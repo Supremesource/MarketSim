@@ -26,7 +26,7 @@ recursiveList :: [(Int, VolumeSide)] -- the list of volume amounts and volume si
               -> Int -- totakefromwall
               -> IO ([(Double, Int)], [(Double, Int)]) -- IO ([(Double, Int)], [(Double, Int)])
 recursiveList [] _ _ _ _ _ _ _ _ = return ([], [])
-recursiveList (x:xs) bidBook askBook gen1 gen2 fullwallsASK fullwallsBIDS startingPoint totakefromwall =
+recursiveList (x:xs) bidBook askBook gen1 gen2 fullwallsASK fullwallsBIDS startingPoint totakefromwall = 
     orderbookLoop x bidBook askBook gen1 gen2 fullwallsASK fullwallsBIDS startingPoint totakefromwall >>=
     \(newBidBook, newAskBook) -> recursiveList xs newBidBook newAskBook gen1 gen2 fullwallsASK fullwallsBIDS startingPoint totakefromwall
   where
