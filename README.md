@@ -1,6 +1,5 @@
-# Orderbook
+# Orderbook prototype
 
-# ! Only a prototype
 Code simulating orderbook in financial markets, needs to get final polish, in terms of:
 - more dynamic spread options
 - better psychology
