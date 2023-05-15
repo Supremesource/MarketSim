@@ -3,7 +3,7 @@
 {-# HLINT ignore "Use hPrint" #-}
 {-# HLINT ignore "Use when" #-}
 -- | module name
-module AAApp where
+
 -- | external modules
 import Control.Exception (bracket, throwIO)
 import Control.Monad (when)
@@ -16,34 +16,32 @@ import Control.Parallel.Strategies
 import System.Random
 import Text.Printf (printf)
 import Data.List (unfoldr)
+
 -- | export modules
-import Orderbook.App.Functions.AAGenerator
-import Orderbook.App.Settings.Arunsettings
-import Orderbook.App.Data.IOOS (generateOrderBook)
-import Orderbook.App.Data.Afilepaths
+import Orderbook.Orderbook.App.Functions.AAGenerator
+import Orderbook.Orderbook.App.Settings.Arunsettings
+import Orderbook.Orderbook.App.Data.IOOS (generateOrderBook)
+import Orderbook.Orderbook.App.Data.Afilepaths
     ( askBookPath, bidBookPath, pricePath, logPath )
-import Orderbook.App.Source.UpdatedPrice 
+import Orderbook.Orderbook.App.Source.UpdatedPrice 
 
 
 
 main :: IO ()
 main = do
-     
-
-     -- | CHECKING IF FILES ARE EMPTY
+     -- | CHECKING IF FILES ARE EMPTY:
     isBidEmpty
             :: Bool
             <- isFileEmpty bidBookPath
     isAskEmpty
             :: Bool
             <- isFileEmpty askBookPath
-
-    hSetBuffering stdout (BlockBuffering (Just 8192))
+-- | IO buffering
     hSetBuffering stdout LineBuffering
 
     -- !! WIPING RUN == TRUE
-    -- \| when wiping run is running the whole code is not evaluated
-    -- \| wiping all of the text files, and changing the starting point
+    -- | when wiping run is running the whole code is not evaluated
+    -- | wiping all of the text files, and changing the starting point
     if wipingRUN
       then do
         let sayStart
@@ -59,34 +57,27 @@ main = do
           askBookPath
           pricePath
           wipingStartingValue
+   
       else do
-        let testlist :: [(Int,VolumeSide)] = [(100000,Sell),(100000,Buy),(90000,Sell),(800000,Buy),(100000,Buy),(90000,Sell),(800000,Buy) ]
-        let listsize :: Int = length testlist
+      
        
-          --if listsize > 0
-          --then do
-      -- orderbookloop :: [[(Int,VolumeSide)]]
+-- | random generator:
         gen1
           <- randomGen
         gen2
           <- randomGen
+
         -- the price we are starting at
-        startingPoint :: Double
-          <- startingPointFromFile
-        -- !! SETTINGS:
-        -- making ask move upside
+       
+        startingPoint :: Double <- startingPointFromFile
 
-        -- Create a list of generators
-        let gens = take takeamountASK $ unfoldr (\g -> Just (g, snd $ split g)) gen1
-
-        -- Pair each generator with the corresponding index
-        let indexedGens = zip [1..takeamountASK] (take takeamountASK gens)
-
-        let upMoves :: [Double]  = map (\(_, g) -> fst $ randomR (minUpMove, maxUpMove) g) indexedGens `using` parList rseq
-
-        -- making bid move downside
-        let downMoves :: [Double] = take takeamountBID (randomRs (minDownMove, maxDownMove) gen2) `using` parList rseq
-
+  
+-- making ask move upside
+        let upMoves = take takeamountASK $ randomRs (minUpMove, maxUpMove) gen1
+-- making bid move downside
+        let downMoves =
+              take takeamountBID $ randomRs (minDownMove, maxDownMove) gen2
+        
         -- liquidity definition for ask, the limit setup gradient
         let setupASK
               :: [Double]
@@ -171,7 +162,8 @@ main = do
 
         -- the orderbook which should change the bid price
         fileBidBook <- readBook bidBookPath
-
+        fileAskBook <- readBook askBookPath 
+        
         let bidBook
               :: [(Double,Int)]
               =
@@ -179,7 +171,8 @@ main = do
                 then orderbook_bid
                 else fileBidBook
         -- the orderbook which should change the ask price
-        fileAskBook <- readBook askBookPath -- BUG possible
+
+     
         let askBook
               :: [(Double,Int)]
               =
@@ -188,9 +181,10 @@ main = do
                 else fileAskBook
 
 -- | price change
-        let listofvolumes = [(100,Buy),(100,Buy),(100,Buy),(100,Buy),(100,Buy),(100,Buy),(100,Buy),(100,Buy),(100,Buy),(100,Buy),(100,Buy),(100,Buy),(100,Buy),(100,Buy),(100,Buy),(100,Buy),(100,Buy),(100,Buy),(100,Buy),(100,Buy),(100,Buy),(100,Buy),(100,Buy),(100,Buy),(100,Buy),(100,Buy),(100,Buy),(100,Buy),(100,Buy),(100,Buy),(100,Buy),(100,Buy),(100,Buy),(100,Buy),(100,Buy),(100,Buy),(100,Buy),(100,Buy),(100,Buy),(100,Buy),(100,Buy),(100,Buy),(100,Buy),(100,Buy),(100,Buy),(100,Buy),(100,Buy),(100,Buy),(100,Buy),(100,Buy),(100,Buy),(100,Buy),(100,Buy),(100,Buy),(100,Buy)]
+        let listofvolumes = [(500000,Buy),(500000,Buy),(500000,Buy),(500000,Buy),(500000,Buy)]
 
-        (finalBidBook,finalAskBook) <- recursiveList listofvolumes bidBook askBook gen1 gen2 fullwallsASK fullwallsBIDS startingPoint totakefromwall
+        (finalBidBook,finalAskBook) -- ! THE ONLY POSSIBLE ERROR, otherwise it does not seems to be in this file
+          <- recursiveList listofvolumes bidBook askBook gen1 gen2 fullwallsASK fullwallsBIDS startingPoint totakefromwall
 
           -- ... do something with finalBidBook and finalAskBook, e.g., print them out ...
         let finaltxtpolish = removeEmptyLines pricePath

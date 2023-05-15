@@ -1,4 +1,4 @@
-module Orderbook.App.Settings.Arunsettings where
+module Orderbook.Orderbook.App.Settings.Arunsettings where
 import Data.Text.Internal.Read (T(T))
 
 -- defining data typ for volume side
@@ -36,20 +36,6 @@ wipingStartingValue = 1000
 automatedrun :: Bool
 automatedrun = False
 
-
---〇 4
---  manual run settings (case 🔼 set to False):
--- ? MANUAL RUN volume side
--- |FILL IN IF AUTOMATED RUN == "FALSE"
-manualrunVside :: VolumeSide
-manualrunVside = Buy
-
-
---〇 5
--- ? Manual run Volume amount
--- | FILL IN IF AUTOMATED RUN == "FALSE"
-manualrunVolumeamount :: Int
-manualrunVolumeamount = 90000000
 
 
 --〇 6
@@ -153,4 +139,4 @@ wallAmplifier = 4
 --〇 17
 -- ? Rounding
 maxDecimal :: Int
-maxDecimal = 1 -- ** fill in
+maxDecimal = 2 -- ** fill in

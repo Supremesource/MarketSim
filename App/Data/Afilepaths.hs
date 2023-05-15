@@ -1,4 +1,4 @@
-module Orderbook.App.Data.Afilepaths where
+module Orderbook.Orderbook.App.Data.Afilepaths where
   -- !! FILEPATHS:
   -- | Usinng 4 file paths in total
   -- | Askbook
@@ -6,11 +6,19 @@ module Orderbook.App.Data.Afilepaths where
   -- | Pricehistory
   -- | Log
   
+    askBookPath :: String
     askBookPath  :: String
-                  = "/Users/janzimula/Desktop/OB/Orderbook/App/Doc/askbook.txt"
+                  = "/Users/janzimula/Desktop/OB/Orderbook/Orderbook/App/Doc/askbook.txt"
+    
     bidBookPath :: String
-                  = "/Users/janzimula/Desktop/OB/Orderbook/App/Doc/bidbook.txt"
+  
+    bidBookPath :: String
+                  = "/Users/janzimula/Desktop/OB/Orderbook/Orderbook/App/Doc/bidbook.txt"
+    
     pricePath :: String
-                  = "/Users/janzimula/Desktop/OB/Orderbook/App/Doc/pricehistory.txt"
+    pricePath :: String
+                  = "/Users/janzimula/Desktop/OB/Orderbook/Orderbook/App/Doc/pricehistory.txt"
+    
+    logPath :: String
     logPath  :: String
-                  = "/Users/janzimula/Desktop/OB/Orderbook/App/Doc/Zcodeconfiguration.txt"
+                  = "/Users/janzimula/Desktop/OB/Orderbook/Orderbook/App/Doc/Zcodeconfiguration.txt"

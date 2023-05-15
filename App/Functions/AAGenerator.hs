@@ -4,7 +4,7 @@
 {-# HLINT ignore "Use when" #-}
 
 -- | module name
-module Orderbook.App.Functions.AAGenerator where
+module Orderbook.Orderbook.App.Functions.AAGenerator where
 -- | external modules
 import Control.Exception (bracket, finally)
 import Data.Char (toUpper)
@@ -31,9 +31,17 @@ import qualified Data.ByteString.Char8 as BS
 import qualified Data.Text as T
 import qualified Data.Text.IO as TIO
 import Text.Read (readMaybe)
+
 -- | exporting modules
-import Orderbook.App.Settings.Arunsettings 
-import Orderbook.App.Data.Afilepaths ( pricePath )
+import Orderbook.Orderbook.App.Settings.Arunsettings
+    ( takeamountBID,
+      takeamountASK,
+      minimum',
+      maximum',
+      orderwalllikelyhood,
+      wallAmplifier,
+      maxDecimal ) 
+import Orderbook.Orderbook.App.Data.Afilepaths ( pricePath )
 
 -- //starting point (starting price)
 -- Read the contents of the file and return the last number
@@ -214,7 +222,7 @@ orderbookChange ((price, volume):xs) amount
 
 -- HERE IS THE BUG FOR SURE
 lengthchange :: [(Double, Int)] -> [(Double, Int)] -> Int
-lengthchange xs ys = length xs - length ys
+lengthchange xs ys = abs (length xs - length ys)
 
 -- | Generating ask list (the updated one)
 infiniteList' :: Double -> StdGen -> [Double] -> [Double]

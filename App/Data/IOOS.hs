@@ -1,7 +1,7 @@
 {-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
 {-# HLINT ignore "Use withFile" #-}
 -- | module name
-module Orderbook.App.Data.IOOS where
+module Orderbook.Orderbook.App.Data.IOOS where
 -- | external modules
 import Data.ByteString.Char8 (ByteString)
 import Data.ByteString.Char8 qualified as B
@@ -10,8 +10,26 @@ import System.IO
 import Control.Exception (bracket, throwIO)
 import Text.Printf (printf)
 -- | module exports
-import Orderbook.App.Functions.AAGenerator
-import Orderbook.App.Settings.Arunsettings
+import Orderbook.Orderbook.App.Functions.AAGenerator
+    ( wallminimum',
+      wallmaximum',
+      takeamount,
+      roundTo,
+      allCaps,
+      minimumlimit,
+      maximumlimit )
+import Orderbook.Orderbook.App.Settings.Arunsettings
+    ( takeamountBID,
+      takeamountASK,
+      minimum',
+      maximum',
+      minUpMove,
+      maxUpMove,
+      minDownMove,
+      maxDownMove,
+      orderwalllikelyhood,
+      wallAmplifier,
+      maxDecimal )
 
 
 generateOrderBook :: [(Double, Int)] -> [(Double,Int)] 
@@ -38,8 +56,6 @@ generateOrderBook :: [(Double, Int)] -> [(Double,Int)]
                   -> String
                   -> String
                   -> String
-                  -> Int
-                  -> Int  
                   -> IO ()
 generateOrderBook 
                   bookSpreadFactorAsk 
@@ -67,22 +83,21 @@ generateOrderBook
                   pricePath
                   bidBookPath 
                   askBookPath 
-                  x 
-                  y 
+              
                   = 
                   do
-  B.putStrLn $ B.pack $ allCaps "📚Orderbook ↕️ \n\n (PRICE LEVEL , USD VALUE)\n"
-  B.putStrLn $
-          B.pack $
-            allCaps "\n📕 ask orderbook ⏬\n\n"
-              ++ unlines (map show (reverse bookSpreadFactorAsk))
-              ++ allCaps "\nask ⬆️ \n\n\n"
+--  B.putStrLn $ B.pack $ allCaps "📚Orderbook ↕️ \n\n (PRICE LEVEL , USD VALUE)\n"
+--  B.putStrLn $
+--          B.pack $
+--            allCaps "\n📕 ask orderbook ⏬\n\n"
+--              ++ unlines (map show (reverse bookSpreadFactorAsk))
+--              ++ allCaps "\nask ⬆️ \n\n\n"
   B.putStrLn $ B.pack $ allCaps "spread: " ++ show (roundTo maxDecimal spread) ++ " $"
-  B.putStrLn $
-          B.pack $
-            allCaps "\n\n\nbid ⬇️ \n\n"
-              ++ unlines (map show bookSpreadFactorBid)
-              ++ allCaps "\n📗 bid orderbook ⏫"
+--  B.putStrLn $
+--          B.pack $
+--            allCaps "\n\n\nbid ⬇️ \n\n"
+--              ++ unlines (map show bookSpreadFactorBid)
+--              ++ allCaps "\n📗 bid orderbook ⏫"
   B.putStrLn $ B.pack "\n------------------------\n"
   B.putStrLn $ B.pack $ allCaps "Overal data ∑ \n"
   B.putStrLn $
