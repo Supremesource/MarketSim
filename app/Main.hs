@@ -192,4 +192,4 @@ main = do
       addsupto100 xProbabilityTaker yProbabilityTaker zProbabilityTaker fProbabilityTaker
       addsupto100 xProbabilityMaker yProbabilityMaker zProbabilityMaker fProbabilityMaker
       -- calling python script (graph)
-      callCommand "python PlotPrices.py"
+      callCommand "python App/PlotPrices.py"
