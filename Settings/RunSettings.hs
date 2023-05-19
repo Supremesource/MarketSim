@@ -10,7 +10,7 @@ import Data.Text.Internal.Read (T(T))
 
 -- | number of runs
 numberOfRuns :: Int
-numberOfRuns = 40 -- Put your actual number of runs here
+numberOfRuns = 2 -- Put your actual number of runs here
 
 
 -- | number of positions

@@ -9,16 +9,16 @@ module Filepaths where
   
 askBookPath :: String
 askBookPath  
-              = "askbook.txt"
+              = "Data/askbook.txt"
 
 bidBookPath :: String
 bidBookPath 
-              = "bidbook.txt"
+              = "Data/bidbook.txt"
 
 pricePath :: String
 pricePath 
-              = "pricehistory.txt"
+              = "Data/pricehistory.txt"
 
 logPath :: String
 logPath  
-              = "codeconfiguration.txt"
+              = "Data/codeconfiguration.txt"

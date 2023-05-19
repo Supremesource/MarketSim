@@ -58,6 +58,6 @@ def plot_prices(prices):
 
 
 if __name__ == "__main__":
-    file_path = "../Data/pricehistory.txt"
+    file_path = "Data/pricehistory.txt"
     prices = read_prices_from_file(file_path)
     plot_prices(prices)
