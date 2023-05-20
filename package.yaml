@@ -1,10 +1,10 @@
 name:                marketsim
 version:             0.1.0.0
-github:              "githubuser/marketsim"
+github:              "SupremeSource/marketsim"
 license:             BSD3
-author:              "Honza"
-maintainer:          "example@example.com"
-copyright:           "2023 Author name here"
+author:              "Supreme Source"
+maintainer:          "zimulajan0@gmail.com"
+copyright:           "2023 Supreme Source"
 
 extra-source-files:
 - README.md

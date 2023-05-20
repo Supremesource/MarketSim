@@ -1,16 +1,14 @@
-{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
 {-# HLINT ignore "Use withFile" #-}
+{-# OPTIONS_GHC -Wno-unused-matches #-}
+{-# OPTIONS_GHC -Wno-type-defaults #-}
 module InputOutput where
 
-import Data.ByteString.Char8 (ByteString)
 import Data.ByteString.Char8 qualified as B
 import Data.ByteString.Char8 qualified as BC
 import System.IO
-import Control.Exception (bracket, throwIO)
-import Control.Monad (forM, replicateM, when)
+import Control.Exception (bracket)
 import Text.Printf (printf)
-import Data.List (unfoldr)
-import Data.Maybe (listToMaybe)
+
 
 -- | internal libraries
 import Lib
@@ -246,8 +244,6 @@ printPositionStats i (taker, makers) randominmain' = do
 
   putStrLn $ "the volume is: " ++ show voL ++ " , " ++ "and the side of the volume is: " ++ show sideVol ++ "\n"
 
-  let volume' = voL
-  let side' = sideVol
 
   print randominmain'
   -- Additional stats for a single position
@@ -371,4 +367,3 @@ printStats stats = do
   Text.Printf.printf "| 💲 %s   | %12s$ |\n" (orange "Value F                            ") (show (offF stats))
   putStrLn "+--------------------end-of-5-minute-time-frame-run------------------------------+\n🍺🍺🍺🍺🍺🍺🍺🍺🍺🍺🍺🍺🍺🍺"
   -- add delta of those other deltas
-
