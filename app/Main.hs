@@ -80,6 +80,7 @@ mainLoop aggregatedStats remainingRuns = do
           putStrLn "--------"
           printStats newAggregatedStats
           nextVolumesAndSides <- mainLoop newAggregatedStats (remainingRuns - 1)
+          printFinal newAggregatedStats
           return (volumesAndSides ++ nextVolumesAndSides)
         else do
           printFinal aggregatedStats
@@ -96,7 +97,6 @@ printFinal aggregatedStats = do
 
 main :: IO ()
 main = do
-  
   
   -- CHECKING IF FILES ARE EMPTY
   isBidEmpty  <- isFileEmpty bidBookPath
