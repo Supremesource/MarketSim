@@ -22,71 +22,71 @@ module Filepaths where
 
 -- | config file
 logPath :: String
-logPath  
-              = "Data/codeconfiguration.txt"  
+logPath
+              = "Data/codeconfiguration.txt"
 
 -- | orderbook
 askBookPath :: String
-askBookPath  
+askBookPath
               = "Data/askbook.txt"
 
 bidBookPath :: String
-bidBookPath 
+bidBookPath
               = "Data/bidbook.txt"
 
 -- | price history
 pricePath :: String
-pricePath 
+pricePath
               = "Data/pricehistory.txt"
 
 -- | orderbook stats
 -- | amount of bids in comparison to amount of asks in the orderbook
 bidAskRPath :: String
-bidAskRPath 
+bidAskRPath
               = "Data/bidAskR.txt"
 
 -- | $ amount of bids & asks in the orderbook
 bidToAskRPath :: String
-bidToAskRPath 
+bidToAskRPath
               = "Data/bidToAskR.txt"
 
 -- | overal volume
 volumePath :: String
-volumePath 
+volumePath
               = "Data/volume.txt"
 
 -- | buy volume
 buyVolumePath :: String
-buyVolumePath 
+buyVolumePath
               = "Data/buyVol.txt"
 
 -- | sell volume
 sellVolumePath :: String
-sellVolumePath 
+sellVolumePath
               = "Data/sellVol.txt"
 
 -- | opening longs
 newLongsPath :: String
-newLongsPath 
+newLongsPath
               = "Data/nLongs.txt"
 
 -- | opening shorts
 newShortsPath :: String
-newShortsPath 
+newShortsPath
               = "Data/nShorts.txt"
 
 -- | exit longs
 exitLongsPath :: String
-exitLongsPath 
+exitLongsPath
               = "Data/eLongs.txt"
 
 -- | exit shorts
 exitShortsPath :: String
-exitShortsPath 
+exitShortsPath
               = "Data/eShorts.txt"
 
 -- | open interest
 openInterestPath :: String
-openInterestPath 
+openInterestPath
               = "Data/oInterest.txt"
-    
+

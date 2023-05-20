@@ -1,4 +1,41 @@
-module RunSettings where
+module RunSettings
+ ( numberOfRuns
+ , numPositions
+ , wipingStartingValue
+ , takeamountBID
+ , takeamountASK
+ , minimum'
+ , maximum'
+ , minUpMove
+ , maxUpMove
+ , minDownMove
+ , maxDownMove
+ , largerSpread
+ , orderwalllikelyhood
+ , wallAmplifier
+ , maxDecimal
+ , plotCharts
+ , basecaseValueLongNew
+ , basecaseValueShortNew
+ , upperBoundLongNew
+ , basecaseValueShortClose
+ , upperBoundShortClose
+ , upperBoundShortNew
+ , basecaseValueLongClose
+ , upperBoundLongClose
+ , xProbabilityTaker
+ , yProbabilityTaker
+ , zProbabilityTaker
+ , fProbabilityTaker
+ , xProbabilityMaker
+ , yProbabilityMaker
+ , zProbabilityMaker
+ , fProbabilityMaker
+
+ )
+
+where
+
 
 
 
@@ -8,6 +45,8 @@ module RunSettings where
 
 -- ! RUN SETTINGS:
 
+plotCharts :: Bool
+plotCharts = True -- ** fill in / plot charts (True/False)
 
 -- | number of runs
 numberOfRuns :: Int
@@ -16,7 +55,7 @@ numberOfRuns = 2 -- Put your actual number of runs here
 
 -- | number of positions
 numPositions :: Int
-numPositions = 100 -- ** fill in / number of positions
+numPositions = 2 -- ** fill in / number of positions
 
 
 --〇 2
@@ -85,9 +124,9 @@ largerSpread = False
 -- | /2  -- (recommended 40-80, possibly even higher, it is going to be `div` by 2 so it gets distributed into bids and asks )
 -- | defines in how many orders in the initial book will a wall occour
 orderwalllikelyhood :: Int
-orderwalllikelyhood = 10000000 
+orderwalllikelyhood = 10000000
 
---〇 16 
+--〇 16
 -- ? Amplifier of Wall  occurrences
 -- | will amplify the maximum to liking (the higher the more the maximum will get multiplied, so the bigger the walls will be)
 wallAmplifier :: Int
@@ -97,18 +136,18 @@ wallAmplifier = 0
 -- | max decimals in the orderbook
 -- | for illiquid coins use wider rounding
 -- | 1 = x.x
--- | 2 = x.xx 
+-- | 2 = x.xx
 -- | 3 = ..
 
 --〇 17
 -- ? Rounding
 maxDecimal :: Int
-maxDecimal = 2 
+maxDecimal = 2
 
 
 -- 〇 18
 -- ? Volume settings:
--- | (functionality defined in Lib) 
+-- | (functionality defined in Lib)
 
 -- ! BUY VOUME
 -- | longs NEW
@@ -132,7 +171,7 @@ upperBoundShortNew = 0
 basecaseValueLongClose :: Int
 basecaseValueLongClose = 0
 upperBoundLongClose :: Int
-upperBoundLongClose = 0 
+upperBoundLongClose = 0
 
 
 

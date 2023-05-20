@@ -2,38 +2,29 @@ module Lib where
 
 
 -- | external modules
-import Control.Exception (bracket)
-import Data.Char (toUpper)
+import           Control.Exception     (bracket)
+import           Data.Char             (toUpper)
 
-import Data.Time.Clock.POSIX (getPOSIXTime)
-import System.IO ( hClose, hFileSize, openFile, IOMode(ReadMode) )
 import qualified Data.ByteString.Char8 as BS
-import qualified Data.Text as T
-import qualified Data.Text.IO as TIO
-import Text.Read (readMaybe)
-import System.Random
-    ( newStdGen,
-      randomRIO,
-      setStdGen,
-      mkStdGen,
-      Random(randomR, randomRs),
-      RandomGen(split),
-      StdGen ) 
-import Data.Ratio ((%))
+import           Data.Ratio            ((%))
+import qualified Data.Text             as T
+import qualified Data.Text.IO          as TIO
+import           Data.Time.Clock.POSIX (getPOSIXTime)
+import           System.IO             (IOMode (ReadMode), hClose, hFileSize,
+                                        openFile)
+import           System.Random         (Random (randomR, randomRs),
+                                        RandomGen (split), StdGen, mkStdGen,
+                                        newStdGen, randomRIO, setStdGen)
+import           Text.Read             (readMaybe)
 
 
 -- | internal libraries
-import Filepaths
-import RunSettings
-    ( takeamountBID,
-      takeamountASK,
-      minimum',
-      maximum',
-      orderwalllikelyhood,
-      wallAmplifier,
-      maxDecimal ) 
-import Statistics ( customRandomRs ) 
-import DataTypes ( MakerTuple )
+import           DataTypes             (MakerTuple)
+import           Filepaths
+import           RunSettings           (maxDecimal, maximum', minimum',
+                                        orderwalllikelyhood, takeamountASK,
+                                        takeamountBID, wallAmplifier)
+import           Statistics            (customRandomRs)
 
 
 
@@ -62,7 +53,7 @@ randomListwalls = do
   randomRs (wallminimum', wallmaximum') <$> newStdGen
 
 takeCustomRandom :: StdGen -> Int -> [Int]
-takeCustomRandom gen n = take n (customRandomRs (minimum', maximum') gen) -- 100 000 
+takeCustomRandom gen n = take n (customRandomRs (minimum', maximum') gen) -- 100 000
 
 printCustomRandomList :: Int -> IO [Int]
 printCustomRandomList n = do
@@ -153,7 +144,7 @@ addAt :: Int -> Int -> [Int] -> [Int]
 addAt idx val lst =
   let (pre, post) = splitAt idx lst
    in case post of
-        [] -> pre ++ [val] -- When the list is empty, append the value.
+        []       -> pre ++ [val] -- When the list is empty, append the value.
         (x:rest) -> pre ++ (val + x) : rest
 
 insertRandomly :: [Int] -> [Int] -> IO [Int]
@@ -229,7 +220,7 @@ readBook fileName =
        let contentsStr = BS.unpack contents
        return $
          case readMaybe contentsStr of
-           Nothing -> []
+           Nothing      -> []
            Just bidBook -> bidBook)
 
 newRunSettings :: FilePath -> FilePath -> FilePath -> FilePath -> Int -> IO ()
@@ -274,7 +265,7 @@ countElements x = length . filter ((== x) . snd)
 
 makerSize :: String -> MakerTuple -> Int
 makerSize x = sum . map fst . filter ((== x) . snd)
-                        
+
 volumecounter :: (Int,String) -> (Int,String)
 volumecounter (n,a) = if a == "x" || a == "z" then (n,"buy") else (n,"sell")
 
@@ -295,7 +286,7 @@ interestorMinus (_, s) makerTuple
 -- | helper function for probability settings (/% checker)
 addsupto100 :: Int -> Int -> Int -> Int -> IO ()
 addsupto100 fst snd thr for | fst + snd + thr + for == 100 = return ()
-                            | otherwise = putStr "🚨 Attention probabilites in settings do not add up to 100% 🚨" 
+                            | otherwise = putStr "🚨 Attention probabilites in settings do not add up to 100% 🚨"
 
 
 roundToTwoDecimals :: (RealFrac a, Fractional b) => a -> b

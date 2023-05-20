@@ -1,73 +1,67 @@
+{-# OPTIONS_GHC -Wno-unused-matches #-}
 module Main where
 {-# LANGUAGE ScopedTypeVariables #-}
 
 
 -- | external libraries
 
-import Control.Monad ( replicateM, forM )
-import Control.Parallel.Strategies ( parList, rseq, using )
-import System.IO
-    ( hSetBuffering, stdout, BufferMode(LineBuffering) )
-import System.Random ( Random(randomRs) )
-import System.Process ( callCommand )
+import           Control.Monad               (forM, replicateM, when)
+import           Control.Parallel.Strategies (parList, rseq, using)
+import           System.IO                   (BufferMode (LineBuffering),
+                                              hSetBuffering, stdout)
+import           System.Process              (callCommand)
+import           System.Random               (Random (randomRs))
 
 
 -- | internal libraries
-import Filepaths ( askBookPath, bidBookPath, pricePath, logPath )
-import InputOutput ( orange, printPositionStats, printStats, red )
-import Lib
-    ( addsupto100,
-      firstPartList,
-      infiniteList,
-      infiniteListDown,
-      isFileEmpty,
-      newRunSettings,
-      printCustomRandomList,
-      printRandomList',
-      randomGen,
-      randomListwalls,
-      randomlyInsert,
-      readBook,
-      removeEmptyLines,
-      secondPartList,
-      startingPointFromFile,
-      takeamount,
-      taketowalls,
-      zipToTuples ) 
-import Statistics ( generateRandomPosition ) 
-import Util ( aggregateStats, initStats, recursiveList ) 
-import DataTypes ( Stats, VolumeSide )
-import RunSettings
-    ( fProbabilityMaker,
-      fProbabilityTaker,
-      maxDownMove,
-      maxUpMove,
-      minDownMove,
-      minUpMove,
-      numPositions,
-      numberOfRuns,
-      takeamountASK,
-      takeamountBID,
-      wipingStartingValue,
-      xProbabilityMaker,
-      xProbabilityTaker,
-      yProbabilityMaker,
-      yProbabilityTaker,
-      zProbabilityMaker,
-      zProbabilityTaker )
+import           DataTypes                   (Stats, VolumeSide)
+import           Filepaths                   (askBookPath, bidBookPath, logPath,
+                                              pricePath)
+import           InputOutput                 (orange, printPositionStats,
+                                              printStats, red)
+import           Lib                         (addsupto100, firstPartList,
+                                              infiniteList, infiniteListDown,
+                                              isFileEmpty, newRunSettings,
+                                              printCustomRandomList,
+                                              printRandomList', randomGen,
+                                              randomListwalls, randomlyInsert,
+                                              readBook, removeEmptyLines,
+                                              secondPartList,
+                                              startingPointFromFile, takeamount,
+                                              taketowalls, zipToTuples)
+import           RunSettings                 (fProbabilityMaker,
+                                              fProbabilityTaker, maxDownMove,
+                                              maxUpMove, minDownMove, minUpMove,
+                                              numPositions, numberOfRuns,
+                                              plotCharts, takeamountASK,
+                                              takeamountBID,
+                                              wipingStartingValue,
+                                              xProbabilityMaker,
+                                              xProbabilityTaker,
+                                              yProbabilityMaker,
+                                              yProbabilityTaker,
+                                              zProbabilityMaker,
+                                              zProbabilityTaker)
+import           Statistics                  (generateRandomPosition)
+import           Util                        (aggregateStats, initStats,
+                                              recursiveList)
+
+
+
+
 
 
 mainLoop :: Stats -> Int -> IO [(Int, VolumeSide)]
 mainLoop aggregatedStats remainingRuns = do
       if remainingRuns > 0
-        then do 
+        then do
           let numberR =  abs (1 - (remainingRuns -1))
           let timeframe = remainingRuns * 5 -- 5 for the time frame
           let hours = fromIntegral timeframe / 60
           print $ "number of remaining runs: " ++ show numberR ++ " you will go through: " ++ show timeframe ++ " minutes at the end | hours = " ++ show hours ++ " hours\n"
           positions <- replicateM numPositions generateRandomPosition
          -- TODO - resolve the conflict right here
-    
+
           let takerl = [1,1..]
           let newAggregatedStats = foldr (\(pos, rnd) acc -> aggregateStats pos acc rnd) aggregatedStats (zip positions takerl)
           volumesAndSides <- Control.Monad.forM (zip (zip [1..] positions) takerl) $ \((i, pos), rnd) -> do
@@ -76,28 +70,26 @@ mainLoop aggregatedStats remainingRuns = do
             print side
             return (volume, side)
 
-          mapM_ (\((i, pos), rnd) -> printPositionStats i pos rnd) (zip (zip [1..] positions) takerl)
           putStrLn "--------"
           printStats newAggregatedStats
           nextVolumesAndSides <- mainLoop newAggregatedStats (remainingRuns - 1)
-          printFinal newAggregatedStats
           return (volumesAndSides ++ nextVolumesAndSides)
         else do
           printFinal aggregatedStats
           return []
-  
+
 
 printFinal :: Stats -> IO ()
 printFinal aggregatedStats = do
   let timeframe = numberOfRuns * 5 -- 5 for the time frame
   let hours = fromIntegral timeframe / 60
   putStrLn $ "\n🍻congrats you went through: " ++ show hours ++ " hours (if you reached your set runs)"
-  putStrLn "\n📊📊FINAL AGGREGATED STATS📊📊: "
+  putStrLn "\n\n\n\n\n\n-------------\n\n\n you have reached the end of the generator \n\n\n📊📊AGGREGATED STATS📊📊: "
   printStats aggregatedStats
 
 main :: IO ()
 main = do
-  
+
   -- CHECKING IF FILES ARE EMPTY
   isBidEmpty  <- isFileEmpty bidBookPath
   isAskEmpty  <- isFileEmpty askBookPath
@@ -117,13 +109,13 @@ main = do
       putStrLn $ orange "\n * you can adjsut starting value in the 'RunSetting' * "
       newRunSettings logPath bidBookPath askBookPath pricePath wipingStartingValue
     else if proceed == "n" || proceed == "N"
-    
-        then  error (red"stopping program")
-    
+
+        then  error (red "stopping program")
+
 
     else do
-        
-     
+
+
 -- | random generator:
       gen1
         <- randomGen
@@ -131,14 +123,14 @@ main = do
         <- randomGen
 
       -- the price we are starting at
-      
+
       startingPoint <- startingPointFromFile
 -- making ask move upside
       let upMoves = take takeamountASK $ randomRs (minUpMove, maxUpMove) gen1
 -- making bid move downside
       let downMoves =
             take takeamountBID $ randomRs (minDownMove, maxDownMove) gen2
-      
+
       -- liquidity definition for ask, the limit setup gradient
       let setupASK = take takeamountASK (tail (infiniteList startingPoint gen1 upMoves)) `using` parList rseq
 
@@ -184,15 +176,15 @@ main = do
 
       -- the orderbook which should change the bid price
       fileBidBook <- readBook bidBookPath
-      fileAskBook <- readBook askBookPath 
-      
+      fileAskBook <- readBook askBookPath
+
       let bidBook =
             if isBidEmpty
               then orderbook_bid
               else fileBidBook
       -- the orderbook which should change the ask price
 
-    
+
       let askBook =
             if isAskEmpty
               then orderbook_ask
@@ -202,15 +194,15 @@ main = do
       volumesAndSides <- mainLoop initStats numberOfRuns
  -- putStrLn "\nVolumes and Sides:"
   -- Store the result in a variable before printing
-      let listofvolumes = volumesAndSides 
-       
+      let listofvolumes = volumesAndSides
+
   -- Print the elements in a formatted way
 --  forM_ result $ \(volume, side) -> do
 --    putStrLn $ "Volume: " ++ show volume ++ ", Side: " ++ show side
       (finalBidBook, finalAskBook) <- recursiveList listofvolumes bidBook askBook gen1 gen2 fullwallsASK fullwallsBIDS startingPoint totakefromwall
 
           -- ... do something with finalBidBook and finalAskBook, e.g., print them out ...
-   
+
       let finaltxtpolish = removeEmptyLines pricePath
       finaltxtpolish
       mapM_ print listofvolumes
@@ -221,4 +213,7 @@ main = do
       addsupto100 xProbabilityTaker yProbabilityTaker zProbabilityTaker fProbabilityTaker
       addsupto100 xProbabilityMaker yProbabilityMaker zProbabilityMaker fProbabilityMaker
       -- calling python script (graph)
-      callCommand "python App/PlotPrices.py"
+
+
+
+      Control.Monad.when plotCharts $ callCommand "python App/PlotPrices.py"

@@ -4,16 +4,16 @@ module DataTypes where
 -- | defining data typ for volume side
 data VolumeSide
   = Buy
-  | Sell 
+  | Sell
    deriving Eq
 
 instance Show VolumeSide where
   show :: VolumeSide -> String
-  show Buy = "Buy"
+  show Buy  = "Buy"
   show Sell = "Sell"
 
 -- | maker tuple structure
-type MakerTuple = [(Int, String)]   
+type MakerTuple = [(Int, String)]
 
 -- | stats that can be extracted
 data Stats = Stats
