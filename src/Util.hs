@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -Wno-unused-local-binds #-}
 module Util where
 
 
@@ -6,6 +7,19 @@ import System.Random ( RandomGen(split), StdGen, Random(randomRs) )
 
 -- | internal libraries
 import Lib
+    ( printCustomRandomList,
+      printRandomList',
+      zipToTuples,
+      orderbookChange,
+      lengthchange,
+      infiniteList',
+      infiniteListDown',
+      sumInts,
+      spread',
+      countElements,
+      makerSize,
+      interestorPlus,
+      interestorMinus )
 import Filepaths
 import RunSettings 
 import DataTypes

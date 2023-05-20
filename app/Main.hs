@@ -1,37 +1,66 @@
 module Main where
-
 {-# LANGUAGE ScopedTypeVariables #-}
 
 
 -- | external libraries
-import Control.Exception (bracket, throwIO)
-import Control.Monad ( replicateM, forM_, forM )
-import Control.Parallel.Strategies
-import Data.ByteString.Char8 (ByteString)
-import Data.List (unfoldr)
-import Data.Maybe (listToMaybe)
-import Data.Ratio ((%))
-import System.IO
-import System.Random
-import Text.Printf (printf)
-import System.Process
 
+import Control.Monad ( replicateM, forM )
+import Control.Parallel.Strategies ( parList, rseq, using )
+import System.IO
+    ( hSetBuffering, stdout, BufferMode(LineBuffering) )
+import System.Random ( Random(randomRs) )
+import System.Process ( callCommand )
 
 
 -- | internal libraries
-import Filepaths
-import InputOutput
-import Lib 
-import Statistics 
-import Util 
-import DataTypes
+import Filepaths ( askBookPath, bidBookPath, pricePath, logPath )
+import InputOutput ( orange, printPositionStats, printStats, red )
+import Lib
+    ( addsupto100,
+      firstPartList,
+      infiniteList,
+      infiniteListDown,
+      isFileEmpty,
+      newRunSettings,
+      printCustomRandomList,
+      printRandomList',
+      randomGen,
+      randomListwalls,
+      randomlyInsert,
+      readBook,
+      removeEmptyLines,
+      secondPartList,
+      startingPointFromFile,
+      takeamount,
+      taketowalls,
+      zipToTuples ) 
+import Statistics ( generateRandomPosition ) 
+import Util ( aggregateStats, initStats, recursiveList ) 
+import DataTypes ( Stats, VolumeSide )
 import RunSettings
+    ( fProbabilityMaker,
+      fProbabilityTaker,
+      maxDownMove,
+      maxUpMove,
+      minDownMove,
+      minUpMove,
+      numPositions,
+      numberOfRuns,
+      takeamountASK,
+      takeamountBID,
+      wipingStartingValue,
+      xProbabilityMaker,
+      xProbabilityTaker,
+      yProbabilityMaker,
+      yProbabilityTaker,
+      zProbabilityMaker,
+      zProbabilityTaker )
 
 
 mainLoop :: Stats -> Int -> IO [(Int, VolumeSide)]
 mainLoop aggregatedStats remainingRuns = do
       if remainingRuns > 0
-        then do
+        then do 
           let numberR =  abs (1 - (remainingRuns -1))
           let timeframe = remainingRuns * 5 -- 5 for the time frame
           let hours = fromIntegral timeframe / 60

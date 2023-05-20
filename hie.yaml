@@ -1,0 +1,22 @@
+cradle:
+  stack:
+    - path: "./Src"
+      component: "marketsim:lib"
+
+    - path: "./App"
+      component: "marketsim:lib"
+
+    - path: "./Settings"
+      component: "marketsim:lib"
+
+    - path: "./Types"
+      component: "marketsim:lib"
+
+    - path: "./App/Main.hs"
+      component: "marketsim:exe:marketsim-exe"
+
+    - path: "./App/Filepaths.hs"
+      component: "marketsim:exe:marketsim-exe"
+
+    - path: "./App/Paths_marketsim.hs"
+      component: "marketsim:exe:marketsim-exe"

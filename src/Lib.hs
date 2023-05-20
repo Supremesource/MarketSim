@@ -1,24 +1,39 @@
 module Lib where
 
+
 -- | external modules
-import Control.Exception (bracket, finally)
+import Control.Exception (bracket)
 import Data.Char (toUpper)
 
 import Data.Time.Clock.POSIX (getPOSIXTime)
-import System.IO
+import System.IO ( hClose, hFileSize, openFile, IOMode(ReadMode) )
 import qualified Data.ByteString.Char8 as BS
 import qualified Data.Text as T
 import qualified Data.Text.IO as TIO
 import Text.Read (readMaybe)
-import System.Random 
+import System.Random
+    ( newStdGen,
+      randomRIO,
+      setStdGen,
+      mkStdGen,
+      Random(randomR, randomRs),
+      RandomGen(split),
+      StdGen ) 
 import Data.Ratio ((%))
-import Data.Map (fromList)
+
 
 -- | internal libraries
 import Filepaths
-import RunSettings 
-import Statistics 
-import DataTypes
+import RunSettings
+    ( takeamountBID,
+      takeamountASK,
+      minimum',
+      maximum',
+      orderwalllikelyhood,
+      wallAmplifier,
+      maxDecimal ) 
+import Statistics ( customRandomRs ) 
+import DataTypes ( MakerTuple )
 
 
 
