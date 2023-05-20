@@ -48,9 +48,6 @@ import           Util                        (aggregateStats, initStats,
 
 
 
-
-
-
 mainLoop :: Stats -> Int -> IO [(Int, VolumeSide)]
 mainLoop aggregatedStats remainingRuns = do
       if remainingRuns > 0
@@ -60,7 +57,10 @@ mainLoop aggregatedStats remainingRuns = do
           let hours = fromIntegral timeframe / 60
           print $ "number of remaining runs: " ++ show numberR ++ " you will go through: " ++ show timeframe ++ " minutes at the end | hours = " ++ show hours ++ " hours\n"
           positions <- replicateM numPositions generateRandomPosition
+       
          -- TODO - resolve the conflict right here
+      
+          -- ⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️
 
           let takerl = [1,1..]
           let newAggregatedStats = foldr (\(pos, rnd) acc -> aggregateStats pos acc rnd) aggregatedStats (zip positions takerl)
