@@ -3,27 +3,20 @@ module Util where
 
 
 -- | importing external libraries
-import System.Random ( RandomGen(split), StdGen, Random(randomRs) )
+import           System.Random (Random (randomRs), RandomGen (split), StdGen)
 
 -- | internal libraries
-import Lib
-    ( printCustomRandomList,
-      printRandomList',
-      zipToTuples,
-      orderbookChange,
-      lengthchange,
-      infiniteList',
-      infiniteListDown',
-      sumInts,
-      spread',
-      countElements,
-      makerSize,
-      interestorPlus,
-      interestorMinus )
-import Filepaths
-import RunSettings 
-import DataTypes
-import InputOutput
+import           DataTypes
+import           Filepaths
+import           InputOutput
+import           Lib           (countElements, infiniteList', infiniteListDown',
+                                interestorMinus, interestorPlus, lengthchange,
+                                makerSize, orderbookChange,
+                                printCustomRandomList, printRandomList',
+                                spread', sumInts, zipToTuples)
+import           RunSettings   (largerSpread, maxDownMove, maxUpMove,
+                                minDownMove, minUpMove, takeamountASK,
+                                takeamountBID)
 
 
 recursiveList :: [(Int, VolumeSide)] -- the list of volume amounts and volume sides
@@ -38,28 +31,28 @@ recursiveList :: [(Int, VolumeSide)] -- the list of volume amounts and volume si
               -> IO ([(Double, Int)], [(Double, Int)]) -- IO ([(Double, Int)], [(Double, Int)])
 
 -- | base case
-recursiveList [] _ _ _ _ _ _ _ _ = return ([], []) 
+recursiveList [] _ _ _ _ _ _ _ _ = return ([], [])
 
 recursiveList (x:xs) bidBook askBook gen1 gen2 fullwallsASK fullwallsBIDS startingPoint totakefromwall -- | recursive case
-         = 
+         =
     orderbookLoop x bidBook askBook gen1 gen2 fullwallsASK fullwallsBIDS startingPoint totakefromwall >>=
     \(newBidBook, newAskBook) -> do
-       
+
         let (newGen1, newGen2) = (fst (split gen1), fst (split gen2)) -- create two new generators
         recursiveList xs newBidBook newAskBook newGen1 newGen2 fullwallsASK fullwallsBIDS startingPoint totakefromwall
-  
+
   where
-    
+
     -- insert bidBook askBook volumeSide volumeAmount, gen1, gen2, fullwallsASK, fullwallsBIDS, StartingPoint, Totakefrom wall
-    orderbookLoop :: (Int, VolumeSide) -> [(Double, Int)] 
+    orderbookLoop :: (Int, VolumeSide) -> [(Double, Int)]
                   -> [(Double, Int)] -> StdGen -> StdGen -> [Int] -> [Int] -> Double -> Int -> IO ([(Double, Int)], [(Double, Int)])
     orderbookLoop (volumeAmount, vSide) bidBook askBook gen1 gen2 fullwallsASK fullwallsBIDS startingPoint totakefromwall = do
-           
+
             let volumeBID = if vSide == Sell then volumeAmount else 0
             let volumeASK = if vSide == Buy then volumeAmount else 0
-          
+
             let bidUpdateBook = orderbookChange bidBook volumeBID
-  
+
             let askUpdateBook = orderbookChange askBook volumeASK
 
             let lengthchangeASK :: Int = lengthchange bidUpdateBook bidBook
@@ -87,21 +80,21 @@ recursiveList (x:xs) bidBook askBook gen1 gen2 fullwallsASK fullwallsBIDS starti
             pricesASK :: [Int] <- printCustomRandomList lengthchangeASK
 
             pricesBID :: [Int] <- printRandomList' lengthchangeBID
-            
+
             let usdamountASK' :: [Int] = pricesASK :: [Int]
 
             let usdamountBID' :: [Int] = pricesBID :: [Int]
 
             let divNumber :: Double = 1
 
-            let listASK :: [(Double, Int)] = zipToTuples askSetupInsert (map (round . (/ divNumber) . fromIntegral) pricesASK) 
+            let listASK :: [(Double, Int)] = zipToTuples askSetupInsert (map (round . (/ divNumber) . fromIntegral) pricesASK)
 
             let listBID :: [(Double, Int)] = zipToTuples bidSetupInsert (map (round . (/ divNumber) . fromIntegral) pricesBID)
 
-            let currentbookASK :: [(Double, Int)] = if vSide ==  Buy then askUpdateBook 
-                        else listASK ++ askBook 
+            let currentbookASK :: [(Double, Int)] = if vSide ==  Buy then askUpdateBook
+                        else listASK ++ askBook
 
-            let currentbookBID :: [(Double, Int)] = if vSide ==  Sell then bidUpdateBook else listBID ++ bidBook  
+            let currentbookBID :: [(Double, Int)] = if vSide ==  Sell then bidUpdateBook else listBID ++ bidBook
 
             let bookSpreadFactorAsk :: [(Double, Int)] = if largerSpread then tail currentbookASK else currentbookASK
 
@@ -170,18 +163,18 @@ recursiveList (x:xs) bidBook askBook gen1 gen2 fullwallsASK fullwallsBIDS starti
                         error "-THE VOLUME EXCEEDED THE ORDERBOOK CAPACITY !"
                     | otherwise = ""
             putStr check
-        
+
             let orderbookIO =   generateOrderBook -- function to generate the orderbook
-                                bookSpreadFactorAsk 
+                                bookSpreadFactorAsk
                                 bookSpreadFactorBid
-                                spread 
-                                asksTotal 
-                                bidsTotal 
-                                bidAskRatio 
+                                spread
+                                asksTotal
+                                bidsTotal
+                                bidAskRatio
                                 bidAskBenefit
-                                logPath 
-                                startingPoint 
-                                maxMinLimit 
+                                logPath
+                                startingPoint
+                                maxMinLimit
                                 totakefromwall
                                 lengthchangeBID
                                 lengthchangeASK
@@ -197,7 +190,7 @@ recursiveList (x:xs) bidBook askBook gen1 gen2 fullwallsASK fullwallsBIDS starti
                                 pricePath
                                 bidBookPath
                                 askBookPath
-                               
+
 
             orderbookIO
             return (currentbookBID,currentbookASK)

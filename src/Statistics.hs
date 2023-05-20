@@ -1,12 +1,12 @@
 module Statistics where
 
-import Control.Monad (replicateM)
-import System.Random
-    ( randomRIO, Random(randomR), RandomGen(split), StdGen ) 
-import Data.List (unfoldr)
+import           Control.Monad (replicateM)
+import           Data.List     (unfoldr)
+import           System.Random (Random (randomR), RandomGen (split), StdGen,
+                                randomRIO)
 
 
-import RunSettings 
+import           RunSettings
 
 -- | Modyfiy this function to change the distribution of the volume
 distribution :: (Int, Int) -> IO Int
@@ -14,7 +14,7 @@ distribution (low, high) = do
   x <- randomRIO (1, 100) :: IO Int
   let percentOfHigh = high `div` 100
   print $ "testin  testin: " ++ show x
-  case () of       
+  case () of
     _ | percentOfHigh <= 0 -> randomRIO (low, 1)
       | x == 1             -> randomRIO (low,   percentOfHigh)
       | x > 1 && x <= 5    -> randomRIO (low, percentOfHigh  * 5)
@@ -68,7 +68,7 @@ generateVolumes numMakers totalVolume = do
 -- ! parts that can get adjusted
 generateRandomPosition :: IO ((Int, String), [(Int, String)])
 generateRandomPosition = do
-  
+
   -- | for longs 1 - 2
   x <- distribution (basecaseValueLongNew, upperBoundLongNew)        -- new longs 1
   print $ "_x: " ++ show x
@@ -80,14 +80,14 @@ generateRandomPosition = do
   z <- distribution (basecaseValueShortClose, upperBoundShortClose)  -- closing shorts 4
   print $ "_z: " ++ show z
 
-  
+
   let takerOptions :: [(Int, (Int, String))]
       takerOptions = [(xProbabilityTaker,(x, "x")), (yProbabilityTaker , (y, "y")), (zProbabilityTaker, (z, "z")), (fProbabilityTaker, (f, "f"))] -- PP
 
   taker' <- weightedRandom takerOptions
   print $ "taker': " ++ show taker'
 
-  let amakersellProbabilities 
+  let amakersellProbabilities
         | snd taker' == "x" = [(yProbabilityMaker, (x, "y")), (fProbabilityMaker, (x, "f"))] -- adjust probabilities here
         | snd taker' == "y" = [(xProbabilityMaker, (y, "x")), (zProbabilityMaker, (y, "z"))]
         | snd taker' == "z" = [(yProbabilityMaker, (z, "y")), (fProbabilityMaker, (z, "f"))]

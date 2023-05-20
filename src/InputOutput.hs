@@ -3,39 +3,39 @@
 {-# OPTIONS_GHC -Wno-type-defaults #-}
 module InputOutput where
 
-import Data.ByteString.Char8 qualified as B
-import Data.ByteString.Char8 qualified as BC
-import System.IO
-import Control.Exception (bracket)
-import Text.Printf (printf)
+import           Control.Exception     (bracket)
+import qualified Data.ByteString.Char8 as B
+import qualified Data.ByteString.Char8 as BC
+import           System.IO
+import           Text.Printf           (printf)
 
 
 -- | internal libraries
-import Lib
-import RunSettings 
-import DataTypes
+import           DataTypes
+import           Lib
+import           RunSettings
 
 
 
 
-generateOrderBook :: [(Double, Int)] -> [(Double,Int)] 
+generateOrderBook :: [(Double, Int)] -> [(Double,Int)]
                   -> Double
-                  -> Int 
-                  -> Int 
-                  -> Double 
-                  -> IO () 
-                  -> String 
+                  -> Int
+                  -> Int
                   -> Double
-                  ->  [[Int]] 
-                  -> Int 
-                  -> Int 
-                  -> Int 
-                  -> Double 
-                  -> Double 
-                  -> [(Double,Int)] 
-                  -> [(Double,Int)] 
-                  -> [(Double,Int)] 
-                  -> [(Double,Int)] 
+                  -> IO ()
+                  -> String
+                  -> Double
+                  ->  [[Int]]
+                  -> Int
+                  -> Int
+                  -> Int
+                  -> Double
+                  -> Double
+                  -> [(Double,Int)]
+                  -> [(Double,Int)]
+                  -> [(Double,Int)]
+                  -> [(Double,Int)]
                   -> String
                   -> Int
                   -> Double
@@ -43,34 +43,34 @@ generateOrderBook :: [(Double, Int)] -> [(Double,Int)]
                   -> String
                   -> String
                   -> IO ()
-generateOrderBook 
-                  bookSpreadFactorAsk 
-                  bookSpreadFactorBid 
-                  spread 
-                  asksTotal 
-                  bidsTotal 
-                  bidAskRatio 
-                  bidAskBenefit 
-                  logPath 
+generateOrderBook
+                  bookSpreadFactorAsk
+                  bookSpreadFactorBid
+                  spread
+                  asksTotal
+                  bidsTotal
+                  bidAskRatio
+                  bidAskBenefit
+                  logPath
                   startingPoint
-                  maxMinLimit 
-                  totakefromwall 
-                  lengthchangeBID 
-                  lengthchangeASK 
-                  stPriceCaseBid 
-                  stPriceCaseAsk 
-                  bidBook 
-                  askBook 
-                  listASK 
-                  listBID 
-                  volumeSide 
+                  maxMinLimit
+                  totakefromwall
+                  lengthchangeBID
+                  lengthchangeASK
+                  stPriceCaseBid
+                  stPriceCaseAsk
+                  bidBook
+                  askBook
+                  listASK
+                  listBID
+                  volumeSide
                   volumeAmount
                   startingprice
                   pricePath
-                  bidBookPath 
-                  askBookPath 
-              
-                  = 
+                  bidBookPath
+                  askBookPath
+
+                  =
                   do
 --  B.putStrLn $ B.pack $ allCaps "📚Orderbook ↕️ \n\n (PRICE LEVEL , USD VALUE)\n"
 --  B.putStrLn $
@@ -213,7 +213,7 @@ generateOrderBook
     hClose handleASK
 
 
-   
+
 color :: Int -> String -> String
 color code text = "\x1b[" ++ show code ++ "m" ++ text ++ "\x1b[0m"
 red :: String -> String
@@ -326,7 +326,7 @@ printStats stats = do
   let checker7 = if ((takerX stats + takerY stats + makerX stats + makerY stats) - (takerZ stats + takerF stats + makerZ stats + makerF stats)) `div` 2 /= overallOI stats then error "7 fail" else "check 7 pass"
   let checker8 = if (takerX stats + takerZ stats) - (makerY stats + makerF stats ) /= 0 then error "check 8 fail" else "check 8 pass"
   let checker9 = if (takerY stats + takerF stats)- (makerX stats + makerZ  stats ) /= 0 then error "check 9 fail" else "check 9 pass"
- -- add volume delta 
+ -- add volume delta
   print checker1
   print checker2
   print checker3
