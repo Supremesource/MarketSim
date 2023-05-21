@@ -1,6 +1,7 @@
 {-# HLINT ignore "Use withFile" #-}
 {-# OPTIONS_GHC -Wno-unused-matches #-}
 {-# OPTIONS_GHC -Wno-type-defaults #-}
+{-# OPTIONS_GHC -Wno-name-shadowing #-}
 module InputOutput where
 
 import           Control.Exception     (bracket)
@@ -14,7 +15,7 @@ import           Text.Printf           (printf)
 import           DataTypes
 import           Lib
 import           RunSettings
-
+import           Filepaths
 
 
 
@@ -196,7 +197,8 @@ generateOrderBook
     B.putStrLn $
       BC.pack
         "\n\n + configuration settings successfuly written into an external file 🦄"
-    -- !!  REWRTING DATA FILES
+
+    -- ! 🔴1  REWRTING DATA FILES | BID ASK BOOKS | PRICE CHANGES | LOGS
     -- //? rewriting price changes
     bracket (openFile pricePath AppendMode) hClose $ \handlePrice -> do
       B.hPutStr handlePrice $ BC.pack "\n"
@@ -230,13 +232,13 @@ purple = color 35
 printPositionStats :: Int -> (TakerTuple, MakerTuple) -> IO (Int, VolumeSide)
 printPositionStats i (taker, makers) = do
   putStrLn $ "Position number : " ++ show i ++ "🍻"
-  putStrLn $ "\n〇Taker: " ++ show taker 
-  putStrLn $ "〇Makers: " ++ show makers ++ "\n" 
+  putStrLn $ "\n〇Taker: " ++ show taker
+  putStrLn $ "〇Makers: " ++ show makers ++ "\n"
 
   let voL = foldl (\acc (x, _) -> acc + x) 0 taker
 
   let sideVol
-        | snd (head taker)         == "x"          || snd (head taker)        == "z"         = Buy
+        | snd (head taker)         == "x"         || snd (head taker)        == "z"         = Buy
         | snd (head taker)         == "y"         || snd (head taker)        == "f"         = Sell
         | otherwise = error "generating volume failed"
 
@@ -257,12 +259,39 @@ printPositionStats i (taker, makers) = do
   putStrLn $ "〇Maker Y_count: " ++ show makerelement_counter_of_Y
   putStrLn $ "〇Maker Z_count: " ++ show makerelement_counter_of_Z
   putStrLn $ "〇Maker F_count: " ++ show makerelement_counter_of_F ++ "\n"
-    
+
   putStrLn $ "〇x " ++ show offX
   putStrLn $ "〇y " ++ show offY
   putStrLn $ "〇z " ++ show offZ
   putStrLn $ "〇f " ++ show offF ++ "\n\n---------\n"
 
+-- ! 🔴2  REWRTING DATA FILES 
+-- | positioning information
+  bracket (openFile newLongsPath AppendMode) hClose $ \handlePosition -> do
+        B.hPutStr handlePosition $ BC.pack "\n"
+        B.hPutStrLn handlePosition $ BC.pack (show offX)
+        hClose handlePosition
+
+  bracket (openFile newShortsPath AppendMode) hClose $ \handlePosition2 -> do
+        B.hPutStr handlePosition2 $ BC.pack "\n"
+        B.hPutStrLn handlePosition2 $ BC.pack (show offY)
+        hClose handlePosition2
+
+  bracket (openFile exitShortsPath AppendMode) hClose $ \handlePosition3 -> do
+        B.hPutStr handlePosition3 $ BC.pack "\n"
+        B.hPutStrLn handlePosition3 $ BC.pack (show offZ)
+        hClose handlePosition3
+
+  bracket (openFile exitLongsPath AppendMode) hClose $ \handlePosition4 -> do
+        B.hPutStr handlePosition4 $ BC.pack "\n"
+        B.hPutStrLn handlePosition4 $ BC.pack (show offF)
+        hClose handlePosition4
+
+
+    
+
+  
+    
   return (voL, sideVol)
 
     where
@@ -285,6 +314,8 @@ printPositionStats i (taker, makers) = do
 
 printStats :: Stats -> IO ()
 printStats stats = do
+
+
   let takerCount = [(takerXc stats + takerYc stats + takerFc stats + takerZc stats, " <- count of takers")
                  ,(takerXc stats + takerZc stats, " <- buying")
                  ,(takerYc stats + takerFc stats, " <- selling")
@@ -304,7 +335,7 @@ printStats stats = do
   let longShortRatioSHORTS = (fromIntegral overalShorts / fromIntegral (overalLongs + overalShorts)) * 100
   let roundedLongShortRatioL = roundToTwoDecimals longShortRatioLONGS
   let roundedLongShortRatioS = roundToTwoDecimals longShortRatioSHORTS
-  
+
 
   let checker1 = if (offX stats + offZ stats)  - (offY stats + offF stats) /= 0 then error "fail 1" else "check 1 pass"
   let checker2 = if ((offX stats + offY stats) - (offZ stats + offF stats)) `div` 2 /= overallOI stats then error "fail 2" else "check 2 pass"
@@ -316,7 +347,7 @@ printStats stats = do
   let checker8 = if (takerX stats + takerZ stats) - (makerY stats + makerF stats ) /= 0 then error "check 8 fail" else "check 8 pass"
   let checker9 = if (takerY stats + takerF stats)- (makerX stats + makerZ  stats ) /= 0 then error "check 9 fail" else "check 9 pass"
  -- add volume delta
-  
+
   print checker1
   print checker2
   print checker3
@@ -327,12 +358,13 @@ printStats stats = do
   print checker8
   print checker9
   
-  print $ "x " ++ show (takerX stats)
-  print $ "y " ++ show (takerY stats)
-  print $ "z " ++ show (takerZ stats)
-  print $ "f " ++ show (takerF stats)
-  print $ "x' " ++ show ( makerX stats)
-  print $ "y' " ++ show  (makerY stats)
+
+  print $ "x " ++ show  (takerX stats)
+  print $ "y " ++ show  (takerY stats)
+  print $ "z " ++ show  (takerZ stats)
+  print $ "f " ++ show  (takerF stats)
+  print $ "x' " ++ show (makerX stats)
+  print $ "y' " ++ show (makerY stats)
   print $ "z' " ++ show (makerZ stats)
   print $ "f' " ++ show (makerF stats)
 --  print takerX

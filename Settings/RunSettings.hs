@@ -60,16 +60,16 @@ maxtakers = round (fromIntegral maxmakers * (0.95 :: Double))
 
 
 plotCharts :: Bool
-plotCharts = False -- ** fill in / plot charts (True/False)
+plotCharts = True -- ** fill in / plot charts (True/False)
 
 -- | number of runs
 numberOfRuns :: Int
-numberOfRuns = 2 -- Put your actual number of runs here
+numberOfRuns = 40 -- Put your actual number of runs here
 
 
 -- | number of positions
 numPositions :: Int
-numPositions = 2 -- ** fill in / number of positions
+numPositions = 100 -- ** fill in / number of positions
 
 
 --〇 2

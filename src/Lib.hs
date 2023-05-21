@@ -225,13 +225,14 @@ readBook fileName =
            Nothing      -> []
            Just bidBook -> bidBook)
 
-newRunSettings :: FilePath -> FilePath -> FilePath -> FilePath -> Int -> IO ()
-newRunSettings logFile bidFile askFile priceFile newValue = do
+newRunSettings :: FilePath -> FilePath -> FilePath -> FilePath -> FilePath -> Int -> IO ()
+newRunSettings logFile bidFile askFile priceFile nLongFile newValue = do
   let wipe = ""
   let price = show newValue
   writeFile logFile wipe
   writeFile bidFile wipe
   writeFile askFile wipe
+  writeFile nLongFile wipe
   writeFile priceFile price
 
 -- cleaning price history file

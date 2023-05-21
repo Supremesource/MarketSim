@@ -1,1 +1,17 @@
-- Implement real maker information
+- add the following informations to file writes:
+
+- BID ASK R
+- BID TO ASKS R
+- VOLUME OVERAL
+- VOLUME BUY
+- VOLUME SELL
+- OPEN INTEREST
+
+
+
+- ADD TIME FRAME FORMATING
+- LIQUIDITY + LEVERAGE
+
+- ADD THE LESS IMPORTANT INFORMATION, LIKE COUNTS ETC.
+
+
