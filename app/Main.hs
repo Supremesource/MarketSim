@@ -102,7 +102,7 @@ main = do
     else do
       -- checking settings
 
--- ! fix this
+
       addsupto100 xProbabilityTaker yProbabilityTaker zProbabilityTaker fProbabilityTaker
       addsupto100 xProbabilityMaker yProbabilityMaker zProbabilityMaker fProbabilityMaker
       volumechecker minvolume basecaseValueLongNew basecaseValueShortNew basecaseValueLongClose basecaseValueShortClose upperBoundLongNew upperBoundShortNew upperBoundLongClose upperBoundShortClose

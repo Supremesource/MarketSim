@@ -197,23 +197,33 @@ upperBoundLongClose = 101
 -- | note that setting must add up to 100 %
 
 -- 〇 19 Taker Probability
+-- | BUY VOLUME
 xProbabilityTaker :: Int
 xProbabilityTaker = 30
+-- | SELL VOLUME
 yProbabilityTaker :: Int
 yProbabilityTaker = 30
+-- ? CLOSING POSITION
+-- | BUY VOLUME
 zProbabilityTaker :: Int
-zProbabilityTaker = 20
+zProbabilityTaker = 150
+-- | SELL VOLUME
 fProbabilityTaker :: Int
-fProbabilityTaker = 20
+fProbabilityTaker = 150
 
 -- 〇 20 Maker Probability
+-- | BUY VOLUME
 xProbabilityMaker :: Int
 xProbabilityMaker = 30
+-- | SELL VOLUME
 yProbabilityMaker :: Int
 yProbabilityMaker = 30
+-- ? CLOSING POSITION
+-- | BUY VOLUME
 zProbabilityMaker :: Int
-zProbabilityMaker = 20
+zProbabilityMaker = 150
+-- | SELL VOLUME
 fProbabilityMaker :: Int
-fProbabilityMaker = 20
+fProbabilityMaker = 150
 
 
