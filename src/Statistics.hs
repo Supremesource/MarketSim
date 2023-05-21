@@ -1,3 +1,5 @@
+{-# OPTIONS_GHC -Wno-unused-matches #-}
+{-# OPTIONS_GHC -Wno-unused-local-binds #-}
 module Statistics where
 
 import           Control.Monad (replicateM)
@@ -7,6 +9,7 @@ import           System.Random (Random (randomR), RandomGen (split), StdGen,
 
 
 import           RunSettings
+
 
 -- | Modyfiy this function to change the distribution of the volume
 distribution :: (Int, Int) -> IO Int
@@ -66,7 +69,7 @@ generateVolumes numMakers totalVolume = do
 
 
 -- ! parts that can get adjusted
-generateRandomPosition :: IO ((Int, String), [(Int, String)])
+generateRandomPosition :: IO ([(Int, String)], [(Int, String)])
 generateRandomPosition = do
 
   -- | for longs 1 - 2
@@ -82,26 +85,46 @@ generateRandomPosition = do
 
 
   let takerOptions :: [(Int, (Int, String))]
-      takerOptions = [(xProbabilityTaker,(x, "x")), (yProbabilityTaker , (y, "y")), (zProbabilityTaker, (z, "z")), (fProbabilityTaker, (f, "f"))] -- PP
+      takerOptions = [(xProbabilityTaker
+                      , (x, "x"))
+                      , (yProbabilityTaker 
+                      , (y, "y"))
+                      , (zProbabilityTaker
+                      , (z, "z"))
+                      , (fProbabilityTaker
+                      , (f, "f"))] 
 
   taker' <- weightedRandom takerOptions
   print $ "taker': " ++ show taker'
 
-  let amakersellProbabilities
-        | snd taker' == "x" = [(yProbabilityMaker, (x, "y")), (fProbabilityMaker, (x, "f"))] -- adjust probabilities here
+  let takerProbab
+        | snd taker' == "x" = [(yProbabilityTaker, (x, "x")), (zProbabilityTaker, (z, "z"))] 
+        | snd taker' == "y" = [(xProbabilityTaker, (y, "y")), (fProbabilityTaker, (f, "f"))]
+        | snd taker' == "z" = [(yProbabilityTaker, (z, "z")), (fProbabilityTaker, (x, "x"))]
+        | snd taker' == "f" = [(xProbabilityTaker, (f, "f")), (zProbabilityTaker, (y, "y"))]
+        | otherwise = error "taker' is not valid"
+
+
+  let makerProbab
+        | snd taker' == "x" = [(yProbabilityMaker, (x, "y")), (fProbabilityMaker, (x, "f"))] 
         | snd taker' == "y" = [(xProbabilityMaker, (y, "x")), (zProbabilityMaker, (y, "z"))]
         | snd taker' == "z" = [(yProbabilityMaker, (z, "y")), (fProbabilityMaker, (z, "f"))]
         | snd taker' == "f" = [(xProbabilityMaker, (f, "x")), (zProbabilityMaker, (f, "z"))]
-        | otherwise = error "taker' is not valid"
+        | otherwise = error "maker' is not valid"
   let totalMakerVolume = fst taker'
 
 
-  let maxmakers :: Int = 2
+
   numMakers <- randomRIO (1, maxmakers) :: IO Int -- select how many makers, filling, FF*
   makerVolumes <- generateVolumes numMakers totalMakerVolume
-  makerInfos <- replicateM numMakers (weightedRandom amakersellProbabilities)
+  makerInfos <- replicateM numMakers (weightedRandom makerProbab)
   let selectedMakers = zip makerVolumes (map snd makerInfos)
   let makerTuple = selectedMakers
+  
+  numTakers <- randomRIO (1, maxtakers) :: IO Int -- select how many takers, filling, FF*
+  takerVolumes <- generateVolumes numTakers (fst taker')
+  takerInfos <- replicateM numTakers (weightedRandom takerProbab)
+  let selectedTakers = zip takerVolumes (map snd takerInfos)
+  let takerTuple = selectedTakers
 
-
-  return (taker', makerTuple)
+  return (takerTuple, makerTuple)

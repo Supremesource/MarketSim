@@ -227,50 +227,37 @@ orange = color 33
 purple :: String -> String
 purple = color 35
 
-printPositionStats :: Int -> ((Int, String), MakerTuple) -> Int -> IO (Int, VolumeSide)
-printPositionStats i (taker, makers) randominmain' = do
+printPositionStats :: Int -> (TakerTuple, MakerTuple) -> IO (Int, VolumeSide)
+printPositionStats i (taker, makers) = do
   putStrLn $ "Position number : " ++ show i ++ "🍻"
-  if randominmain' == 1 then putStrLn $ "\n〇Taker: " ++ show taker else putStrLn $ "\n〇Maker: " ++ show taker
-  if randominmain' == 1 then putStrLn $ "〇Makers: " ++ show makers ++ "\n" else putStrLn $ "〇Takers: " ++ show makers ++ "\n"
+  putStrLn $ "\n〇Taker: " ++ show taker 
+  putStrLn $ "〇Makers: " ++ show makers ++ "\n" 
 
-  let voL = if randominmain' == 1 then fst taker else foldl (\acc (x, _) -> acc + x) 0 makers
+  let voL = foldl (\acc (x, _) -> acc + x) 0 taker
 
   let sideVol
-        | randominmain' == 1 && snd taker         == "x"         || randominmain' == 1 && snd taker         == "z"         = Buy
-        | randominmain' == 1 && snd taker         == "y"         || randominmain' == 1 && snd taker         == "f"         = Sell
-        | randominmain' == 0 && snd (head makers) == "f"         || randominmain' == 0 && snd (head makers) == "y"         = Sell
-        | randominmain' == 0 && snd (head makers) == "x"         || randominmain' == 0 && snd (head makers) == "z"         = Buy
+        | snd (head taker)         == "x"          || snd (head taker)        == "z"         = Buy
+        | snd (head taker)         == "y"         || snd (head taker)        == "f"         = Sell
         | otherwise = error "generating volume failed"
 
   putStrLn $ "the volume is: " ++ show voL ++ " , " ++ "and the side of the volume is: " ++ show sideVol ++ "\n"
 
 
-  print randominmain'
+
   -- Additional stats for a single position
-  if randominmain' == 1
-    then do
-      putStrLn $ "〇Taker X_count: " ++ show takercounter_X
-      putStrLn $ "〇Taker Y_count: " ++ show takercounter_Y
-      putStrLn $ "〇Taker Z_count: " ++ show takercounter_Z
-      putStrLn $ "〇Taker F_count: " ++ show takercounter_F ++ "\n"
-    else do
-      putStrLn $ "〇Maker X_count: " ++ show takercounter_X
-      putStrLn $ "〇Maker Y_count: " ++ show takercounter_Y
-      putStrLn $ "〇Maker Z_count: " ++ show takercounter_Z
-      putStrLn $ "〇Maker F_count: " ++ show takercounter_F ++ "\n"
 
-  if randominmain' == 1
-    then do
-      putStrLn $ "〇Maker X_count: " ++ show makerelement_counter_of_X
-      putStrLn $ "〇Maker Y_count: " ++ show makerelement_counter_of_Y
-      putStrLn $ "〇Maker Z_count: " ++ show makerelement_counter_of_Z
-      putStrLn $ "〇Maker F_count: " ++ show makerelement_counter_of_F ++ "\n"
-    else do
-            putStrLn $ "〇Taker X_count: " ++ show makerelement_counter_of_X
-            putStrLn $ "〇Taker Y_count: " ++ show makerelement_counter_of_Y
-            putStrLn $ "〇Taker Z_count: " ++ show makerelement_counter_of_Z
-            putStrLn $ "〇Taker F_count: " ++ show makerelement_counter_of_F ++ "\n"
+  putStrLn $ "〇Taker X_count: " ++ show takercounter_X
+  putStrLn $ "〇Taker Y_count: " ++ show takercounter_Y
+  putStrLn $ "〇Taker Z_count: " ++ show takercounter_Z
+  putStrLn $ "〇Taker F_count: " ++ show takercounter_F ++ "\n"
 
+
+
+  putStrLn $ "〇Maker X_count: " ++ show makerelement_counter_of_X
+  putStrLn $ "〇Maker Y_count: " ++ show makerelement_counter_of_Y
+  putStrLn $ "〇Maker Z_count: " ++ show makerelement_counter_of_Z
+  putStrLn $ "〇Maker F_count: " ++ show makerelement_counter_of_F ++ "\n"
+    
   putStrLn $ "〇x " ++ show offX
   putStrLn $ "〇y " ++ show offY
   putStrLn $ "〇z " ++ show offZ
@@ -285,15 +272,15 @@ printPositionStats i (taker, makers) randominmain' = do
     makerelement_counter_of_Z = countElements "z" makers
     makerelement_counter_of_F = countElements "f" makers
     -- Taker counters
-    takercounter_X = if snd taker == "x" then 1 else 0
-    takercounter_Y = if snd taker == "y" then 1 else 0
-    takercounter_Z = if snd taker == "z" then 1 else 0
-    takercounter_F = if snd taker == "f" then 1 else 0
+    takercounter_X = countElements "x" taker
+    takercounter_Y = countElements "y" taker
+    takercounter_Z = countElements "z" taker
+    takercounter_F = countElements "f" taker
    -- official X Y Z F values
-    offX = (if snd taker == "x" then fst taker else 0) + makerSize "x" makers
-    offY = (if snd taker == "y" then fst taker else 0) + makerSize "y" makers
-    offZ = (if snd taker == "z" then fst taker else 0) + makerSize "z" makers
-    offF = (if snd taker == "f" then fst taker else 0) + makerSize "f" makers
+    offX = orderSize "x" taker + orderSize "x" makers
+    offY = orderSize "y" taker + orderSize "y" makers
+    offZ = orderSize "z" taker + orderSize "z" makers
+    offF = orderSize "f" taker + orderSize "f" makers
 -- overal aggregated
 
 printStats :: Stats -> IO ()
@@ -317,16 +304,19 @@ printStats stats = do
   let longShortRatioSHORTS = (fromIntegral overalShorts / fromIntegral (overalLongs + overalShorts)) * 100
   let roundedLongShortRatioL = roundToTwoDecimals longShortRatioLONGS
   let roundedLongShortRatioS = roundToTwoDecimals longShortRatioSHORTS
-  let checker1 = if (offX stats + offZ stats) - (offY stats + offF stats) /= 0 then error "fail 1" else "check 1 pass"
-  let checker2 = if ((offX stats + offY stats) - (offZ stats + offF stats)) `div` 2 /= overallOI stats then "fail 2" else "check 2 pass"
+  
+  let checker1 = if (offX stats + offZ stats)  - (offY stats + offF stats) /= 0 then error "fail 1" else "check 1 pass"
+  let checker2 = if ((offX stats + offY stats) - (offZ stats + offF stats)) `div` 2 /= overallOI stats then error "fail 2" else "check 2 pass"
   let checker3 = if ((takerX stats + takerZ stats)- (makerY stats + makerF stats)) /= 0 then error "fail 3" else "check 3 pass"
   let checker4 = if ((takerY stats + takerF stats)- (makerX stats + makerZ stats)) /= 0 then error "fail 4" else "check 4 pass"
   let checker5 = if (takerX stats + takerZ stats) /= buyVolume stats then error "5 fail" else "check 5 pass"
   let checker6 = if (takerY stats + takerF stats) /= sellVolume stats then error "6 fail" else "check 6 pass"
+
   let checker7 = if ((takerX stats + takerY stats + makerX stats + makerY stats) - (takerZ stats + takerF stats + makerZ stats + makerF stats)) `div` 2 /= overallOI stats then error "7 fail" else "check 7 pass"
   let checker8 = if (takerX stats + takerZ stats) - (makerY stats + makerF stats ) /= 0 then error "check 8 fail" else "check 8 pass"
   let checker9 = if (takerY stats + takerF stats)- (makerX stats + makerZ  stats ) /= 0 then error "check 9 fail" else "check 9 pass"
  -- add volume delta
+  
   print checker1
   print checker2
   print checker3
@@ -336,6 +326,7 @@ printStats stats = do
   print checker7
   print checker8
   print checker9
+  
   print $ "x " ++ show (takerX stats)
   print $ "y " ++ show (takerY stats)
   print $ "z " ++ show (takerZ stats)

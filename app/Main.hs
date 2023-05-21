@@ -28,20 +28,9 @@ import           Lib                         (addsupto100, firstPartList,
                                               readBook, removeEmptyLines,
                                               secondPartList,
                                               startingPointFromFile, takeamount,
-                                              taketowalls, zipToTuples)
-import           RunSettings                 (fProbabilityMaker,
-                                              fProbabilityTaker, maxDownMove,
-                                              maxUpMove, minDownMove, minUpMove,
-                                              numPositions, numberOfRuns,
-                                              plotCharts, takeamountASK,
-                                              takeamountBID,
-                                              wipingStartingValue,
-                                              xProbabilityMaker,
-                                              xProbabilityTaker,
-                                              yProbabilityMaker,
-                                              yProbabilityTaker,
-                                              zProbabilityMaker,
-                                              zProbabilityTaker)
+                                              taketowalls, volumechecker,
+                                              zipToTuples)
+import           RunSettings
 import           Statistics                  (generateRandomPosition)
 import           Util                        (aggregateStats, initStats,
                                               recursiveList)
@@ -52,20 +41,10 @@ mainLoop :: Stats -> Int -> IO [(Int, VolumeSide)]
 mainLoop aggregatedStats remainingRuns = do
       if remainingRuns > 0
         then do
-          let numberR =  abs (1 - (remainingRuns -1))
-          let timeframe = remainingRuns * 5 -- 5 for the time frame
-          let hours = fromIntegral timeframe / 60
-          print $ "number of remaining runs: " ++ show numberR ++ " you will go through: " ++ show timeframe ++ " minutes at the end | hours = " ++ show hours ++ " hours\n"
           positions <- replicateM numPositions generateRandomPosition
-       
-         -- TODO - resolve the conflict right here
-      
-          -- ⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️
-
-          let takerl = [1,1..]
-          let newAggregatedStats = foldr (\(pos, rnd) acc -> aggregateStats pos acc rnd) aggregatedStats (zip positions takerl)
-          volumesAndSides <- Control.Monad.forM (zip (zip [1..] positions) takerl) $ \((i, pos), rnd) -> do
-            (volume, side) <- printPositionStats i pos rnd
+          let newAggregatedStats = foldl (\acc pos -> aggregateStats pos acc) aggregatedStats positions
+          volumesAndSides <- Control.Monad.forM (zip [1..] positions) $ \(i, pos) -> do
+            (volume, side) <- printPositionStats i pos
             print $ "TESTING :" ++ show volume
             print side
             return (volume, side)
@@ -79,17 +58,25 @@ mainLoop aggregatedStats remainingRuns = do
           return []
 
 
+
+
+    -- TODO
+    -- |
+    -- return the list of volumes and sides , right here not after
+    -- fix the maker tuple
+    -- add majority of the outputs into the data files & display in charts using elm/ javascript/ https/ css
+
+
+
 printFinal :: Stats -> IO ()
 printFinal aggregatedStats = do
-  let timeframe = numberOfRuns * 5 -- 5 for the time frame
-  let hours = fromIntegral timeframe / 60
-  putStrLn $ "\n🍻congrats you went through: " ++ show hours ++ " hours (if you reached your set runs)"
   putStrLn "\n\n\n\n\n\n-------------\n\n\n you have reached the end of the generator \n\n\n📊📊AGGREGATED STATS📊📊: "
   printStats aggregatedStats
 
 main :: IO ()
 main = do
 
+  
   -- CHECKING IF FILES ARE EMPTY
   isBidEmpty  <- isFileEmpty bidBookPath
   isAskEmpty  <- isFileEmpty askBookPath
@@ -99,6 +86,7 @@ main = do
   -- wiping all of the text files, and changing the starting point
   putStrLn $ "Proceed (_ / n)" ++ red "\n\n * for run-restore (w)  *"
   proceed <- getLine
+
 
   if proceed == "W" || proceed == "w"
     then do
@@ -114,6 +102,13 @@ main = do
 
 
     else do
+      -- checking settings
+
+-- ! fix this
+      addsupto100 xProbabilityTaker yProbabilityTaker zProbabilityTaker fProbabilityTaker
+      addsupto100 xProbabilityMaker yProbabilityMaker zProbabilityMaker fProbabilityMaker
+      volumechecker minvolume basecaseValueLongNew basecaseValueShortNew basecaseValueLongClose basecaseValueShortClose upperBoundLongNew upperBoundShortNew upperBoundLongClose upperBoundShortClose
+    
 
 
 -- | random generator:
@@ -208,12 +203,8 @@ main = do
       mapM_ print listofvolumes
       print $ length listofvolumes
 
--- checking settings
 
-      addsupto100 xProbabilityTaker yProbabilityTaker zProbabilityTaker fProbabilityTaker
-      addsupto100 xProbabilityMaker yProbabilityMaker zProbabilityMaker fProbabilityMaker
       -- calling python script (graph)
-
 
 
       Control.Monad.when plotCharts $ callCommand "python App/PlotPrices.py"

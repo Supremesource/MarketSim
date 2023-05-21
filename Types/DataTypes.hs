@@ -15,6 +15,10 @@ instance Show VolumeSide where
 -- | maker tuple structure
 type MakerTuple = [(Int, String)]
 
+-- | taker tuple structure
+type TakerTuple = [(Int, String)]
+
+
 -- | stats that can be extracted
 data Stats = Stats
   { overallOI   :: Int

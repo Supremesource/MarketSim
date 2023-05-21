@@ -11,7 +11,7 @@ import           Filepaths
 import           InputOutput
 import           Lib           (countElements, infiniteList', infiniteListDown',
                                 interestorMinus, interestorPlus, lengthchange,
-                                makerSize, orderbookChange,
+                                orderSize, orderbookChange,
                                 printCustomRandomList, printRandomList',
                                 spread', sumInts, zipToTuples)
 import           RunSettings   (largerSpread, maxDownMove, maxUpMove,
@@ -200,241 +200,63 @@ recursiveList (x:xs) bidBook askBook gen1 gen2 fullwallsASK fullwallsBIDS starti
 initStats :: Stats
 initStats = Stats 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
 
-aggregateStats :: ((Int, String), MakerTuple) -> Stats -> Int -> Stats
-aggregateStats (taker, makers) stats randominmain =
+aggregateStats :: (TakerTuple, MakerTuple) -> Stats -> Stats
+aggregateStats (taker, makers) stats  =
   Stats
     { overallOI = overallOI stats + sum (interestorPlus taker makers) - sum (interestorMinus taker makers),
-      totalVolume = totalVolume stats + fst taker,
+      totalVolume = totalVolume stats + foldl (\acc (x, _) -> acc + x) 0 taker,
       buyVolume =
-        buyVolume stats
-          + ( if randominmain
-                == 1
-                && (snd taker == "x" || snd taker == "z")
-                then fst taker
-                else 0
-            )
-          + ( if randominmain
-                == 0
-                && (snd taker == "y" || snd taker == "f")
-                then fst taker
-                else 0
-            ),
+        buyVolume stats + foldl (\acc (x, y) -> if y == "x" || y == "z" then acc + x else acc) 0 taker,
+        
       sellVolume =
-        sellVolume stats
-          + ( if randominmain
-                == 1
-                && (snd taker == "y" || snd taker == "f")
-                then fst taker
-                else 0
-            )
-          + ( if randominmain
-                == 0
-                && (snd taker == "x" || snd taker == "z")
-                then fst taker
-                else 0
-            ),
+        sellVolume stats + foldl (\acc (x, y) -> if y == "y" || y == "f" then acc + x else acc) 0 taker,
       takerXc =
-        takerXc stats
-          + ( if randominmain
-                == 1
-                && snd taker == "x"
-                then 1
-                else 0
-            )
-          + ( if randominmain
-                == 0
-                then countElements "x" makers
-                else 0
-            ),
+        takerXc stats + countElements "x" taker,
       takerYc =
-        takerYc stats
-          + ( if randominmain
-                == 1
-                && snd taker == "y"
-                then 1
-                else 0
-            )
-          + ( if randominmain
-                == 0
-                then countElements "y" makers
-                else 0
-            ),
+        takerYc stats + countElements "y" taker,
       takerZc =
-        takerZc stats
-          + ( if randominmain
-                == 1
-                && snd taker == "z"
-                then 1
-                else 0
-            )
-          + ( if randominmain
-                == 0
-                then countElements "z" makers
-                else 0
-            ),
+        takerZc stats + countElements "z" taker,
       takerFc =
-        takerFc stats
-          + ( if randominmain
-                == 1
-                && snd taker == "f"
-                then 1
-                else 0
-            )
-          + ( if randominmain
-                == 0
-                then countElements "f" makers
-                else 0
-            ),
+        takerFc stats + countElements "f" taker,
       makerXc =
         makerXc stats
-          + if randominmain
-            == 1
-            then countElements "x" makers
-            else
-              if randominmain
-                == 0
-                && snd taker == "x"
-                then 1
-                else 0,
-      makerYc =
-        makerYc stats
-          + if randominmain
-            == 1
-            then countElements "y" makers
-            else
-              if randominmain
-                == 0
-                && snd taker == "y"
-                then 1
-                else 0,
+          + countElements "x" makers,
+      
+      makerYc = makerYc stats + countElements "y" makers ,
+     
       makerZc =
-        makerZc stats
-          + if randominmain
-            == 1
-            then countElements "z" makers
-            else
-              if randominmain
-                == 0
-                && snd taker == "z"
-                then 1
-                else 0,
+        makerZc stats + countElements "z" makers,
       makerFc =
         makerFc stats
-          + if randominmain
-            == 1
-            then countElements "f" makers
-            else
-              if randominmain
-                == 0
-                && snd taker == "f"
-                then 1
-                else 0,
-      offX = offX stats + (if snd taker == "x" then fst taker else 0) + makerSize "x" makers,
-      offY = offY stats + (if snd taker == "y" then fst taker else 0) + makerSize "y" makers,
-      offZ = offZ stats + (if snd taker == "z" then fst taker else 0) + makerSize "z" makers,
-      offF = offF stats + (if snd taker == "f" then fst taker else 0) + makerSize "f" makers,
+          +  countElements "f" makers,
+    
+      offX = offX stats + orderSize "x" taker + orderSize "x" makers,
+      offY = offY stats + orderSize "y" taker + orderSize "y" makers,
+      offZ = offZ stats + orderSize "z" taker + orderSize "z" makers,
+      offF = offF stats + orderSize "f" taker + orderSize "f" makers,
+    
       takerX =
-        takerX stats
-          + ( if randominmain
-                == 1
-                && snd taker == "x"
-                then fst taker
-                else 0
-            )
-          + ( if randominmain
-                == 0
-                then makerSize "x" makers
-                else 0
-            ),
+        takerX stats + orderSize "x" taker,
+      
       takerY =
-        takerY stats
-          + ( if randominmain
-                == 1
-                && snd taker == "y"
-                then fst taker
-                else 0
-            )
-          + ( if randominmain
-                == 0
-                then makerSize "y" makers
-                else 0
-            ),
+        takerY stats + orderSize "y" taker,
+    
       takerZ =
-        takerZ stats
-          + ( if randominmain
-                == 1
-                && snd taker == "z"
-                then fst taker
-                else 0
-            )
-          + ( if randominmain
-                == 0
-                then makerSize "z" makers
-                else 0
-            ),
+        takerZ stats + orderSize "z" taker,
+         
       takerF =
-        takerF stats
-          + ( if randominmain
-                == 1
-                && snd taker == "f"
-                then fst taker
-                else 0
-            )
-          + ( if randominmain
-                == 0
-                then makerSize "f" makers
-                else 0
-            ),
+        takerF stats + orderSize "f" taker,
+        
       makerX =
-        makerX stats
-          + ( if randominmain
-                == 0
-                && snd taker == "x"
-                then fst taker
-                else 0
-            )
-          + ( if randominmain
-                == 1
-                then makerSize "x" makers
-                else 0
-            ),
+        makerX stats + orderSize "x" makers,
+        
       makerY =
-        makerY stats
-          + ( if randominmain
-                == 0
-                && snd taker == "y"
-                then fst taker
-                else 0
-            )
-          + ( if randominmain
-                == 1
-                then makerSize "y" makers
-                else 0
-            ),
+        makerY stats + orderSize "y" makers,
+      
       makerZ =
-        makerZ stats
-          + ( if randominmain
-                == 0
-                && snd taker == "z"
-                then fst taker
-                else 0
-            )
-          + ( if randominmain
-                == 1
-                then makerSize "z" makers
-                else 0
-            ),
+        makerZ stats + orderSize "z" makers,
+       
       makerF =
-        makerF stats
-          + ( if randominmain
-                == 0
-                && snd taker == "f"
-                then fst taker
-                else 0
-            )
-          + ( if randominmain
-                == 1
-                then makerSize "f" makers
-                else 0
-            )
+        makerF stats + orderSize "f" makers
+       
     }
