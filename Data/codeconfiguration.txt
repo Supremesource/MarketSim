@@ -1,0 +1,27 @@
+CODE CONFIGURATION, FOR ORDERBOOK: 
+
+  GENERAL BOOK INFO:
+ 1. STARTING PRICE: 1000.0$
+ 2. ORDER BOOK LENGTH (to both sides): 2000
+ 3. ASK MAX UP MOVE: 0.5
+ 4. ASK MIN UP MOVE: 0.1
+ 5. BID MAX DOWN MOVE: 0.5
+ 6. BID DOWN MIN MOVE: 0.1
+ 7. MINUMUM VALUE OF LIMIT ORDER WAS = 1000 (HARDCODED) ACTUAL      = 1067$
+ 8. MAXIMUM VALUE OF LIMIT ORDER WAS = 1000000 (HARDCODED) ACTUAL  = 998444$
+ 9. BID SIZE OF THE ORDERBOOK: 1000
+ 10.ASK SIZE OF THE ORDERBOOK: 1000
+ 11.ASKS -> 180595684$ / 166265338$ <- BIDS
+
+  WALL INFO:
+ 12. WALL OCCURRENCES: 10000000
+                       ^^   (i.e. 10 takeamount -> 2 walls -> to bid, ask)
+ 13. (actuall taken to walls: 0 , (it is going to get div by 2))
+ 14. wall minimum  = 1000000
+ 15. wall maximum  = 0
+ 16. wall aplifier = 0
+
+ (17. max decimal: 2)
+
+
+18. Length change of BID : 0

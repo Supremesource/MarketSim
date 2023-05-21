@@ -271,21 +271,33 @@ orderSize x = sum . map fst . filter ((== x) . snd)
 volumecounter :: (Int,String) -> (Int,String)
 volumecounter (n,a) = if a == "x" || a == "z" then (n,"buy") else (n,"sell")
 
-interestorPlus :: TakerTuple -> MakerTuple -> [Int]
-interestorPlus [] _ = []
-interestorPlus ((_, s):ts) makerTuple
-  | s == "x" = map fst (filter (\ (_, s2) -> s2 == "y") makerTuple) ++ interestorPlus ts makerTuple
-  | s == "y" = map fst (filter (\ (_, s2) -> s2 == "x") makerTuple) ++ interestorPlus ts makerTuple
-  | otherwise = interestorPlus ts makerTuple
+interestorMinus :: TakerTuple -> MakerTuple -> Int
+interestorMinus [] _ = 0
+interestorMinus _ [] = 0
+interestorMinus ((n1, s1):takers) ((n2, s2):makers)
+    | n1 == n2  = if s1 == "f" && s2 == "z" || s1 == "z" && s2 == "f"
+                  then n1 + interestorMinus takers makers
+                  else interestorMinus takers makers
+    | n1 < n2   = if s1 == "f" && s2 == "z" || s1 == "z" && s2 == "f"
+                  then n1 + interestorMinus takers ((n2-n1, s2):makers)
+                  else interestorMinus takers ((n2-n1, s2):makers)
+    | otherwise = if s1 == "f" && s2 == "z" || s1 == "z" && s2 == "f"
+                  then n2 + interestorMinus ((n1-n2, s1):takers) makers
+                  else interestorMinus ((n1-n2, s1):takers) makers
 
-
-interestorMinus :: TakerTuple -> MakerTuple -> [Int]
-interestorMinus [] _ = []
-interestorMinus ((_, s):ts) makerTuple
-  | s == "z" = map fst (filter (\ (_, s2) -> s2 == "f") makerTuple) ++ interestorMinus ts makerTuple
-  | s == "f" = map fst (filter (\ (_, s2) -> s2 == "z") makerTuple) ++ interestorMinus ts makerTuple
-  | otherwise = interestorMinus ts makerTuple
-
+interestorPlus :: TakerTuple -> MakerTuple -> Int
+interestorPlus [] _ = 0
+interestorPlus _ [] = 0
+interestorPlus ((n1, s1):takers) ((n2, s2):makers)
+    | n1 == n2  = if s1 == "x" && s2 == "y" || s1 == "y" && s2 == "x" 
+                  then n1 + interestorPlus takers makers
+                  else interestorPlus takers makers
+    | n1 < n2   = if s1 == "x" && s2 == "y" || s1 == "y" && s2 == "x" 
+                  then n1 + interestorPlus takers ((n2-n1, s2):makers)
+                  else interestorPlus takers ((n2-n1, s2):makers)
+    | otherwise = if s1 == "x" && s2 == "y" || s1 == "y" && s2 == "x" 
+                  then n2 + interestorPlus ((n1-n2, s1):takers) makers
+                  else interestorPlus ((n1-n2, s1):takers) makers
 
 
 -- | helper function for probability settings (/% checker)

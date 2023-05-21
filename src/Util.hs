@@ -203,7 +203,7 @@ initStats = Stats 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
 aggregateStats :: (TakerTuple, MakerTuple) -> Stats -> Stats
 aggregateStats (taker, makers) stats  =
   Stats
-    { overallOI = overallOI stats + sum (interestorPlus taker makers) - sum (interestorMinus taker makers),
+    { overallOI = overallOI stats + (interestorPlus taker makers) - (interestorMinus taker makers),
       totalVolume = totalVolume stats + foldl (\acc (x, _) -> acc + x) 0 taker,
       buyVolume =
         buyVolume stats + foldl (\acc (x, y) -> if y == "x" || y == "z" then acc + x else acc) 0 taker,
