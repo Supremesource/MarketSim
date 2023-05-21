@@ -17,7 +17,7 @@ needs to get final polish, in terms of:
 ,random run(dynamic)
 ,downtrend
 ,uptrend 
-- fix the counterparty,- maker to interact with Order book
+- fix open interest 
 ‹- will need to add triples instead of normal tuples and different evaluation, processing in the code.
 
 - optimize performance (now there is too much unnecessary overwriting)
