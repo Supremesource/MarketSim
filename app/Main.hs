@@ -16,7 +16,7 @@ import           System.Random               (Random (randomRs))
 -- | internal libraries
 import           DataTypes                   (Stats, VolumeSide)
 import           Filepaths                   (askBookPath, bidBookPath, logPath,
-                                              pricePath)
+                                              pricePath, newLongsPath)
 import           InputOutput                 (orange, printPositionStats,
                                               printStats, red)
 import           Lib                         (addsupto100, firstPartList,
@@ -52,6 +52,8 @@ mainLoop aggregatedStats remainingRuns = do
           putStrLn "--------"
           printStats newAggregatedStats
           nextVolumesAndSides <- mainLoop newAggregatedStats (remainingRuns - 1)
+      
+
           return (volumesAndSides ++ nextVolumesAndSides)
         else do
           printFinal aggregatedStats
@@ -93,11 +95,10 @@ main = do
       putStr "\nnew starting value will be set to: $"
       putStrLn sayStart
       putStrLn $ orange "\n * you can adjsut starting value in the 'RunSetting' * "
-      newRunSettings logPath bidBookPath askBookPath pricePath wipingStartingValue
+      newRunSettings logPath bidBookPath askBookPath pricePath newLongsPath wipingStartingValue
     else if proceed == "n" || proceed == "N"
 
         then  error (red "stopping program")
-
 
     else do
       -- checking settings
@@ -196,8 +197,10 @@ main = do
 
           -- ... do something with finalBidBook and finalAskBook, e.g., print them out ...
 
-      let finaltxtpolish = removeEmptyLines pricePath
-      finaltxtpolish
+-- final polish
+      removeEmptyLines pricePath 
+      removeEmptyLines newLongsPath
+
       mapM_ print listofvolumes
       print $ length listofvolumes
 

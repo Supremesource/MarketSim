@@ -203,11 +203,11 @@ initStats = Stats 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
 aggregateStats :: (TakerTuple, MakerTuple) -> Stats -> Stats
 aggregateStats (taker, makers) stats  =
   Stats
-    { overallOI = overallOI stats + (interestorPlus taker makers) - (interestorMinus taker makers),
+    { overallOI = overallOI stats + interestorPlus taker makers - interestorMinus taker makers,
       totalVolume = totalVolume stats + foldl (\acc (x, _) -> acc + x) 0 taker,
       buyVolume =
         buyVolume stats + foldl (\acc (x, y) -> if y == "x" || y == "z" then acc + x else acc) 0 taker,
-        
+
       sellVolume =
         sellVolume stats + foldl (\acc (x, y) -> if y == "y" || y == "f" then acc + x else acc) 0 taker,
       takerXc =
@@ -221,42 +221,42 @@ aggregateStats (taker, makers) stats  =
       makerXc =
         makerXc stats
           + countElements "x" makers,
-      
+
       makerYc = makerYc stats + countElements "y" makers ,
-     
+
       makerZc =
         makerZc stats + countElements "z" makers,
       makerFc =
         makerFc stats
           +  countElements "f" makers,
-    
+
       offX = offX stats + orderSize "x" taker + orderSize "x" makers,
       offY = offY stats + orderSize "y" taker + orderSize "y" makers,
       offZ = offZ stats + orderSize "z" taker + orderSize "z" makers,
       offF = offF stats + orderSize "f" taker + orderSize "f" makers,
-    
+
       takerX =
         takerX stats + orderSize "x" taker,
-      
+
       takerY =
         takerY stats + orderSize "y" taker,
-    
+
       takerZ =
         takerZ stats + orderSize "z" taker,
-         
+
       takerF =
         takerF stats + orderSize "f" taker,
-        
+
       makerX =
         makerX stats + orderSize "x" makers,
-        
+
       makerY =
         makerY stats + orderSize "y" makers,
-      
+
       makerZ =
         makerZ stats + orderSize "z" makers,
-       
+
       makerF =
         makerF stats + orderSize "f" makers
-       
+
     }
