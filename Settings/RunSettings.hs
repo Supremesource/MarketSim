@@ -31,6 +31,9 @@ module RunSettings
  , yProbabilityMaker
  , zProbabilityMaker
  , fProbabilityMaker
+ , maxmakers
+ , minvolume
+ , maxtakers
 
  )
 
@@ -45,8 +48,19 @@ where
 
 -- ! RUN SETTINGS:
 
+maxmakers :: Int
+maxmakers = 100
+
+
+-- | note that max takers is hardcoded to be 95% of maxmakers (done on real market observtions)
+-- ? Not recommended to change this from 0.95
+maxtakers :: Int
+maxtakers = round (fromIntegral maxmakers * (0.95 :: Double))
+
+
+
 plotCharts :: Bool
-plotCharts = True -- ** fill in / plot charts (True/False)
+plotCharts = False -- ** fill in / plot charts (True/False)
 
 -- | number of runs
 numberOfRuns :: Int
@@ -149,29 +163,32 @@ maxDecimal = 2
 -- ? Volume settings:
 -- | (functionality defined in Lib)
 
+minvolume :: Int
+minvolume = 10
+
 -- ! BUY VOUME
 -- | longs NEW
 basecaseValueLongNew :: Int
 basecaseValueLongNew = 100
 upperBoundLongNew :: Int
-upperBoundLongNew = 100000
+upperBoundLongNew = 101
 -- | shorts CLOSE
 basecaseValueShortClose :: Int
 basecaseValueShortClose = 100
 upperBoundShortClose :: Int
-upperBoundShortClose = 500000
+upperBoundShortClose = 101
 
 -- ! SELL VOLUME
 -- | shorts NEW
 basecaseValueShortNew :: Int
-basecaseValueShortNew = 0
+basecaseValueShortNew = 100
 upperBoundShortNew :: Int
-upperBoundShortNew = 0
+upperBoundShortNew = 101
 -- | longs CLOSE
 basecaseValueLongClose :: Int
-basecaseValueLongClose = 0
+basecaseValueLongClose = 100
 upperBoundLongClose :: Int
-upperBoundLongClose = 0
+upperBoundLongClose = 101
 
 
 

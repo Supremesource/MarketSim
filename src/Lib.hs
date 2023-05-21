@@ -1,3 +1,5 @@
+{-# OPTIONS_GHC -Wno-unused-matches #-}
+{-# OPTIONS_GHC -Wno-name-shadowing #-}
 module Lib where
 
 
@@ -19,12 +21,13 @@ import           Text.Read             (readMaybe)
 
 
 -- | internal libraries
-import           DataTypes             (MakerTuple)
+import           DataTypes             (MakerTuple, TakerTuple)
 import           Filepaths
 import           RunSettings           (maxDecimal, maximum', minimum',
                                         orderwalllikelyhood, takeamountASK,
-                                        takeamountBID, wallAmplifier)
+                                        takeamountBID, wallAmplifier, maxmakers)
 import           Statistics            (customRandomRs)
+
 
 
 
@@ -186,7 +189,6 @@ orderbookChange ((price, volume):xs) amount
   | amount >= volume = orderbookChange xs (amount - volume)
   | otherwise = (price, volume - amount) : xs
 
--- HERE IS THE BUG FOR SURE
 lengthchange :: [(Double, Int)] -> [(Double, Int)] -> Int
 lengthchange xs ys = abs (length xs - length ys)
 
@@ -263,23 +265,26 @@ sideProbability trueProbability
 countElements :: String -> MakerTuple -> Int
 countElements x = length . filter ((== x) . snd)
 
-makerSize :: String -> MakerTuple -> Int
-makerSize x = sum . map fst . filter ((== x) . snd)
+orderSize :: String -> MakerTuple -> Int
+orderSize x = sum . map fst . filter ((== x) . snd)
 
 volumecounter :: (Int,String) -> (Int,String)
 volumecounter (n,a) = if a == "x" || a == "z" then (n,"buy") else (n,"sell")
 
-interestorPlus :: (Int, String) -> MakerTuple -> [Int]
-interestorPlus (_, s) makerTuple
-  | s == "x" = map fst (filter (\ (_, s2) -> s2 == "y") makerTuple)
-  | s == "y" = map fst (filter (\ (_, s2) -> s2 == "x") makerTuple)
-  | otherwise = []
+interestorPlus :: TakerTuple -> MakerTuple -> [Int]
+interestorPlus [] _ = []
+interestorPlus ((_, s):ts) makerTuple
+  | s == "x" = map fst (filter (\ (_, s2) -> s2 == "y") makerTuple) ++ interestorPlus ts makerTuple
+  | s == "y" = map fst (filter (\ (_, s2) -> s2 == "x") makerTuple) ++ interestorPlus ts makerTuple
+  | otherwise = interestorPlus ts makerTuple
 
-interestorMinus :: (Int, String) -> MakerTuple -> [Int]
-interestorMinus (_, s) makerTuple
-  | s == "z" = map fst (filter (\ (_, s2) -> s2 == "f") makerTuple)
-  | s == "f" = map fst (filter (\ (_, s2) -> s2 == "z") makerTuple)
-  | otherwise = []
+
+interestorMinus :: TakerTuple -> MakerTuple -> [Int]
+interestorMinus [] _ = []
+interestorMinus ((_, s):ts) makerTuple
+  | s == "z" = map fst (filter (\ (_, s2) -> s2 == "f") makerTuple) ++ interestorMinus ts makerTuple
+  | s == "f" = map fst (filter (\ (_, s2) -> s2 == "z") makerTuple) ++ interestorMinus ts makerTuple
+  | otherwise = interestorMinus ts makerTuple
 
 
 
@@ -292,5 +297,15 @@ addsupto100 fst snd thr for | fst + snd + thr + for == 100 = return ()
 roundToTwoDecimals :: (RealFrac a, Fractional b) => a -> b
 roundToTwoDecimals x = fromRational (round (x * 100) Data.Ratio.% 100)
 
-
+volumechecker :: Int -> Int -> Int -> Int -> Int -> Int -> Int -> Int -> Int -> IO ()
+volumechecker minimum a b c d e f g h |    a < minimum
+                                        || b < minimum
+                                        || c < minimum
+                                        || d < minimum
+                                        || e < minimum
+                                        || f < minimum
+                                        || g < minimum
+                                        || h < minimum
+                                                  = error "Volume must be greater than minimum volume specified in settings"
+                                      | otherwise = return ()
 
