@@ -58,8 +58,6 @@ mainLoop aggregatedStats remainingRuns = do
           return []
 
 
-
-
     -- TODO
     -- |
     -- return the list of volumes and sides , right here not after

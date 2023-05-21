@@ -18,6 +18,7 @@ needs to get final polish, in terms of:
 ,downtrend
 ,uptrend 
 - fix open interest 
+- add writes into external files
 ‹- will need to add triples instead of normal tuples and different evaluation, processing in the code.
 
 - optimize performance (now there is too much unnecessary overwriting)

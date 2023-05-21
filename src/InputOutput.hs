@@ -305,13 +305,13 @@ printStats stats = do
   let roundedLongShortRatioL = roundToTwoDecimals longShortRatioLONGS
   let roundedLongShortRatioS = roundToTwoDecimals longShortRatioSHORTS
   
+
   let checker1 = if (offX stats + offZ stats)  - (offY stats + offF stats) /= 0 then error "fail 1" else "check 1 pass"
   let checker2 = if ((offX stats + offY stats) - (offZ stats + offF stats)) `div` 2 /= overallOI stats then error "fail 2" else "check 2 pass"
   let checker3 = if ((takerX stats + takerZ stats)- (makerY stats + makerF stats)) /= 0 then error "fail 3" else "check 3 pass"
   let checker4 = if ((takerY stats + takerF stats)- (makerX stats + makerZ stats)) /= 0 then error "fail 4" else "check 4 pass"
   let checker5 = if (takerX stats + takerZ stats) /= buyVolume stats then error "5 fail" else "check 5 pass"
   let checker6 = if (takerY stats + takerF stats) /= sellVolume stats then error "6 fail" else "check 6 pass"
-
   let checker7 = if ((takerX stats + takerY stats + makerX stats + makerY stats) - (takerZ stats + takerF stats + makerZ stats + makerF stats)) `div` 2 /= overallOI stats then error "7 fail" else "check 7 pass"
   let checker8 = if (takerX stats + takerZ stats) - (makerY stats + makerF stats ) /= 0 then error "check 8 fail" else "check 8 pass"
   let checker9 = if (takerY stats + takerF stats)- (makerX stats + makerZ  stats ) /= 0 then error "check 9 fail" else "check 9 pass"
