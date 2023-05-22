@@ -27,7 +27,7 @@ import           RunSettings           (maxDecimal, maximum', minimum',
                                         orderwalllikelyhood, takeamountASK,
                                         takeamountBID, wallAmplifier, maxmakers)
 import           Statistics            (customRandomRs)
-
+import           Colours               (red)
 
 
 
@@ -225,14 +225,23 @@ readBook fileName =
            Nothing      -> []
            Just bidBook -> bidBook)
 
-newRunSettings :: FilePath -> FilePath -> FilePath -> FilePath -> FilePath -> Int -> IO ()
-newRunSettings logFile bidFile askFile priceFile nLongFile newValue = do
+newRunSettings :: FilePath -> FilePath -> FilePath -> FilePath -> FilePath -> FilePath -> FilePath -> FilePath -> FilePath -> FilePath -> FilePath -> FilePath -> FilePath -> FilePath -> Int -> IO ()
+newRunSettings logFile bidFile askFile priceFile nLongFile nShortFile eLongFile eShortFile bidAskRFile bidToAskFile buyVolFile sellVolFile volFile oiFile newValue = do
   let wipe = ""
   let price = show newValue
   writeFile logFile wipe
   writeFile bidFile wipe
   writeFile askFile wipe
   writeFile nLongFile wipe
+  writeFile nShortFile wipe
+  writeFile eLongFile wipe
+  writeFile eShortFile wipe
+  writeFile bidAskRFile wipe
+  writeFile bidToAskFile wipe
+  writeFile buyVolFile wipe
+  writeFile sellVolFile wipe
+  writeFile volFile wipe
+  writeFile oiFile wipe
   writeFile priceFile price
 
 -- cleaning price history file
@@ -304,7 +313,7 @@ interestorPlus ((n1, s1):takers) ((n2, s2):makers)
 -- | helper function for probability settings (/% checker)
 addsupto100 :: Int -> Int -> Int -> Int -> IO ()
 addsupto100 fst snd thr for | fst + snd + thr + for == 100 = return ()
-                            | otherwise = putStr "🚨 Attention probabilites in settings do not add up to 100% 🚨"
+                            | otherwise = putStr (red "🚨 Attention probabilites in settings do not add up to 100% 🚨")
 
 
 roundToTwoDecimals :: (RealFrac a, Fractional b) => a -> b
@@ -319,6 +328,9 @@ volumechecker minimum a b c d e f g h |    a < minimum
                                         || f < minimum
                                         || g < minimum
                                         || h < minimum
-                                                  = error "Volume must be greater than minimum volume specified in settings"
+                                                  = error (red "\n\nVolume must be greater than minimum volume specified in settings")
                                       | otherwise = return ()
 
+positionamountcheck :: Int -> Int -> IO ()
+positionamountcheck a b | a < (b * 2) = error (red "\n\nPosition amount must be greater than 2 times the minimum volume specified in settings\n\n(you can fix this in the settings, 'catching potential errors)")
+                        | otherwise = return ()

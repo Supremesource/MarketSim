@@ -49,7 +49,7 @@ where
 -- ! RUN SETTINGS:
 
 maxmakers :: Int
-maxmakers = 100
+maxmakers = 2
 
 
 -- | note that max takers is hardcoded to be 95% of maxmakers (done on real market observtions)
@@ -64,12 +64,12 @@ plotCharts = True -- ** fill in / plot charts (True/False)
 
 -- | number of runs
 numberOfRuns :: Int
-numberOfRuns = 40 -- Put your actual number of runs here
+numberOfRuns = 2 -- Put your actual number of runs here
 
 
 -- | number of positions
 numPositions :: Int
-numPositions = 100 -- ** fill in / number of positions
+numPositions = 2 -- ** fill in / number of positions
 
 
 --〇 2
@@ -164,31 +164,31 @@ maxDecimal = 2
 -- | (functionality defined in Lib)
 
 minvolume :: Int
-minvolume = 10
+minvolume = 1000
 
 -- ! BUY VOUME
 -- | longs NEW
 basecaseValueLongNew :: Int
-basecaseValueLongNew = 100
+basecaseValueLongNew = 1000
 upperBoundLongNew :: Int
-upperBoundLongNew = 101
+upperBoundLongNew = 100000
 -- | shorts CLOSE
 basecaseValueShortClose :: Int
-basecaseValueShortClose = 100
+basecaseValueShortClose = 1000
 upperBoundShortClose :: Int
-upperBoundShortClose = 101
+upperBoundShortClose = 100000
 
 -- ! SELL VOLUME
 -- | shorts NEW
 basecaseValueShortNew :: Int
-basecaseValueShortNew = 100
+basecaseValueShortNew = 1000
 upperBoundShortNew :: Int
-upperBoundShortNew = 101
+upperBoundShortNew = 100000
 -- | longs CLOSE
 basecaseValueLongClose :: Int
-basecaseValueLongClose = 100
+basecaseValueLongClose = 1000
 upperBoundLongClose :: Int
-upperBoundLongClose = 101
+upperBoundLongClose = 100000
 
 
 

@@ -12,11 +12,21 @@ import           Text.Printf           (printf)
 
 
 -- | internal libraries
-import           DataTypes
-import           Lib
-import           RunSettings
-import           Filepaths
-
+import           Colours               (blue, green, orange, purple, red)
+import           DataTypes             (MakerTuple,
+                                        Stats (buyVolume, makerF, makerFc, makerX, makerXc, makerY, makerYc, makerZ, makerZc, offF, offX, offY, offZ, overallOI, sellVolume, takerF, takerFc, takerX, takerXc, takerY, takerYc, takerZ, takerZc, totalVolume),
+                                        TakerTuple, VolumeSide (..))
+import           Filepaths             (exitLongsPath, exitShortsPath,
+                                        newLongsPath, newShortsPath)
+import           Lib                   (allCaps, countElements, maximumlimit,
+                                        minimumlimit, orderSize, roundTo,
+                                        roundToTwoDecimals, takeamount,
+                                        wallmaximum', wallminimum')
+import           RunSettings           (maxDecimal, maxDownMove, maxUpMove,
+                                        maximum', minDownMove, minUpMove,
+                                        minimum', orderwalllikelyhood,
+                                        takeamountASK, takeamountBID,
+                                        wallAmplifier)
 
 
 generateOrderBook :: [(Double, Int)] -> [(Double,Int)]
@@ -215,20 +225,6 @@ generateOrderBook
     hClose handleASK
 
 
-
-color :: Int -> String -> String
-color code text = "\x1b[" ++ show code ++ "m" ++ text ++ "\x1b[0m"
-red :: String -> String
-red = color 31
-blue :: String -> String
-blue = color 34
-green :: String -> String
-green = color 32
-orange :: String -> String
-orange = color 33
-purple :: String -> String
-purple = color 35
-
 printPositionStats :: Int -> (TakerTuple, MakerTuple) -> IO (Int, VolumeSide)
 printPositionStats i (taker, makers) = do
   putStrLn $ "Position number : " ++ show i ++ "🍻"
@@ -265,7 +261,7 @@ printPositionStats i (taker, makers) = do
   putStrLn $ "〇z " ++ show offZ
   putStrLn $ "〇f " ++ show offF ++ "\n\n---------\n"
 
--- ! 🔴2  REWRTING DATA FILES 
+-- ! 🔴2  REWRTING DATA FILES
 -- | positioning information
   bracket (openFile newLongsPath AppendMode) hClose $ \handlePosition -> do
         B.hPutStr handlePosition $ BC.pack "\n"
@@ -288,10 +284,10 @@ printPositionStats i (taker, makers) = do
         hClose handlePosition4
 
 
-    
 
-  
-    
+
+
+
   return (voL, sideVol)
 
     where
@@ -357,7 +353,7 @@ printStats stats = do
   print checker7
   print checker8
   print checker9
-  
+
 
   print $ "x " ++ show  (takerX stats)
   print $ "y " ++ show  (takerY stats)
