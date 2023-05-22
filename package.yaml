@@ -49,6 +49,7 @@ library:
    - Filepaths
    - RunSettings
    - DataTypes
+   - Colours
   default-extensions:
    - ImportQualifiedPost
    - InstanceSigs

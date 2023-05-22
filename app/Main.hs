@@ -1,4 +1,5 @@
 {-# OPTIONS_GHC -Wno-unused-matches #-}
+{-# OPTIONS_GHC -Wno-unused-imports #-}
 module Main where
 {-# LANGUAGE ScopedTypeVariables #-}
 
@@ -14,11 +15,11 @@ import           System.Random               (Random (randomRs))
 
 
 -- | internal libraries
-import           DataTypes                   (Stats, VolumeSide)
-import           Filepaths                   (askBookPath, bidBookPath, logPath,
-                                              pricePath, newLongsPath)
-import           InputOutput                 (orange, printPositionStats,
-                                              printStats, red)
+import           Colours
+import           DataTypes                   (Stats (buyVolume, sellVolume, overallOI), VolumeSide)
+import           Filepaths                   
+
+import           InputOutput                 (printPositionStats, printStats)
 import           Lib                         (addsupto100, firstPartList,
                                               infiniteList, infiniteListDown,
                                               isFileEmpty, newRunSettings,
@@ -29,11 +30,13 @@ import           Lib                         (addsupto100, firstPartList,
                                               secondPartList,
                                               startingPointFromFile, takeamount,
                                               taketowalls, volumechecker,
-                                              zipToTuples)
+                                              zipToTuples, positionamountcheck)
+
 import           RunSettings
 import           Statistics                  (generateRandomPosition)
 import           Util                        (aggregateStats, initStats,
                                               recursiveList)
+
 
 
 
@@ -52,7 +55,7 @@ mainLoop aggregatedStats remainingRuns = do
           putStrLn "--------"
           printStats newAggregatedStats
           nextVolumesAndSides <- mainLoop newAggregatedStats (remainingRuns - 1)
-      
+
 
           return (volumesAndSides ++ nextVolumesAndSides)
         else do
@@ -76,7 +79,7 @@ printFinal aggregatedStats = do
 main :: IO ()
 main = do
 
-  
+
   -- CHECKING IF FILES ARE EMPTY
   isBidEmpty  <- isFileEmpty bidBookPath
   isAskEmpty  <- isFileEmpty askBookPath
@@ -95,19 +98,20 @@ main = do
       putStr "\nnew starting value will be set to: $"
       putStrLn sayStart
       putStrLn $ orange "\n * you can adjsut starting value in the 'RunSetting' * "
-      newRunSettings logPath bidBookPath askBookPath pricePath newLongsPath wipingStartingValue
+      newRunSettings logPath bidBookPath askBookPath pricePath newLongsPath newShortsPath exitLongsPath exitShortsPath bidAskRPath 
+                bidToAskRPath buyVolumePath sellVolumePath volumePath openInterestPath  wipingStartingValue
+   
     else if proceed == "n" || proceed == "N"
 
         then  error (red "stopping program")
 
     else do
-      -- checking settings
-
+      -- checking settings, catching potential bugs in the setting specified by user
 
       addsupto100 xProbabilityTaker yProbabilityTaker zProbabilityTaker fProbabilityTaker
       addsupto100 xProbabilityMaker yProbabilityMaker zProbabilityMaker fProbabilityMaker
       volumechecker minvolume basecaseValueLongNew basecaseValueShortNew basecaseValueLongClose basecaseValueShortClose upperBoundLongNew upperBoundShortNew upperBoundLongClose upperBoundShortClose
-    
+      positionamountcheck minvolume maxmakers
 
 
 -- | random generator:
@@ -198,7 +202,7 @@ main = do
           -- ... do something with finalBidBook and finalAskBook, e.g., print them out ...
 
 -- final polish
-      removeEmptyLines pricePath 
+      removeEmptyLines pricePath
       removeEmptyLines newLongsPath
 
       mapM_ print listofvolumes
