@@ -207,7 +207,6 @@ aggregateStats (taker, makers) stats  =
       totalVolume = totalVolume stats + foldl (\acc (x, _) -> acc + x) 0 taker,
       buyVolume =
         buyVolume stats + foldl (\acc (x, y) -> if y == "x" || y == "z" then acc + x else acc) 0 taker,
-
       sellVolume =
         sellVolume stats + foldl (\acc (x, y) -> if y == "y" || y == "f" then acc + x else acc) 0 taker,
       takerXc =
@@ -260,3 +259,4 @@ aggregateStats (taker, makers) stats  =
         makerF stats + orderSize "f" makers
 
     }
+

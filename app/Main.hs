@@ -17,7 +17,7 @@ import           System.Random               (Random (randomRs))
 -- | internal libraries
 import           Colours
 import           DataTypes                   (Stats (buyVolume, sellVolume, overallOI), VolumeSide)
-import           Filepaths                   
+import           Filepaths
 
 import           InputOutput                 (printPositionStats, printStats)
 import           Lib                         (addsupto100, firstPartList,
@@ -45,12 +45,16 @@ mainLoop aggregatedStats remainingRuns = do
       if remainingRuns > 0
         then do
           positions <- replicateM numPositions generateRandomPosition
-          let newAggregatedStats = foldl (\acc pos -> aggregateStats pos acc) aggregatedStats positions
+          let newAggregatedStats = foldl (flip aggregateStats) aggregatedStats positions
           volumesAndSides <- Control.Monad.forM (zip [1..] positions) $ \(i, pos) -> do
             (volume, side) <- printPositionStats i pos
             print $ "TESTING :" ++ show volume
             print side
+
+
             return (volume, side)
+
+
 
           putStrLn "--------"
           printStats newAggregatedStats
@@ -98,9 +102,9 @@ main = do
       putStr "\nnew starting value will be set to: $"
       putStrLn sayStart
       putStrLn $ orange "\n * you can adjsut starting value in the 'RunSetting' * "
-      newRunSettings logPath bidBookPath askBookPath pricePath newLongsPath newShortsPath exitLongsPath exitShortsPath bidAskRPath 
+      newRunSettings logPath bidBookPath askBookPath pricePath newLongsPath newShortsPath exitLongsPath exitShortsPath bidAskRPath
                 bidToAskRPath buyVolumePath sellVolumePath volumePath openInterestPath  wipingStartingValue
-   
+
     else if proceed == "n" || proceed == "N"
 
         then  error (red "stopping program")
@@ -203,8 +207,8 @@ main = do
 
 -- final polish
       removeEmptyLines pricePath
-      removeEmptyLines newLongsPath
-
+      
+      
       mapM_ print listofvolumes
       print $ length listofvolumes
 

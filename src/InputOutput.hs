@@ -17,11 +17,11 @@ import           DataTypes             (MakerTuple,
                                         Stats (buyVolume, makerF, makerFc, makerX, makerXc, makerY, makerYc, makerZ, makerZc, offF, offX, offY, offZ, overallOI, sellVolume, takerF, takerFc, takerX, takerXc, takerY, takerYc, takerZ, takerZc, totalVolume),
                                         TakerTuple, VolumeSide (..))
 import           Filepaths             (exitLongsPath, exitShortsPath,
-                                        newLongsPath, newShortsPath)
+                                        newLongsPath, newShortsPath, buyVolumePath, sellVolumePath, volumePath, openInterestPath, bidAskRPath, bidToAskRPath)
 import           Lib                   (allCaps, countElements, maximumlimit,
                                         minimumlimit, orderSize, roundTo,
                                         roundToTwoDecimals, takeamount,
-                                        wallmaximum', wallminimum')
+                                        wallmaximum', wallminimum', interestorPlus, interestorMinus)
 import           RunSettings           (maxDecimal, maxDownMove, maxUpMove,
                                         maximum', minDownMove, minUpMove,
                                         minimum', orderwalllikelyhood,
@@ -208,39 +208,55 @@ generateOrderBook
       BC.pack
         "\n\n + configuration settings successfuly written into an external file 🦄"
 
-    -- ! 🔴1  REWRTING DATA FILES | BID ASK BOOKS | PRICE CHANGES | LOGS
+    -- ! 🔴1  REWRTING DATA FILES -- Asociated with the orderbook
     -- //? rewriting price changes
     bracket (openFile pricePath AppendMode) hClose $ \handlePrice -> do
       B.hPutStr handlePrice $ BC.pack "\n"
       B.hPutStrLn handlePrice $ BC.pack (show startingprice)
       hClose handlePrice
       -- //?? rewriting bidbook
-  bracket (openFile bidBookPath WriteMode) hClose $ \handleBID -> do
-    hPrint handleBID bookSpreadFactorBid
-    hClose handleBID
+    bracket (openFile bidBookPath WriteMode) hClose $ \handleBID -> do
+      hPrint handleBID bookSpreadFactorBid
+      hClose handleBID
 
-  -- //? rewriting askbook
-  bracket (openFile askBookPath WriteMode) hClose $ \handleASK -> do
-    hPrint handleASK bookSpreadFactorAsk
-    hClose handleASK
+    -- //? rewriting askbook
+    bracket (openFile askBookPath WriteMode) hClose $ \handleASK -> do
+      hPrint handleASK bookSpreadFactorAsk
+      hClose handleASK
 
+  -- //? rewriting bid/ask RATIO
+    bracket (openFile bidAskRPath AppendMode) hClose $ \handleRatio -> do
+      hPutStrLn handleRatio (printf "%.4f" bidAskRatio)
+      hClose handleRatio
+
+
+  -- //? rewriting bid TO ask RATIO
+    bracket (openFile bidToAskRPath AppendMode) hClose $ \handleTORatio -> do
+      hPutStrLn handleTORatio (show bidsTotal ++ " / " ++ show asksTotal)
+      hClose handleTORatio
+      
 
 printPositionStats :: Int -> (TakerTuple, MakerTuple) -> IO (Int, VolumeSide)
 printPositionStats i (taker, makers) = do
-  putStrLn $ "Position number : " ++ show i ++ "🍻"
-  putStrLn $ "\n〇Taker: " ++ show taker
-  putStrLn $ "〇Makers: " ++ show makers ++ "\n"
+ 
 
   let voL = foldl (\acc (x, _) -> acc + x) 0 taker
-
   let sideVol
         | snd (head taker)         == "x"         || snd (head taker)        == "z"         = Buy
         | snd (head taker)         == "y"         || snd (head taker)        == "f"         = Sell
         | otherwise = error "generating volume failed"
 
+  
+  let overalOpenInterest = interestorPlus taker makers - interestorMinus taker makers
+  let buyVOLUME = if sideVol == Buy then voL else 0
+  let sellVOLUME = if sideVol == Sell then voL else 0
+  let overalVOLUME = voL
+
+  putStrLn $ "Position number : " ++ show i ++ "🍻"
+  putStrLn $ "\n〇Taker: " ++ show taker
+  putStrLn $ "〇Makers: " ++ show makers ++ "\n"
+  putStrLn $ "〇Overal open interest: " ++ show overalOpenInterest ++ "\n"
   putStrLn $ "the volume is: " ++ show voL ++ " , " ++ "and the side of the volume is: " ++ show sideVol ++ "\n"
-
-
 
   -- Additional stats for a single position
 
@@ -248,7 +264,6 @@ printPositionStats i (taker, makers) = do
   putStrLn $ "〇Taker Y_count: " ++ show takercounter_Y
   putStrLn $ "〇Taker Z_count: " ++ show takercounter_Z
   putStrLn $ "〇Taker F_count: " ++ show takercounter_F ++ "\n"
-
 
 
   putStrLn $ "〇Maker X_count: " ++ show makerelement_counter_of_X
@@ -261,28 +276,39 @@ printPositionStats i (taker, makers) = do
   putStrLn $ "〇z " ++ show offZ
   putStrLn $ "〇f " ++ show offF ++ "\n\n---------\n"
 
--- ! 🔴2  REWRTING DATA FILES
+-- ! 🔴2  REWRTING DATA FILES -- asociated with the positioning
 -- | positioning information
   bracket (openFile newLongsPath AppendMode) hClose $ \handlePosition -> do
-        B.hPutStr handlePosition $ BC.pack "\n"
         B.hPutStrLn handlePosition $ BC.pack (show offX)
         hClose handlePosition
 
   bracket (openFile newShortsPath AppendMode) hClose $ \handlePosition2 -> do
-        B.hPutStr handlePosition2 $ BC.pack "\n"
         B.hPutStrLn handlePosition2 $ BC.pack (show offY)
         hClose handlePosition2
 
   bracket (openFile exitShortsPath AppendMode) hClose $ \handlePosition3 -> do
-        B.hPutStr handlePosition3 $ BC.pack "\n"
         B.hPutStrLn handlePosition3 $ BC.pack (show offZ)
         hClose handlePosition3
 
   bracket (openFile exitLongsPath AppendMode) hClose $ \handlePosition4 -> do
-        B.hPutStr handlePosition4 $ BC.pack "\n"
         B.hPutStrLn handlePosition4 $ BC.pack (show offF)
         hClose handlePosition4
 
+  bracket (openFile buyVolumePath AppendMode) hClose $ \handleVol -> do
+        B.hPutStrLn handleVol $ BC.pack (show buyVOLUME)
+        hClose handleVol
+
+  bracket (openFile sellVolumePath AppendMode) hClose $ \handleVol2 -> do
+      B.hPutStrLn handleVol2 $ BC.pack (show sellVOLUME)
+      hClose handleVol2
+
+  bracket (openFile volumePath AppendMode) hClose $ \handleVol3 -> do
+      B.hPutStrLn handleVol3 $ BC.pack (show overalVOLUME)
+      hClose handleVol3
+
+  bracket (openFile openInterestPath AppendMode) hClose $ \handleInterest -> do
+      B.hPutStrLn handleInterest $ BC.pack (show overalOpenInterest)
+      hClose handleInterest
 
 
 
@@ -316,6 +342,7 @@ printStats stats = do
                  ,(takerXc stats + takerZc stats, " <- buying")
                  ,(takerYc stats + takerFc stats, " <- selling")
                  ,(takerXc stats + takerZc stats - takerYc stats - takerFc stats, "delta")]
+  
   let makerCount = [(makerXc stats + makerYc stats + makerFc stats + makerZc stats, " <- count of makers")
                  ,(makerXc stats + makerZc stats, " <- buying")
                  ,(makerYc stats + makerFc stats, " <- selling")

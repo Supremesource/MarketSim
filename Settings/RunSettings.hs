@@ -49,7 +49,7 @@ where
 -- ! RUN SETTINGS:
 
 maxmakers :: Int
-maxmakers = 2
+maxmakers = 6
 
 
 -- | note that max takers is hardcoded to be 95% of maxmakers (done on real market observtions)
@@ -60,7 +60,7 @@ maxtakers = round (fromIntegral maxmakers * (0.95 :: Double))
 
 
 plotCharts :: Bool
-plotCharts = True -- ** fill in / plot charts (True/False)
+plotCharts = False -- ** fill in / plot charts (True/False)
 
 -- | number of runs
 numberOfRuns :: Int
