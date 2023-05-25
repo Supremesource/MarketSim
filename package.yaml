@@ -24,6 +24,7 @@ dependencies:
 - process
 
 
+
 ghc-options:
 - -Wall
 - -Wcompat
@@ -73,6 +74,7 @@ executables:
     - containers
     - parallel
     - process
+    
 
 # Comment out the tests section if you don't have test directory or modules.
 # tests:

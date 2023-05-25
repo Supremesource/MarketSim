@@ -47,3 +47,10 @@ data Stats = Stats
   , makerF      :: Int
   } deriving Show
 
+data Options = 
+               UP | 
+              UUP | 
+              DW  | 
+              DWW | 
+              CN 
+              deriving (Eq, Show)

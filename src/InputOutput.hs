@@ -7,26 +7,23 @@ module InputOutput where
 import           Control.Exception     (bracket)
 import qualified Data.ByteString.Char8 as B
 import qualified Data.ByteString.Char8 as BC
-import           System.IO
+import           Data.Time.Clock.POSIX (getPOSIXTime)
+import           System.IO             (IOMode (AppendMode, WriteMode), hClose,
+                                        hPrint, hPutStrLn, openFile)
+import           System.Random         (Random (randomRs), mkStdGen)
 import           Text.Printf           (printf)
 
-
 -- | internal libraries
-import           Colours               (blue, green, orange, purple, red)
-import           DataTypes             (MakerTuple,
-                                        Stats (buyVolume, makerF, makerFc, makerX, makerXc, makerY, makerYc, makerZ, makerZc, offF, offX, offY, offZ, overallOI, sellVolume, takerF, takerFc, takerX, takerXc, takerY, takerYc, takerZ, takerZc, totalVolume),
-                                        TakerTuple, VolumeSide (..))
-import           Filepaths             (exitLongsPath, exitShortsPath,
-                                        newLongsPath, newShortsPath, buyVolumePath, sellVolumePath, volumePath, openInterestPath, bidAskRPath, bidToAskRPath)
-import           Lib                   (allCaps, countElements, maximumlimit,
-                                        minimumlimit, orderSize, roundTo,
-                                        roundToTwoDecimals, takeamount,
-                                        wallmaximum', wallminimum', interestorPlus, interestorMinus)
-import           RunSettings           (maxDecimal, maxDownMove, maxUpMove,
-                                        maximum', minDownMove, minUpMove,
-                                        minimum', orderwalllikelyhood,
-                                        takeamountASK, takeamountBID,
-                                        wallAmplifier)
+import           Colours               (purple, red)
+import           DataTypes
+import           Filepaths             (bidAskRPath, bidToAskRPath,
+                                        buyVolumePath, exitLongsPath,
+                                        exitShortsPath, newLongsPath,
+                                        newShortsPath, openInterestPath,
+                                        sellVolumePath, volumePath)
+import           Lib
+import           RunSettings
+
 
 
 generateOrderBook :: [(Double, Int)] -> [(Double,Int)]
@@ -83,131 +80,83 @@ generateOrderBook
 
                   =
                   do
---  B.putStrLn $ B.pack $ allCaps "📚Orderbook ↕️ \n\n (PRICE LEVEL , USD VALUE)\n"
---  B.putStrLn $
---          B.pack $
---            allCaps "\n📕 ask orderbook ⏬\n\n"
+
+  -- | random id generator
+  currentTime <- getPOSIXTime
+  let seed = round $ currentTime * (10^9) :: Int
+  let gen = mkStdGen seed
+  let symbols = ['0'..'9'] ++ ['a'..'z'] ++ ['A'..'Z'] ++ "?!@#$&*"
+  let randomChars = randomRs (0, length symbols - 1) gen
+  let id = map (symbols !!) $ take 10 randomChars
+-- | random id generator
+  let formatRow x y z = B.pack $ purple $ printf "| %-15s | %-15s | %-15s |\n" x y z
+  let line = B.pack $ purple $ replicate 54 '-' ++ "\n"
+
+  B.putStr line
+  B.putStr $  formatRow "Field" "Value" "Unit"
+  B.putStr line
+  B.putStr $ formatRow "ID" id ""
+  B.putStr $ formatRow "Spread" (show (roundTo maxDecimal spread)) "$"
+  B.putStr $ formatRow "Asks total" (show asksTotal) "$"
+  B.putStr $ formatRow "Bids total" (show bidsTotal) "$"
+  B.putStr $ formatRow "Bid/Ask ratio" (printf "%.4f" bidAskRatio :: String) ""
+  B.putStr $ formatRow "Starting price" (show startingprice) "$"
+  B.putStr $ formatRow "Volume side" volumeSide ""
+  B.putStr $ formatRow "Volume amount" (show volumeAmount) "$"
+  B.putStr $ formatRow "Taken from ASK" (show lengthchangeBID) "$"
+  B.putStr $ formatRow "Taken from BID" (show lengthchangeASK) "$"
+  B.putStr line
+
+
+  bracket (openFile logPath AppendMode) hClose $ \handle -> do
+    hPutStrLn handle $ printf "%-50s %-20s" "\n\n\nID:" id
+    B.hPutStrLn handle $ BC.pack $ printf "%-50s" (allCaps "Code configuration for orderbook:")
+    B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps "1. Starting price:") (show startingPoint ++ "$")
+    B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps "2. Order book length (to both sides):") (show takeamount)
+    B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps "3. Ask max up move:") (show maxUpMove)
+    B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps "4. Ask min up move:") (show minUpMove)
+    B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps "5. Bid max down move:") (show maxDownMove)
+    B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps "6. Bid down min move:") (show minDownMove)
+    B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps "7. Minimum value of limit order was (hardcoded):") (show minimum' ++ " (actual = " ++ show (minimumlimit maxMinLimit) ++ ")$")
+    B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps "8. Maximum value of limit order was (hardcoded):") (show maximum' ++ " (actual = " ++ show (maximumlimit maxMinLimit) ++ ")$")
+    B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps "9. Bid size of the orderbook:") (show takeamountBID)
+    B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps "10. Ask size of the orderbook:") (show takeamountASK)
+    B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps "11. ASKS -> BIDS:") (show asksTotal ++ "$ / " ++ show bidsTotal ++ "$")
+    B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps "12. Wall occurrences:") (show orderwalllikelyhood ++ " (i.e. 10 takeamount -> 2 walls -> to bid, ask)")
+    B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" "13. Actually taken to walls:" (show totakefromwall ++ ", (it is going to get div by 2)")
+    B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" "14. Wall minimum:" (show wallminimum')
+    B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" "15. Wall maximum:" (show wallmaximum')
+    B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" "16. Wall amplifier:" (show wallAmplifier)
+    B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" "17. Max decimal:" (show maxDecimal)
+    B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" "18. Length change of BID:" (show lengthchangeBID)
+    B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" "19. Length change of ASK:" (show lengthchangeASK)
+    B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" "20. Bid starting Price:" (show stPriceCaseBid)
+    B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" "21. Ask starting Price:" (show stPriceCaseAsk)
+    B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" "24. New Ask List | insertion:" (show listASK)
+    B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" "25. New Bid List | insertion:" (show listBID)
+    B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" "28. Volume side:" volumeSide
+    B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" "29. Volume amount:" (show volumeAmount)
+    B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" "30. The starting price:" (show startingprice) ++ "\n\n\n"
+    B.hPutStrLn handle $ B.pack $ printf  "%-50s %-20s" "31. `partial` Orderbook ASK: " (take 500 (unlines (map show (reverse bookSpreadFactorAsk))))
+    B.hPutStrLn handle $ B.pack $ printf  "%-50s %-20s" "32. `partial` Orderbook BID: " (take 500 (unlines (map show bookSpreadFactorBid)))
+  --  B.hPutStrLn handle $ B.pack $ printf  "%-50s %-20s" "32. allCaps "  (allCaps "\n ask orderbook \n")
+  --  B.hPutStrLn handle $ B.pack $ printf  "%-50s %-20s" "33. unlines (map show (reverse bookSpreadFactorAsk))" (unlines (map show (reverse bookSpreadFactorAsk)))
+  --  B.hPutStrLn handle $ B.pack $ printf  "%-50s %-20s" "34. allCaps "  (allCaps "\nask ⬆️ \n\n\n")
+  --  B.hPutStrLn handle $ B.pack $ printf  "%-50s %-20s" "35. allCaps "  (allCaps "\n\n\nbid ⬇️ \n\n")
+  --  B.hPutStrLn handle $ B.pack $ printf  "%-50s %-20s" "36. unlines (map show bookSpreadFactorBid)" (unlines (map show bookSpreadFactorBid))
+  --  B.hPutStrLn handle $ B.pack $ printf  "%-50s %-20s" "37. allCaps "  (allCaps "\n📗 bid orderbook ⏫")
+
 --              ++ unlines (map show (reverse bookSpreadFactorAsk))
 --              ++ allCaps "\nask ⬆️ \n\n\n"
-  B.putStrLn $ B.pack $ allCaps "spread: " ++ show (roundTo maxDecimal spread) ++ " $"
+
 --  B.putStrLn $
 --          B.pack $
 --            allCaps "\n\n\nbid ⬇️ \n\n"
 --              ++ unlines (map show bookSpreadFactorBid)
 --              ++ allCaps "\n📗 bid orderbook ⏫"
-  B.putStrLn $ B.pack "\n------------------------\n"
-  B.putStrLn $ B.pack $ allCaps "Overal data ∑ \n"
-  B.putStrLn $
-          B.pack $
-            allCaps
-              ( "ASKS -> "
-                  ++ show asksTotal
-                  ++ "$ / "
-                  ++ show bidsTotal
-                  ++ "$ <- BIDS" -- !! BID ASKS (MEANING THEIR USD VALUES)
-              )
-  B.putStrLn $ B.pack $ "THE BID/ASK RATIO IS =  " ++ printf "%.4f" bidAskRatio -- !! the BID & ASK ratio in terms of order count
-  bidAskBenefit
-  B.putStrLn $
-          B.pack $
-             allCaps
-              ("\nthe spread was = " ++ show (roundTo maxDecimal spread) ++ "$")
 
-  bracket (openFile logPath WriteMode) hClose $ \handle -> do
-    B.hPutStr handle $ BC.pack $ allCaps "code configuration, for orderbook: \n"
-    B.hPutStrLn handle $
-            BC.pack $
-              allCaps "\n  general book info:\n 1. starting price: "
-                ++ show startingPoint
-                ++ "$"
-    B.hPutStrLn handle $
-          BC.pack $
-              allCaps " 2. Order book length "
-                ++ "(to both sides): "
-                ++ show takeamount
-    B.hPutStrLn handle $
-      BC.pack $
-              allCaps " 3. ask max up move: "
-                ++ show maxUpMove
-                ++ allCaps "\n 4. ask min up move: "
-                ++ show minUpMove
-                ++ allCaps "\n 5. bid max down move: "
-                ++ show maxDownMove
-                ++ allCaps "\n 6. bid down min move: "
-                ++ show minDownMove
-    B.hPutStrLn handle $
-            BC.pack $
-              allCaps
-                ( " 7. minumum value of limit order was = "
-                    ++ show minimum'
-                    ++ " (hardcoded)"
-                    ++ " actual      = "
-                    ++ show (minimumlimit maxMinLimit)
-                )
-                ++ "$"
-    B.hPutStrLn handle $
-            BC.pack $
-              allCaps
-                ( " 8. maximum value of limit order was = "
-                    ++ show maximum'
-                    ++ " (hardcoded)"
-                    ++ " actual  = "
-                    ++ show (maximumlimit maxMinLimit)
-                )
-                ++ "$"
-    B.hPutStrLn handle $
-          BC.pack $
-              allCaps " 9. bid size of the orderbook: " ++ show takeamountBID
-    B.hPutStrLn handle $
-          BC.pack $
-              allCaps " 10.ask size of the orderbook: " ++ show takeamountASK
-    B.hPutStrLn handle $
-          BC.pack $
-              allCaps " 11.ASKS -> "
-                ++ show asksTotal
-                ++ "$ / "
-                ++ show bidsTotal
-                ++ "$ <- BIDS"
-    B.hPutStrLn handle $
-          BC.pack $
-              allCaps "\n  wall info:\n 12. Wall occurrences: "
-                ++ show orderwalllikelyhood
-                ++ "\n                       ^^   (i.e. 10 takeamount -> 2 walls -> to bid, ask)"
-    B.hPutStrLn handle $
-          BC.pack $
-              " 13. (actuall taken to walls: "
-                ++ show totakefromwall
-                ++ " , (it is going to get div by 2))"
-    B.hPutStrLn handle $ BC.pack $ " 14. wall minimum  = " ++ show wallminimum'
-    B.hPutStrLn handle $ BC.pack $ " 15. wall maximum  = " ++ show wallmaximum'
-    B.hPutStrLn handle $ BC.pack $ " 16. wall aplifier = " ++ show wallAmplifier
-    B.hPutStrLn handle $ BC.pack $ "\n (17. max decimal: " ++ show maxDecimal ++ ")\n"
-    -- \|regarding price changes
-    B.hPutStrLn handle $
-      BC.pack $
-        "\n18. Length change of BID : " ++ show lengthchangeBID
-  --  B.hPutStrLn handle $ BC.pack $ "19. Lenght change of ASK : " ++ show lengthchangeASK
-  --  B.hPutStrLn handle $ BC.pack $ "\n20. Bid starting Price: " ++ show stPriceCaseBid
-   -- B.hPutStrLn handle $ BC.pack $ "21. Ask starting Price: " ++ show stPriceCaseAsk
-   -- B.hPutStrLn handle $ BC.pack $ "\n22. Bid Book: " ++ show bidBook
-   -- B.hPutStrLn handle $ BC.pack $ "23. Ask Book: " ++ show askBook
-   -- B.hPutStrLn handle $ BC.pack $ "\n24. New Ask List | insertion : " ++ show listASK
-   -- B.hPutStrLn handle $ BC.pack $ "25. New Bid List | insertion: " ++ show listBID
-   -- B.hPutStrLn handle $ BC.pack $ "\n26. current ask list = " ++ show bookSpreadFactorAsk
-   -- B.hPutStrLn handle $ BC.pack $ "27. current bid list = " ++ show bookSpreadFactorBid
-   -- B.hPutStrLn handle $ BC.pack $ "28. volume side: " ++ volumeSide
-   -- B.hPutStrLn handle $ BC.pack $ "29. volume amount: " ++ show volumeAmount
-   -- B.hPutStrLn handle $ BC.pack $ "\n30. the starting price: " ++ show startingprice
-   -- B.hPutStrLn handle $ BC.pack $ "\n\nx" ++ show x
-   -- B.hPutStrLn handle $ BC.pack $ "y" ++ show y
-   -- B.putStrLn $ BC.pack $ allCaps "the price is: " ++ show startingprice
-   -- B.putStrLn $ BC.pack $ allCaps "volume side was: " ++ show volumeSide
-   -- B.putStrLn $ BC.pack $ allCaps "volume amount was: " ++ show volumeAmount
     hClose handle
-    B.putStrLn $
-      BC.pack
-        "\n\n + configuration settings successfuly written into an external file 🦄"
-
+    B.putStrLn $ BC.pack $ printf "%-50s" "\n\n + Configuration settings successfully written into an external file 🦄"
     -- ! 🔴1  REWRTING DATA FILES -- Asociated with the orderbook
     -- //? rewriting price changes
     bracket (openFile pricePath AppendMode) hClose $ \handlePrice -> do
@@ -234,11 +183,11 @@ generateOrderBook
     bracket (openFile bidToAskRPath AppendMode) hClose $ \handleTORatio -> do
       hPutStrLn handleTORatio (show bidsTotal ++ " / " ++ show asksTotal)
       hClose handleTORatio
-      
+
 
 printPositionStats :: Int -> (TakerTuple, MakerTuple) -> IO (Int, VolumeSide)
 printPositionStats i (taker, makers) = do
- 
+
 
   let voL = foldl (\acc (x, _) -> acc + x) 0 taker
   let sideVol
@@ -246,35 +195,40 @@ printPositionStats i (taker, makers) = do
         | snd (head taker)         == "y"         || snd (head taker)        == "f"         = Sell
         | otherwise = error "generating volume failed"
 
-  
+
   let overalOpenInterest = interestorPlus taker makers - interestorMinus taker makers
   let buyVOLUME = if sideVol == Buy then voL else 0
   let sellVOLUME = if sideVol == Sell then voL else 0
   let overalVOLUME = voL
 
-  putStrLn $ "Position number : " ++ show i ++ "🍻"
-  putStrLn $ "\n〇Taker: " ++ show taker
-  putStrLn $ "〇Makers: " ++ show makers ++ "\n"
-  putStrLn $ "〇Overal open interest: " ++ show overalOpenInterest ++ "\n"
-  putStrLn $ "the volume is: " ++ show voL ++ " , " ++ "and the side of the volume is: " ++ show sideVol ++ "\n"
 
-  -- Additional stats for a single position
+  putStrLn $ "------------------------------------------"
+  putStrLn $ "| Position number    | " ++ show i ++ " 🍻 |"
+  putStrLn $ "------------------------------------------"
+  putStrLn $ "| Taker                | " ++ show taker
+  putStrLn $ "| Makers               | " ++ show makers
+  putStrLn $ "| Overal open interest | " ++ show overalOpenInterest
+  putStrLn $ "| Volume               | " ++ show overalVOLUME
+  putStrLn $ "| Buy volume           | " ++ show buyVOLUME
+  putStrLn $ "| Sell volume          | " ++ show sellVOLUME
+  putStrLn $ "------------------------"
+  putStrLn $ "| Taker X count        | " ++ show takercounter_X
+  putStrLn $ "| Taker Y count        | " ++ show takercounter_Y
+  putStrLn $ "| Taker Z count        | " ++ show takercounter_Z
+  putStrLn $ "| Taker F count        | " ++ show takercounter_F
+  putStrLn $ "| Maker X count        | " ++ show makerelement_counter_of_X
+  putStrLn $ "| Maker Y count        | " ++ show makerelement_counter_of_Y
+  putStrLn $ "| Maker Z count        | " ++ show makerelement_counter_of_Z
+  putStrLn $ "| Maker F count        | " ++ show makerelement_counter_of_F
+  putStrLn $ "------------------------\n"
 
-  putStrLn $ "〇Taker X_count: " ++ show takercounter_X
-  putStrLn $ "〇Taker Y_count: " ++ show takercounter_Y
-  putStrLn $ "〇Taker Z_count: " ++ show takercounter_Z
-  putStrLn $ "〇Taker F_count: " ++ show takercounter_F ++ "\n"
-
-
-  putStrLn $ "〇Maker X_count: " ++ show makerelement_counter_of_X
-  putStrLn $ "〇Maker Y_count: " ++ show makerelement_counter_of_Y
-  putStrLn $ "〇Maker Z_count: " ++ show makerelement_counter_of_Z
-  putStrLn $ "〇Maker F_count: " ++ show makerelement_counter_of_F ++ "\n"
-
-  putStrLn $ "〇x " ++ show offX
-  putStrLn $ "〇y " ++ show offY
-  putStrLn $ "〇z " ++ show offZ
-  putStrLn $ "〇f " ++ show offF ++ "\n\n---------\n"
+-- final overview
+  putStrLn $        "----------TOTAL---------"
+  putStrLn $ purple "| Total USD X | " ++ show offX
+  putStrLn $ purple "| Total USD Y | " ++ show offY
+  putStrLn $ purple "| Total USD Z | " ++ show offZ
+  putStrLn $ purple "| Total USD F | " ++ show offF
+  putStrLn $        "------------------------\n"
 
 -- ! 🔴2  REWRTING DATA FILES -- asociated with the positioning
 -- | positioning information
@@ -310,10 +264,6 @@ printPositionStats i (taker, makers) = do
       B.hPutStrLn handleInterest $ BC.pack (show overalOpenInterest)
       hClose handleInterest
 
-
-
-
-
   return (voL, sideVol)
 
     where
@@ -336,18 +286,16 @@ printPositionStats i (taker, makers) = do
 
 printStats :: Stats -> IO ()
 printStats stats = do
-
-
   let takerCount = [(takerXc stats + takerYc stats + takerFc stats + takerZc stats, " <- count of takers")
                  ,(takerXc stats + takerZc stats, " <- buying")
                  ,(takerYc stats + takerFc stats, " <- selling")
                  ,(takerXc stats + takerZc stats - takerYc stats - takerFc stats, "delta")]
-  
+
   let makerCount = [(makerXc stats + makerYc stats + makerFc stats + makerZc stats, " <- count of makers")
                  ,(makerXc stats + makerZc stats, " <- buying")
                  ,(makerYc stats + makerFc stats, " <- selling")
                  ,(makerXc stats + makerZc stats - makerYc stats - makerFc stats, "delta")]
-  let lsprediction = [ (if (takerXc stats + takerZc stats) > (makerXc stats + makerZc stats) then "C up" else "C down", if buyVolume stats > sellVolume stats then "V up" else "V down", if offX stats > offY stats then "A up" else "A down")]
+--  let lsprediction = [ (if (takerXc stats + takerZc stats) > (makerXc stats + makerZc stats) then "C up" else "C down", if buyVolume stats > sellVolume stats then "V up" else "V down", if offX stats > offY stats then "A up" else "A down")]
   let overalxCount = takerXc stats + makerXc stats
   let overalyCount = takerYc stats + makerYc stats
   let overalzCount = takerZc stats + makerZc stats
@@ -358,58 +306,132 @@ printStats stats = do
   let longShortRatioSHORTS = (fromIntegral overalShorts / fromIntegral (overalLongs + overalShorts)) * 100
   let roundedLongShortRatioL = roundToTwoDecimals longShortRatioLONGS
   let roundedLongShortRatioS = roundToTwoDecimals longShortRatioSHORTS
+-- checking the correcthnes of output
+  let checkers = [ ("Checker 1", if (offX stats + offZ stats)  - (offY stats + offF stats) /= 0                        then error "fail 1" else "check 1 pass")
+                 , ("Checker 2", if ((offX stats + offY stats) - (offZ stats + offF stats)) `div` 2 /= overallOI stats then error "fail 2" else "check 2 pass")
+                 , ("Checker 3", if ((takerX stats + takerZ stats)- (makerY stats + makerF stats)) /= 0                then error "fail 3" else "check 3 pass")
+                 , ("Checker 4", if ((takerY stats + takerF stats)- (makerX stats + makerZ stats)) /= 0                then error "fail 4" else "check 4 pass")
+                 , ("Checker 5", if (takerX stats + takerZ stats) /= buyVolume stats then error "5 fail"               else "check 5 pass")
+                 , ("Checker 6", if (takerY stats + takerF stats) /= sellVolume stats then error "6 fail"              else "check 6 pass")
+                 , ("Checker 7", if ((takerX stats + takerY stats + makerX stats + makerY stats) - (takerZ stats + takerF stats + makerZ stats + makerF stats)) `div` 2 /= overallOI stats then error "7 fail" else "check 7 pass")
+                 , ("Checker 8", if (takerX stats + takerZ stats) - (makerY stats + makerF stats ) /= 0                then error "check 8 fail" else "check 8 pass")
+                 , ("Checker 9", if (takerY stats + takerF stats)- (makerX stats + makerZ  stats ) /= 0                then error "check 9 fail" else "check 9 pass")
+                 -- | setting checker
+                 , ("Checker 10", if basecaseValueLongNew >= upperBoundLongNew then error "10 fail"       else "check 10 pass")
+                 , ("Checker 11", if basecaseValueLongClose >= upperBoundLongClose then error "11 fail"   else "check 11 pass")
+                 , ("Checker 12", if basecaseValueShortNew >= upperBoundShortNew then error "12 fail"     else "check 12 pass")
+                 , ("Checker 13", if basecaseValueShortClose >= upperBoundShortClose then error "13 fail" else "check 13 pass")
 
 
-  let checker1 = if (offX stats + offZ stats)  - (offY stats + offF stats) /= 0 then error "fail 1" else "check 1 pass"
-  let checker2 = if ((offX stats + offY stats) - (offZ stats + offF stats)) `div` 2 /= overallOI stats then error "fail 2" else "check 2 pass"
-  let checker3 = if ((takerX stats + takerZ stats)- (makerY stats + makerF stats)) /= 0 then error "fail 3" else "check 3 pass"
-  let checker4 = if ((takerY stats + takerF stats)- (makerX stats + makerZ stats)) /= 0 then error "fail 4" else "check 4 pass"
-  let checker5 = if (takerX stats + takerZ stats) /= buyVolume stats then error "5 fail" else "check 5 pass"
-  let checker6 = if (takerY stats + takerF stats) /= sellVolume stats then error "6 fail" else "check 6 pass"
-  let checker7 = if ((takerX stats + takerY stats + makerX stats + makerY stats) - (takerZ stats + takerF stats + makerZ stats + makerF stats)) `div` 2 /= overallOI stats then error "7 fail" else "check 7 pass"
-  let checker8 = if (takerX stats + takerZ stats) - (makerY stats + makerF stats ) /= 0 then error "check 8 fail" else "check 8 pass"
-  let checker9 = if (takerY stats + takerF stats)- (makerX stats + makerZ  stats ) /= 0 then error "check 9 fail" else "check 9 pass"
- -- add volume delta
+                 ]
+  putStrLn $ red "----------------------------"
+  putStrLn $ red "| Check        | Result    |"
+  putStrLn $ red "----------------------------"
+  mapM_ (\(name, result) -> putStrLn $ "| " ++ name ++ " | " ++ result ++ " |") checkers
+  putStrLn $ "----------------------------"
+  let statsList = [("Metric", "Value"),
+                  ("Taker X", show (takerX stats)),
+                  ("Taker Y", show (takerY stats)),
+                  ("Taker Z", show (takerZ stats)),
+                  ("Taker F", show (takerF stats)),
+                  ("Maker X", show (makerX stats)),
+                  ("Maker Y", show (makerY stats)),
+                  ("Maker Z", show (makerZ stats)),
+                  ("Maker F", show (makerF stats)),
+                  ("Overall Open Interest", show (overallOI stats)),
+                  ("Total Volume", show (totalVolume stats)),
+                  ("Buy Volume", show (buyVolume stats)),
+                  ("Sell Volume", show (sellVolume stats)),
+                  ("Count X", show overalxCount),
+                  ("Count Y", show overalyCount),
+                  ("Count Z", show overalzCount),
+                  ("Count F", show overalfCount),
+                  ("Taker Count", show takerCount),
+                  ("Maker Count", show makerCount),
+                  ("Long Ratio", show overalLongs ++ ", " ++ show roundedLongShortRatioL ++ "%"),
+                  ("Short Ratio", show overalShorts ++ ", " ++ show roundedLongShortRatioS ++ "%"),
+                  ("Value X", show (offX stats) ++ "$"),
+                  ("Value Y", show (offY stats) ++ "$"),
+                  ("Value Z", show (offZ stats) ++ "$"),
+                  ("Value F", show (offF stats) ++ "$")
+                ]
+  putStrLn $ red "+------------------------------------------------+---------------------------+"
+  putStrLn $ red "|                  Metric                        |               Value       |"
+  putStrLn $ red "+------------------------------------------------+---------------------------+"
+  mapM_ (\(metric, value) -> Text.Printf.printf "| %-50s | %25s |\n" (purple metric) value) statsList
+  putStrLn $ "+------------------------------------------------+---------------------------+"
+  putStrLn "\n"
+  
 
-  print checker1
-  print checker2
-  print checker3
-  print checker4
-  print checker5
-  print checker6
-  print checker7
-  print checker8
-  print checker9
 
 
-  print $ "x " ++ show  (takerX stats)
-  print $ "y " ++ show  (takerY stats)
-  print $ "z " ++ show  (takerZ stats)
-  print $ "f " ++ show  (takerF stats)
-  print $ "x' " ++ show (makerX stats)
-  print $ "y' " ++ show (makerY stats)
-  print $ "z' " ++ show (makerZ stats)
-  print $ "f' " ++ show (makerF stats)
---  print takerX
-  putStrLn "+--------------------------------+---------------------------+\n|                  Metric        |               Value         |\n+--------------------------------+---------------------------+"
-  Text.Printf.printf "| 💹 %s  | %13s |\n" (purple "Overall Open Interest               ") (show  (overallOI stats))
-  Text.Printf.printf "| 🔄 %s  | %13s |\n" (blue "Total Volume                        ") (show (totalVolume stats))
-  Text.Printf.printf "| 🔼 %s  | %13s |\n" (green "- Buy Volume                        ") (show (buyVolume stats))
-  Text.Printf.printf "| 🔽 %s  | %13s |\n" (red "- Sell Volume                       ") (show (sellVolume stats))
-  putStrLn "|----------------------------------------------------------"
-  Text.Printf.printf "| 🅰️  %s  | %13s |\n" (red "Count X                             ") (show overalxCount)
-  Text.Printf.printf "| 🅱️  %s    | %13s |\n" (red "Count Y                           ") (show overalyCount)
-  Text.Printf.printf "| 🅾️  %s  | %13s |\n" (red "Count Z                             ") (show overalzCount)
-  Text.Printf.printf "| 🆎 %s  | %13s |\n" (red "Count F                             ") (show overalfCount)
-  Text.Printf.printf "  👑 %s   %13s \n" (red " taker count ") (show takerCount)
-  Text.Printf.printf "  👑 %s   %13s \n" (red " maker count ") (show makerCount)
-  Text.Printf.printf "| ∑ %s  | %13s |\n" (red "ratio prediction") (show lsprediction)
-  Text.Printf.printf "| ∑ %s  | %13s |\n" (red "long ratio                           ") (show overalLongs ++ ", " ++ show roundedLongShortRatioL ++ "%")
-  Text.Printf.printf "| ∑ %s| %13s |\n" (red "short ratio                            ") (show overalShorts ++ "," ++ show roundedLongShortRatioS ++ "%")
-  putStrLn "|-------------------------------------------------------"
-  Text.Printf.printf "| 💲 %s   | %12s$ |\n" (orange "Value X                            ") (show (offX stats))
-  Text.Printf.printf "| 💲 %s  | %12s$ |\n" (orange "Value Y                             ") (show (offY stats))
-  Text.Printf.printf "| 💲 %s  | %12s$ |\n" (orange "Value Z                             ") (show (offZ stats))
-  Text.Printf.printf "| 💲 %s   | %12s$ |\n" (orange "Value F                            ") (show (offF stats))
-  putStrLn "+--------------------end-of-5-minute-time-frame-run------------------------------+\n🍺🍺🍺🍺🍺🍺🍺🍺🍺🍺🍺🍺🍺🍺"
-  -- add delta of those other deltas
+-- | final IO ()
+printFinal :: Stats -> IO ()
+printFinal aggregatedStats = do
+  putStrLn $ unlines
+    [ " "
+     , ""
+     , ""
+     , ""
+     , ""
+     , "   ████████╗██╗  ██╗███████╗    ███████╗███╗   ██╗██████╗      "
+     , "   ╚══██╔══╝██║  ██║██╔════╝    ██╔════╝████╗  ██║██╔══██╗     "
+     , "      ██║   ███████║█████╗      █████╗  ██╔██╗ ██║██║  ██║     "
+     , "      ██║   ██╔══██║██╔══╝      ██╔══╝  ██║╚██╗██║██║  ██║     "
+     , "      ██║   ██║  ██║███████╗    ███████╗██║ ╚████║██████╔╝     "
+     , "      ╚═╝   ╚═╝  ╚═╝╚══════╝    ╚══════╝╚═╝  ╚═══╝╚═════╝      "
+     , " "
+     , ""
+     , ""
+     , ""
+     , ""
+     , ""
+     , ""
+     , ""
+     , "   █████╗  ██████╗  ██████╗ ██████╗ ███████╗ ██████╗  █████╗ ████████╗███████╗██████╗  "
+     , "  ██╔══██╗██╔════╝ ██╔════╝ ██╔══██╗██╔════╝██╔════╝ ██╔══██╗╚══██╔══╝██╔════╝██╔══██╗ "
+     , "  ███████║██║  ███╗██║  ███╗██████╔╝█████╗  ██║  ███╗███████║   ██║   █████╗  ██║  ██║ "
+     , "  ██╔══██║██║   ██║██║   ██║██╔══██╗██╔══╝  ██║   ██║██╔══██║   ██║   ██╔══╝  ██║  ██║ "
+     , "  ██║  ██║╚██████╔╝╚██████╔╝██║  ██║███████╗╚██████╔╝██║  ██║   ██║   ███████╗██████╔╝ "
+     , "  ╚═╝  ╚═╝ ╚═════╝  ╚═════╝ ╚═╝  ╚═╝╚══════╝ ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚══════╝╚═════╝  "
+     , "          ███████╗████████╗ █████╗ ████████╗███████╗                                   "
+     , "          ██╔════╝╚══██╔══╝██╔══██╗╚══██╔══╝██╔════╝                                   "
+     , "          ███████╗   ██║   ███████║   ██║   ███████╗                                   "
+     , "          ╚════██║   ██║   ██╔══██║   ██║   ╚════██║                                   "
+     , "          ███████║   ██║   ██║  ██║   ██║   ███████║                                   "
+     , "          ╚══════╝   ╚═╝   ╚═╝  ╚═╝   ╚═╝   ╚══════╝                                   "
+     , ""
+     , ""
+    ]
+  printStats aggregatedStats
+  putStrLn $ unlines
+      [ " "
+      , ""
+      , ""
+      , ""
+      , ""
+      , ""
+      , ""
+      , "  ██████╗ ██████╗ ██████╗ ███████╗██████╗ ██████╗  ██████╗  ██████╗ ██╗  ██╗ "
+      , " ██╔═══██╗██╔══██╗██╔══██╗██╔════╝██╔══██╗██╔══██╗██╔═══██╗██╔═══██╗██║ ██╔╝ "
+      , " ██║   ██║██████╔╝██║  ██║█████╗  ██████╔╝██████╔╝██║   ██║██║   ██║█████╔╝  "
+      , " ██║   ██║██╔══██╗██║  ██║██╔══╝  ██╔══██╗██╔══██╗██║   ██║██║   ██║██╔═██╗  "
+      , " ╚██████╔╝██║  ██║██████╔╝███████╗██║  ██║██████╔╝╚██████╔╝╚██████╔╝██║  ██╗ "
+      , "  ╚═════╝ ╚═╝  ╚═╝╚═════╝ ╚══════╝╚═╝  ╚═╝╚═════╝  ╚═════╝  ╚═════╝ ╚═╝  ╚═╝ "
+      , ""
+      , ""
+      , ""
+      , ""
+      , ""
+      , ""
+      , ""
+      , "                     ██╗███╗   ██╗███████╗ ██████╗     "
+      , "                     ██║████╗  ██║██╔════╝██╔═══██╗    "
+      , "                     ██║██╔██╗ ██║█████╗  ██║   ██║    "
+      , "                     ██║██║╚██╗██║██╔══╝  ██║   ██║    "
+      , "                     ██║██║ ╚████║██║     ╚██████╔╝    "
+      , "                     ╚═╝╚═╝  ╚═══╝╚═╝      ╚═════╝     "
+      , ""
+      , ""
+      , ""
+      ]
