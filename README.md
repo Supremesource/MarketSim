@@ -12,19 +12,18 @@ prototype of a market simulation with transparent data
 needs to get final polish, in terms of:
 
 - more dynamic spread options
-- better psychology
-- add run tempeates/ 
-,random run(dynamic)
-,downtrend
-,uptrend 
-- fix open interest 
-- add writes into external files
-‹- will need to add triples instead of normal tuples and different evaluation, processing in the code.
+- better psychology ** optional **
+- make code more readable
+- add liquidity factors
+-- such as liquidations, leverage etc.
 
+
+- generaly optimize
 - optimize performance (now there is too much unnecessary overwriting)
 
 # User manual
 ! Do not forget to specify runSettings in /Settings !
 
+have fun!
 ![Alt Text](https://www.thisiscolossal.com/wp-content/uploads/2014/03/120430.gif)
 
