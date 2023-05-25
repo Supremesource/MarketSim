@@ -8,7 +8,7 @@ module Colours
  )
 where
 
--- colours
+-- | colours
 color :: Int -> String -> String
 color code text = "\x1b[" ++ show code ++ "m" ++ text ++ "\x1b[0m"
 red :: String -> String

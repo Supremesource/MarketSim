@@ -14,87 +14,83 @@ import           System.Process              (callCommand)
 import           System.Random               (Random (randomRs))
 
 
+
 -- | internal libraries
 import           Colours
-import           DataTypes                   (Stats (buyVolume, sellVolume, overallOI), VolumeSide)
-import           Filepaths
+import           DataTypes                   
+import           Filepaths                   
 
-import           InputOutput                 (printPositionStats, printStats)
-import           Lib                         (addsupto100, firstPartList,
-                                              infiniteList, infiniteListDown,
-                                              isFileEmpty, newRunSettings,
-                                              printCustomRandomList,
-                                              printRandomList', randomGen,
-                                              randomListwalls, randomlyInsert,
-                                              readBook, removeEmptyLines,
-                                              secondPartList,
-                                              startingPointFromFile, takeamount,
-                                              taketowalls, volumechecker,
-                                              zipToTuples, positionamountcheck)
+import           InputOutput                
+                     
 
-import           RunSettings
-import           Statistics                  (generateRandomPosition)
-import           Util                        (aggregateStats, initStats,
-                                              recursiveList)
+import           RunSettings                 
+import           Statistics                 
+import           Util                        
+import            Lib 
 
 
 
-
+-- | loop initializing the main processes
 mainLoop :: Stats -> Int -> IO [(Int, VolumeSide)]
 mainLoop aggregatedStats remainingRuns = do
       if remainingRuns > 0
         then do
-          positions <- replicateM numPositions generateRandomPosition
+            
+          -- | "i" is an index showing the number of that particular position  
+          -- | IO ()
+          putStrLn   "+------------+"
+          putStrLn $ "|RUN ID   " ++ show remainingRuns
+          putStrLn   "+------------+"
+          -- | initilizing the number of positions
+          positions <- forM [1..numPositions] $ \i -> do
+            generateRandomPosition (processTempleateRun i)
+            
+
+          -- | generating the stats for the positions
           let newAggregatedStats = foldl (flip aggregateStats) aggregatedStats positions
-          volumesAndSides <- Control.Monad.forM (zip [1..] positions) $ \(i, pos) -> do
+          -- | initilizing the positioning
+          volumesAndSides <- forM (zip [1..] positions) $ \(i, pos) -> do
+            
             (volume, side) <- printPositionStats i pos
-            print $ "TESTING :" ++ show volume
-            print side
-
-
             return (volume, side)
-
-
-
-          putStrLn "--------"
+         
+          -- | IO ()
+          putStrLn   "+------------+"
+          putStrLn $ "|END OF RUN " ++ show remainingRuns
+          putStrLn   "+------------+\n\n"
+          putStrLn   "+------------------------------------+"
+          putStrLn $ "|RUN: " ++ show remainingRuns ++ " CONTENTS & aggregatedStats" ++ "|"
+          putStrLn   "+------------------------------------+\n"
           printStats newAggregatedStats
+          -- | initilizing the counter
           nextVolumesAndSides <- mainLoop newAggregatedStats (remainingRuns - 1)
-
-
           return (volumesAndSides ++ nextVolumesAndSides)
+
         else do
+          -- | if the number of runs is reached
           printFinal aggregatedStats
           return []
 
-
     -- TODO
-    -- |
-    -- return the list of volumes and sides , right here not after
-    -- fix the maker tuple
-    -- add majority of the outputs into the data files & display in charts using elm/ javascript/ https/ css
+    -- |  display in charts using elm/ javascript/ https/ css
 
-
-
-printFinal :: Stats -> IO ()
-printFinal aggregatedStats = do
-  putStrLn "\n\n\n\n\n\n-------------\n\n\n you have reached the end of the generator \n\n\n📊📊AGGREGATED STATS📊📊: "
-  printStats aggregatedStats
 
 main :: IO ()
 main = do
-
-
-  -- CHECKING IF FILES ARE EMPTY
+  -- | IO ()
+  -- | clening log file
+  writeFile logPath ""
+  -- | CHECKING IF FILES ARE EMPTY
   isBidEmpty  <- isFileEmpty bidBookPath
   isAskEmpty  <- isFileEmpty askBookPath
+ -- | optimizing the output to be formated in lines
   hSetBuffering stdout LineBuffering
-  -- WIPING RUN == TRUE
-  -- when wiping run is running the whole code is not evaluated
-  -- wiping all of the text files, and changing the starting point
+-- | Asking user to proceed
   putStrLn $ "Proceed (_ / n)" ++ red "\n\n * for run-restore (w)  *"
   proceed <- getLine
-
-
+  -- | WIPING RUN == TRUE
+  -- | When wiping run is running the whole code is not evaluated
+  -- | Wiping all of the text files, and changing the starting point
   if proceed == "W" || proceed == "w"
     then do
       let sayStart = show wipingStartingValue
@@ -104,116 +100,84 @@ main = do
       putStrLn $ orange "\n * you can adjsut starting value in the 'RunSetting' * "
       newRunSettings logPath bidBookPath askBookPath pricePath newLongsPath newShortsPath exitLongsPath exitShortsPath bidAskRPath
                 bidToAskRPath buyVolumePath sellVolumePath volumePath openInterestPath  wipingStartingValue
-
     else if proceed == "n" || proceed == "N"
-
         then  error (red "stopping program")
-
     else do
-      -- checking settings, catching potential bugs in the setting specified by user
-
-      addsupto100 xProbabilityTaker yProbabilityTaker zProbabilityTaker fProbabilityTaker
-      addsupto100 xProbabilityMaker yProbabilityMaker zProbabilityMaker fProbabilityMaker
+-- | checking settings, catching potential bugs in the setting specified by user
+-- | if the settings are not correct, the program will not run
       volumechecker minvolume basecaseValueLongNew basecaseValueShortNew basecaseValueLongClose basecaseValueShortClose upperBoundLongNew upperBoundShortNew upperBoundLongClose upperBoundShortClose
       positionamountcheck minvolume maxmakers
-
-
--- | random generator:
+-- | random generators:
       gen1
         <- randomGen
       gen2
         <- randomGen
-
-      -- the price we are starting at
-
+-- ! ORDERBOOK
+-- | the price we are starting at
       startingPoint <- startingPointFromFile
--- making ask move upside
+-- | orderbook
+-- | making ask move upside
       let upMoves = take takeamountASK $ randomRs (minUpMove, maxUpMove) gen1
--- making bid move downside
+-- | making bid move downside
       let downMoves =
             take takeamountBID $ randomRs (minDownMove, maxDownMove) gen2
-
-      -- liquidity definition for ask, the limit setup gradient
+-- | liquidity  for ask, the limit setup gradient
+-- | grid of the orderbook
       let setupASK = take takeamountASK (tail (infiniteList startingPoint gen1 upMoves)) `using` parList rseq
-
-      -- liquidity definition for ask, the limit setup gradient
+ -- | liquidity for ask, the limit setup gradient
       let setupBID = take takeamountBID (tail (infiniteListDown startingPoint gen2 downMoves)) `using` parList rseq
-
-      -- generating prices for ASKS $$ amount
+-- | generating prices for ASKS $$ amount
       amountASK  <- printCustomRandomList takeamountASK
-      -- generating prices for BIDS $$ amount
+-- | generating prices for BIDS $$ amount
       amountBID <- printRandomList' takeamountBID
-
+-- | adding into a list
       let usdamountASK = amountASK  :: [Int] -- // convertion into []
       let usdamountBID  = amountBID :: [Int] -- // converting into []
-
-      -- !! WALLS:
-      -- \| Price walls (limit)
-      -- generate the size of limit walls (in terms of it's occurrence)
+-- | Price walls (limit)
+-- | generate the size of limit walls (in terms of it's occurrence)
       let totakefromwall  =  taketowalls $ 2 * takeamount
-
-      -- generating walls, this is an infinite list
+-- | generating walls, this is an infinite list
       pricewalls <- randomListwalls
       let pricewalllist = take totakefromwall pricewalls
-
-      -- first part of the list above going to bids
+-- | first part of the list above going to bids
       let pricesBids1 = firstPartList pricewalllist
-
-      -- second part going to asks
+-- | second part going to asks
       let pricesAsk1  = secondPartList pricewalllist
-
-      -- full wall build, the list is 2* as long tho functions below will make it usable for bids and asks
+-- | full wall build, the list is 2* as long tho functions below will make it usable for bids and asks
       fullwallsASK <- randomlyInsert pricesAsk1 (take takeamountASK usdamountASK)
-
-      -- full wall build, the list is 2* as long tho functions below will make it usable for bids and asks
+-- | full wall build, the list is 2* as long tho functions below will make it usable for bids and asks
       fullwallsBIDS <- randomlyInsert pricesBids1 (take takeamountBID usdamountBID)
-
-      -- !! ADDING DATA TOGETHER
-      -- \| adding orderbook together & generating additional data
-      -- zipping so that we have orderwalls in  -> orderbook is built
-      -- zipping prices with $ AMOUNT
+-- | ADDING DATA TOGETHER
+-- | adding orderbook together & generating additional data
+-- |zipping so that we have orderwalls in  -> orderbook is built
+-- | zipping prices with $ AMOUNT
       let orderbook_ask = zipToTuples setupASK fullwallsASK
-
       let orderbook_bid  = zipToTuples setupBID fullwallsBIDS
-
-      -- the orderbook which should change the bid price
+-- | the orderbook path which should change the bid price
       fileBidBook <- readBook bidBookPath
       fileAskBook <- readBook askBookPath
-
+-- | orderbook logc:
       let bidBook =
             if isBidEmpty
               then orderbook_bid
               else fileBidBook
-      -- the orderbook which should change the ask price
-
-
+-- |  ask
       let askBook =
             if isAskEmpty
               then orderbook_ask
               else fileAskBook
-
+-- ! ADDING STATS FROM 'MAINLOOP' TOGETHER
 -- | price change
       volumesAndSides <- mainLoop initStats numberOfRuns
- -- putStrLn "\nVolumes and Sides:"
-  -- Store the result in a variable before printing
+-- | Store the volume result
       let listofvolumes = volumesAndSides
-
-  -- Print the elements in a formatted way
---  forM_ result $ \(volume, side) -> do
---    putStrLn $ "Volume: " ++ show volume ++ ", Side: " ++ show side
       (finalBidBook, finalAskBook) <- recursiveList listofvolumes bidBook askBook gen1 gen2 fullwallsASK fullwallsBIDS startingPoint totakefromwall
-
-          -- ... do something with finalBidBook and finalAskBook, e.g., print them out ...
-
--- final polish
+-- | formating price document
+      
       removeEmptyLines pricePath
-      
-      
-      mapM_ print listofvolumes
-      print $ length listofvolumes
-
-
-      -- calling python script (graph)
-
-
+-- | optional warnings
+      addsupto100 xProbabilityTaker yProbabilityTaker zProbabilityTaker fProbabilityTaker
+      addsupto100 xProbabilityMaker yProbabilityMaker zProbabilityMaker fProbabilityMaker
+-- calling python script (graph)
+-- TODO make this way more effective
       Control.Monad.when plotCharts $ callCommand "python App/PlotPrices.py"

@@ -29,3 +29,5 @@ An interesting conclusion is that there are more limit orders than market orders
 
 And thanks to that: long short ratio is going to change with volume, if there are more market (taker) orders taking place
 than a divergence between l/s ratio and CVD can take place, indicating taker fomo or poorly structured order book, which could be a sign of a potential reversal
+
+- twap is only useful to watch with cvd, or even better directional commutative volume, price is uselles, thanks to the orderbook

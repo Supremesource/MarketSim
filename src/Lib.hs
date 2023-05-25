@@ -21,13 +21,11 @@ import           Text.Read             (readMaybe)
 
 
 -- | internal libraries
-import           DataTypes             (MakerTuple, TakerTuple)
-import           Filepaths
-import           RunSettings           (maxDecimal, maximum', minimum',
-                                        orderwalllikelyhood, takeamountASK,
-                                        takeamountBID, wallAmplifier, maxmakers)
-import           Statistics            (customRandomRs)
 import           Colours               (red)
+import           DataTypes
+import           Filepaths
+import           RunSettings
+import           Statistics            (customRandomRs)
 
 
 
@@ -299,13 +297,13 @@ interestorPlus :: TakerTuple -> MakerTuple -> Int
 interestorPlus [] _ = 0
 interestorPlus _ [] = 0
 interestorPlus ((n1, s1):takers) ((n2, s2):makers)
-    | n1 == n2  = if s1 == "x" && s2 == "y" || s1 == "y" && s2 == "x" 
+    | n1 == n2  = if s1 == "x" && s2 == "y" || s1 == "y" && s2 == "x"
                   then n1 + interestorPlus takers makers
                   else interestorPlus takers makers
-    | n1 < n2   = if s1 == "x" && s2 == "y" || s1 == "y" && s2 == "x" 
+    | n1 < n2   = if s1 == "x" && s2 == "y" || s1 == "y" && s2 == "x"
                   then n1 + interestorPlus takers ((n2-n1, s2):makers)
                   else interestorPlus takers ((n2-n1, s2):makers)
-    | otherwise = if s1 == "x" && s2 == "y" || s1 == "y" && s2 == "x" 
+    | otherwise = if s1 == "x" && s2 == "y" || s1 == "y" && s2 == "x"
                   then n2 + interestorPlus ((n1-n2, s1):takers) makers
                   else interestorPlus ((n1-n2, s1):takers) makers
 
@@ -313,7 +311,7 @@ interestorPlus ((n1, s1):takers) ((n2, s2):makers)
 -- | helper function for probability settings (/% checker)
 addsupto100 :: Int -> Int -> Int -> Int -> IO ()
 addsupto100 fst snd thr for | fst + snd + thr + for == 100 = return ()
-                            | otherwise = putStr (red "🚨 Attention probabilites in settings do not add up to 100% 🚨")
+                            | otherwise = putStr (red "\nWarning probabilites in settings do not add up to 100%")
 
 
 roundToTwoDecimals :: (RealFrac a, Fractional b) => a -> b
@@ -334,3 +332,53 @@ volumechecker minimum a b c d e f g h |    a < minimum
 positionamountcheck :: Int -> Int -> IO ()
 positionamountcheck a b | a < (b * 2) = error (red "\n\nPosition amount must be greater than 2 times the minimum volume specified in settings\n\n(you can fix this in the settings, 'catching potential errors)")
                         | otherwise = return ()
+
+
+runPercentage :: Int -> [Int]
+runPercentage n = [round (fromIntegral n * x) | x <- [0.1,0.2..1.0]]
+
+processlist :: [Options] -> [Int] -> Int -> Options
+processlist (o:os) (p:ps) x | x <= p = o
+                            | otherwise = processlist os ps x
+
+
+optionProcessor :: Options -> Int -> Int
+optionProcessor a i = case a of
+  UP  -> templeaterunBUY i a
+  UUP -> templeaterunBUY i a
+  _   -> templeaterunSELL i a
+
+templeaterunBUY :: Int -> Options -> Int
+templeaterunBUY a op = case op of
+  UP   -> a * 2  -- increasing b vol by 200%
+  UUP  -> a * 4  -- increasing b vol by 400%
+  DW   -> a      -- doing nothing to downtrend
+  DWW  -> a      -- extreme downtrend doing nothing
+  CN   -> a      -- consolidation doing nothing
+  _    -> error "your templeate pattern matching did not go through"
+
+templeaterunSELL :: Int -> Options -> Int
+templeaterunSELL a op = case op of
+  UP   -> a      -- nothing
+  UUP  -> a      -- nothing
+  DW   -> a * 2  -- increasing s vol by 200%
+  DWW  -> a * 4  -- increasing s vol by 400%
+  CN   -> a      -- consolidation doing nothing
+  _    -> error "your templeate pattern matching did not go through"
+  
+-- | i == position index
+processTempleateRun :: Int -> [Int]
+processTempleateRun i = do
+  let process = runPercentage numPositions
+  let currentO = processlist runlist process i
+  let ifprocess = currentO == UP || currentO == UUP
+  let templeatedprobability = if ifprocess then optionProcessor currentO xProbabilityTaker else xProbabilityTaker
+  let templeatedprobabilityY = if ifprocess then yProbabilityTaker else optionProcessor currentO yProbabilityTaker
+  let templeatedprobabilityZ = if ifprocess then optionProcessor currentO zProbabilityTaker else zProbabilityTaker
+  let templeatedprobabilityF = if ifprocess then fProbabilityTaker else optionProcessor currentO fProbabilityTaker
+  [templeatedprobability,templeatedprobabilityY,templeatedprobabilityZ,templeatedprobabilityF]
+  
+
+
+
+
