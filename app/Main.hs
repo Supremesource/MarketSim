@@ -17,16 +17,18 @@ import           System.Random               (Random (randomRs))
 
 -- | internal libraries
 import           Colours
-import           DataTypes                   
-import           Filepaths                   
+import           DataTypes
+import           Filepaths
 
-import           InputOutput                
-                     
+import           InputOutput
 
-import           RunSettings                 
-import           Statistics                 
-import           Util                        
-import            Lib 
+
+import           RunSettings
+import           Statistics
+import           Util
+import            Lib
+
+
 
 
 
@@ -35,7 +37,7 @@ mainLoop :: Stats -> Int -> IO [(Int, VolumeSide)]
 mainLoop aggregatedStats remainingRuns = do
       if remainingRuns > 0
         then do
-            
+
           -- | "i" is an index showing the number of that particular position  
           -- | IO ()
           putStrLn   "+------------+"
@@ -43,17 +45,23 @@ mainLoop aggregatedStats remainingRuns = do
           putStrLn   "+------------+"
           -- | initilizing the number of positions
           positions <- forM [1..numPositions] $ \i -> do
-            generateRandomPosition (processTempleateRun i)
+          -- | generating random number for the template
+            randomToTempleate <- rndA 
+         
+            -- | generating the position
+            generateRandomPosition (processTempleateRun i randomToTempleate)
             
-
+           
           -- | generating the stats for the positions
           let newAggregatedStats = foldl (flip aggregateStats) aggregatedStats positions
           -- | initilizing the positioning
           volumesAndSides <- forM (zip [1..] positions) $ \(i, pos) -> do
+           
+         
             
             (volume, side) <- printPositionStats i pos
             return (volume, side)
-         
+
           -- | IO ()
           putStrLn   "+------------+"
           putStrLn $ "|END OF RUN " ++ show remainingRuns
@@ -161,6 +169,7 @@ main = do
             if isBidEmpty
               then orderbook_bid
               else fileBidBook
+
 -- |  ask
       let askBook =
             if isAskEmpty
@@ -173,11 +182,13 @@ main = do
       let listofvolumes = volumesAndSides
       (finalBidBook, finalAskBook) <- recursiveList listofvolumes bidBook askBook gen1 gen2 fullwallsASK fullwallsBIDS startingPoint totakefromwall
 -- | formating price document
-      
+
       removeEmptyLines pricePath
 -- | optional warnings
       addsupto100 xProbabilityTaker yProbabilityTaker zProbabilityTaker fProbabilityTaker
       addsupto100 xProbabilityMaker yProbabilityMaker zProbabilityMaker fProbabilityMaker
+
+
 -- calling python script (graph)
 -- TODO make this way more effective
       Control.Monad.when plotCharts $ callCommand "python App/PlotPrices.py"

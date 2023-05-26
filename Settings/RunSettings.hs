@@ -1,14 +1,7 @@
-module RunSettings
-
-
-
-
-where
+module RunSettings where
 
 import           DataTypes (Options (..))
-
-
-
+import            System.Random
 
 
 -- !    ⬇️ FILL IN ⬇️       :
@@ -29,12 +22,12 @@ maxtakers = round (fromIntegral maxmakers * (0.95 :: Double))
 
 --〇
 plotCharts :: Bool
-plotCharts = True -- ** fill in / plot charts (True/False)
+plotCharts = False -- ** fill in / plot charts (True/False)
 
 --〇
 -- | number of runs
 numberOfRuns :: Int
-numberOfRuns = 10 -- Put your actual number of runs here
+numberOfRuns = 1 -- Put your actual number of runs here
 
 --〇
 -- | number of positions
@@ -52,12 +45,12 @@ wipingStartingValue = 1000 -- ** fill in / starting value in wiping run
 --〇
 -- ? Size of bid orderbook
 takeamountBID :: Int
-takeamountBID = 1000 -- ** fill in / size of bid order book
+takeamountBID = 2000 -- ** fill in / size of bid order book
 
 --〇
 -- ? Size of ask orderbook
 takeamountASK :: Int
-takeamountASK = 1000 -- ** fill in / size of ask book
+takeamountASK = 2000 -- ** fill in / size of ask book
 
 --〇
 -- ! LIQUIDITY SETTINGS:
@@ -81,7 +74,6 @@ minUpMove :: Double
 minUpMove = 0.1
 maxUpMove :: Double
 maxUpMove = 0.5
-
 
 --〇
 -- ? Minimum & Maximum DOWN move in the orderbook structure
@@ -157,13 +149,11 @@ basecaseValueLongClose = 1000000
 upperBoundLongClose :: Int
 upperBoundLongClose = 2000000
 
-
-
 -- ? Position-Status occurrence:
 -- | in %
 -- | note that setting must add up to 100 %
 
--- 〇 19 Taker Probability
+-- 〇  Taker Probability
 -- | BUY VOLUME
 xProbabilityTaker :: Int
 xProbabilityTaker = 30
@@ -178,7 +168,7 @@ zProbabilityTaker = 30
 fProbabilityTaker :: Int
 fProbabilityTaker = 30
 
--- 〇 20 Maker Probability
+-- 〇 Maker Probability
 -- | BUY VOLUME
 xProbabilityMaker :: Int
 xProbabilityMaker = 30
@@ -193,8 +183,27 @@ zProbabilityMaker = 30
 fProbabilityMaker :: Int
 fProbabilityMaker = 30
 
+
+rndA :: IO Options
+rndA = do
+  let options = [UP, UUP,CN, DWW, DW] 
+  idx <- randomRIO (0, length options - 1)
+  return (options !! idx)
+
+-- ! CUSTOM RUN SETTINGS:
+
 --〇
 -- | how run is going to be structured
+-- | you can choose from the following options:
+-- | RANDOM, UP, UUP, CN, DWW, DW
+-- | RANDOM = random
+-- | UP = up
+-- | UUP = up up
+-- | CN = constant / consolidation
+-- | DWW = down down
+-- | DW = down
+
+-- ? for more info you can check the LIB.hs file
 runlist :: [Options]
-runlist = [UP , UUP , CN  , CN  , CN  , DWW , DW  , UUP , DW  , UUP  ]
+runlist = [RANDOM , RANDOM , RANDOM , UP  , RANDOM  , RANDOM , RANDOM  , RANDOM , RANDOM  , RANDOM  ]
       -- [0-10,10-20,20-30,30-40,40-50,50-60,60-70,70-80,80-90,90-100]
