@@ -333,13 +333,22 @@ positionamountcheck :: Int -> Int -> IO ()
 positionamountcheck a b | a < (b * 2) = error (red "\n\nPosition amount must be greater than 2 times the minimum volume specified in settings\n\n(you can fix this in the settings, 'catching potential errors)")
                         | otherwise = return ()
 
+adjustedlenght :: [Options] -> Double
+adjustedlenght x = fromIntegral (length x) / 10
 
-runPercentage :: Int -> [Int]
-runPercentage n = [round (fromIntegral n * x) | x <- [0.1,0.2..1.0]]
+runPercentage :: Int -> Double -> [Int]
+runPercentage n listL = [round (fromIntegral n * x) | x <- [0.1,0.2..listL]] -- TODO . fix this part (hardcoded at this point)
+
 
 processlist :: [Options] -> [Int] -> Int -> Options
 processlist (o:os) (p:ps) x | x <= p = o
                             | otherwise = processlist os ps x
+
+
+
+randomhandler :: Options -> Options ->  Options
+randomhandler o rnd = if o == RANDOM then rnd else  o 
+
 
 
 optionProcessor :: Options -> Int -> Int
@@ -348,37 +357,40 @@ optionProcessor a i = case a of
   UUP -> templeaterunBUY i a
   _   -> templeaterunSELL i a
 
+
+
 templeaterunBUY :: Int -> Options -> Int
 templeaterunBUY a op = case op of
-  UP   -> a * 2  -- increasing b vol by 200%
-  UUP  -> a * 4  -- increasing b vol by 400%
-  DW   -> a      -- doing nothing to downtrend
-  DWW  -> a      -- extreme downtrend doing nothing
-  CN   -> a      -- consolidation doing nothing
-  _    -> error "your templeate pattern matching did not go through"
+  UP       -> a * 2  -- increasing b vol by 200%
+  UUP      -> a * 4  -- increasing b vol by 400%
+  DW       -> a      -- doing nothing to downtrend
+  DWW      -> a      -- extreme downtrend doing nothing
+  CN       -> a 
+  _        -> error "your templeate pattern matching did not go through"
 
 templeaterunSELL :: Int -> Options -> Int
 templeaterunSELL a op = case op of
-  UP   -> a      -- nothing
-  UUP  -> a      -- nothing
-  DW   -> a * 2  -- increasing s vol by 200%
-  DWW  -> a * 4  -- increasing s vol by 400%
-  CN   -> a      -- consolidation doing nothing
-  _    -> error "your templeate pattern matching did not go through"
+  UP     -> a      -- nothing
+  UUP    -> a      -- nothing
+  DW     -> a * 2  -- increasing s vol by 200%
+  DWW    -> a * 4  -- increasing s vol by 400%
+  CN     -> a  
+  _      -> error "your templeate pattern matching did not go through"
   
+
 -- | i == position index
-processTempleateRun :: Int -> [Int]
-processTempleateRun i = do
-  let process = runPercentage numPositions
-  let currentO = processlist runlist process i
-  let ifprocess = currentO == UP || currentO == UUP
-  let templeatedprobability = if ifprocess then optionProcessor currentO xProbabilityTaker else xProbabilityTaker
+processTempleateRun :: Int -> Options -> [Int]
+processTempleateRun i o       = do
+  let process                = runPercentage numPositions (adjustedlenght runlist)
+  let currentO'               = processlist runlist process i
+
+  let currentO = if currentO' == RANDOM then o else currentO'
+
+  let ifprocess              = currentO   == UP || currentO == UUP
+  let templeatedprobability  = if ifprocess then optionProcessor currentO xProbabilityTaker else xProbabilityTaker
   let templeatedprobabilityY = if ifprocess then yProbabilityTaker else optionProcessor currentO yProbabilityTaker
   let templeatedprobabilityZ = if ifprocess then optionProcessor currentO zProbabilityTaker else zProbabilityTaker
   let templeatedprobabilityF = if ifprocess then fProbabilityTaker else optionProcessor currentO fProbabilityTaker
   [templeatedprobability,templeatedprobabilityY,templeatedprobabilityZ,templeatedprobabilityF]
   
-
-
-
 

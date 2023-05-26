@@ -105,6 +105,7 @@ generateRandomPosition [xProb,yProb, zProb, fProb]  = do
 
   taker' <- weightedRandom takeROptions
 
+  
   let takerProbab  
         | snd taker' == "x" = [(yProb, (fst taker', "x")), (zProb, (fst taker', "z"))]
         | snd taker' == "y" = [(xProb, (fst taker', "y")), (fProb, (fst taker', "f"))]

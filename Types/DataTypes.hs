@@ -52,5 +52,6 @@ data Options =
               UUP | 
               DW  | 
               DWW | 
-              CN 
-              deriving (Eq, Show)
+              CN  |
+              RANDOM
+              deriving  (Eq, Show, Enum, Bounded)
