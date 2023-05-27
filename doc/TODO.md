@@ -1,5 +1,7 @@
 - add the following informations to file writes:
 
+- CATCH POTENTIAL NEGATIVE VALUES IN TUPLES MAKER AND TAKER
+
 - BID ASK R
 - BID TO ASKS R
 - VOLUME OVERAL
