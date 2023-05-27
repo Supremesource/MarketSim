@@ -1,7 +1,7 @@
 {-# OPTIONS_GHC -Wno-unused-local-binds #-}
 {-# OPTIONS_GHC -Wno-name-shadowing #-}
 module Util where
-
+-- | module of utility funcitons
 
 -- | importing external libraries
 import           System.Random (Random (randomRs), RandomGen (split), StdGen)
@@ -19,6 +19,8 @@ import           Lib           (countElements, infiniteList', infiniteListDown',
 import           RunSettings   (largerSpread, maxDownMove, maxUpMove,
                                 minDownMove, minUpMove, takeamountASK,
                                 takeamountBID)
+
+
 -- | processing the orderbook with a volume
 recursiveList :: [(Int, VolumeSide)] -- the list of volume amounts and volume sides
               -> [(Double,Int)] -- bidBook
@@ -43,6 +45,8 @@ recursiveList (x:xs) bidBook askBook gen1 gen2 fullwallsASK fullwallsBIDS starti
     orderbookLoop :: (Int, VolumeSide) -> [(Double, Int)]
                   -> [(Double, Int)] -> StdGen -> StdGen -> [Int] -> [Int] -> Double -> Int -> IO ([(Double, Int)], [(Double, Int)])
     orderbookLoop (volumeAmount, vSide) bidBook askBook gen1 gen2 fullwallsASK fullwallsBIDS startingPoint totakefromwall = do
+
+            -- | local variables
             let volumeBID = if vSide == Sell then volumeAmount else 0
             let volumeASK = if vSide == Buy then volumeAmount else 0
             let bidUpdateBook = orderbookChange bidBook volumeBID
@@ -65,63 +69,58 @@ recursiveList (x:xs) bidBook askBook gen1 gen2 fullwallsASK fullwallsBIDS starti
             let divNumber :: Double = 1
             let listASK :: [(Double, Int)] = zipToTuples askSetupInsert (map (round . (/ divNumber) . fromIntegral) pricesASK)
             let listBID :: [(Double, Int)] = zipToTuples bidSetupInsert (map (round . (/ divNumber) . fromIntegral) pricesBID)
-            let currentbookASK :: [(Double, Int)] = if vSide ==  Buy then askUpdateBook
-                        else listASK ++ askBook
-            let currentbookBID :: [(Double, Int)] = if vSide ==  Sell then bidUpdateBook else listBID ++ bidBook
+            let currentbookASK :: [(Double, Int)] = if vSide ==  Buy     then askUpdateBook  else listASK ++ askBook
+            let currentbookBID :: [(Double, Int)] = if vSide ==  Sell    then bidUpdateBook else listBID ++ bidBook
             let bookSpreadFactorAsk :: [(Double, Int)] = if largerSpread then tail currentbookASK else currentbookASK
             let bookSpreadFactorBid :: [(Double, Int)] = if largerSpread then tail currentbookBID else currentbookBID
-            -- !! ADDITIONAL INFORMATION
-            -- ask in total in terms of count
+           
+            -- ? ADDITIONAL INFORMATION
+-- | ask in total in terms of count
             let asktotal
                     :: Double
                     = fromIntegral (length bookSpreadFactorAsk)
-
-            -- bids in total in terms of count
+-- | bids in total in terms of count
             let bidtotal
                     :: Double
                     = fromIntegral (length bookSpreadFactorBid)
-            -- Ratio between bids and AKS
+-- | Ratio between bids and AKS
             let bidAskRatio
                     :: Double
                     =
                     abs ((bidtotal - asktotal) / (bidtotal + asktotal)) :: Double
-
-            -- Ratio is benefiting :
+-- | Ratio is benefiting :
             let bidAskBenefit
                     :: IO ()
                     =
                     if asktotal > bidtotal
                     then putStr " ->  benefiting ASKS"
                     else putStr " -> benefeting BIDS"
-
-            -- asks in total -> $$
+-- | asks in total -> $$
             let asksTotal
                     :: Int
                     =
                     sumInts bookSpreadFactorAsk
-
-            -- bids in total -> $$
+ -- | bids in total -> $$
             let bidsTotal
                     :: Int
                     =
                     sumInts bookSpreadFactorBid
-
-            -- bid ask spread
+-- | bid ask spread
             let firstelemASK
                     :: Double
                     =
                     (fst . head) bookSpreadFactorAsk
-
             let firstelemBID
                     :: Double
                     =
                     (fst . head) bookSpreadFactorBid
-
             let spread
                     :: Double
                     =
                     spread' firstelemASK firstelemBID
-            -- checking if the stats above will go through with the orderbook
+
+-- | checking if the stats above will go through with the orderbook
+-- | local check
             let check
                     :: String
                     | vSide /=  Buy && vSide /=  Sell =
@@ -161,9 +160,13 @@ recursiveList (x:xs) bidBook askBook gen1 gen2 fullwallsASK fullwallsBIDS starti
 
 
             orderbookIO
+-- | returning the orderbook
             return (currentbookBID,currentbookASK)
+
+-- | helper funciton for the funciton below (where is everything starting at)
 initStats :: Stats
 initStats = Stats 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+-- | aggregating  stats together
 aggregateStats :: (TakerTuple, MakerTuple) -> Stats -> Stats
 aggregateStats (taker, makers) stats  =
   Stats

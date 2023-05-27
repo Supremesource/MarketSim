@@ -4,20 +4,18 @@
 {-# OPTIONS_GHC -Wno-missing-export-lists #-}
 {-# OPTIONS_GHC -Wno-incomplete-patterns #-}
 module Statistics where
+-- | module where majoritiy of statistical functions are defined
 
+-- | External libraries
 import           Control.Monad (replicateM)
 import           Data.List     (unfoldr)
 import           System.Random (Random (randomR), RandomGen (split), StdGen,
                                 randomRIO)
-
-
+-- | Internal libraries
 import           RunSettings   
 
-
-
-
-
-
+-- important:
+-- you might want to change the distribution these functions, to your statistical needs
 -- | Modyfiy this function to change the distribution of the volume
 distribution :: (Int, Int) -> IO Int
 distribution (low, high) = do
@@ -62,6 +60,8 @@ customRandomR (low, high) gen = (num, gen3)
       | p <= 0.98 = low + round (fromIntegral (high - low) * 0.85 * r1)
       | otherwise = low + round (fromIntegral (high - low) * r1)
     (r1, _) = randomR (0, 1 :: Double) gen2
+
+-- | Random generator helper funcitions
 customRandomRs :: (Int, Int) -> StdGen -> [Int]
 customRandomRs bounds gen = nums
   where
@@ -80,7 +80,6 @@ generateVolumes numMakers totalVolume = do
   let lastVolume = totalVolume - sum volumes
   return (volumes ++ [lastVolume])
 
-
 generateRandomPosition :: [Int] -> IO ([(Int, String)], [(Int, String)])
 generateRandomPosition [xProb,yProb, zProb, fProb]  = do
 
@@ -89,10 +88,9 @@ generateRandomPosition [xProb,yProb, zProb, fProb]  = do
   f <- distribution (basecaseValueLongClose, upperBoundLongClose)    -- closing longs 2
   -- | for shorts 3 - 4
   y <- distribution (basecaseValueShortNew, upperBoundShortNew)      -- new shorts 3
-
   z <- distribution (basecaseValueShortClose, upperBoundShortClose)  -- closing shorts 4
 
-
+-- | options of takers
   let takeROptions  = 
                         [(xProb
                         , (x, "x"))
@@ -102,17 +100,15 @@ generateRandomPosition [xProb,yProb, zProb, fProb]  = do
                         , (z, "z"))
                         , (fProb
                         , (f, "f"))]
-
   taker' <- weightedRandom takeROptions
 
-  
+-- | Taker and maker probabilitis  
   let takerProbab  
         | snd taker' == "x" = [(yProb, (fst taker', "x")), (zProb, (fst taker', "z"))]
         | snd taker' == "y" = [(xProb, (fst taker', "y")), (fProb, (fst taker', "f"))]
         | snd taker' == "z" = [(yProb, (fst taker', "z")), (fProb, (fst taker', "x"))]
         | snd taker' == "f" = [(xProb, (fst taker', "f")), (zProb, (fst taker', "y"))]
         | otherwise = error "taker' is not valid"
-  
   let makerProbab
         | snd taker' == "x" = [(yProbabilityMaker, (x, "y")), (fProbabilityMaker, (x, "f"))]
         | snd taker' == "y" = [(xProbabilityMaker, (y, "x")), (zProbabilityMaker, (y, "z"))]
@@ -120,17 +116,17 @@ generateRandomPosition [xProb,yProb, zProb, fProb]  = do
         | snd taker' == "f" = [(xProbabilityMaker, (f, "x")), (zProbabilityMaker, (f, "z"))]
         | otherwise = error "maker' is not valid"
   
+-- | local variables  
   let totalMakerVolume = fst taker'
-  numMakers <- randomRIO (1, maxmakers) :: IO Int -- select how many makers, filling, FF*
+  numMakers <- randomRIO (1, maxMakers) :: IO Int -- select how many makers
   makerVolumes <- generateVolumes numMakers totalMakerVolume
   makerInfos <- replicateM numMakers (weightedRandom makerProbab)
   let selectedMakers = zip makerVolumes (map snd makerInfos)
   let makerTuple = selectedMakers
-
-  numTakers <- randomRIO (1, maxtakers) :: IO Int -- select how many takers, filling, FF*
+  numTakers <- randomRIO (1, maxTakers) :: IO Int -- select how many takers
   takerVolumes <- generateVolumes numTakers (fst taker')
   takerInfos <- replicateM numTakers (weightedRandom takerProbab)
   let selectedTakers = zip takerVolumes (map snd takerInfos)
   let takerTuple = selectedTakers
-
+-- | return tuple
   return (takerTuple, makerTuple)
