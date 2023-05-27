@@ -1,132 +1,90 @@
 module RunSettings where
-
 import           DataTypes (Options (..))
-import            System.Random
+-- ? NOTE:
+-- YOU CAN READ MORE ABOUT THESE SETTINGS IN:
+-- | doc/SETTINGS.md
+-- | if you are not sure what to do, just leave the settings as they are, or read the documentation above
+
+-- Contents:
+-- | !GENERAL SETTINGS / simulation settings 
+-- | !POSITIONING SETTINGS / run cycle
+-- | !ORDERBOOK SETTINGS / liquidity  / order walls / orderbook structure
 
 
--- !    ⬇️ FILL IN ⬇️       :
+-- FILL IN THE SETTINGS BELOW !     :
 
 
--- ! RUN SETTINGS:
-
---〇
-maxmakers :: Int
-maxmakers = 6
-
---〇
--- | note that max takers is hardcoded to be 95% of maxmakers (done on real market observtions)
--- ? Not recommended to change this from 0.95
-maxtakers :: Int
-maxtakers = round (fromIntegral maxmakers * (0.95 :: Double))
-
-
---〇
+-- ! GENERAL SETTINGS:
+--〇 ID = PLTCHRT 
+-- | if TRUE you will see price displayed as a chart
 plotCharts :: Bool
-plotCharts = False -- ** fill in / plot charts (True/False)
+plotCharts = False 
 
---〇
--- | number of runs
-numberOfRuns :: Int
-numberOfRuns = 1 -- Put your actual number of runs here
+--〇 ID = STRVAL
+-- | starting value
+-- | you can activate this price point by running `w` - wiping run 
+wipingStartingValue :: Int
+wipingStartingValue = 1000 
 
---〇
+--〇 ID = NUMPOS
+-- | number of positions you want to take place in the simulation run
 -- | number of positions
 numPositions :: Int
-numPositions = 100 -- ** fill in / number of positions
+numPositions = 100 
 
---〇
--- ? STARTING VALUE IN WIPING RUN
-wipingStartingValue :: Int
-wipingStartingValue = 1000 -- ** fill in / starting value in wiping run
+--〇 ID = NUMRUN
+-- | number of runs, this is a loop how many times will the simulation repeat itself (random generators are updating each time though)
+numberOfRuns :: Int
+numberOfRuns = 1 
 
+--〇 ID = maxM/T
+-- | what is the maximum of makers in one transaction , i.e 1000 buy matched with 1000 sell, now the max makers filled in that transaction can be specified below
+maxMakers :: Int
+maxMakers = 6
+-- | note that max takers is hardcoded to be 95% of maxmakers (done on real market observtions)
+-- ? Not recommended to change this from 0.95
+maxTakers :: Int
+maxTakers = round (fromIntegral maxMakers * (0.95 :: Double))
 
--- ! ORDERBOOK SETTINGS
-
---〇
--- ? Size of bid orderbook
-takeamountBID :: Int
-takeamountBID = 2000 -- ** fill in / size of bid order book
-
---〇
--- ? Size of ask orderbook
-takeamountASK :: Int
-takeamountASK = 2000 -- ** fill in / size of ask book
-
---〇
--- ! LIQUIDITY SETTINGS:
--- | logic for definign intervals // prices at each level
-
---〇
--- ? Minimuim $ amount of order
-minimum' :: Int
-minimum' = 1000 --  minimum order  $ amount
-
-
---〇
--- ? Maximum $ amount of order
-maximum' :: Int
-maximum' = 1000000 -- maximum order $ amount
-
---〇
--- ? Minimum & Maximum UP move in the orderbook structure
--- | for bid = bid liquidity (< min move + max move <  = more liquidity, vice versa)
-minUpMove :: Double
-minUpMove = 0.1
-maxUpMove :: Double
-maxUpMove = 0.5
-
---〇
--- ? Minimum & Maximum DOWN move in the orderbook structure
--- | for ask = ask liquidity (< min move + max move <  = more liquidity, vice versa)
-minDownMove :: Double
-minDownMove = 0.1
-maxDownMove :: Double
-maxDownMove = 0.5
-
---〇
--- ? larger spread
--- TODO
-largerSpread :: Bool
-largerSpread = False
-
---〇
--- ! ORDER WALL SETTINGS:
--- | intervals for walls
--- ? Arder book WALL occurrences
--- | /2  -- (recommended 40-80, possibly even higher, it is going to be `div` by 2 so it gets distributed into bids and asks )
--- | defines in how many orders in the initial book will a wall occour
-orderwalllikelyhood :: Int
-orderwalllikelyhood = 10000000
-
---〇
--- ? Amplifier of Wall  occurrences
--- | will amplify the maximum to liking (the higher the more the maximum will get multiplied, so the bigger the walls will be)
-wallAmplifier :: Int
-wallAmplifier = 0
-
---〇
--- !! ROUNDING SETTINGS:
+--〇 ID = ROUND
+-- | ROUNDING SETTINGS:
 -- | max decimals in the orderbook
 -- | for illiquid coins use wider rounding
 -- | 1 = x.x
 -- | 2 = x.xx
 -- | 3 = ..
-
---〇
--- ? Rounding
+-- Rounding
 maxDecimal :: Int
 maxDecimal = 2
 
--- 〇
--- ? Volume settings:
--- | (functionality defined in Lib)
 
---〇
+-- ! POSITIONING SETTINGS
+-- 〇 ID = CYCLE
+-- | CUSTOM RUN SETTINGS:  
+-- | how run is going to be structured
+-- | you can choose from the following options:
+-- | RANDOM -> UP, UUP, CN, DWW, DW
+-- | RANDOM = random 
+-- | UP = up
+-- | UUP = up up
+-- | CN = constant / consolidation
+-- | DWW = down down
+-- | DW = down
+-- | for more info you can check the LIB.hs file, to see how everything works
+runlist :: [Options]
+runlist = [RANDOM , RANDOM , RANDOM , UP  , RANDOM  , RANDOM , RANDOM  , RANDOM , RANDOM  , RANDOM  ]
+      -- [0-10,10-20,20-30,30-40,40-50,50-60,60-70,70-80,80-90,90-100]
+
+--  Volume settings:
+-- 〇 ID = VOL
+-- | (functionality defined in Lib)
+-- | note that this function only works as a correctness checker for yourslf, exchanges always have a minimum volume allowed by the user, make yours
+-- | not recommended to go below 10 , depends on your maxmakers, maxtakers, there is potential error catching metric implemented, but still set this rather high
 minvolume :: Int
 minvolume = 1000
 
---〇
--- ! BUY VOUME
+--〇 ID = VOL02
+-- | BUY VOUME
 -- | longs NEW
 basecaseValueLongNew :: Int
 basecaseValueLongNew = 1000000
@@ -137,7 +95,7 @@ basecaseValueShortClose :: Int
 basecaseValueShortClose = 1000000
 upperBoundShortClose :: Int
 upperBoundShortClose = 2000000
--- ! SELL VOLUME
+-- | SELL VOLUME
 -- | shorts NEW
 basecaseValueShortNew :: Int
 basecaseValueShortNew = 1000000
@@ -149,33 +107,34 @@ basecaseValueLongClose = 1000000
 upperBoundLongClose :: Int
 upperBoundLongClose = 2000000
 
--- ? Position-Status occurrence:
+-- Statistics : 
+-- | Position-Status occurrence:
 -- | in %
--- | note that setting must add up to 100 %
+-- | note that setting 'should' add up to 100 %, it's a good practice at least, for keeping track :)
 
--- 〇  Taker Probability
+-- 〇 ID = STAT
+--  Taker Probability
 -- | BUY VOLUME
 xProbabilityTaker :: Int
 xProbabilityTaker = 30
 -- | SELL VOLUME
 yProbabilityTaker :: Int
 yProbabilityTaker = 30
--- ? CLOSING POSITION
+-- | CLOSING POSITION
 -- | BUY VOLUME
 zProbabilityTaker :: Int
 zProbabilityTaker = 30
 -- | SELL VOLUME
 fProbabilityTaker :: Int
 fProbabilityTaker = 30
-
--- 〇 Maker Probability
+--  Maker Probability
 -- | BUY VOLUME
 xProbabilityMaker :: Int
 xProbabilityMaker = 30
 -- | SELL VOLUME
 yProbabilityMaker :: Int
 yProbabilityMaker = 30
--- ? CLOSING POSITION
+-- | CLOSING POSITION
 -- | BUY VOLUME
 zProbabilityMaker :: Int
 zProbabilityMaker = 30
@@ -183,27 +142,59 @@ zProbabilityMaker = 30
 fProbabilityMaker :: Int
 fProbabilityMaker = 30
 
+-- ! ORDERBOOK SETINGS 
+--  + liquidity settings
+-- + wall settings
+-- | logic for definign intervals // prices at each level
 
-rndA :: IO Options
-rndA = do
-  let options = [UP, UUP,CN, DWW, DW] 
-  idx <- randomRIO (0, length options - 1)
-  return (options !! idx)
+--〇 ID = bookMinMax$
+-- ? Minimuim $ amount of order
+minimum' :: Int
+minimum' = 1000 --  minimum order  $ amount
+-- ? Maximum $ amount of order
+maximum' :: Int
+maximum' = 1000000 -- maximum order $ amount
 
--- ! CUSTOM RUN SETTINGS:
+--〇 ID = bookMinMaxMove
+-- | define how to orderbook grid is going to be moving
+-- | Minimum & Maximum UP move in the orderbook structure
+-- | for bid = bid liquidity (< min move + max move <  = more liquidity, vice versa)
+minUpMove :: Double
+minUpMove = 0.1
+maxUpMove :: Double
+maxUpMove = 0.5
+-- | Minimum & Maximum DOWN move in the orderbook structure
+-- | for ask = ask liquidity (< min move + max move <  = more liquidity, vice versa)
+minDownMove :: Double
+minDownMove = 0.1
+maxDownMove :: Double
+maxDownMove = 0.5
 
---〇
--- | how run is going to be structured
--- | you can choose from the following options:
--- | RANDOM, UP, UUP, CN, DWW, DW
--- | RANDOM = random
--- | UP = up
--- | UUP = up up
--- | CN = constant / consolidation
--- | DWW = down down
--- | DW = down
+--〇 ID = SPREAD
+-- | larger spread
+-- TODO small note for myself, i should check if this function behaves correctly, on the low level not just the IO , cause that is working
+largerSpread :: Bool
+largerSpread = False
 
--- ? for more info you can check the LIB.hs file
-runlist :: [Options]
-runlist = [RANDOM , RANDOM , RANDOM , UP  , RANDOM  , RANDOM , RANDOM  , RANDOM , RANDOM  , RANDOM  ]
-      -- [0-10,10-20,20-30,30-40,40-50,50-60,60-70,70-80,80-90,90-100]
+--〇 ID = TakeBidAsk
+-- | Size of bid orderbook
+takeamountBID :: Int
+takeamountBID = 2000 
+-- | Size of ask orderbook
+takeamountASK :: Int
+takeamountASK = 2000 
+
+--  'WALL' SETTINGS:
+--〇 ID = wallLikehood
+-- | intervals for walls
+-- ? Order book WALL occurrences
+-- | /2  -- (recommended 40-80, possibly even higher, it is going to be `div` by 2 so it gets distributed into bids and asks )
+-- | defines in how many orders in the initial book will a wall occour
+orderwalllikelyhood :: Int
+orderwalllikelyhood = 10000000
+
+--〇 ID = wallAmp
+-- | Amplifier of Wall  occurrences
+-- | will amplify the maximum to liking (the higher the more the maximum will get multiplied, so the bigger the walls will be)
+wallAmplifier :: Int
+wallAmplifier = 0
