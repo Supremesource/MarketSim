@@ -241,7 +241,7 @@ volumechecker minimum a b c d e f g h |    a < minimum
 
 -- | checking position amount
 positionamountcheck :: Int -> Int -> IO ()
-positionamountcheck a b | a < (b * 2) = error (red "\n\nPosition amount must be greater than 2 times the minimum volume specified in settings\n\n(you can fix this in the settings, 'catching potential errors)")
+positionamountcheck a b | a <  (b * 2) = error (red "\n\nPosition amount must be greater than 2 times the minimum volume specified in settings\n\n(you can fix this in the settings, 'catching potential errors)")
                         | otherwise = return ()
 
 -- | warning checker for settings

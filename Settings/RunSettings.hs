@@ -18,29 +18,29 @@ import           DataTypes (Options (..))
 --〇 ID = PLTCHRT 
 -- | if TRUE you will see price displayed as a chart
 plotCharts :: Bool
-plotCharts = False 
+plotCharts = True 
 
 --〇 ID = STRVAL
 -- | starting value
 -- | you can activate this price point by running `w` - wiping run 
 wipingStartingValue :: Int
-wipingStartingValue = 1000 
+wipingStartingValue = 10000 
 
 --〇 ID = NUMPOS
 -- | number of positions you want to take place in the simulation run
 -- | number of positions
 numPositions :: Int
-numPositions = 100 
+numPositions = 1250 
 
 --〇 ID = NUMRUN
 -- | number of runs, this is a loop how many times will the simulation repeat itself (random generators are updating each time though)
 numberOfRuns :: Int
-numberOfRuns = 1 
+numberOfRuns = 2
 
 --〇 ID = maxM/T
 -- | what is the maximum of makers in one transaction , i.e 1000 buy matched with 1000 sell, now the max makers filled in that transaction can be specified below
 maxMakers :: Int
-maxMakers = 6
+maxMakers = 100
 -- | note that max takers is hardcoded to be 95% of maxmakers (done on real market observtions)
 -- ? Not recommended to change this from 0.95
 maxTakers :: Int
@@ -57,7 +57,6 @@ maxTakers = round (fromIntegral maxMakers * (0.95 :: Double))
 maxDecimal :: Int
 maxDecimal = 2
 
-
 -- ! POSITIONING SETTINGS
 -- 〇 ID = CYCLE
 -- | CUSTOM RUN SETTINGS:  
@@ -72,8 +71,8 @@ maxDecimal = 2
 -- | DW = down
 -- | for more info you can check the LIB.hs file, to see how everything works
 runlist :: [Options]
-runlist = [RANDOM , RANDOM , RANDOM , UP  , RANDOM  , RANDOM , RANDOM  , RANDOM , RANDOM  , RANDOM  ]
-      -- [0-10,10-20,20-30,30-40,40-50,50-60,60-70,70-80,80-90,90-100]
+runlist = [RANDOM, UP, DWW, RANDOM, RANDOM, UUP, RANDOM, RANDOM, UP, CN, CN, UP, UP, RANDOM, UUP, RANDOM, RANDOM, DW, DWW, UUP, CN, RANDOM, RANDOM, DW, DWW, UUP, RANDOM, CN, UP, RANDOM]
+
 
 --  Volume settings:
 -- 〇 ID = VOL
@@ -81,31 +80,31 @@ runlist = [RANDOM , RANDOM , RANDOM , UP  , RANDOM  , RANDOM , RANDOM  , RANDOM 
 -- | note that this function only works as a correctness checker for yourslf, exchanges always have a minimum volume allowed by the user, make yours
 -- | not recommended to go below 10 , depends on your maxmakers, maxtakers, there is potential error catching metric implemented, but still set this rather high
 minvolume :: Int
-minvolume = 1000
+minvolume = 200
 
 --〇 ID = VOL02
 -- | BUY VOUME
 -- | longs NEW
 basecaseValueLongNew :: Int
-basecaseValueLongNew = 1000000
+basecaseValueLongNew = 250
 upperBoundLongNew :: Int
-upperBoundLongNew = 2000000
+upperBoundLongNew = 1000000
 -- | shorts CLOSE
 basecaseValueShortClose :: Int
-basecaseValueShortClose = 1000000
+basecaseValueShortClose = 250
 upperBoundShortClose :: Int
-upperBoundShortClose = 2000000
+upperBoundShortClose = 800000
 -- | SELL VOLUME
 -- | shorts NEW
 basecaseValueShortNew :: Int
-basecaseValueShortNew = 1000000
+basecaseValueShortNew = 200
 upperBoundShortNew :: Int
-upperBoundShortNew = 2000000
+upperBoundShortNew = 1100000
 -- | longs CLOSE
 basecaseValueLongClose :: Int
-basecaseValueLongClose = 1000000
+basecaseValueLongClose = 200
 upperBoundLongClose :: Int
-upperBoundLongClose = 2000000
+upperBoundLongClose = 500000
 
 -- Statistics : 
 -- | Position-Status occurrence:
@@ -113,60 +112,63 @@ upperBoundLongClose = 2000000
 -- | note that setting 'should' add up to 100 %, it's a good practice at least, for keeping track :)
 
 -- 〇 ID = STAT
+
 --  Taker Probability
+-- | OPENING POSITIONS
 -- | BUY VOLUME
 xProbabilityTaker :: Int
-xProbabilityTaker = 30
+xProbabilityTaker = 40
 -- | SELL VOLUME
 yProbabilityTaker :: Int
-yProbabilityTaker = 30
+yProbabilityTaker = 35
 -- | CLOSING POSITION
 -- | BUY VOLUME
 zProbabilityTaker :: Int
-zProbabilityTaker = 30
+zProbabilityTaker = 15
 -- | SELL VOLUME
 fProbabilityTaker :: Int
-fProbabilityTaker = 30
+fProbabilityTaker = 10
+
 --  Maker Probability
 -- | BUY VOLUME
 xProbabilityMaker :: Int
-xProbabilityMaker = 30
+xProbabilityMaker = 40
 -- | SELL VOLUME
 yProbabilityMaker :: Int
-yProbabilityMaker = 30
+yProbabilityMaker = 40
 -- | CLOSING POSITION
 -- | BUY VOLUME
 zProbabilityMaker :: Int
-zProbabilityMaker = 30
+zProbabilityMaker = 10
 -- | SELL VOLUME
 fProbabilityMaker :: Int
-fProbabilityMaker = 30
+fProbabilityMaker = 10
 
 -- ! ORDERBOOK SETINGS 
 --  + liquidity settings
--- + wall settings
+--  + wall settings
 -- | logic for definign intervals // prices at each level
 
 --〇 ID = bookMinMax$
 -- ? Minimuim $ amount of order
 minimum' :: Int
-minimum' = 1000 --  minimum order  $ amount
+minimum' = 5000 --  minimum order  $ amount
 -- ? Maximum $ amount of order
 maximum' :: Int
-maximum' = 1000000 -- maximum order $ amount
+maximum' = 1500000 -- maximum order $ amount
 
 --〇 ID = bookMinMaxMove
 -- | define how to orderbook grid is going to be moving
 -- | Minimum & Maximum UP move in the orderbook structure
 -- | for bid = bid liquidity (< min move + max move <  = more liquidity, vice versa)
 minUpMove :: Double
-minUpMove = 0.1
+minUpMove = 0.05
 maxUpMove :: Double
 maxUpMove = 0.5
 -- | Minimum & Maximum DOWN move in the orderbook structure
 -- | for ask = ask liquidity (< min move + max move <  = more liquidity, vice versa)
 minDownMove :: Double
-minDownMove = 0.1
+minDownMove = 0.06
 maxDownMove :: Double
 maxDownMove = 0.5
 
@@ -179,22 +181,22 @@ largerSpread = False
 --〇 ID = TakeBidAsk
 -- | Size of bid orderbook
 takeamountBID :: Int
-takeamountBID = 2000 
+takeamountBID = 4000 
 -- | Size of ask orderbook
 takeamountASK :: Int
-takeamountASK = 2000 
+takeamountASK = 4000 
 
 --  'WALL' SETTINGS:
---〇 ID = wallLikehood
+--〇 ID = wallLikeHood
 -- | intervals for walls
 -- ? Order book WALL occurrences
 -- | /2  -- (recommended 40-80, possibly even higher, it is going to be `div` by 2 so it gets distributed into bids and asks )
 -- | defines in how many orders in the initial book will a wall occour
 orderwalllikelyhood :: Int
-orderwalllikelyhood = 10000000
+orderwalllikelyhood = 300
 
 --〇 ID = wallAmp
 -- | Amplifier of Wall  occurrences
 -- | will amplify the maximum to liking (the higher the more the maximum will get multiplied, so the bigger the walls will be)
 wallAmplifier :: Int
-wallAmplifier = 0
+wallAmplifier = 3

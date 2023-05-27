@@ -193,7 +193,6 @@ main = do
       addsupto100 xProbabilityTaker yProbabilityTaker zProbabilityTaker fProbabilityTaker
       addsupto100 xProbabilityMaker yProbabilityMaker zProbabilityMaker fProbabilityMaker
 
-
 -- | calling python script (graph)
 --  TODO make this way more effective
       Control.Monad.when plotCharts $ callCommand "python App/PlotPrices.py"
