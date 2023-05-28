@@ -18,58 +18,58 @@ module Filepaths where
   -- | --------------------
 
 -- ! FILEPATHS:
--- | config file, log
-logPath :: FilePath
-logPath = "Data/codeconfiguration.txt"
-
 -- | orderbook
 askBookPath :: FilePath
-askBookPath = "Data/askbook.txt"
+askBookPath = "data/askbook.txt"
 
 bidBookPath :: FilePath
-bidBookPath = "Data/bidbook.txt"
+bidBookPath = "data/bidbook.txt"
+
+-- | config file, log
+logPath :: FilePath
+logPath = "output/log.txt"
 
 -- | price history
 pricePath :: FilePath
-pricePath = "Data/pricehistory.txt"
+pricePath = "output/pricehistory.txt"
 
 -- | orderbook stats
 -- | amount of bids in comparison to amount of asks in the orderbook
 bidAskRPath :: FilePath
-bidAskRPath = "Data/bidAskR.txt"
+bidAskRPath = "output/bidAskR.txt"
 
 -- | $ amount of bids & asks in the orderbook
 bidToAskRPath :: FilePath
-bidToAskRPath = "Data/bidToAskR.txt"
+bidToAskRPath = "output/bidToAskR.txt"
 
 -- | overal volume
 volumePath :: FilePath
-volumePath = "Data/volume.txt"
+volumePath = "output/volume.txt"
 
 -- | buy volume
 buyVolumePath :: FilePath
-buyVolumePath = "Data/buyVol.txt"
+buyVolumePath = "output/buyVol.txt"
 
 -- | sell volume
 sellVolumePath :: FilePath
-sellVolumePath = "Data/sellVol.txt"
+sellVolumePath = "output/sellVol.txt"
 
 -- | opening longs
 newLongsPath :: FilePath
-newLongsPath = "Data/nLongs.txt"
+newLongsPath = "output/nLongs.txt"
 
 -- | opening shorts
 newShortsPath :: FilePath
-newShortsPath = "Data/nShorts.txt"
+newShortsPath = "output/nShorts.txt"
 
 -- | exit longs
 exitLongsPath :: FilePath
-exitLongsPath = "Data/eLongs.txt"
+exitLongsPath = "output/eLongs.txt"
 
 -- | exit shorts
 exitShortsPath :: FilePath
-exitShortsPath = "Data/eShorts.txt"
+exitShortsPath = "output/eShorts.txt"
 
 -- | open interest
 openInterestPath :: FilePath
-openInterestPath = "Data/oInterest.txt"
+openInterestPath = "output/oInterest.txt"
