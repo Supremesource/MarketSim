@@ -3,6 +3,7 @@
 {-# OPTIONS_GHC -Wno-type-defaults #-}
 {-# OPTIONS_GHC -Wno-name-shadowing #-}
 {-# OPTIONS_GHC -Wno-missing-export-lists #-}
+{-# LANGUAGE BlockArguments #-}
 module InputOutput where
 -- | module where the IO is taking place
 
@@ -36,8 +37,7 @@ generateOrderBook :: [(Double, Int)] -> [(Double,Int)]
                   -> Int
                   -> Int
                   -> Int
-                  -> Double
-                  -> Double
+           
                   -> [(Double,Int)]
                   -> [(Double,Int)]
                   -> [(Double,Int)]
@@ -62,9 +62,7 @@ generateOrderBook
                   maxMinLimit
                   totakefromwall
                   lengthchangeBID
-                  lengthchangeASK
-                  stPriceCaseBid
-                  stPriceCaseAsk
+                  lengthchangeASK            
                   bidBook
                   askBook
                   listASK
@@ -106,6 +104,8 @@ generateOrderBook
   B.putStr $ formatRow "Taken from BID" (show lengthchangeASK) "$"
   B.putStr line
 
+
+--filewrites1 :: 
 -- ? WRITING INTO FILES 1 ? -- 
 -- | (goes into log file)
   bracket (openFile logPath AppendMode) hClose $ \handle -> do
@@ -130,8 +130,6 @@ generateOrderBook
     B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps"17. Max decimal:")                     (show maxDecimal)
     B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps"18. Length change of BID:")            (show lengthchangeBID)
     B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps"19. Length change of ASK:")           (show lengthchangeASK)
-    B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps"20. Bid starting Price:")             (show stPriceCaseBid)
-    B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps"21. Ask starting Price:")             (show stPriceCaseAsk)
     B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps"24. New Ask List | insertion:")        (show listASK)
     B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps"25. New Bid List | insertion:")        (show listBID)
     B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps"28. Volume side:")                     volumeSide
@@ -141,7 +139,7 @@ generateOrderBook
     B.hPutStrLn handle $ B.pack $ printf  "%-50s %-20s" (allCaps"\n32. 'partial' Orderbook ASK: \n\n") (take 750 (unlines (map show bookSpreadFactorAsk)))
     B.hPutStrLn handle $ B.pack $ printf  "%-50s %-20s" (allCaps"\n33. 'partial' Orderbook BID: \n\n") (take 750 (unlines (map show bookSpreadFactorBid)))
     hClose handle
-    B.putStrLn $ BC.pack $ printf "%-50s" "\n\n + Configuration settings successfully written into an external file 🦄"
+    B.putStrLn $ BC.pack $ printf "%-50s" "\n\n + Configuration settings successfully written into an external file"
 
 -- ? REWRTING INTO FILES 2 ? --  
 -- | Asociated with the orderbook
@@ -311,9 +309,12 @@ printStats stats = do
                  , ("Checker 11", if basecaseValueLongClose >= upperBoundLongClose then error "11 fail"   else "check 11 pass")
                  , ("Checker 12", if basecaseValueShortNew >= upperBoundShortNew then error "12 fail"     else "check 12 pass")
                  , ("Checker 13", if basecaseValueShortClose >= upperBoundShortClose then error "13 fail" else "check 13 pass")
-
-
+                
                  ]
+
+
+
+
 
 -- | printing the results formated as a table
   putStrLn $ red "----------------------------"
@@ -351,7 +352,7 @@ printStats stats = do
   putStrLn $ red "|                  Metric                        |               Value       |"
   putStrLn $ red "+------------------------------------------------+---------------------------+"
   mapM_ (\(metric, value) -> Text.Printf.printf "| %-50s | %25s |\n" (purple metric) value) statsList
-  putStrLn $ "+------------------------------------------------+---------------------------+"
+  putStrLn       "+------------------------------------------------+---------------------------+"
   putStrLn "\n"
   
 -- | final IO ()
