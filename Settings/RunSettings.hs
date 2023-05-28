@@ -30,12 +30,12 @@ wipingStartingValue = 10000
 -- | number of positions you want to take place in the simulation run
 -- | number of positions
 numPositions :: Int
-numPositions = 1250 
+numPositions = 1000
 
 --〇 ID = NUMRUN
 -- | number of runs, this is a loop how many times will the simulation repeat itself (random generators are updating each time though)
 numberOfRuns :: Int
-numberOfRuns = 2
+numberOfRuns = 1
 
 --〇 ID = maxM/T
 -- | what is the maximum of makers in one transaction , i.e 1000 buy matched with 1000 sell, now the max makers filled in that transaction can be specified below

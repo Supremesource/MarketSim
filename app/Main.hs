@@ -195,4 +195,4 @@ main = do
 
 -- | calling python script (graph)
 --  TODO make this way more effective
-      Control.Monad.when plotCharts $ callCommand "python App/PlotPrices.py"
+      Control.Monad.when plotCharts $ callCommand "python scripts/plot_prices.py"
