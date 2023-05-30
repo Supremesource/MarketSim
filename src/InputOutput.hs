@@ -8,167 +8,144 @@ module InputOutput where
 -- | module where the IO is taking place
 
 -- | external libraries
-import           Control.Exception     (bracket)
+
 import qualified Data.ByteString.Char8 as B
 import qualified Data.ByteString.Char8 as BC
 import           Data.Time.Clock.POSIX (getPOSIXTime)
-import           System.IO             (IOMode (AppendMode, WriteMode), hClose,
-                                        hPrint, hPutStrLn, openFile)
+import           System.IO
 import           System.Random         (Random (randomRs), mkStdGen)
 import           Text.Printf           (printf)
+import           Control.Exception.Base (bracket)
 -- | internal libraries
-import           Colours               
+import           Colours
 import           DataTypes
-import           Filepaths             
+import           Filepaths
 import           Lib
 import           RunSettings
 
 
--- | IO orderbook
-generateOrderBook :: [(Double, Int)] -> [(Double,Int)]
-                  -> Double
-                  -> Int
-                  -> Int
-                  -> Double
-                  -> IO ()
-                  -> String
-                  -> Double
-                  -> [[Int]]
-                  -> Int
-                  -> Int
-                  -> Int
-           
-                  -> [(Double,Int)]
-                  -> [(Double,Int)]
-                  -> [(Double,Int)]
-                  -> [(Double,Int)]
-                  -> String
-                  -> Int
-                  -> Double
-                  -> String
-                  -> String
-                  -> String
-                  -> IO ()
-generateOrderBook
-                  bookSpreadFactorAsk
-                  bookSpreadFactorBid
-                  spread
-                  asksTotal
-                  bidsTotal
-                  bidAskRatio
-                  bidAskBenefit
-                  logPath
-                  startingPoint
-                  maxMinLimit
-                  totakefromwall
-                  lengthchangeBID
-                  lengthchangeASK            
-                  bidBook
-                  askBook
-                  listASK
-                  listBID
-                  volumeSide
-                  volumeAmount
-                  startingprice
-                  pricePath
-                  bidBookPath
-                  askBookPath
-                  = do
-
--- | random id generator / every run has its own id, for better debugging + finding bugs in logs
+generateId :: IO String
+generateId = do
   currentTime <- getPOSIXTime
   let seed = round $ currentTime * (10^9) :: Int
   let gen = mkStdGen seed
   let symbols = ['0'..'9'] ++ ['a'..'z'] ++ ['A'..'Z'] ++ "?!@#$&*"
   let randomChars = randomRs (0, length symbols - 1) gen
-  let id = map (symbols !!) $ take 10 randomChars
+  return $ map (symbols !!) $ take 10 randomChars
 
--- | formatinhg the output as a table
--- | random id generator
-  let formatRow x y z = B.pack $ purple $ printf "| %-15s | %-15s | %-15s |\n" x y z
-  let line = B.pack $ purple $ replicate 54 '-' ++ "\n"
+-- Function to open file handles
+openFiles :: IO FileWrtiter
+openFiles = do
+  handleLog       <- openFile logPath AppendMode -- 1
+  handlePrice     <- openFile pricePath AppendMode -- 2
+  handleBID       <- openFile bidBookPath WriteMode -- 3
+  handleASK       <- openFile askBookPath WriteMode -- 4
+  handleRatio     <- openFile bidAskRPath AppendMode -- 5
+  handleTORatio   <- openFile bidToAskRPath AppendMode -- 6
+  return (handleLog, handlePrice, handleBID, handleASK, handleRatio, handleTORatio)
 
+openReads :: IO FileReader
+openReads = do  
+  -- opening in readmode for reading purposes
+  handleBIDRead   <- openFile bidBookPath ReadMode -- 7
+  handleASKRead   <- openFile askBookPath ReadMode -- 8
+  return (handleBIDRead, handleASKRead)
+
+closeFilesW :: FileWrtiter -> IO ()
+closeFilesW (handleLog, handlePrice, handleBID, handleASK, handleRatio, handleTORatio) = do
+  hClose handleLog
+  hClose handlePrice
+  hClose handleBID
+  hClose handleASK
+  hClose handleRatio
+  hClose handleTORatio
+
+closeFilesR :: FileReader -> IO ()
+closeFilesR (handleBIDR, handleASKR) = do
+  hClose handleBIDR
+  hClose handleASKR
+
+
+
+
+  
+formatAndPrintInfo :: Double -> Int    -> Int   -> Double  -> Double   -> VolumeSide   -> Int      -> Int      -> Int          -> IO ()
+formatAndPrintInfo    sprd      asktot   bidtot   bidaskr    strprice     vlmside      vlmamount  lchangeBID  lchangeASK = do
+-- | random id generator / every run has its own id, for better debugging + finding bugs in logs
+  id <- generateId
+  let formatRow x y z = B.pack $ printf "| %-15s | %-15s | %-15s |\n" x y z
+  let line = B.pack $ replicate 54 '-' ++ "\n"
+--, spread, asksTotal, bidsTotal, bidAskRatio, startingprice, volumeSide, volumeAmount, lengthchangeBID, lengthchangeASK
 -- | (goes into console)
   B.putStr line
   B.putStr $  formatRow "Field" "Value" "Unit"
   B.putStr line
   B.putStr $ formatRow "ID" id ""
-  B.putStr $ formatRow "Spread" (show (roundTo maxDecimal spread)) "$"
-  B.putStr $ formatRow "Asks total" (show asksTotal) "$"
-  B.putStr $ formatRow "Bids total" (show bidsTotal) "$"
-  B.putStr $ formatRow "Bid/Ask ratio" (printf "%.4f" bidAskRatio :: String) ""
-  B.putStr $ formatRow "Starting price" (show startingprice) "$"
-  B.putStr $ formatRow "Volume side" volumeSide ""
-  B.putStr $ formatRow "Volume amount" (show volumeAmount) "$"
-  B.putStr $ formatRow "Taken from ASK" (show lengthchangeBID) "$"
-  B.putStr $ formatRow "Taken from BID" (show lengthchangeASK) "$"
+  B.putStr $ formatRow "Spread" (show (roundTo maxDecimal sprd)) "$"
+  B.putStr $ formatRow "Asks total" (show asktot) "$"
+  B.putStr $ formatRow "Bids total" (show bidtot) "$"
+  B.putStr $ formatRow "Bid/Ask ratio" (printf "%.4f" bidaskr :: String) ""
+  B.putStr $ formatRow "Starting price" (show strprice) "$"
+  B.putStr $ formatRow "Volume side"   (show vlmside) ""
+  B.putStr $ formatRow "Volume amount" (show vlmamount) "$"
+  B.putStr $ formatRow "Taken from ASK" (show lchangeBID) "$"
+  B.putStr $ formatRow "Taken from BID" (show lchangeASK) "$"
   B.putStr line
 
 
---filewrites1 :: 
+
+filewrites1 ::  FileWrtiter  ->                                                          StartingPoint        -> [[Int]]      -> Int        -> Int     -> Int             -> Int             -> Int            -> [(Double,Int)]     -> [(Double,Int)]  -> VolumeSide       -> Int          -> Double     -> Double     -> OrderBook          ->  [(Double,Int)]  -> Double -> IO ()
+filewrites1     (handle, handlePrice, handleBID, handleASK, handleRatio, handleTORatio)   startingPoint        maxMinLimit      asksTotal     bidsTotal  totakefromwall     lengthchangeBID    lengthchangeASK   listASK               listBID               volumeSide    volumeAmount        spread        startingprice    bookSpreadFactorAsk    bookSpreadFactorBid    bidAskRatio = do
+  id <- generateId
 -- ? WRITING INTO FILES 1 ? -- 
 -- | (goes into log file)
-  bracket (openFile logPath AppendMode) hClose $ \handle -> do
-    hPutStrLn handle $ printf "%-50s %-20s" "\n\n\nID:" id
-    B.hPutStrLn handle $ BC.pack $ printf "%-50s" (allCaps "Code configuration for orderbook:")
-    B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps "1. Starting price of the whole run:") (show startingPoint ++ "$")
-    B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps "2. Order book length (to both sides):") (show takeamount)
-    B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps "3. Ask max up move:")                  (show maxUpMove)
-    B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps "4. Ask min up move:")               (show minUpMove)
-    B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps "5. Bid max down move:")             (show maxDownMove)
-    B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps "6. Bid down min move:")             (show minDownMove)
-    B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps "7. Minimum value of limit order was (hardcoded):") (show minimum' ++ " (actual = " ++ show (minimumlimit maxMinLimit) ++ ")$")
-    B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps "8. Maximum value of limit order was (hardcoded):") (show maximum' ++ " (actual = " ++ show (maximumlimit maxMinLimit) ++ ")$")
-    B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps "9. Bid size of the orderbook:")       (show takeamountBID)
-    B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps "10. Ask size of the orderbook:")     (show takeamountASK)
-    B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps "11. ASKS -> BIDS:")                   (show asksTotal ++ "$ / " ++ show bidsTotal ++ "$")
-    B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps "12. Wall occurrences:")               (show orderwalllikelyhood ++ " (i.e. 10 takeamount -> 2 walls -> to bid, ask)")
-    B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps "13. Actually taken to walls:")        (show totakefromwall ++ ", (it is going to get div by 2)")
-    B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps"14. Wall minimum:")                    (show wallminimum')
-    B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps"15. Wall maximum:")                    (show wallmaximum')
-    B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps"16. Wall amplifier:")                  (show wallAmplifier)
-    B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps"17. Max decimal:")                     (show maxDecimal)
-    B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps"18. Length change of BID:")            (show lengthchangeBID)
-    B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps"19. Length change of ASK:")           (show lengthchangeASK)
-    B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps"24. New Ask List | insertion:")        (show listASK)
-    B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps"25. New Bid List | insertion:")        (show listBID)
-    B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps"28. Volume side:")                     volumeSide
-    B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps"29. Volume amount:")                  (show volumeAmount)
-    B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps"30. Spread: ")                         (show (roundTo maxDecimal spread))
-    B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps"31. The starting price:")             (show startingprice) ++ "\n\n\n"
-    B.hPutStrLn handle $ B.pack $ printf  "%-50s %-20s" (allCaps"\n32. 'partial' Orderbook ASK: \n\n") (take 750 (unlines (map show bookSpreadFactorAsk)))
-    B.hPutStrLn handle $ B.pack $ printf  "%-50s %-20s" (allCaps"\n33. 'partial' Orderbook BID: \n\n") (take 750 (unlines (map show bookSpreadFactorBid)))
-    hClose handle
-    B.putStrLn $ BC.pack $ printf "%-50s" "\n\n + Configuration settings successfully written into an external file"
-
+  hPutStrLn handle $ printf "%-50s %-20s" "\n\n\nID:" id
+  B.hPutStrLn handle $ BC.pack $ printf "%-50s" (allCaps "Code configuration for orderbook:")
+  B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps "1. Starting price of the whole run:") (show startingPoint ++ "$")
+  B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps "2. Order book length (to both sides):") (show takeamount)
+  B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps "3. Ask max up move:")                  (show maxUpMove)
+  B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps "4. Ask min up move:")               (show minUpMove)
+  B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps "5. Bid max down move:")             (show maxDownMove)
+  B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps "6. Bid down min move:")             (show minDownMove)
+  B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps "7. Minimum value of limit order was (hardcoded):") (show minimum' ++ " (actual = " ++ show (minimumlimit maxMinLimit) ++ ")$")
+  B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps "8. Maximum value of limit order was (hardcoded):") (show maximum' ++ " (actual = " ++ show (maximumlimit maxMinLimit) ++ ")$")
+  B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps "9. Bid size of the orderbook:")       (show takeamountBID)
+  B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps "10. Ask size of the orderbook:")     (show takeamountASK)
+  B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps "11. ASKS -> BIDS:")                   (show asksTotal ++ "$ / " ++ show bidsTotal ++ "$")
+  B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps "12. Wall occurrences:")               (show orderwalllikelyhood ++ " (i.e. 10 takeamount -> 2 walls -> to bid, ask)")
+  B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps "13. Actually taken to walls:")        (show totakefromwall ++ ", (it is going to get div by 2)")
+  B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps "14. Wall minimum:")                    (show wallminimum')
+  B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps "15. Wall maximum:")                    (show wallmaximum')
+  B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps "16. Wall amplifier:")                  (show wallAmplifier)
+  B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps "17. Max decimal:")                     (show maxDecimal)
+  B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps "18. Length change of BID:")            (show lengthchangeBID)
+  B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps "19. Length change of ASK:")           (show lengthchangeASK)
+  B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps "20. New Ask List | insertion:")        (show listASK)
+  B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps "21. New Bid List | insertion:")        (show listBID)
+  B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps "22. Volume side:")                     (show volumeSide)
+  B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps "23. Volume amount:")                  (show volumeAmount)
+  B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps "24. Spread: ")                         (show (roundTo maxDecimal spread)) -- TODO fix rounding here
+  B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps "25. The starting price:")             (show startingprice) ++ "\n\n\n"
+  B.hPutStrLn handle $ B.pack $ printf  "%-50s %-20s" (allCaps "\n26. 'partial' Orderbook ASK: \n\n") (take 750 (unlines (map show bookSpreadFactorAsk)))
+  B.hPutStrLn handle $ B.pack $ printf  "%-50s %-20s" (allCaps "\n27. 'partial' Orderbook BID: \n\n") (take 750 (unlines (map show bookSpreadFactorBid)))
+  B.putStrLn $ BC.pack $ printf "%-50s" "\n\n + Configuration settings successfully written into an external file"
 -- ? REWRTING INTO FILES 2 ? --  
 -- | Asociated with the orderbook
-
 -- | rewriting price changes
-    bracket (openFile pricePath AppendMode) hClose $ \handlePrice -> do
-      B.hPutStr handlePrice $ BC.pack "\n"
-      B.hPutStrLn handlePrice $ BC.pack (show startingprice)
-      hClose handlePrice
+  B.hPutStr handlePrice $ BC.pack "\n"
+  B.hPutStrLn handlePrice $ BC.pack (show startingprice)
 -- | rewriting bidbook
-    bracket (openFile bidBookPath WriteMode) hClose $ \handleBID -> do
-      hPrint handleBID bookSpreadFactorBid
-      hClose handleBID
+  hPrint handleBID bookSpreadFactorBid -- TODO biggest computation thread
 -- | rewriting askbook
-    bracket (openFile askBookPath WriteMode) hClose $ \handleASK -> do
-      hPrint handleASK bookSpreadFactorAsk
-      hClose handleASK
+  hPrint handleASK bookSpreadFactorAsk
 -- | rewriting bid/ask RATIO
-    bracket (openFile bidAskRPath AppendMode) hClose $ \handleRatio -> do
-      hPutStrLn handleRatio (printf "%.4f" bidAskRatio)
-      hClose handleRatio
+  hPutStrLn handleRatio (printf "%.4f" bidAskRatio)
 -- | rewriting bid TO ask RATIO
-    bracket (openFile bidToAskRPath AppendMode) hClose $ \handleTORatio -> do
-      hPutStrLn handleTORatio (show bidsTotal ++ " / " ++ show asksTotal)
-      hClose handleTORatio
-
+  hPutStrLn handleTORatio (show bidsTotal ++ " / " ++ show asksTotal)
 -- | printing stats associated with positioning
 printPositionStats :: Int -> (TakerTuple, MakerTuple) -> IO (Int, VolumeSide)
 printPositionStats i (taker, makers) = do
+
 -- | scope bindings  
 -- | volumesum
   let volumeSume = foldl (\acc (x, _) -> acc + x) 0 taker
@@ -208,45 +185,44 @@ printPositionStats i (taker, makers) = do
   putStrLn $ purple "| Total USD Z | " ++ show offZ
   putStrLn $ purple "| Total USD F | " ++ show offF
   putStrLn          "------------------------\n"
-
 -- ?  REWRTING DATA FILES 3 ? -- 
 -- | asociated with the positioning
 -- | positioning information
-
 -- | total X 
   bracket (openFile newLongsPath AppendMode) hClose $ \handlePosition -> do
         B.hPutStrLn handlePosition $ BC.pack (show offX)
         hClose handlePosition
--- | total Y  
+  -- | total Y  
   bracket (openFile newShortsPath AppendMode) hClose $ \handlePosition2 -> do
         B.hPutStrLn handlePosition2 $ BC.pack (show offY)
         hClose handlePosition2
--- | total Z  
+  -- | total Z  
   bracket (openFile exitShortsPath AppendMode) hClose $ \handlePosition3 -> do
         B.hPutStrLn handlePosition3 $ BC.pack (show offZ)
         hClose handlePosition3
--- | total F
+  -- | total F
   bracket (openFile exitLongsPath AppendMode) hClose $ \handlePosition4 -> do
         B.hPutStrLn handlePosition4 $ BC.pack (show offF)
         hClose handlePosition4
--- | Buy volume
+  -- | Buy volume
   bracket (openFile buyVolumePath AppendMode) hClose $ \handleVol -> do
         B.hPutStrLn handleVol $ BC.pack (show buyVOLUME)
         hClose handleVol
--- | Sell volume
+  -- | Sell volume
   bracket (openFile sellVolumePath AppendMode) hClose $ \handleVol2 -> do
       B.hPutStrLn handleVol2 $ BC.pack (show sellVOLUME)
       hClose handleVol2
--- | Overal volume
+  -- | Overal volume
   bracket (openFile volumePath AppendMode) hClose $ \handleVol3 -> do
       B.hPutStrLn handleVol3 $ BC.pack (show overalVOLUME)
       hClose handleVol3
--- | Overal open interest
+  -- | Overal open interest
   bracket (openFile openInterestPath AppendMode) hClose $ \handleInterest -> do
       B.hPutStrLn handleInterest $ BC.pack (show overalOpenInterest)
       hClose handleInterest
 -- | return
   return (volumeSume, sideVol)
+    
     where
 -- | Maker counters
     makerelement_counter_of_X = countElements "x" makers
@@ -309,7 +285,7 @@ printStats stats = do
                  , ("Checker 11", if basecaseValueLongClose >= upperBoundLongClose then error "11 fail"   else "check 11 pass")
                  , ("Checker 12", if basecaseValueShortNew >= upperBoundShortNew then error "12 fail"     else "check 12 pass")
                  , ("Checker 13", if basecaseValueShortClose >= upperBoundShortClose then error "13 fail" else "check 13 pass")
-                
+
                  ]
 
 
@@ -354,7 +330,7 @@ printStats stats = do
   mapM_ (\(metric, value) -> Text.Printf.printf "| %-50s | %25s |\n" (purple metric) value) statsList
   putStrLn       "+------------------------------------------------+---------------------------+"
   putStrLn "\n"
-  
+
 -- | final IO ()
 -- | this function is called by the main loop if we reached the runs
 printFinal :: Stats -> IO ()

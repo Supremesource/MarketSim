@@ -12,8 +12,8 @@ module Main where
 -- | external libraries
 import           Control.Monad               (forM, replicateM, when)
 import           Control.Parallel.Strategies (parList, rseq, using)
-import           System.IO                   (BufferMode (LineBuffering),
-                                              hSetBuffering, stdout)
+import           System.IO                   
+                                              
 import           System.Process              (callCommand)
 import           System.Random               (Random (randomRs))
 -- | internal libraries
@@ -78,15 +78,17 @@ mainLoop aggregatedStats remainingRuns = do
 main :: IO ()
 main = do
 -- ? IO 
+
 -- | clening log file
   writeFile logPath ""
-
+ 
 -- | CHECKING IF FILES ARE EMPTY
-  isBidEmpty  <- isFileEmpty bidBookPath
-  isAskEmpty  <- isFileEmpty askBookPath
+
 
 -- | optimizing the IO to be formated in lines
   hSetBuffering stdout LineBuffering
+
+  --
 
 -- | Asking user to proceed
   putStrLn $ "Proceed (_ / n)" ++ red "\n\n * for run-restore (w)  *"
@@ -111,6 +113,11 @@ main = do
     else do
 -- | checking settings, catching potential bugs in the setting specified by user
 -- | if the settings are not correct, the program will not run
+
+      
+    
+
+
 -- ? CHECKING SETTINGS   
       volumechecker minvolume basecaseValueLongNew basecaseValueShortNew basecaseValueLongClose basecaseValueShortClose upperBoundLongNew upperBoundShortNew upperBoundLongClose upperBoundShortClose
       positionamountcheck minvolume maxMakers
@@ -121,9 +128,11 @@ main = do
       gen2
         <- randomGen
 
+     
+     
 -- ! - ORDERBOOK - ! --
 -- | the price simulation is starting at
-      startingPoint <- startingPointFromFile
+      startingPoint <- startingPointFromFile pricePath
 
 -- | orderbook
 -- | making ask move upside
@@ -166,33 +175,52 @@ main = do
       let orderbook_ask  = zipToTuples setupASK fullwallsASK
       let orderbook_bid  = zipToTuples setupBID fullwallsBIDS
 -- | the orderbook path which should change the bid price
-      fileBidBook <- readBook bidBookPath
-      fileAskBook <- readBook askBookPath
+   
 
+      reads <- openReads
+      let pathReadBidBook = fst  reads
+      let pathReadAskBook = snd  reads
+      isBidEmpty  <- isFileEmpty  pathReadBidBook
+      isAskEmpty  <- isFileEmpty  pathReadAskBook
+      fileBidBook <- readBook     pathReadBidBook
+      fileAskBook <- readBook     pathReadAskBook
 -- | orderbook logc:
       let bidBook =
             if isBidEmpty
               then orderbook_bid
               else fileBidBook
+      
 -- |  ask
       let askBook =
             if isAskEmpty
               then orderbook_ask
               else fileAskBook
-
+      closeFilesR reads
+      handles <- openFiles 
 -- ? ADDING STATS FROM 'MAINLOOP' TOGETHER
 -- | price change
       volumesAndSides <- mainLoop initStats numberOfRuns
+
+     
+      closeFilesW handles
 -- | Store the volume result
       let listofvolumes = volumesAndSides
-      (finalBidBook, finalAskBook) <- recursiveList listofvolumes bidBook askBook gen1 gen2 fullwallsASK fullwallsBIDS startingPoint totakefromwall
-
+      (finalBidBook, finalAskBook) <- recursiveList listofvolumes bidBook askBook gen1 gen2 fullwallsASK fullwallsBIDS startingPoint totakefromwall handles
+      
+  
+      closeFilesW handles
+   
+    
+   
 -- | formating price document
       removeEmptyLines pricePath
+   
+
 -- | optional warnings
       addsupto100 xProbabilityTaker yProbabilityTaker zProbabilityTaker fProbabilityTaker
       addsupto100 xProbabilityMaker yProbabilityMaker zProbabilityMaker fProbabilityMaker
-
+ 
+    
 -- | calling python script (graph)
 --  TODO make this way more effective
       Control.Monad.when plotCharts $ callCommand "python scripts/plot_prices.py"
