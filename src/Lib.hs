@@ -5,7 +5,7 @@ module Lib where
 -- | moudle aggregating all the functions
 
 -- | external modules
-import           Control.Exception     (bracket)
+import           Control.Monad
 import           Data.Char             (toUpper)
 
 import qualified Data.ByteString.Char8 as BS
@@ -13,8 +13,8 @@ import           Data.Ratio            ((%))
 import qualified Data.Text             as T
 import qualified Data.Text.IO          as TIO
 import           Data.Time.Clock.POSIX (getPOSIXTime)
-import           System.IO             (IOMode (ReadMode), hClose, hFileSize,
-                                        openFile)
+import           System.IO
+
 import           System.Random         (Random (randomR, randomRs),
                                         RandomGen (split), StdGen, mkStdGen,
                                         newStdGen, randomRIO, setStdGen)
@@ -22,11 +22,13 @@ import           Text.Read             (readMaybe)
 
 
 -- | internal libraries
-import           Colours               
+import           Colours
 import           DataTypes
-import           Filepaths
+
 import           RunSettings
-import           Statistics            
+import           Statistics
+import qualified Data.Maybe
+import  Filepaths
 
 
 
@@ -60,13 +62,13 @@ printRandomList' n = do
 
 -- | (the maximum' is recommended as a minumum)
 wallminimum' :: Int
-wallminimum' = maximum' 
+wallminimum' = maximum'
 -- | maximum wallamount
 wallmaximum' :: Int
 wallmaximum' = maximum' * wallAmplifier
 -- | works mainly for gauging how big the walls should be
 takeamount :: Int
-takeamount = takeamountBID + takeamountASK 
+takeamount = takeamountBID + takeamountASK
 -- | telling the wall occourance
 taketowalls :: Int -> Int
 taketowalls 0 = 0
@@ -258,7 +260,7 @@ adjustedlenght :: [Options] -> Double
 adjustedlenght x = fromIntegral (length x) / 10
 
 runPercentage :: Int -> Double -> [Int]
-runPercentage n listL = [round (fromIntegral n * x) | x <- [0.1,0.2..listL]] 
+runPercentage n listL = [round (fromIntegral n * x) | x <- [0.1,0.2..listL]]
 
 
 processlist :: [Options] -> [Int] -> Int -> Options
@@ -266,9 +268,9 @@ processlist (o:os) (p:ps) x | x <= p = o
                             | otherwise = processlist os ps x
 
 randomhandler :: Options -> Options ->  Options
-randomhandler initoption randomGen 
-      | initoption == RANDOM  = randomGen 
-      | otherwise             =  initoption 
+randomhandler initoption randomGen
+      | initoption == RANDOM  = randomGen
+      | otherwise             =  initoption
 
 optionProcessor :: Options -> Int -> Int
 optionProcessor a i = case a of
@@ -282,7 +284,7 @@ templeaterunBUY a op = case op of
   UUP      -> a * 4  -- increasing b vol by 400%
   DW       -> a      -- doing nothing to downtrend
   DWW      -> a      -- extreme downtrend doing nothing
-  CN       -> a 
+  CN       -> a
   _        -> error "your templeate pattern matching did not go through"
 
 templeaterunSELL :: Int -> Options -> Int
@@ -291,9 +293,9 @@ templeaterunSELL a op = case op of
   UUP    -> a      -- nothing
   DW     -> a * 2  -- increasing s vol by 200%
   DWW    -> a * 4  -- increasing s vol by 400%
-  CN     -> a  
+  CN     -> a
   _      -> error "your templeate pattern matching did not go through"
-  
+
 -- | i == position index
 processTempleateRun :: Int -> Options -> [Int]
 processTempleateRun i o       = do
@@ -307,10 +309,10 @@ processTempleateRun i o       = do
   let templeatedprobabilityZ = if ifprocess then optionProcessor currentO zProbabilityTaker else zProbabilityTaker
   let templeatedprobabilityF = if ifprocess then fProbabilityTaker else optionProcessor currentO fProbabilityTaker
   [templeatedprobability,templeatedprobabilityY,templeatedprobabilityZ,templeatedprobabilityF]
-  
+
 randomOptionGen :: IO Options
 randomOptionGen = do
-  let options = [UP, UUP,CN, DWW, DW] 
+  let options = [UP, UUP,CN, DWW, DW]
   idx <- randomRIO (0, length options - 1)
   return (options !! idx)
 
@@ -330,27 +332,21 @@ roundToTwoDecimals x = fromRational (round (x * 100) Data.Ratio.% 100)
 
 
 -- | checking if the file is empty
-isFileEmpty :: FilePath -> IO Bool
-isFileEmpty filePath =
-  bracket
-    (openFile filePath ReadMode)
-    hClose
-    (\handle -> do
-       fileSize <- hFileSize handle
-       return (fileSize == 0))
+isFileEmpty :: Handle -> IO Bool
+isFileEmpty handle = do
+  fileSize <- hFileSize handle
+  return (fileSize == 0)
+
+
 -- | reading the orderbook
-readBook :: FilePath -> IO [(Double, Int)]
-readBook fileName =
-  bracket
-    (openFile fileName ReadMode)
-    hClose
-    (\handle -> do
-       contents <- BS.hGetContents handle
-       let contentsStr = BS.unpack contents
-       return $
-         case readMaybe contentsStr of
-           Nothing      -> []
-           Just bidBook -> bidBook)
+readBook :: Handle -> IO [(Double, Int)]
+readBook handle = do
+  contents <- BS.hGetContents handle
+  let contentsStr = BS.unpack contents
+  return $ Data.Maybe.fromMaybe [] (readMaybe contentsStr)
+
+
+
 -- | when wiping run then -> wipe the orderbook + write starting price
 newRunSettings :: FilePath -> FilePath -> FilePath -> FilePath -> FilePath -> FilePath -> FilePath -> FilePath -> FilePath -> FilePath -> FilePath -> FilePath -> FilePath -> FilePath -> Int -> IO ()
 newRunSettings logFile bidFile askFile priceFile nLongFile nShortFile eLongFile eShortFile bidAskRFile bidToAskFile buyVolFile sellVolFile volFile oiFile newValue = do
@@ -389,14 +385,13 @@ roundTo n x = (fromInteger . round $ x * (10 ^ n)) / (10.0 ^^ n)
 -- | Initialize a random generator with a seed based on the current time
 
 
--- |starting point (starting price)
 -- | Read the contents of the file and return the last number
 getLastNumberFromFile :: FilePath -> IO Double
 getLastNumberFromFile filePath = do
   content <- readFile filePath
   let numbers = map read (words content) :: [Double]
-  return $ last numbers
+  return $ if null numbers then 0 else last numbers
 
 -- | Define the starting point, maximum and minimum upmove and downmove values, and the maximum number of decimal points
-startingPointFromFile :: IO Double
-startingPointFromFile = getLastNumberFromFile pricePath
+startingPointFromFile :: FilePath -> IO Double
+startingPointFromFile = getLastNumberFromFile

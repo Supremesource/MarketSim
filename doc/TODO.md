@@ -1,19 +1,14 @@
-- add the following informations to file writes:
+
 
 - CATCH POTENTIAL NEGATIVE VALUES IN TUPLES MAKER AND TAKER
 
-- BID ASK R
-- BID TO ASKS R
-- VOLUME OVERAL
-- VOLUME BUY
-- VOLUME SELL
-- OPEN INTEREST
 
 
 
 - ADD TIME FRAME FORMATING
 - LIQUIDITY + LEVERAGE
 
-- ADD THE LESS IMPORTANT INFORMATION, LIKE COUNTS ETC.
 
 
+reslove the handle management by doing one function for all filewrites, and then closing it at the end
+resolve file rewrites

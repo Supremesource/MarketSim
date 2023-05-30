@@ -1,16 +1,13 @@
 module DataTypes where
-
+import System.Random ( StdGen )  
+import System.IO
 
 -- | defining data typ for volume side
 data VolumeSide
   = Buy
   | Sell
-   deriving Eq
+   deriving (Show, Eq, Ord, Enum, Bounded)
 
-instance Show VolumeSide where
-  show :: VolumeSide -> String
-  show Buy  = "Buy"
-  show Sell = "Sell"
 
 -- | maker tuple structure
 type MakerTuple = [(Int, String)]
@@ -55,3 +52,20 @@ data Options =
               CN  |
               RANDOM
               deriving  (Eq, Show, Enum, Bounded)
+
+
+type OrderBook = [(Double, Int)]
+type VolumeList = [(Int, VolumeSide)]
+type Generator = StdGen
+type FullWall = [Int]
+type StartingPoint = Double
+type Totakefromwall = Int
+type Volume = (Int, VolumeSide) 
+
+data OrderBookData = OrderBookData
+  { bidBookData :: OrderBook
+  , askBookData :: OrderBook}
+
+type FileWrtiter = (Handle,Handle,Handle,Handle,Handle,Handle) 
+
+type FileReader = (Handle, Handle)
