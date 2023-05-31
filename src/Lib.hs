@@ -5,7 +5,9 @@ module Lib where
 -- | moudle aggregating all the functions
 
 -- | external modules
-import           Control.Monad
+
+
+import           Control.Exception.Base
 import           Data.Char             (toUpper)
 
 import qualified Data.ByteString.Char8 as BS
@@ -27,8 +29,8 @@ import           DataTypes
 
 import           RunSettings
 import           Statistics
-import qualified Data.Maybe
-import  Filepaths
+
+
 
 
 
@@ -332,18 +334,28 @@ roundToTwoDecimals x = fromRational (round (x * 100) Data.Ratio.% 100)
 
 
 -- | checking if the file is empty
-isFileEmpty :: Handle -> IO Bool
-isFileEmpty handle = do
-  fileSize <- hFileSize handle
-  return (fileSize == 0)
-
-
+isFileEmpty :: FilePath -> IO Bool
+isFileEmpty filePath =
+  bracket
+    (openFile filePath ReadMode)
+    hClose
+    (\handle -> do
+       fileSize <- hFileSize handle
+       return (fileSize == 0))
+       
 -- | reading the orderbook
-readBook :: Handle -> IO [(Double, Int)]
-readBook handle = do
-  contents <- BS.hGetContents handle
-  let contentsStr = BS.unpack contents
-  return $ Data.Maybe.fromMaybe [] (readMaybe contentsStr)
+readBook :: FilePath -> IO [(Double, Int)]
+readBook fileName =
+  bracket
+    (openFile fileName ReadMode)
+    hClose
+    (\handle -> do
+       contents <- BS.hGetContents handle
+       let contentsStr = BS.unpack contents
+       return $
+         case readMaybe contentsStr of
+           Nothing      -> []
+           Just bidBook -> bidBook)
 
 
 

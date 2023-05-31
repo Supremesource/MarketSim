@@ -33,37 +33,6 @@ generateId = do
   let randomChars = randomRs (0, length symbols - 1) gen
   return $ map (symbols !!) $ take 10 randomChars
 
--- Function to open file handles
-openFiles :: IO FileWrtiter
-openFiles = do
-  handleLog       <- openFile logPath AppendMode -- 1
-  handlePrice     <- openFile pricePath AppendMode -- 2
-  handleBID       <- openFile bidBookPath WriteMode -- 3
-  handleASK       <- openFile askBookPath WriteMode -- 4
-  handleRatio     <- openFile bidAskRPath AppendMode -- 5
-  handleTORatio   <- openFile bidToAskRPath AppendMode -- 6
-  return (handleLog, handlePrice, handleBID, handleASK, handleRatio, handleTORatio)
-
-openReads :: IO FileReader
-openReads = do  
-  -- opening in readmode for reading purposes
-  handleBIDRead   <- openFile bidBookPath ReadMode -- 7
-  handleASKRead   <- openFile askBookPath ReadMode -- 8
-  return (handleBIDRead, handleASKRead)
-
-closeFilesW :: FileWrtiter -> IO ()
-closeFilesW (handleLog, handlePrice, handleBID, handleASK, handleRatio, handleTORatio) = do
-  hClose handleLog
-  hClose handlePrice
-  hClose handleBID
-  hClose handleASK
-  hClose handleRatio
-  hClose handleTORatio
-
-closeFilesR :: FileReader -> IO ()
-closeFilesR (handleBIDR, handleASKR) = do
-  hClose handleBIDR
-  hClose handleASKR
 
 
 
@@ -93,10 +62,12 @@ formatAndPrintInfo    sprd      asktot   bidtot   bidaskr    strprice     vlmsid
   B.putStr line
 
 
-
-filewrites1 ::  FileWrtiter  ->                                                          StartingPoint        -> [[Int]]      -> Int        -> Int     -> Int             -> Int             -> Int            -> [(Double,Int)]     -> [(Double,Int)]  -> VolumeSide       -> Int          -> Double     -> Double     -> OrderBook          ->  [(Double,Int)]  -> Double -> IO ()
-filewrites1     (handle, handlePrice, handleBID, handleASK, handleRatio, handleTORatio)   startingPoint        maxMinLimit      asksTotal     bidsTotal  totakefromwall     lengthchangeBID    lengthchangeASK   listASK               listBID               volumeSide    volumeAmount        spread        startingprice    bookSpreadFactorAsk    bookSpreadFactorBid    bidAskRatio = do
+filewrites1 ::     StartingPoint        -> [[Int]]      -> Int        -> Int     -> Int             -> Int             -> Int            -> [(Double,Int)]     -> [(Double,Int)]  -> VolumeSide       -> Int          -> Double     -> Double     -> OrderBook          ->  [(Double,Int)]  -> Double -> IO ()
+filewrites1       startingPoint        maxMinLimit      asksTotal     bidsTotal  totakefromwall     lengthchangeBID    lengthchangeASK   listASK               listBID               volumeSide    volumeAmount        spread        startingprice    bookSpreadFactorAsk    bookSpreadFactorBid    bidAskRatio = do
+ 
+ bracket (openFile logPath AppendMode) hClose $ \handle -> do
   id <- generateId
+  
 -- ? WRITING INTO FILES 1 ? -- 
 -- | (goes into log file)
   hPutStrLn handle $ printf "%-50s %-20s" "\n\n\nID:" id
@@ -129,19 +100,34 @@ filewrites1     (handle, handlePrice, handleBID, handleASK, handleRatio, handleT
   B.hPutStrLn handle $ B.pack $ printf  "%-50s %-20s" (allCaps "\n26. 'partial' Orderbook ASK: \n\n") (take 750 (unlines (map show bookSpreadFactorAsk)))
   B.hPutStrLn handle $ B.pack $ printf  "%-50s %-20s" (allCaps "\n27. 'partial' Orderbook BID: \n\n") (take 750 (unlines (map show bookSpreadFactorBid)))
   B.putStrLn $ BC.pack $ printf "%-50s" "\n\n + Configuration settings successfully written into an external file"
+  hClose handle
 -- ? REWRTING INTO FILES 2 ? --  
 -- | Asociated with the orderbook
 -- | rewriting price changes
+ bracket (openFile pricePath AppendMode) hClose $ \handlePrice -> do
   B.hPutStr handlePrice $ BC.pack "\n"
   B.hPutStrLn handlePrice $ BC.pack (show startingprice)
+  hClose handlePrice
+
 -- | rewriting bidbook
+ bracket (openFile bidBookPath WriteMode) hClose $ \handleBID -> do
   hPrint handleBID bookSpreadFactorBid -- TODO biggest computation thread
+  hClose handleBID
+
 -- | rewriting askbook
+ bracket (openFile askBookPath WriteMode) hClose $ \handleASK -> do
   hPrint handleASK bookSpreadFactorAsk
+  hClose handleASK
+
 -- | rewriting bid/ask RATIO
+ bracket (openFile bidAskRPath AppendMode) hClose $ \handleRatio -> do
   hPutStrLn handleRatio (printf "%.4f" bidAskRatio)
+  hClose handleRatio
+  
 -- | rewriting bid TO ask RATIO
+ bracket (openFile bidToAskRPath AppendMode) hClose $ \handleTORatio -> do
   hPutStrLn handleTORatio (show bidsTotal ++ " / " ++ show asksTotal)
+  hClose handleTORatio
 -- | printing stats associated with positioning
 printPositionStats :: Int -> (TakerTuple, MakerTuple) -> IO (Int, VolumeSide)
 printPositionStats i (taker, makers) = do

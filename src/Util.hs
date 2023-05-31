@@ -1,4 +1,3 @@
-{-# OPTIONS_GHC -Wno-unused-local-binds #-}
 {-# OPTIONS_GHC -Wno-name-shadowing #-}
 module Util where
 -- | module of utility funcitons
@@ -45,19 +44,19 @@ startingPrices vSide bidUpdateBook askUpdateBook =
 
 
 -- | processing the orderbook with a volume
-recursiveList :: VolumeList -> OrderBook -> OrderBook -> Generator -> Generator -> FullWall -> FullWall -> StartingPoint -> Totakefromwall -> FileWrtiter -> IO (OrderBook, OrderBook) 
+recursiveList :: VolumeList -> OrderBook -> OrderBook -> Generator -> Generator -> FullWall -> FullWall -> StartingPoint -> Totakefromwall  -> IO (OrderBook, OrderBook) 
 -- | base case
-recursiveList [] _ _ _ _ _ _ _ _ _ = return ([], [])
-recursiveList (x:xs) bidBook askBook gen1 gen2 fullwallsASK fullwallsBIDS startingPoint totakefromwall handles1 -- | recursive case
+recursiveList [] _ _ _ _ _ _ _ _ = return ([], [])
+recursiveList (x:xs) bidBook askBook gen1 gen2 fullwallsASK fullwallsBIDS startingPoint totakefromwall  -- | recursive case
          =
-    orderbookLoop x bidBook askBook gen1 gen2 fullwallsASK fullwallsBIDS startingPoint totakefromwall handles1 >>=
+    orderbookLoop x bidBook askBook gen1 gen2 fullwallsASK fullwallsBIDS startingPoint totakefromwall  >>=
     \(newBidBook, newAskBook) -> do
         let (newGen1, newGen2) = (fst (split gen1), fst (split gen2)) -- create two new generators
-        recursiveList xs newBidBook newAskBook newGen1 newGen2 fullwallsASK fullwallsBIDS startingPoint totakefromwall handles1
+        recursiveList xs newBidBook newAskBook newGen1 newGen2 fullwallsASK fullwallsBIDS startingPoint totakefromwall 
   where
     orderbookLoop :: Volume -> OrderBook
-                  -> OrderBook -> Generator -> Generator -> FullWall -> FullWall -> StartingPoint -> Totakefromwall -> FileWrtiter  -> IO (OrderBook, OrderBook) 
-    orderbookLoop (volumeAmount, vSide) bidBook askBook gen1 gen2 fullwallsASK fullwallsBIDS startingPoint totakefromwall handles1 = do
+                  -> OrderBook -> Generator -> Generator -> FullWall -> FullWall -> StartingPoint -> Totakefromwall  -> IO (OrderBook, OrderBook) 
+    orderbookLoop (volumeAmount, vSide) bidBook askBook gen1 gen2 fullwallsASK fullwallsBIDS startingPoint totakefromwall  = do
             -- | local variables
             let (volumeBID, volumeASK) = calculateVolumes vSide volumeAmount
             let bidUpdateBook = orderbookChange bidBook volumeBID
@@ -75,8 +74,11 @@ recursiveList (x:xs) bidBook askBook gen1 gen2 fullwallsASK fullwallsBIDS starti
             -- | the / number is how smaller the insertion will be
             let listASK :: [(Double, Int)] = zipToTuples askSetupInsert (map (round . (/ 1.10) . fromIntegral) pricesASK)
             let listBID :: [(Double, Int)] = zipToTuples bidSetupInsert (map (round . (/ 1.10) . fromIntegral) pricesBID)
-            let currentbookASK :: [(Double, Int)] = if vSide ==  Buy     then askUpdateBook  else listASK 
-            let currentbookBID :: [(Double, Int)] = if vSide ==  Sell    then bidUpdateBook else listBID 
+        --  let insertInAsk = if vSide == Buy then [] else listASK 
+        --  let insertInBid = if vSide == Sell then [] else listBID
+           
+            let currentbookASK :: [(Double, Int)] = if vSide ==  Buy     then askUpdateBook  else listASK ++ askBook
+            let currentbookBID :: [(Double, Int)] = if vSide ==  Sell    then bidUpdateBook else  listBID ++ bidBook
             let finalBookAsk :: [(Double, Int)] = if largerSpread then tail currentbookASK else currentbookASK
             let finalBookBid :: [(Double, Int)] = if largerSpread then tail currentbookBID else currentbookBID
 -- | ask in total in terms of count
@@ -103,7 +105,7 @@ recursiveList (x:xs) bidBook askBook gen1 gen2 fullwallsASK fullwallsBIDS starti
             let insertinInfo = formatAndPrintInfo spread asksTotal bidsTotal bidAskRatio startingprice vSide volumeAmount lengthchangeBID lengthchangeASK
             insertinInfo
        
-            let writeInfo = filewrites1 handles1 startingPoint maxMinLimit asksTotal bidsTotal totakefromwall lengthchangeBID lengthchangeASK listASK listBID vSide volumeAmount spread startingprice  finalBookAsk finalBookBid bidAskRatio
+            let writeInfo = filewrites1 startingPoint maxMinLimit asksTotal bidsTotal totakefromwall lengthchangeBID lengthchangeASK listASK listBID vSide volumeAmount spread startingprice  finalBookAsk finalBookBid bidAskRatio
             writeInfo
 
 

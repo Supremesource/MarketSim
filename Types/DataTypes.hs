@@ -1,3 +1,4 @@
+{-# LANGUAGE GADTs #-}
 module DataTypes where
 import System.Random ( StdGen )  
 import System.IO
@@ -66,6 +67,6 @@ data OrderBookData = OrderBookData
   { bidBookData :: OrderBook
   , askBookData :: OrderBook}
 
-type FileWrtiter = (Handle,Handle,Handle,Handle,Handle,Handle) 
+data AskBook = AskBook [(Double,Int)] deriving Show
 
-type FileReader = (Handle, Handle)
+data BidBook = BidBook  [(Double,Int)] deriving Show
