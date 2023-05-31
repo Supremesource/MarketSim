@@ -16,6 +16,24 @@ import           Filepaths
 -- TODO implement types instead of long def
 
 
+initialBookDetails :: BookStats
+initialBookDetails = BookStats
+  { startingPoint    = 0.0
+  , maxMinLimit     = replicate 2 []
+  , asksTotal       = 0
+  , bidsTotal       = 0
+  , totakefromwall  = 0
+  , lengthchangeBID = 0
+  , lengthchangeASK = 0
+  , listASK         = []
+  , listBID         = []
+  , vSide           = Buy
+  , volumeAmount    = 0
+  , spread          = 0.0
+  , startingprice   = 0.0
+  , bidAskRatio     = 0.0
+  }
+
 
 settingcheck :: VolumeSide -> Int -> Int -> Int -> IO ()
 settingcheck vSide volumeAmount asksTotal bidsTotal = do
@@ -45,24 +63,24 @@ startingPrices vSide bidUpdateBook askUpdateBook =
         (if vSide == Buy then fst (head askUpdateBook) else 0)
 
 
--- | processing the orderbook with a volume
-recursiveList :: VolumeList -> OrderBook -> OrderBook -> Generator -> Generator -> FullWall -> FullWall -> StartingPoint -> Totakefromwall  -> IO (OrderBook, OrderBook) 
--- | base case
-recursiveList [] bidBook askBook _ _ _ _ _ _  = do 
-    writeFile bidBookPath $ show bidBook 
-    writeFile askBookPath $ show askBook
-    return (bidBook, askBook)
 
-recursiveList (x:xs) bidBook askBook gen1 gen2 fullwallsASK fullwallsBIDS startingPoint totakefromwall =
-    orderbookLoop x bidBook askBook gen1 gen2 fullwallsASK fullwallsBIDS startingPoint totakefromwall  >>=
-    \(newBidBook, newAskBook) -> do
+-- | processing the orderbook with a volume
+recursiveList :: VolumeList -> OrderBook -> OrderBook -> Generator -> Generator -> FullWall -> FullWall -> StartingPoint -> Totakefromwall -> BookStats -> IO (OrderBook, OrderBook, BookStats) 
+-- | base case
+recursiveList [] bidBook askBook _ _ _ _ _ _ bookDetails  = do 
+   -- let a = filewrites1 bookDetails -- TODO fix this, now it output only the last value I need to store everything and then output it there insetead of just the last value
+   --  a
+    return (bidBook, askBook, bookDetails)
+
+recursiveList (x:xs) bidBook askBook gen1 gen2 fullwallsASK fullwallsBIDS startingPoint totakefromwall bookDetails =
+    orderbookLoop x bidBook askBook gen1 gen2 fullwallsASK fullwallsBIDS startingPoint totakefromwall bookDetails >>=
+    \(newBidBook, newAskBook, newBookDetails) -> do
         let (newGen1, newGen2) = (fst (split gen1), fst (split gen2)) -- create two new generators
-        recursiveList xs newBidBook newAskBook newGen1 newGen2 fullwallsASK fullwallsBIDS startingPoint totakefromwall
+        recursiveList xs newBidBook newAskBook newGen1 newGen2 fullwallsASK fullwallsBIDS startingPoint totakefromwall newBookDetails
 
   where
-    orderbookLoop :: Volume -> OrderBook
-                  -> OrderBook -> Generator -> Generator -> FullWall -> FullWall -> StartingPoint -> Totakefromwall  -> IO (OrderBook, OrderBook) 
-    orderbookLoop (volumeAmount, vSide) bidBook askBook gen1 gen2 fullwallsASK fullwallsBIDS startingPoint totakefromwall  = do
+    orderbookLoop :: Volume -> OrderBook -> OrderBook -> Generator -> Generator -> FullWall -> FullWall -> StartingPoint -> Totakefromwall -> BookStats -> IO (OrderBook, OrderBook, BookStats) 
+    orderbookLoop (volumeAmount, vSide) bidBook askBook gen1 gen2 fullwallsASK fullwallsBIDS startingPoint totakefromwall bookDetails  = do
             -- | local variables
             let (volumeBID, volumeASK) = calculateVolumes vSide volumeAmount
             let bidUpdateBook = orderbookChange bidBook volumeBID
@@ -105,35 +123,35 @@ recursiveList (x:xs) bidBook askBook gen1 gen2 fullwallsASK fullwallsBIDS starti
 -- | local check
             let check = settingcheck vSide volumeAmount asksTotal bidsTotal
             check
-    -- TODO make this shit more simple
-           
-            let bookDetails = 
-                    BookStats {startingPoint    = startingPoint
-                              , maxMinLimit     = maxMinLimit
-                              , asksTotal       = asksTotal
-                              , bidsTotal       = bidsTotal
-                              , totakefromwall  = totakefromwall
-                              , lengthchangeBID = lengthchangeBID
-                              , lengthchangeASK = lengthchangeASK
-                              , listASK         = listASK
-                              , listBID         = listBID
-                              , vSide           = vSide
-                              , volumeAmount    = volumeAmount
-                              , spread          = spread
+   
+   -- TODO this is accumulator
+            let newbookDetails = 
+                    BookStats {startingPoint     = startingPoint
+                              , maxMinLimit      = maxMinLimit
+                              , asksTotal        = asksTotal
+                              , bidsTotal        = bidsTotal
+                              , totakefromwall   = totakefromwall
+                              , lengthchangeBID  = lengthchangeBID
+                              , lengthchangeASK  = lengthchangeASK
+                              , listASK          = listASK
+                              , listBID          = listBID
+                              , vSide            = vSide
+                              , volumeAmount     = volumeAmount
+                              , spread           = spread
                               , startingprice    = startingprice
-                              , bidAskRatio     = bidAskRatio
+                              , bidAskRatio      = bidAskRatio
                               }
 
-
-
             -- exclude this in data types, this can be printed all the time
-            let insertinInfo = formatAndPrintInfo bookDetails
+            let insertinInfo = formatAndPrintInfo newbookDetails
             insertinInfo -- THIS IS ONLY CONSOLE
-
-            let writeInfo = filewrites1 bookDetails
-            writeInfo -- THIS IS ONLY FILE
+           
+           -- TODO this is going to be passed after reaching the base case and rewritten
+            let writeInfo = filewrites1 newbookDetails -- TODO make this funciton activate after base case is hit
+            writeInfo
+             -- THIS IS ONLY FILE
 -- | returning the orderbook
-            return (finalBookBid, finalBookAsk)
+            return (finalBookBid, finalBookAsk, newbookDetails)
 
 
 -- | helper funciton for the funciton below (where is everything starting at)
