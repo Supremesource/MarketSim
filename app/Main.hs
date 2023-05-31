@@ -27,6 +27,7 @@ import           Statistics
 import           Util
 
 
+
 -- | Entry point of your program
 runProgram :: Stats -> Int -> IO [(Int, VolumeSide)]
 runProgram aggregatedStats remainingRuns = do
@@ -213,6 +214,9 @@ main = do
 
 
 
+      -- | Store the volume result , THIS IS ACCUMULATOR
+
+  
 
 -- ? ADDING STATS FROM 'MAINLOOP' TOGETHER
 -- | price change
@@ -220,11 +224,8 @@ main = do
 
 
 
--- | Store the volume result
       let listofvolumes = volumesAndSides
-      (finalBidBook, finalAskBook) <- recursiveList listofvolumes bidBook askBook gen1 gen2 fullwallsASK fullwallsBIDS startingPoint totakefromwall
-
-
+      (finalBidBook, finalAskBook, finalBookDetails) <- recursiveList listofvolumes bidBook askBook gen1 gen2 fullwallsASK fullwallsBIDS startingPoint totakefromwall initialBookDetails
 
 
 
