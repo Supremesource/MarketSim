@@ -116,6 +116,14 @@ main = do
 
       
     
+      isBidEmpty  <- isFileEmpty bidBookPath
+      isAskEmpty  <- isFileEmpty askBookPath
+      startingPoint <- startingPointFromFile pricePath
+
+
+            
+      fileBidBook <- readBook bidBookPath
+      fileAskBook <- readBook askBookPath
 
 
 -- ? CHECKING SETTINGS   
@@ -132,7 +140,7 @@ main = do
      
 -- ! - ORDERBOOK - ! --
 -- | the price simulation is starting at
-      startingPoint <- startingPointFromFile pricePath
+     
 
 -- | orderbook
 -- | making ask move upside
@@ -177,39 +185,38 @@ main = do
 -- | the orderbook path which should change the bid price
    
 
-      reads <- openReads
-      let pathReadBidBook = fst  reads
-      let pathReadAskBook = snd  reads
-      isBidEmpty  <- isFileEmpty  pathReadBidBook
-      isAskEmpty  <- isFileEmpty  pathReadAskBook
-      fileBidBook <- readBook     pathReadBidBook
-      fileAskBook <- readBook     pathReadAskBook
+
+
 -- | orderbook logc:
       let bidBook =
             if isBidEmpty
-              then orderbook_bid
+              then do orderbook_bid
+                 
               else fileBidBook
       
+     
+
 -- |  ask
       let askBook =
             if isAskEmpty
-              then orderbook_ask
+              then do orderbook_ask
               else fileAskBook
-      closeFilesR reads
-      handles <- openFiles 
+
+      
+
+     
 -- ? ADDING STATS FROM 'MAINLOOP' TOGETHER
 -- | price change
       volumesAndSides <- mainLoop initStats numberOfRuns
 
      
-      closeFilesW handles
+
 -- | Store the volume result
       let listofvolumes = volumesAndSides
-      (finalBidBook, finalAskBook) <- recursiveList listofvolumes bidBook askBook gen1 gen2 fullwallsASK fullwallsBIDS startingPoint totakefromwall handles
+      (finalBidBook, finalAskBook) <- recursiveList listofvolumes bidBook askBook gen1 gen2 fullwallsASK fullwallsBIDS startingPoint totakefromwall 
       
   
-      closeFilesW handles
-   
+
     
    
 -- | formating price document
