@@ -12,8 +12,8 @@ module Main where
 -- | external libraries
 import           Control.Monad               (forM, replicateM, when)
 import           Control.Parallel.Strategies (parList, rseq, using)
-import           System.IO                   
-                                              
+import           System.IO
+
 import           System.Process              (callCommand)
 import           System.Random               (Random (randomRs))
 -- | internal libraries
@@ -26,9 +26,21 @@ import           RunSettings
 import           Statistics
 import           Util
 
+
+-- | Entry point of your program
+runProgram :: Stats -> Int -> IO [(Int, VolumeSide)]
+runProgram aggregatedStats remainingRuns = do
+    handles <- openRewrites3
+    result <- mainLoop aggregatedStats remainingRuns handles
+    closeHandles3 handles
+    return result
+
+
+
 -- | loop initializing the main processes
-mainLoop :: Stats -> Int -> IO [(Int, VolumeSide)]
-mainLoop aggregatedStats remainingRuns = do
+-- | loop initializing the main processes
+mainLoop ::   Stats -> Int -> RewriteHandle3 -> IO [(Int, VolumeSide)]
+mainLoop  aggregatedStats remainingRuns handles = do
       if remainingRuns > 0
         then do
 
@@ -37,9 +49,9 @@ mainLoop aggregatedStats remainingRuns = do
           putStrLn   "+------------+"
           putStrLn $ "|RUN ID   " ++ show remainingRuns
           putStrLn   "+------------+"
-          
+
 -- | initilizing the number of positions
-          positions <- forM [1..numPositions] $ \indexPosition -> do       
+          positions <- forM [1..numPositions] $ \indexPosition -> do
 -- | generating random number for the template / list described in settings
             randomToTempleate <- randomOptionGen
 -- | generating positioning
@@ -50,7 +62,7 @@ mainLoop aggregatedStats remainingRuns = do
           volumesAndSides <- forM (zip [1..] positions) $ \(indexPosition, positionInfo) -> do
 
 -- | returns the volume and side of the position
-            (volume, side) <- printPositionStats indexPosition positionInfo
+            (volume, side) <- printPositionStats handles indexPosition positionInfo
             return (volume, side)
 
 -- | IO ()
@@ -64,15 +76,14 @@ mainLoop aggregatedStats remainingRuns = do
           printStats newAggregatedStats
 
 -- | initilizing the counter
-          nextVolumesAndSides <- mainLoop newAggregatedStats (remainingRuns - 1)
-
+          nextVolumesAndSides <- mainLoop newAggregatedStats (remainingRuns - 1) handles
 -- | returning the volume and side of the position, for further processing in orderbook
           return (volumesAndSides ++ nextVolumesAndSides)
         else do
-
 -- | if the number of runs is reached
           printFinal aggregatedStats
           return []
+
 
 -- | main function
 main :: IO ()
@@ -81,7 +92,7 @@ main = do
 
 -- | clening log file
   writeFile logPath ""
- 
+
 -- | CHECKING IF FILES ARE EMPTY
 
 
@@ -108,20 +119,20 @@ main = do
                 bidToAskRPath buyVolumePath sellVolumePath volumePath openInterestPath  wipingStartingValue
     else if proceed == "n" || proceed == "N"
         then  error (red "stopping program")
-   
+
 -- | user wants to proceed with the simulation generation   
     else do
 -- | checking settings, catching potential bugs in the setting specified by user
 -- | if the settings are not correct, the program will not run
 
-      
-    
+
+
       isBidEmpty  <- isFileEmpty bidBookPath
       isAskEmpty  <- isFileEmpty askBookPath
       startingPoint <- startingPointFromFile pricePath
 
 
-            
+
       fileBidBook <- readBook bidBookPath
       fileAskBook <- readBook askBookPath
 
@@ -136,11 +147,11 @@ main = do
       gen2
         <- randomGen
 
-     
-     
+
+
 -- ! - ORDERBOOK - ! --
 -- | the price simulation is starting at
-     
+
 
 -- | orderbook
 -- | making ask move upside
@@ -159,8 +170,8 @@ main = do
 -- | generating prices for BIDS $$ amount
       amountBID <- printRandomList' takeamountBID
 -- | adding into a list / converting into []
-      let usdamountASK  = amountASK  :: [Int] 
-      let usdamountBID  = amountBID :: [Int]  
+      let usdamountASK  = amountASK  :: [Int]
+      let usdamountBID  = amountBID :: [Int]
 -- | Price walls (limit)
 -- | generate the size of limit walls (in terms of it's occurrence)
       let totakefromwall  =  taketowalls $ 2 * takeamount
@@ -183,7 +194,7 @@ main = do
       let orderbook_ask  = zipToTuples setupASK fullwallsASK
       let orderbook_bid  = zipToTuples setupBID fullwallsBIDS
 -- | the orderbook path which should change the bid price
-   
+
 
 
 
@@ -191,10 +202,8 @@ main = do
       let bidBook =
             if isBidEmpty
               then do orderbook_bid
-                 
+
               else fileBidBook
-      
-     
 
 -- |  ask
       let askBook =
@@ -202,32 +211,32 @@ main = do
               then do orderbook_ask
               else fileAskBook
 
-      
 
-     
+
+
 -- ? ADDING STATS FROM 'MAINLOOP' TOGETHER
 -- | price change
-      volumesAndSides <- mainLoop initStats numberOfRuns
+      volumesAndSides <- runProgram initStats numberOfRuns
 
-     
+
 
 -- | Store the volume result
       let listofvolumes = volumesAndSides
-      (finalBidBook, finalAskBook) <- recursiveList listofvolumes bidBook askBook gen1 gen2 fullwallsASK fullwallsBIDS startingPoint totakefromwall 
-      
-  
+      (finalBidBook, finalAskBook) <- recursiveList listofvolumes bidBook askBook gen1 gen2 fullwallsASK fullwallsBIDS startingPoint totakefromwall
 
-    
-   
+
+
+
+
 -- | formating price document
       removeEmptyLines pricePath
-   
+
 
 -- | optional warnings
       addsupto100 xProbabilityTaker yProbabilityTaker zProbabilityTaker fProbabilityTaker
       addsupto100 xProbabilityMaker yProbabilityMaker zProbabilityMaker fProbabilityMaker
- 
-    
+
+
 -- | calling python script (graph)
 --  TODO make this way more effective
       Control.Monad.when plotCharts $ callCommand "python scripts/plot_prices.py"

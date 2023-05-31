@@ -67,6 +67,24 @@ data OrderBookData = OrderBookData
   { bidBookData :: OrderBook
   , askBookData :: OrderBook}
 
-data AskBook = AskBook [(Double,Int)] deriving Show
-
+data AskBook = AskBook [(Double,Int)] deriving Show -- TODO probably not needed
 data BidBook = BidBook  [(Double,Int)] deriving Show
+
+type RewriteHandle3 = (Handle, Handle, Handle, Handle, Handle, Handle, Handle, Handle)
+
+data BookStats = BookStats { 
+                     startingPoint :: StartingPoint
+                   , maxMinLimit :: [[Int]]                   
+                   , asksTotal :: Int
+                   , bidsTotal :: Int
+                   , totakefromwall :: Totakefromwall
+                   , lengthchangeBID :: Int
+                   , lengthchangeASK :: Int
+                   , listASK :: [(Double, Int)]
+                   , listBID :: [(Double, Int)]
+                   , vSide :: VolumeSide
+                   , volumeAmount :: Int
+                   , spread :: Double
+                   , startingprice :: Double
+                   , bidAskRatio :: Double           
+                   }
