@@ -21,7 +21,7 @@ import           System.Random         (Random (randomR, randomRs),
                                         RandomGen (split), StdGen, mkStdGen,
                                         newStdGen, randomRIO, setStdGen)
 import           Text.Read             (readMaybe)
-
+import           Data.Foldable
 
 -- | internal libraries
 import           Colours
@@ -146,11 +146,17 @@ secondPartList lst = drop halfLen lst
     halfLen = (length lst + 1) `div` 2
 
 
-minimumlimit :: (Ord a, Foldable t, Functor t) => t [a] -> a
-minimumlimit = minimum . fmap minimum
+minimumlimit :: (Ord a, Foldable t, Functor t) => t [a] -> Maybe a
+minimumlimit xs = if all null (toList xs)
+                  then Nothing
+                  else Just (minimum . fmap minimum $ xs)
 
-maximumlimit :: (Ord a, Foldable t, Functor t) => t [a] -> a
-maximumlimit = maximum . fmap maximum
+
+maximumlimit :: (Ord a, Foldable t, Functor t) => t [a] -> Maybe a
+maximumlimit xs = if all null (toList xs)
+                  then Nothing
+                  else Just (maximum . fmap maximum $ xs)
+
 
 -- | for price changes:
 orderbookChange :: [(Double, Int)] -> Int -> [(Double, Int)]
@@ -342,7 +348,7 @@ isFileEmpty filePath =
     (\handle -> do
        fileSize <- hFileSize handle
        return (fileSize == 0))
-       
+
 -- | reading the orderbook
 readBook :: FilePath -> IO [(Double, Int)]
 readBook fileName =

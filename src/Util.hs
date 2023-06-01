@@ -65,23 +65,22 @@ startingPrices vSide bidUpdateBook askUpdateBook =
 
 
 -- | processing the orderbook with a volume
-recursiveList :: VolumeList -> OrderBook -> OrderBook -> Generator -> Generator -> FullWall -> FullWall -> StartingPoint -> Totakefromwall -> BookStats -> IO (OrderBook, OrderBook, BookStats) 
+recursiveList :: VolumeList -> OrderBook -> OrderBook -> Generator -> Generator -> FullWall -> FullWall -> StartingPoint -> Totakefromwall -> [BookStats] -> IO (OrderBook, OrderBook, [BookStats]) 
 -- | base case
 recursiveList [] bidBook askBook _ _ _ _ _ _ bookDetails  = do 
-   -- let a = filewrites1 bookDetails -- TODO fix this, now it output only the last value I need to store everything and then output it there insetead of just the last value
-   --  a
+-- write accumulator to file at the end
+    mapM_ filewrites1 $ tail  (reverse bookDetails )
     return (bidBook, askBook, bookDetails)
-
 recursiveList (x:xs) bidBook askBook gen1 gen2 fullwallsASK fullwallsBIDS startingPoint totakefromwall bookDetails =
-    orderbookLoop x bidBook askBook gen1 gen2 fullwallsASK fullwallsBIDS startingPoint totakefromwall bookDetails >>=
+    orderbookLoop x bidBook askBook gen1 gen2 fullwallsASK fullwallsBIDS startingPoint totakefromwall >>=
     \(newBidBook, newAskBook, newBookDetails) -> do
-        let (newGen1, newGen2) = (fst (split gen1), fst (split gen2)) -- create two new generators
-        recursiveList xs newBidBook newAskBook newGen1 newGen2 fullwallsASK fullwallsBIDS startingPoint totakefromwall newBookDetails
-
+-- create two new generators      
+        let (newGen1, newGen2) = (fst (split gen1), fst (split gen2)) 
+        recursiveList xs newBidBook newAskBook newGen1 newGen2 fullwallsASK fullwallsBIDS startingPoint totakefromwall (newBookDetails:bookDetails)
   where
-    orderbookLoop :: Volume -> OrderBook -> OrderBook -> Generator -> Generator -> FullWall -> FullWall -> StartingPoint -> Totakefromwall -> BookStats -> IO (OrderBook, OrderBook, BookStats) 
-    orderbookLoop (volumeAmount, vSide) bidBook askBook gen1 gen2 fullwallsASK fullwallsBIDS startingPoint totakefromwall bookDetails  = do
-            -- | local variables
+    orderbookLoop :: Volume -> OrderBook -> OrderBook -> Generator -> Generator -> FullWall -> FullWall -> StartingPoint -> Totakefromwall  -> IO (OrderBook, OrderBook, BookStats) 
+    orderbookLoop (volumeAmount, vSide) bidBook askBook gen1 gen2 fullwallsASK fullwallsBIDS startingPoint totakefromwall   = do
+        -- | local variables
             let (volumeBID, volumeASK) = calculateVolumes vSide volumeAmount
             let bidUpdateBook = orderbookChange bidBook volumeBID
             let askUpdateBook = orderbookChange askBook volumeASK
@@ -123,8 +122,7 @@ recursiveList (x:xs) bidBook askBook gen1 gen2 fullwallsASK fullwallsBIDS starti
 -- | local check
             let check = settingcheck vSide volumeAmount asksTotal bidsTotal
             check
-   
-   -- TODO this is accumulator
+-- | how accumulator stores the values
             let newbookDetails = 
                     BookStats {startingPoint     = startingPoint
                               , maxMinLimit      = maxMinLimit
@@ -142,14 +140,9 @@ recursiveList (x:xs) bidBook askBook gen1 gen2 fullwallsASK fullwallsBIDS starti
                               , bidAskRatio      = bidAskRatio
                               }
 
-            -- exclude this in data types, this can be printed all the time
             let insertinInfo = formatAndPrintInfo newbookDetails
             insertinInfo -- THIS IS ONLY CONSOLE
-           
-           -- TODO this is going to be passed after reaching the base case and rewritten
-            let writeInfo = filewrites1 newbookDetails -- TODO make this funciton activate after base case is hit
-            writeInfo
-             -- THIS IS ONLY FILE
+
 -- | returning the orderbook
             return (finalBookBid, finalBookAsk, newbookDetails)
 

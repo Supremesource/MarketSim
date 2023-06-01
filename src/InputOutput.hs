@@ -80,7 +80,6 @@ formatAndPrintInfo stats = do
 
 filewrites1 ::   BookStats -> IO ()
 filewrites1   stats  = do
-
  bracket (openFile logPath AppendMode) hClose $ \handle -> do
   id <- generateId
 
@@ -115,7 +114,6 @@ filewrites1   stats  = do
   B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps "25. The starting price:")             (show $ startingprice stats) ++ "\n\n\n"
  -- B.hPutStrLn handle $ B.pack $ printf  "%-50s %-20s" (allCaps "\n26. 'partial' Orderbook ASK: \n\n") (take 750 (unlines (map show bookSpreadFactorAsk)))
  -- B.hPutStrLn handle $ B.pack $ printf  "%-50s %-20s" (allCaps "\n27. 'partial' Orderbook BID: \n\n") (take 750 (unlines (map show bookSpreadFactorBid)))
-  B.putStrLn $ BC.pack $ printf "%-50s" "\n\n + Configuration settings successfully written into an external file"
   hClose handle
 -- ? REWRTING INTO FILES 2 ? --  
 -- | Asociated with the orderbook
@@ -197,38 +195,21 @@ printPositionStats (handlePosition, handlePosition2,handlePosition3,handlePositi
 -- | asociated with the positioning
 -- | positioning information
 -- | total X 
-
-
   B.hPutStrLn handlePosition $ BC.pack (show offX)
-   
   -- | total Y  
- 
   B.hPutStrLn handlePosition2 $ BC.pack (show offY)
-   
   -- | total Z  
-
-  B.hPutStrLn handlePosition3 $ BC.pack (show offZ)
-       
+  B.hPutStrLn handlePosition3 $ BC.pack (show offZ)       
   -- | total F
-
-  B.hPutStrLn handlePosition4 $ BC.pack (show offF)
-       
+  B.hPutStrLn handlePosition4 $ BC.pack (show offF)       
   -- | Buy volume
-
-  B.hPutStrLn handleVol $ BC.pack (show buyVOLUME)
-      
+  B.hPutStrLn handleVol $ BC.pack (show buyVOLUME)      
   -- | Sell volume
-
-  B.hPutStrLn handleVol2 $ BC.pack (show sellVOLUME)
-    
+  B.hPutStrLn handleVol2 $ BC.pack (show sellVOLUME)    
   -- | Overal volume
-
-  B.hPutStrLn handleVol3 $ BC.pack (show overalVOLUME)
-    
+  B.hPutStrLn handleVol3 $ BC.pack (show overalVOLUME)  
   -- | Overal open interest
-
-  B.hPutStrLn handleInterest $ BC.pack (show overalOpenInterest)
-      
+  B.hPutStrLn handleInterest $ BC.pack (show overalOpenInterest)    
 -- | return
   return (volumeSume, sideVol)
 
