@@ -222,10 +222,11 @@ main = do
 -- | price change
       volumesAndSides <- runProgram initStats numberOfRuns
 
+      
 
-
+      let initialBookDetailsList = [initialBookDetails]
       let listofvolumes = volumesAndSides
-      (finalBidBook, finalAskBook, finalBookDetails) <- recursiveList listofvolumes bidBook askBook gen1 gen2 fullwallsASK fullwallsBIDS startingPoint totakefromwall initialBookDetails
+      (finalBidBook, finalAskBook, finalBookDetails) <- recursiveList listofvolumes bidBook askBook gen1 gen2 fullwallsASK fullwallsBIDS startingPoint totakefromwall initialBookDetailsList
 
 
 

@@ -86,5 +86,7 @@ data BookStats = BookStats {
                    , volumeAmount :: Int
                    , spread :: Double
                    , startingprice :: Double
-                   , bidAskRatio :: Double           
+                   , bidAskRatio :: Double       
+             
                    }
+
