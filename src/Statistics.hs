@@ -1,8 +1,6 @@
-{-# OPTIONS_GHC -Wno-unused-matches #-}
-{-# OPTIONS_GHC -Wno-unused-local-binds #-}
-{-# OPTIONS_GHC -Wno-identities #-}
 {-# OPTIONS_GHC -Wno-missing-export-lists #-}
 {-# OPTIONS_GHC -Wno-incomplete-patterns #-}
+
 module Statistics where
 -- | module where majoritiy of statistical functions are defined
 
@@ -82,14 +80,12 @@ generateVolumes numMakers totalVolume = do
 
 generateRandomPosition :: [Int] -> IO ([(Int, String)], [(Int, String)])
 generateRandomPosition [xProb,yProb, zProb, fProb]  = do
-
   -- | for longs 1 - 2
   x <- distribution (basecaseValueLongNew, upperBoundLongNew)        -- new longs 1
   f <- distribution (basecaseValueLongClose, upperBoundLongClose)    -- closing longs 2
   -- | for shorts 3 - 4
   y <- distribution (basecaseValueShortNew, upperBoundShortNew)      -- new shorts 3
   z <- distribution (basecaseValueShortClose, upperBoundShortClose)  -- closing shorts 4
-
 -- | options of takers
   let takeROptions  = 
                         [(xProb
@@ -101,7 +97,6 @@ generateRandomPosition [xProb,yProb, zProb, fProb]  = do
                         , (fProb
                         , (f, "f"))]
   taker' <- weightedRandom takeROptions
-
 -- | Taker and maker probabilitis  
   let takerProbab  
         | snd taker' == "x" = [(yProb, (fst taker', "x")), (zProb, (fst taker', "z"))]
@@ -115,7 +110,6 @@ generateRandomPosition [xProb,yProb, zProb, fProb]  = do
         | snd taker' == "z" = [(yProbabilityMaker, (z, "y")), (fProbabilityMaker, (z, "f"))]
         | snd taker' == "f" = [(xProbabilityMaker, (f, "x")), (zProbabilityMaker, (f, "z"))]
         | otherwise = error "maker' is not valid"
-  
 -- | local variables  
   let totalMakerVolume = fst taker'
   numMakers <- randomRIO (1, maxMakers) :: IO Int -- select how many makers
