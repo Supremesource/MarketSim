@@ -1,5 +1,10 @@
-/output
+# Project files to ignore
+
+```
 /App/Main
+prices.html
+output/*
+
 
 .stack-work/
 *~

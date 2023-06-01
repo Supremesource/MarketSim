@@ -9,13 +9,11 @@ data VolumeSide
   | Sell
    deriving (Show, Eq, Ord, Enum, Bounded)
 
-
 -- | maker tuple structure
 type MakerTuple = [(Int, String)]
 
 -- | taker tuple structure
 type TakerTuple = [(Int, String)]
-
 
 -- | stats that can be extracted
 data Stats = Stats
@@ -54,7 +52,6 @@ data Options =
               RANDOM
               deriving  (Eq, Show, Enum, Bounded)
 
-
 type OrderBook = [(Double, Int)]
 type VolumeList = [(Int, VolumeSide)]
 type Generator = StdGen
@@ -63,14 +60,10 @@ type StartingPoint = Double
 type Totakefromwall = Int
 type Volume = (Int, VolumeSide) 
 
-data OrderBookData = OrderBookData
-  { bidBookData :: OrderBook
-  , askBookData :: OrderBook}
-
-data AskBook = AskBook [(Double,Int)] deriving Show -- TODO probably not needed
-data BidBook = BidBook  [(Double,Int)] deriving Show
 
 type RewriteHandle3 = (Handle, Handle, Handle, Handle, Handle, Handle, Handle, Handle)
+
+type InitBookStats = (StartingPoint , [[Int]] , Int , Int , Totakefromwall , Int , Int, [(Double,Int)],  [(Double,Int)] , VolumeSide, Int, Double, Double, Double)
 
 data BookStats = BookStats { 
                      startingPoint :: StartingPoint
@@ -86,7 +79,9 @@ data BookStats = BookStats {
                    , volumeAmount :: Int
                    , spread :: Double
                    , startingprice :: Double
-                   , bidAskRatio :: Double       
-             
+                   , bidAskRatio :: Double                    
                    }
 
+type RecursionPass = (VolumeList, OrderBook, OrderBook, Generator, Generator, FullWall, FullWall, StartingPoint, Totakefromwall, [BookStats])
+
+type ListPass = (Volume , OrderBook , OrderBook, Generator, Generator, FullWall, FullWall, StartingPoint, Totakefromwall )
