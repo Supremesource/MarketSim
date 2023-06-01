@@ -12,7 +12,7 @@ import           DataTypes
 import           InputOutput
 import           Lib
 import           RunSettings
-
+import           Filepaths
 -- TODO implement types instead of long def
 
 -- | Store the volume result , THIS IS ACCUMULATOR
@@ -137,6 +137,8 @@ recursiveList :: RecursionPass -> IO (OrderBook, OrderBook, [BookStats])
 -- | base case
 recursiveList ([], bidBook, askBook, _, _, _, _, _, _, bookDetails) = do
     mapM_ filewrites1 $ tail (reverse bookDetails )
+    writeFile bidBookPath $ show bidBook 
+    writeFile askBookPath $ show askBook
     return (bidBook, askBook, bookDetails)
 recursiveList (x:xs, bidBook, askBook, gen1, gen2, fullwallsASK, fullwallsBIDS, startingPoint, totakefromwall, bookDetails) =
     orderbookLoop (x, bidBook, askBook, gen1, gen2, fullwallsASK, fullwallsBIDS, startingPoint, totakefromwall) >>=

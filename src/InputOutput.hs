@@ -134,20 +134,6 @@ filewrites1   stats  = do
   hClose handleTORatio
 
 
-{-
--- | rewriting bidbook
- bracket (openFile bidBookPath WriteMode) hClose $ \handleBID -> do
-  hPrint handleBID bookSpreadFactorBid -- TODO biggest computation thread
-  hClose handleBID
-
-
--- | rewriting askbook
- bracket (openFile askBookPath WriteMode) hClose $ \handleASK -> do
-  hPrint handleASK bookSpreadFactorAsk
-  hClose handleASK
--}
-
-
 -- | printing stats associated with positioning
 printPositionStats :: RewriteHandle3 -> Int -> (TakerTuple, MakerTuple) -> IO (Int, VolumeSide)
 printPositionStats (handlePosition, handlePosition2,handlePosition3,handlePosition4,handleVol,handleVol2,handleVol3, handleInterest) i (taker, makers) = do
