@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -Wno-missing-export-lists #-}
 module RunSettings where
 import           DataTypes (Options (..))
 -- ? NOTE:
@@ -6,7 +7,7 @@ import           DataTypes (Options (..))
 -- | if you are not sure what to do, just leave the settings as they are, or read the documentation above
 
 -- Contents:
--- | !GENERAL SETTINGS / simulation settings 
+-- | !GENERAL SETTINGS / simulation settings
 -- | !POSITIONING SETTINGS / run cycle
 -- | !ORDERBOOK SETTINGS / liquidity  / order walls / orderbook structure
 
@@ -15,22 +16,22 @@ import           DataTypes (Options (..))
 
 
 -- ! GENERAL SETTINGS:
---〇 ID = PLTCHRT 
+--〇 ID = PLTCHRT
 -- | if TRUE you will see price displayed as a chart
 plotCharts :: Bool
-plotCharts = True 
+plotCharts = True
 
 --〇 ID = STRVAL
 -- | starting value
--- | you can activate this price point by running `w` - wiping run 
+-- | you can activate this price point by running `w` - wiping run
 wipingStartingValue :: Int
-wipingStartingValue = 10000 
+wipingStartingValue = 10000
 
 --〇 ID = NUMPOS
 -- | number of positions you want to take place in the simulation run
 -- | number of positions
 numPositions :: Int
-numPositions = 4000
+numPositions = 10000
 
 --〇 ID = NUMRUN
 -- | number of runs, this is a loop how many times will the simulation repeat itself (random generators are updating each time though)
@@ -59,11 +60,11 @@ maxDecimal = 2
 
 -- ! POSITIONING SETTINGS
 -- 〇 ID = CYCLE
--- | CUSTOM RUN SETTINGS:  
+-- | CUSTOM RUN SETTINGS:
 -- | how run is going to be structured
 -- | you can choose from the following options:
 -- | RANDOM -> UP, UUP, CN, DWW, DW
--- | RANDOM = random 
+-- | RANDOM = random
 -- | UP = up
 -- | UUP = up up
 -- | CN = constant / consolidation
@@ -71,7 +72,7 @@ maxDecimal = 2
 -- | DW = down
 -- | for more info you can check the LIB.hs file, to see how everything works
 runlist :: [Options]
-runlist = [RANDOM, UP, DWW, RANDOM, RANDOM, UUP, RANDOM, RANDOM, UP, CN, CN, UP, UP, RANDOM, UUP, RANDOM, RANDOM, DW, DWW, UUP, CN, RANDOM, RANDOM, DW, DWW, UUP, RANDOM, CN, UP, RANDOM]
+runlist = [RANDOM,RANDOM,RANDOM,RANDOM, RANDOM, RANDOM, RANDOM,RANDOM,RANDOM,RANDOM]
 
 
 --  Volume settings:
@@ -99,14 +100,14 @@ upperBoundShortClose = 800000
 basecaseValueShortNew :: Int
 basecaseValueShortNew = 200
 upperBoundShortNew :: Int
-upperBoundShortNew = 1100000
+upperBoundShortNew = 1200000
 -- | longs CLOSE
 basecaseValueLongClose :: Int
 basecaseValueLongClose = 200
 upperBoundLongClose :: Int
 upperBoundLongClose = 500000
 
--- Statistics : 
+-- Statistics :
 -- | Position-Status occurrence:
 -- | in %
 -- | note that setting 'should' add up to 100 %, it's a good practice at least, for keeping track :)
@@ -144,7 +145,7 @@ zProbabilityMaker = 10
 fProbabilityMaker :: Int
 fProbabilityMaker = 10
 
--- ! ORDERBOOK SETINGS 
+-- ! ORDERBOOK SETINGS
 --  + liquidity settings
 --  + wall settings
 -- | logic for definign intervals // prices at each level
@@ -181,10 +182,10 @@ largerSpread = False
 --〇 ID = TakeBidAsk
 -- | Size of bid orderbook
 takeamountBID :: Int
-takeamountBID = 4000 
+takeamountBID = 6000
 -- | Size of ask orderbook
 takeamountASK :: Int
-takeamountASK = 4000 
+takeamountASK = 6000
 
 --  'WALL' SETTINGS:
 --〇 ID = wallLikeHood

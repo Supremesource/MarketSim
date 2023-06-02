@@ -1,15 +1,16 @@
-{-# LANGUAGE ScopedTypeVariables #-}
+{-# OPTIONS_GHC -Wno-missing-export-lists #-}
 module Main where
   -- TODO
     -- | display in charts using elm/ javascript/ https/ css
     -- | make frontend more efficient the way the python script is called now is just terrible+
     -- | better UI with timeframes
-  -- TODO    
+  -- TODO
 -- imports
 -- | external libraries
 import           Control.Monad               (forM, when)
 import           Control.Parallel.Strategies (parList, rseq, using)
-import           System.IO
+import           System.IO                   (BufferMode (LineBuffering),
+                                              hSetBuffering, stdout)
 import           System.Process              (callCommand)
 import           System.Random               (Random (randomRs))
 -- | internal libraries
@@ -58,7 +59,7 @@ mainLoop  aggregatedStats remainingRuns handles = do
           putStrLn   "+------------------------------------+"
           putStrLn $ "|RUN: " ++ show remainingRuns ++ " CONTENTS & aggregatedStats" ++ "|"
           putStrLn   "+------------------------------------+\n"
--- | overal stats         
+-- | overal stats
           printStats newAggregatedStats
 -- | initilizing the counter
           nextVolumesAndSides <- mainLoop newAggregatedStats (remainingRuns - 1) handles
@@ -71,13 +72,13 @@ mainLoop  aggregatedStats remainingRuns handles = do
 -- | main function
 main :: IO ()
 main = do
--- ? IO 
+-- ? IO
 -- | clening log file before every run
   writeFile logPath ""
 -- | optimizing the IO to be formated in lines
   hSetBuffering stdout LineBuffering
 -- | Asking user to proceed
-  putStrLn $ "Proceed (_ / n)" ++ red "\n\n * for run-restore (w)  *"
+  putStrLn $ cyan $ "Proceed (_ / n)" ++ gray "\n\n { for run-restore press - (w) }"
   proceed <- getLine
 -- | WIPING RUN == TRUE
 -- | When wiping run is running the whole code is not evaluated
@@ -85,15 +86,15 @@ main = do
   if proceed == "W" || proceed == "w"
     then do
       let sayStart = show wipingStartingValue
-      putStrLn "🚨 YOU JUST RAN WIPING RUN 🚨 "
-      putStr "\nnew starting value will be set to: $"
-      putStrLn sayStart
-      putStrLn $ orange "\n * you can adjsut starting value in the 'RunSetting' * "
+      putStrLn $ purple  "YOU DELETED OUTPUT & DATA FILES"
+      putStr   $ gray "\nnew starting value will be set to: $"
+      putStrLn $ purple $ show sayStart
+      putStrLn $ gray "\n { you can adjsut starting value in the '..Settings/RunSetting' } "
       newRunSettings logPath bidBookPath askBookPath pricePath newLongsPath newShortsPath exitLongsPath exitShortsPath bidAskRPath
                 bidToAskRPath buyVolumePath sellVolumePath volumePath openInterestPath  wipingStartingValue
     else if proceed == "n" || proceed == "N"
         then  error (red "stopping program")
--- | user wants to proceed with the simulation generation   
+-- | user wants to proceed with the simulation generation
     else do
 -- | checking settings, catching potential bugs in the setting specified by user
 -- | if the settings are not correct, the program will not run
@@ -103,7 +104,7 @@ main = do
       initstartingPoint <- startingPointFromFile pricePath
       fileBidBook <- readBook bidBookPath
       fileAskBook <- readBook askBookPath
--- ? CHECKING SETTINGS   
+-- ? CHECKING SETTINGS
       volumechecker minvolume basecaseValueLongNew basecaseValueShortNew basecaseValueLongClose basecaseValueShortClose upperBoundLongNew upperBoundShortNew upperBoundLongClose upperBoundShortClose
       positionamountcheck minvolume maxMakers
 -- ? RANDOM GENERATORS:
@@ -171,6 +172,7 @@ main = do
       (_, _, _) <- recursiveList (listofvolumes, bidBook ,askBook, gen1, gen2 ,fullwallsASK, fullwallsBIDS ,initstartingPoint, inittotakefromwall, initialBookDetailsList)
 -- | formating price document
       removeEmptyLines pricePath
+      putStrLn $ gray "OUTPUT SUCCESFULLY GENERATED"
 -- | optional warnings
       addsupto100 xProbabilityTaker yProbabilityTaker zProbabilityTaker fProbabilityTaker
       addsupto100 xProbabilityMaker yProbabilityMaker zProbabilityMaker fProbabilityMaker

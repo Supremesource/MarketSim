@@ -1,34 +1,30 @@
-{-# OPTIONS_GHC -Wno-unused-matches #-}
-{-# OPTIONS_GHC -Wno-name-shadowing #-}
-{-# OPTIONS_GHC -Wno-incomplete-patterns #-}
+{-# OPTIONS_GHC -Wno-missing-export-lists #-}
 module Lib where
 -- | moudle aggregating all the functions
 
 -- | external modules
-
-
 import           Control.Exception.Base
-import           Data.Char             (toUpper)
-
-import qualified Data.ByteString.Char8 as BS
-import           Data.Ratio            ((%))
-import qualified Data.Text             as T
-import qualified Data.Text.IO          as TIO
-import           Data.Time.Clock.POSIX (getPOSIXTime)
-import           System.IO
-
-import           System.Random         (Random (randomR, randomRs),
-                                        RandomGen (split), StdGen, mkStdGen,
-                                        newStdGen, randomRIO, setStdGen)
-import           Text.Read             (readMaybe)
-import           Data.Foldable
-
+import qualified Data.ByteString.Char8  as BS
+import           Data.Char              (toUpper)
+import           Data.Foldable          (Foldable (toList))
+import           Data.Maybe             (fromMaybe)
+import           Data.Ratio             ((%))
+import qualified Data.Text              as T
+import qualified Data.Text.IO           as TIO
+import           Data.Time.Clock.POSIX  (getPOSIXTime)
+import           System.IO              (IOMode (ReadMode), hClose, hFileSize,
+                                         openFile)
+import           System.Random          (Random (randomR, randomRs),
+                                         RandomGen (split), StdGen, mkStdGen,
+                                         newStdGen, randomRIO, setStdGen)
+import           Text.Read              (readMaybe)
 -- | internal libraries
 import           Colours
 import           DataTypes
 
 import           RunSettings
 import           Statistics
+
 
 
 
@@ -84,18 +80,20 @@ randomGen = do
   currentTime <- getPOSIXTime
   let seed = round currentTime
   return $ mkStdGen seed
+
 -- | generating next numbers
 -- Function to generate the next number in the upMove list
-nextNumber :: [Double] -> Double -> (Double, StdGen) -> (Double, StdGen)
-nextNumber moves prev (rnd, gen) = (newNum, newGen)
+nextNumber :: [Double] -> Double -> StdGen -> (Double, StdGen)
+nextNumber moves prev gen = (newNum, newGen)
   where
     listSize = length moves
     (index, newGen) = randomR (0, listSize - 1) gen
     delta = moves !! index
     newNum = roundTo maxDecimal (prev + delta)
+
 -- | Function to generate the next number in the downMove list
-nextNumberDown :: [Double] -> Double -> (Double, StdGen) -> (Double, StdGen)
-nextNumberDown moves prev (rnd, gen) = (newNum, newGen)
+nextNumberDown :: [Double] -> Double -> StdGen -> (Double, StdGen)
+nextNumberDown moves prev gen = (newNum, newGen)
   where
     listSize = length moves
     (index, newGen) = randomR (0, listSize - 1) gen
@@ -106,14 +104,16 @@ nextNumberDown moves prev (rnd, gen) = (newNum, newGen)
 -- | Generating ask list
 infiniteList :: Double -> StdGen -> [Double] -> [Double]
 infiniteList start gen moves =
-  map fst $ iterate (\x -> nextNumber moves (fst x) x) (start, gen)
+  map fst $ iterate (uncurry (nextNumber moves)) (start, gen)
+
 -- | Generating bid list
 infiniteListDown :: Double -> StdGen -> [Double] -> [Double]
 infiniteListDown start gen moves =
   takeWhile (> 0) . map fst $
-  iterate (\x -> nextNumberDown moves (fst x) x) (start, gen)
+  iterate (uncurry (nextNumberDown moves)) (start, gen)
 -- | list management for the orderbook 2
 -- | adding insertion grid togerger with prices
+
 zipToTuples :: [Double] -> [Int] -> [(Double, Int)]
 zipToTuples = zip
 
@@ -121,7 +121,8 @@ addAt :: Int -> Int -> [Int] -> [Int]
 addAt idx val lst =
   let (pre, post) = splitAt idx lst
    in case post of
-        []       -> pre ++ [val] -- When the list is empty, append the value.
+-- | When the list is empty, append the value.
+        []       -> pre ++ [val]
         (x:rest) -> pre ++ (val + x) : rest
 -- |randomly inserting walls
 insertRandomly :: [Int] -> [Int] -> IO [Int]
@@ -168,15 +169,18 @@ orderbookChange ((price, volume):xs) amount
 -- | helper for inserting into bid and ask orderbook
 lengthchange :: [(Double, Int)] -> [(Double, Int)] -> Int
 lengthchange xs ys = abs (length xs - length ys)
--- | Generating ask list (the updated one)
+
+-- | Generating ask list
 infiniteList' :: Double -> StdGen -> [Double] -> [Double]
 infiniteList' startPoint gen moves =
-  map fst $ iterate (\x -> nextNumber moves (fst x) x) (startPoint, gen)
+  map fst $ iterate (uncurry (nextNumber moves)) (startPoint, gen)
 
 -- | Generating bid list (the updated one)
 infiniteListDown' :: Double -> StdGen -> [Double] -> [Double]
 infiniteListDown' startPoint gen moves =
-  map fst $ iterate (\x -> nextNumberDown moves (fst x) x) (startPoint, gen)
+  takeWhile (> 0) . map fst $
+  iterate (uncurry (nextNumberDown moves)) (startPoint, gen)
+
 
 
 -- ? SOME POSITION INFORMATION
@@ -189,7 +193,7 @@ spread' askHead bidHead = abs (askHead - bidHead)
 sideProbability :: Double -> IO Bool
 sideProbability trueProbability
   | trueProbability < 0 || trueProbability > 1 =
-    error "Probability must be between 0 and 1"
+    error $ red  "Probability must be between 0 and 1"
   | otherwise = do
     randomValue <- randomRIO (0, 1)
     return (randomValue < trueProbability)
@@ -236,16 +240,16 @@ interestorPlus ((n1, s1):takers) ((n2, s2):makers)
 
 
 -- ? CHECKERS
--- | checking volume 
+-- | checking volume
 volumechecker :: Int -> Int -> Int -> Int -> Int -> Int -> Int -> Int -> Int -> IO ()
-volumechecker minimum a b c d e f g h |    a < minimum
-                                        || b < minimum
-                                        || c < minimum
-                                        || d < minimum
-                                        || e < minimum
-                                        || f < minimum
-                                        || g < minimum
-                                        || h < minimum
+volumechecker minimumV a b c d e f g h |    a < minimumV
+                                        || b < minimumV
+                                        || c < minimumV
+                                        || d < minimumV
+                                        || e < minimumV
+                                        || f < minimumV
+                                        || g < minimumV
+                                        || h < minimumV
                                                   = error (red "\n\nVolume must be greater than minimum volume specified in settings")
                                       | otherwise = return ()
 
@@ -257,15 +261,17 @@ positionamountcheck a b | a <  (b * 2) = error (red "\n\nPosition amount must be
 -- | warning checker for settings
 -- | helper function for probability settings (/% checker)
 addsupto100 :: Int -> Int -> Int -> Int -> IO ()
-addsupto100 fst snd thr for | fst + snd + thr + for == 100 = return ()
+addsupto100 first second thr for | first + second + thr + for == 100 = return ()
                             | otherwise = putStr (red "\nWarning probabilites in settings do not add up to 100%")
-
 
 -- ? TEMPLEATE RUN FUNCITOINS
 
 -- | helper function for runPercenatge
 adjustedlenght :: [Options] -> Double
-adjustedlenght x = fromIntegral (length x) / 10
+adjustedlenght x = if length x < 10 then
+  error $ red $ "please make sure that the length of `../runsetting/runlist` is larger than " ++ purple "10" ++ red " , currently it is: " ++ purple (show (length x))
+  else fromIntegral (length x) / 10
+
 
 runPercentage :: Int -> Double -> [Int]
 runPercentage n listL = [round (fromIntegral n * x) | x <- [0.1,0.2..listL]]
@@ -274,10 +280,12 @@ runPercentage n listL = [round (fromIntegral n * x) | x <- [0.1,0.2..listL]]
 processlist :: [Options] -> [Int] -> Int -> Options
 processlist (o:os) (p:ps) x | x <= p = o
                             | otherwise = processlist os ps x
+processlist _ _ _ = error $ red "Invalid input to processlist"
+
 
 randomhandler :: Options -> Options ->  Options
-randomhandler initoption randomGen
-      | initoption == RANDOM  = randomGen
+randomhandler initoption randomGenlocal
+      | initoption == RANDOM  = randomGenlocal
       | otherwise             =  initoption
 
 optionProcessor :: Options -> Int -> Int
@@ -288,26 +296,26 @@ optionProcessor a i = case a of
 
 templeaterunBUY :: Int -> Options -> Int
 templeaterunBUY a op = case op of
-  UP       -> a * 2  -- increasing b vol by 200%
-  UUP      -> a * 4  -- increasing b vol by 400%
-  DW       -> a      -- doing nothing to downtrend
-  DWW      -> a      -- extreme downtrend doing nothing
-  CN       -> a
-  _        -> error "your templeate pattern matching did not go through"
+  UP  -> a * 2  -- increasing b vol by 200%
+  UUP -> a * 4  -- increasing b vol by 400%
+  DW  -> a      -- doing nothing to downtrend
+  DWW -> a      -- extreme downtrend doing nothing
+  CN  -> a
+  _   -> error $ red  "your templeate pattern matching did not go through"
 
 templeaterunSELL :: Int -> Options -> Int
 templeaterunSELL a op = case op of
-  UP     -> a      -- nothing
-  UUP    -> a      -- nothing
-  DW     -> a * 2  -- increasing s vol by 200%
-  DWW    -> a * 4  -- increasing s vol by 400%
-  CN     -> a
-  _      -> error "your templeate pattern matching did not go through"
+  UP  -> a      -- nothing
+  UUP -> a      -- nothing
+  DW  -> a * 2  -- increasing s vol by 200%
+  DWW -> a * 4  -- increasing s vol by 400%
+  CN  -> a
+  _   -> error $ red  "your templeate pattern matching did not go through"
 
 -- | i == position index
 processTempleateRun :: Int -> Options -> [Int]
 processTempleateRun i o       = do
--- | local variables  
+-- | local variables
   let process                 = runPercentage numPositions (adjustedlenght runlist)
   let currentO'               = processlist runlist process i
   let currentO = if currentO' == RANDOM then o else currentO'
@@ -345,8 +353,8 @@ isFileEmpty filePath =
   bracket
     (openFile filePath ReadMode)
     hClose
-    (\handle -> do
-       fileSize <- hFileSize handle
+    (\handleEmpty -> do
+       fileSize <- hFileSize handleEmpty
        return (fileSize == 0))
 
 -- | reading the orderbook
@@ -355,13 +363,11 @@ readBook fileName =
   bracket
     (openFile fileName ReadMode)
     hClose
-    (\handle -> do
-       contents <- BS.hGetContents handle
+    (\handleRead -> do
+       contents <- BS.hGetContents handleRead
        let contentsStr = BS.unpack contents
        return $
-         case readMaybe contentsStr of
-           Nothing      -> []
-           Just bidBook -> bidBook)
+         Data.Maybe.fromMaybe [] (readMaybe contentsStr))
 
 
 

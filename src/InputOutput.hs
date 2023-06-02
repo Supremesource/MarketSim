@@ -1,21 +1,17 @@
-{-# HLINT ignore "Use withFile" #-}
-{-# OPTIONS_GHC -Wno-unused-matches #-}
-{-# OPTIONS_GHC -Wno-type-defaults #-}
-{-# OPTIONS_GHC -Wno-name-shadowing #-}
 {-# OPTIONS_GHC -Wno-missing-export-lists #-}
-{-# LANGUAGE BlockArguments #-}
 module InputOutput where
 -- | module where the IO is taking place
 
 -- | external libraries
-
-import qualified Data.ByteString.Char8 as B
-import qualified Data.ByteString.Char8 as BC
-import           Data.Time.Clock.POSIX (getPOSIXTime)
-import           System.IO
-import           System.Random         (Random (randomRs), mkStdGen)
-import           Text.Printf           (printf)
 import           Control.Exception.Base (bracket)
+import           Control.Monad          (when)
+import qualified Data.ByteString.Char8  as B
+import qualified Data.ByteString.Char8  as BC
+import           Data.Time.Clock.POSIX  (getPOSIXTime)
+import           System.IO              (IOMode (AppendMode), hClose, hPutStrLn,
+                                         openFile)
+import           System.Random          (Random (randomRs), mkStdGen)
+import           Text.Printf            (printf)
 -- | internal libraries
 import           Colours
 import           DataTypes
@@ -24,10 +20,11 @@ import           Lib
 import           RunSettings
 
 
+
 generateId :: IO String
 generateId = do
   currentTime <- getPOSIXTime
-  let seed = round $ currentTime * (10^9) :: Int
+  let seed = round $ currentTime * (10^(9 :: Integer)) :: Int
   let gen = mkStdGen seed
   let symbols = ['0'..'9'] ++ ['a'..'z'] ++ ['A'..'Z'] ++ "?!@#$&*"
   let randomChars = randomRs (0, length symbols - 1) gen
@@ -59,13 +56,13 @@ closeHandles3 (handlePosition, handlePosition2, handlePosition3, handlePosition4
 
 formatAndPrintInfo :: BookStats -> IO ()
 formatAndPrintInfo stats = do
-  id <- generateId
-  let formatRow x y z = B.pack $ printf "| %-15s | %-15s | %-15s |\n" x y z
-  let line = B.pack $ replicate 54 '-' ++ "\n"
+  identifier <- generateId
+  let formatRow x y z = B.pack $ printf ( blue "| %-15s | %-15s | %-15s |\n") x y z
+  let line = B.pack $ blue (replicate 54 '-' ++ "\n")
   B.putStr line
   B.putStr $ formatRow "Field" "Value" "Unit"
   B.putStr line
-  B.putStr $ formatRow "ID" id ""
+  B.putStr $ formatRow "ID" identifier ""
   B.putStr $ formatRow "Spread" (show (roundTo maxDecimal (spread stats))) "$"
   B.putStr $ formatRow "Asks total" (show (asksTotal stats)) "$"
   B.putStr $ formatRow "Bids total" (show (bidsTotal stats)) "$"
@@ -81,11 +78,11 @@ formatAndPrintInfo stats = do
 filewrites1 ::   BookStats -> IO ()
 filewrites1   stats  = do
  bracket (openFile logPath AppendMode) hClose $ \handle -> do
-  id <- generateId
+  identifier <- generateId
 
--- ? WRITING INTO FILES 1 ? -- 
+-- ? WRITING INTO FILES 1 ? --
 -- | (goes into log file)
-  hPutStrLn handle $ printf "%-50s %-20s" "\n\n\nID:" id
+  hPutStrLn handle $ printf "%-50s %-20s" "\n\n\nID:" identifier
   B.hPutStrLn handle $ BC.pack $ printf "%-50s" (allCaps "Code configuration for orderbook:")
   B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps "1. Starting price of the whole run:") (show (startingPoint stats) ++ "$")
   B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps "2. Order book length (to both sides):") (show takeamount)
@@ -110,17 +107,17 @@ filewrites1   stats  = do
   B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps "21. New Bid List | insertion:")        (show $ listBID stats)
   B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps "22. Volume side:")                     (show $ vSide stats)
   B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps "23. Volume amount:")                  (show $ volumeAmount stats)
-  B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps "24. Spread: ")                         (show (roundTo maxDecimal $ spread stats)) -- TODO fix rounding here
+  B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps "24. Spread: ")                         (show (roundTo maxDecimal $ spread stats)) -- TODO fix rounding here
   B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps "25. The starting price:")             (show $ startingprice stats) ++ "\n\n\n"
  -- B.hPutStrLn handle $ B.pack $ printf  "%-50s %-20s" (allCaps "\n26. 'partial' Orderbook ASK: \n\n") (take 750 (unlines (map show bookSpreadFactorAsk)))
  -- B.hPutStrLn handle $ B.pack $ printf  "%-50s %-20s" (allCaps "\n27. 'partial' Orderbook BID: \n\n") (take 750 (unlines (map show bookSpreadFactorBid)))
   hClose handle
--- ? REWRTING INTO FILES 2 ? --  
+-- ? REWRTING INTO FILES 2 ? --
 -- | Asociated with the orderbook
 -- | rewriting price changes
  bracket (openFile pricePath AppendMode) hClose $ \handlePrice -> do
   B.hPutStr handlePrice $ BC.pack "\n"
-  B.hPutStrLn handlePrice $ BC.pack (show $ startingprice stats)
+  B.hPutStrLn handlePrice $ BC.pack (show $ startingprice stats)
   hClose handlePrice
 
 -- | rewriting bid/ask RATIO
@@ -130,21 +127,25 @@ filewrites1   stats  = do
 
 -- | rewriting bid TO ask RATIO
  bracket (openFile bidToAskRPath AppendMode) hClose $ \handleTORatio -> do
-  hPutStrLn handleTORatio (show (bidsTotal stats) ++ " / " ++ show (asksTotal stats))
+  hPutStrLn handleTORatio (show (bidsTotal stats) ++ " / " ++ show (asksTotal stats))
   hClose handleTORatio
+
 
 
 -- | printing stats associated with positioning
 printPositionStats :: RewriteHandle3 -> Int -> (TakerTuple, MakerTuple) -> IO (Int, VolumeSide)
 printPositionStats (handlePosition, handlePosition2,handlePosition3,handlePosition4,handleVol,handleVol2,handleVol3, handleInterest) i (taker, makers) = do
-
--- | scope bindings  
+-- | checking if maker & taker tuple is negative
+  let tupleNegativecheck = Control.Monad.when (not (nonNegative taker) && not (nonNegative makers)) $ error $ red "makers tuple is negative, (something possibly wrong with checker letting you come to this error), \
+                              \ check /settings and input different values, \n congratulations on getting the rarest error <(|O|_|O|)> "
+  tupleNegativecheck
+-- | scope bindings
 -- | volumesum
   let volumeSume = foldl (\acc (x, _) -> acc + x) 0 taker
   let sideVol
         | snd (head taker)         == "x"         || snd (head taker)        == "z"         = Buy
         | snd (head taker)         == "y"         || snd (head taker)        == "f"         = Sell
-        | otherwise = error "generating volume failed"
+        | otherwise = error $ red "generating volume failed"
   let overalOpenInterest = interestorPlus taker makers - interestorMinus taker makers
   let buyVOLUME = if sideVol == Buy then volumeSume else 0
   let sellVOLUME = if sideVol == Sell then volumeSume else 0
@@ -172,30 +173,30 @@ printPositionStats (handlePosition, handlePosition2,handlePosition3,handlePositi
   putStrLn   "------------------------\n"
 -- | final overview
   putStrLn          "----------TOTAL---------"
-  putStrLn $ purple "| Total USD X | " ++ show offX
-  putStrLn $ purple "| Total USD Y | " ++ show offY
-  putStrLn $ purple "| Total USD Z | " ++ show offZ
-  putStrLn $ purple "| Total USD F | " ++ show offF
+  putStrLn $ purple "| Total USD X | " ++ show totalX
+  putStrLn $ purple "| Total USD Y | " ++ show totalY
+  putStrLn $ purple "| Total USD Z | " ++ show totalZ
+  putStrLn $ purple "| Total USD F | " ++ show totalF
   putStrLn          "------------------------\n"
--- ?  REWRTING DATA FILES 3 ? -- 
+-- ?  REWRTING DATA FILES 3 ? --
 -- | asociated with the positioning
 -- | positioning information
--- | total X 
-  B.hPutStrLn handlePosition $ BC.pack (show offX)
-  -- | total Y  
-  B.hPutStrLn handlePosition2 $ BC.pack (show offY)
-  -- | total Z  
-  B.hPutStrLn handlePosition3 $ BC.pack (show offZ)       
+-- | total X
+  B.hPutStrLn handlePosition $ BC.pack (show totalX)
+  -- | total Y
+  B.hPutStrLn handlePosition2 $ BC.pack (show totalY)
+  -- | total Z
+  B.hPutStrLn handlePosition3 $ BC.pack (show totalZ)
   -- | total F
-  B.hPutStrLn handlePosition4 $ BC.pack (show offF)       
+  B.hPutStrLn handlePosition4 $ BC.pack (show totalF)
   -- | Buy volume
-  B.hPutStrLn handleVol $ BC.pack (show buyVOLUME)      
+  B.hPutStrLn handleVol $ BC.pack (show buyVOLUME)
   -- | Sell volume
-  B.hPutStrLn handleVol2 $ BC.pack (show sellVOLUME)    
+  B.hPutStrLn handleVol2 $ BC.pack (show sellVOLUME)
   -- | Overal volume
-  B.hPutStrLn handleVol3 $ BC.pack (show overalVOLUME)  
+  B.hPutStrLn handleVol3 $ BC.pack (show overalVOLUME)
   -- | Overal open interest
-  B.hPutStrLn handleInterest $ BC.pack (show overalOpenInterest)    
+  B.hPutStrLn handleInterest $ BC.pack (show overalOpenInterest)
 -- | return
   return (volumeSume, sideVol)
 
@@ -211,10 +212,40 @@ printPositionStats (handlePosition, handlePosition2,handlePosition3,handlePositi
     takercounter_Z = countElements "z" taker
     takercounter_F = countElements "f" taker
 -- | official X Y Z F values
-    offX = orderSize "x" taker + orderSize "x" makers
-    offY = orderSize "y" taker + orderSize "y" makers
-    offZ = orderSize "z" taker + orderSize "z" makers
-    offF = orderSize "f" taker + orderSize "f" makers
+    totalX = orderSize "x" taker + orderSize "x" makers
+    totalY = orderSize "y" taker + orderSize "y" makers
+    totalZ = orderSize "z" taker + orderSize "z" makers
+    totalF = orderSize "f" taker + orderSize "f" makers
+
+
+
+-- | checks the correctness of output
+-- | to stop unwanted misinformation
+checkers :: Stats -> [(String, String)]
+checkers stats =
+  [ ("Checker 1", if (offX stats + offZ stats)  - (offY stats + offF stats) /= 0                        then error $ red "fail 1" else "check 1 pass")
+   , ("Checker 2", if ((offX stats + offY stats) - (offZ stats + offF stats)) `div` 2 /= overallOI stats then error $ red "fail 2" else "check 2 pass")
+     , ("Checker 3", if ((takerX stats + takerZ stats)- (makerY stats + makerF stats)) /= 0                then error $ red  "fail 3" else "check 3 pass")
+       , ("Checker 4", if ((takerY stats + takerF stats)- (makerX stats + makerZ stats)) /= 0                then error $ red "fail 4" else "check 4 pass")
+         , ("Checker 5", if (takerX stats + takerZ stats) /= buyVolume stats                                   then error $ red "5 fail"               else "check 5 pass")
+           , ("Checker 6", if (takerY stats + takerF stats) /= sellVolume stats                                  then error $ red  "6 fail"              else "check 6 pass")
+             , ("Checker 7", if ((takerX stats + takerY stats + makerX stats + makerY stats) - (takerZ stats + takerF stats + makerZ stats + makerF stats)) `div` 2 /= overallOI stats then error $ red "7 fail" else "check 7 pass")
+               , ("Checker 8", if (takerX stats + takerZ stats) - (makerY stats + makerF stats ) /= 0                then error $ red "check 8 fail" else "check 8 pass")
+                 , ("Checker 9", if (takerY stats + takerF stats)- (makerX stats + makerZ  stats ) /= 0                then error $ red "check 9 fail" else "check 9 pass")
+
+  -- | setting checker
+                   , ("Checker 10", if basecaseValueLongNew >= upperBoundLongNew then error $ red  "10 fail"       else "check 10 pass")
+                    , ("Checker 11", if basecaseValueLongClose >= upperBoundLongClose then error $ red  "11 fail"   else "check 11 pass")
+                      , ("Checker 12", if basecaseValueShortNew >= upperBoundShortNew then error $ red "12 fail"     else "check 12 pass")
+                        , ("Checker 13", if basecaseValueShortClose >= upperBoundShortClose then  error $ red "13 fail" else "check 13 pass")
+  ]
+
+nonNegative :: TakerTuple -> Bool
+nonNegative []          = True
+nonNegative ((x, _):xs) = (x >= 0) && nonNegative xs
+
+
+
 
 
 -- | overal aggregated data associated with positioning
@@ -231,48 +262,28 @@ printStats stats = do
                  ,(makerXc stats + makerZc stats - makerYc stats - makerFc stats, "delta")]
 
 -- //  let lsprediction = [ (if (takerXc stats + takerZc stats) > (makerXc stats + makerZc stats) then "C up" else "C down", if buyVolume stats > sellVolume stats then "V up" else "V down", if offX stats > offY stats then "A up" else "A down")]
-
--- | some scope definitions  
+-- | some scope definitions
   let overalxCount = takerXc stats + makerXc stats
   let overalyCount = takerYc stats + makerYc stats
   let overalzCount = takerZc stats + makerZc stats
   let overalfCount = takerFc stats + makerFc stats
   let overalLongs = overalxCount - overalfCount
   let overalShorts = overalyCount - overalzCount
-  let longShortRatioLONGS = (fromIntegral overalLongs / fromIntegral (overalLongs + overalShorts)) * 100
-  let longShortRatioSHORTS = (fromIntegral overalShorts / fromIntegral (overalLongs + overalShorts)) * 100
-  let roundedLongShortRatioL = roundToTwoDecimals longShortRatioLONGS
-  let roundedLongShortRatioS = roundToTwoDecimals longShortRatioSHORTS
+  let longShortRatioLONGS = (fromIntegral overalLongs / fromIntegral (overalLongs + overalShorts)) * 100 :: Double
+  let longShortRatioSHORTS = (fromIntegral overalShorts / fromIntegral (overalLongs + overalShorts)) * 100 :: Double 
+  let roundedLongShortRatioL = roundToTwoDecimals longShortRatioLONGS  :: Double
+  let roundedLongShortRatioS = roundToTwoDecimals longShortRatioSHORTS :: Double
 
 -- | checking the correcthnes of output
 -- | to stop unvanted missinformation
-
-  let checkers = [ ("Checker 1", if (offX stats + offZ stats)  - (offY stats + offF stats) /= 0                        then error "fail 1" else "check 1 pass")
-                 , ("Checker 2", if ((offX stats + offY stats) - (offZ stats + offF stats)) `div` 2 /= overallOI stats then error "fail 2" else "check 2 pass")
-                 , ("Checker 3", if ((takerX stats + takerZ stats)- (makerY stats + makerF stats)) /= 0                then error "fail 3" else "check 3 pass")
-                 , ("Checker 4", if ((takerY stats + takerF stats)- (makerX stats + makerZ stats)) /= 0                then error "fail 4" else "check 4 pass")
-                 , ("Checker 5", if (takerX stats + takerZ stats) /= buyVolume stats then error "5 fail"               else "check 5 pass")
-                 , ("Checker 6", if (takerY stats + takerF stats) /= sellVolume stats then error "6 fail"              else "check 6 pass")
-                 , ("Checker 7", if ((takerX stats + takerY stats + makerX stats + makerY stats) - (takerZ stats + takerF stats + makerZ stats + makerF stats)) `div` 2 /= overallOI stats then error "7 fail" else "check 7 pass")
-                 , ("Checker 8", if (takerX stats + takerZ stats) - (makerY stats + makerF stats ) /= 0                then error "check 8 fail" else "check 8 pass")
-                 , ("Checker 9", if (takerY stats + takerF stats)- (makerX stats + makerZ  stats ) /= 0                then error "check 9 fail" else "check 9 pass")
-                 -- | setting checker
-                 , ("Checker 10", if basecaseValueLongNew >= upperBoundLongNew then error "10 fail"       else "check 10 pass")
-                 , ("Checker 11", if basecaseValueLongClose >= upperBoundLongClose then error "11 fail"   else "check 11 pass")
-                 , ("Checker 12", if basecaseValueShortNew >= upperBoundShortNew then error "12 fail"     else "check 12 pass")
-                 , ("Checker 13", if basecaseValueShortClose >= upperBoundShortClose then error "13 fail" else "check 13 pass")
-
-                 ]
-
-
-
+  let checkResult = checkers stats
 
 
 -- | printing the results formated as a table
   putStrLn $ red "----------------------------"
   putStrLn $ red "| Check        | Result    |"
   putStrLn $ red "----------------------------"
-  mapM_ (\(name, result) -> putStrLn $ "| " ++ name ++ " | " ++ result ++ " |") checkers
+  mapM_ (\(name, result) -> putStrLn $ "| " ++ name ++ " | " ++ result ++ " |") checkResult
   putStrLn "----------------------------"
   let statsList = [("Metric", "Value"),
                   ("Taker X", show (takerX stats)),

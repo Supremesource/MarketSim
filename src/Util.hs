@@ -1,19 +1,16 @@
-{-# OPTIONS_GHC -Wno-name-shadowing #-}
+{-# OPTIONS_GHC -Wno-missing-export-lists #-}
 module Util where
 -- | module of utility funcitons
-
 -- | importing external libraries
 import           System.Random (Random (randomRs), RandomGen (split))
-
-
-
 -- | internal libraries
+import           Colours
 import           DataTypes
+import           Filepaths
 import           InputOutput
 import           Lib
 import           RunSettings
-import           Filepaths
--- TODO implement types instead of long def
+
 
 -- | Store the volume result , THIS IS ACCUMULATOR
 initialBookDetails :: BookStats
@@ -35,58 +32,58 @@ initialBookDetails = BookStats
   }
 
 setupBookDetails :: InitBookStats -> BookStats
-setupBookDetails (startingPoint, maxMinLimit ,asksTotal, bidsTotal, totakefromwall, lengthchangeBID, lengthchangeASK ,listASK, listBID, vSide, volumeAmount, spread ,startingprice ,bidAskRatio) = 
-        BookStats {     startingPoint     = startingPoint
-                                                            , maxMinLimit       = maxMinLimit
-                                                              , asksTotal         = asksTotal
-                                                                , bidsTotal         = bidsTotal
-                                                                  , totakefromwall    = totakefromwall
-                                                                    , lengthchangeBID   = lengthchangeBID
-                                                                      , lengthchangeASK    = lengthchangeASK
-                                                                        , listASK           = listASK
-                                                                          , listBID           = listBID
-                                                                            , vSide              = vSide
-                                                                              , volumeAmount      = volumeAmount
-                                                                                , spread            = spread
-                                                                                 , startingprice     = startingprice
-                                                                                  , bidAskRatio       = bidAskRatio
+setupBookDetails (startingP', maxMinL' ,asksTot', bidsTot', takewall', lengchngBid', lengchngAsk' ,listASK', listBID', vSide', volumeA', sprd' ,sprice' ,bidAskR') =
+        BookStats {     startingPoint     = startingP'
+                                                            , maxMinLimit       = maxMinL'
+                                                              , asksTotal         = asksTot'
+                                                                , bidsTotal         = bidsTot'
+                                                                  , totakefromwall    = takewall'
+                                                                    , lengthchangeBID   = lengchngBid'
+                                                                      , lengthchangeASK    = lengchngAsk'
+                                                                        , listASK           = listASK'
+                                                                          , listBID           = listBID'
+                                                                            , vSide              = vSide'
+                                                                              , volumeAmount      = volumeA'
+                                                                                , spread            = sprd'
+                                                                                 , startingprice     = sprice'
+                                                                                  , bidAskRatio       = bidAskR'
                                             }
 
 
 settingcheck :: VolumeSide -> Int -> Int -> Int -> IO ()
-settingcheck vSide volumeAmount asksTotal bidsTotal = do
+settingcheck vSide' volumeA' asksTot' bidsTot' = do
             let check
                     :: String
-                    | vSide /=  Buy && vSide /=  Sell =
-                        error "wrong volume specification !"
-                    | vSide ==  Buy && volumeAmount > asksTotal =
-                        error "THE VOLUME EXCEEDED THE ORDERBOOK CAPACITY !"
-                    | vSide ==  Sell && volumeAmount > bidsTotal =
-                        error "-THE VOLUME EXCEEDED THE ORDERBOOK CAPACITY !"
+                    | vSide' /=  Buy && vSide' /=  Sell =
+                        error $ red  "wrong volume specification !"
+                    | vSide' ==  Buy && volumeA' > asksTot' =
+                        error $ red  "THE VOLUME EXCEEDED THE ORDERBOOK CAPACITY !"
+                    | vSide' ==  Sell && volumeA' > bidsTot' =
+                        error $ red  "THE VOLUME EXCEEDED THE ORDERBOOK CAPACITY !"
                     | otherwise = ""
             putStrLn check
 
 calculateVolumes :: VolumeSide -> Int -> (Int, Int)
-calculateVolumes vSide volumeAmount =
-    (if vSide == Sell then volumeAmount else 0,
-     if vSide == Buy then volumeAmount  else 0)
+calculateVolumes vSide' volumeA' =
+    (if vSide' == Sell then volumeA' else 0,
+     if vSide' == Buy then volumeA'  else 0)
 
 calculateBooks :: Int -> Int -> OrderBook -> OrderBook -> (OrderBook, OrderBook)
-calculateBooks volumeBID volumeASK bidBook askBook = 
+calculateBooks volumeBID volumeASK bidBook askBook =
     let bidUpdateBook = orderbookChange bidBook volumeBID
         askUpdateBook = orderbookChange askBook volumeASK
     in (bidUpdateBook, askUpdateBook)
 
 calculateCurrentBooks :: VolumeSide -> OrderBook -> [(Double,Int)] -> OrderBook -> OrderBook -> [(Double,Int)] -> OrderBook ->(OrderBook, OrderBook)
-calculateCurrentBooks vSide             askUpdateBook listASK         askBook       bidUpdateBook     listBID bidBook =
-    let currentbookASK = if vSide == Buy  then askUpdateBook else listASK ++ askBook
-        currentbookBID = if vSide == Sell then bidUpdateBook else listBID ++ bidBook
+calculateCurrentBooks vSide' askUpdateBook listASK' askBook bidUpdateBook listBID' bidBook =
+    let currentbookASK = if vSide' == Buy  then askUpdateBook else listASK' ++ askBook
+        currentbookBID = if vSide' == Sell then bidUpdateBook else listBID' ++ bidBook
     in (currentbookASK, currentbookBID)
 
 calculateFinalBooks :: Bool -> OrderBook -> OrderBook -> (OrderBook, OrderBook)
-calculateFinalBooks largerSpread currentbookASK currentbookBID =
-    let finalBookAsk = if largerSpread then tail currentbookASK else currentbookASK
-        finalBookBid = if largerSpread then tail currentbookBID else currentbookBID
+calculateFinalBooks largSprd' currentbookASK currentbookBID =
+    let finalBookAsk = if largSprd' then tail currentbookASK else currentbookASK
+        finalBookBid = if largSprd' then tail currentbookBID else currentbookBID
     in (finalBookAsk, finalBookBid)
 
 
@@ -95,16 +92,18 @@ lengthChanges bidUpdateBook bidBook askUpdateBook askBook =
     (lengthchange bidUpdateBook bidBook, lengthchange askUpdateBook askBook)
 
 startingPrices :: VolumeSide -> OrderBook -> OrderBook -> Double
-startingPrices vSide bidUpdateBook askUpdateBook =
-    max (if vSide == Sell then fst (head bidUpdateBook) else 0)
-        (if vSide == Buy then fst (head askUpdateBook)  else 0)
+startingPrices vSide' bidUpdateBook askUpdateBook =
+    max (if vSide' == Sell then fst (head bidUpdateBook) else 0)
+        (if vSide' == Buy then fst (head askUpdateBook)  else 0)
 
+divisionValue :: Double
+divisionValue = 1.10
 
 calculateListTuples :: [Double] -> [Double] -> [Int] -> [Int] -> ([(Double,Int)], [(Double,Int)])
 calculateListTuples askSetupInsert bidSetupInsert pricesASK pricesBID  =
-    let listASK = zipToTuples askSetupInsert (map (round . (/ 1.10) . fromIntegral) pricesASK)
-        listBID = zipToTuples bidSetupInsert (map (round . (/ 1.10) . fromIntegral) pricesBID)
-    in (listASK, listBID)
+    let listASK' = zipToTuples askSetupInsert (map (round . ((/ divisionValue) :: Double -> Double) . fromIntegral) pricesASK)
+        listBID' = zipToTuples bidSetupInsert (map (round . ((/ divisionValue) :: Double -> Double) . fromIntegral) pricesBID)
+    in (listASK', listBID')
 
 calculateFirstElements :: OrderBook -> OrderBook -> (Double, Double)
 calculateFirstElements finalBookAsk finalBookBid =
@@ -114,16 +113,16 @@ calculateFirstElements finalBookAsk finalBookBid =
 
 calculateTotals :: OrderBook -> OrderBook -> (Int, Int)
 calculateTotals finalBookAsk finalBookBid =
-    let asksTotal = sumInts finalBookAsk
-        bidsTotal = sumInts finalBookBid
-    in (asksTotal, bidsTotal)
+    let asksTot' = sumInts finalBookAsk
+        bidsTot' = sumInts finalBookBid
+    in (asksTot', bidsTot')
 
 calculateSetupInserts :: Int -> Int -> Double -> Generator -> Generator -> ([Double], [Double])
-calculateSetupInserts lengthchangeASK lengthchangeBID startingprice gen1 gen2 =
+calculateSetupInserts lengchngAsk' lengchngBid' sPrice gen1 gen2 =
     let upMovesInsert = take takeamountASK $ randomRs (minUpMove, maxUpMove) gen1
         downMovesInsert = take takeamountBID $ randomRs (minDownMove, maxDownMove) gen2
-        askSetupInsert = take lengthchangeASK (tail (infiniteList' startingprice gen1 upMovesInsert))
-        bidSetupInsert = take lengthchangeBID (tail (infiniteListDown' startingprice gen2 downMovesInsert))
+        askSetupInsert = take lengchngAsk' (tail (infiniteList' sPrice gen1 upMovesInsert))
+        bidSetupInsert = take lengchngBid' (tail (infiniteListDown' sPrice gen2 downMovesInsert))
     in (askSetupInsert, bidSetupInsert)
 
 calculateTotalsCount :: OrderBook -> OrderBook -> (Double, Double)
@@ -137,53 +136,53 @@ recursiveList :: RecursionPass -> IO (OrderBook, OrderBook, [BookStats])
 -- | base case
 recursiveList ([], bidBook, askBook, _, _, _, _, _, _, bookDetails) = do
     mapM_ filewrites1 $ tail (reverse bookDetails )
-    writeFile bidBookPath $ show bidBook 
+    writeFile bidBookPath $ show bidBook
     writeFile askBookPath $ show askBook
     return (bidBook, askBook, bookDetails)
-recursiveList (x:xs, bidBook, askBook, gen1, gen2, fullwallsASK, fullwallsBIDS, startingPoint, totakefromwall, bookDetails) =
-    orderbookLoop (x, bidBook, askBook, gen1, gen2, fullwallsASK, fullwallsBIDS, startingPoint, totakefromwall) >>=
+recursiveList (x:xs, bidBook, askBook, gen1, gen2, fullwallsASK, fullwallsBIDS, sPoint, takeWall, bookDetails) =
+    orderbookLoop (x, bidBook, askBook, gen1, gen2, fullwallsASK, fullwallsBIDS, sPoint, takeWall) >>=
     \(newBidBook, newAskBook, newBookDetails) -> do
         let (newGen1, newGen2) = (fst (split gen1), fst (split gen2))
-        recursiveList (xs, newBidBook, newAskBook, newGen1, newGen2, fullwallsASK, fullwallsBIDS, startingPoint, totakefromwall, newBookDetails:bookDetails)            
+        recursiveList (xs, newBidBook, newAskBook, newGen1, newGen2, fullwallsASK, fullwallsBIDS, sPoint, takeWall, newBookDetails:bookDetails)
 
 
 orderbookLoop :: ListPass -> IO (OrderBook, OrderBook, BookStats)
-orderbookLoop ((volumeAmount, vSide), bidBook, askBook, gen1, gen2 ,fullwallsASK ,fullwallsBIDS, startingPoint, totakefromwall)   = do                                 
+orderbookLoop ((vAmount, vSide'), bidBook, askBook, gen1, gen2 ,fullwallsASK ,fullwallsBIDS, sPoint, takeWall)   = do
 -- | local variables
-                          let (volumeBID, volumeASK) = calculateVolumes vSide volumeAmount
-                          let (bidUpdateBook, askUpdateBook) = calculateBooks volumeBID volumeASK bidBook askBook                                   
+                          let (volumeBID, volumeASK) = calculateVolumes vSide' vAmount
+                          let (bidUpdateBook, askUpdateBook) = calculateBooks volumeBID volumeASK bidBook askBook
 -- | how much volume took from certain order books
-                          let (lengthchangeASK, lengthchangeBID) = lengthChanges bidUpdateBook bidBook askUpdateBook askBook
-                          let startingprice                        = startingPrices vSide bidUpdateBook askUpdateBook                         
-                          let (askSetupInsert, bidSetupInsert) = calculateSetupInserts lengthchangeASK lengthchangeBID startingprice gen1 gen2                                               
-                          let maxMinLimit :: [[Int]]    = [fullwallsASK, fullwallsBIDS]                         
-                          pricesASK  <- printCustomRandomList lengthchangeASK
-                          pricesBID  <- printRandomList' lengthchangeBID                          
+                          let (lengchngAsk', lengchngBid') = lengthChanges bidUpdateBook bidBook askUpdateBook askBook
+                          let sPrice                        = startingPrices vSide' bidUpdateBook askUpdateBook
+                          let (askSetupInsert, bidSetupInsert) = calculateSetupInserts lengchngAsk' lengchngBid' sPrice gen1 gen2
+                          let maxMinLmt :: [[Int]]    = [fullwallsASK, fullwallsBIDS]
+                          pricesASK  <- printCustomRandomList lengchngAsk'
+                          pricesBID  <- printRandomList' lengchngBid'
 -- | the / number is how smaller the insertion will be
-                          let (listASK, listBID) = calculateListTuples askSetupInsert bidSetupInsert pricesASK pricesBID
--- TODO, possible microoptimization with the stuff below :
--- | let insertInAsk = if vSide == Buy then [] else listASK 
---  / let insertInBid = if vSide == Sell then [] else listBID    // --       
-                          let (currentbookASK, currentbookBID) = calculateCurrentBooks vSide askUpdateBook listASK askBook bidUpdateBook listBID bidBook
+                          let (listASK', listBID') = calculateListTuples askSetupInsert bidSetupInsert pricesASK pricesBID
+-- //TODO, possible microoptimization with the stuff below :
+-- | let insertInAsk = if vSide == Buy then [] else listASK
+--  / let insertInBid = if vSide == Sell then [] else listBID    // --
+                          let (currentbookASK, currentbookBID) = calculateCurrentBooks vSide' askUpdateBook listASK' askBook bidUpdateBook listBID' bidBook
                           let (finalBookAsk, finalBookBid) = calculateFinalBooks largerSpread currentbookASK currentbookBID
--- | ask in total in terms of count         
+-- | ask in total in terms of count
 -- | bids in total in terms of count
                           let (asktotal, bidtotal) = calculateTotalsCount finalBookAsk finalBookBid
 -- | Ratio between bids and AKS
-                          let bidAskRatio   = abs ((bidtotal - asktotal) / (bidtotal + asktotal)) :: Double
+                          let bidAskR'   = abs ((bidtotal - asktotal) / (bidtotal + asktotal)) :: Double
 -- | Ratio is benefiting :
--- | asks in total -> $$          
+-- | asks in total -> $$
 -- | bids in total -> $$
-                          let (asksTotal, bidsTotal) = calculateTotals finalBookAsk finalBookBid
+                          let (asksTot', bidsTot') = calculateTotals finalBookAsk finalBookBid
 -- | bid ask spread
                           let (firstelemASK, firstelemBID) = calculateFirstElements finalBookAsk finalBookBid
-                          let spread                    = spread' firstelemASK firstelemBID
+                          let sprd'                        = spread' firstelemASK firstelemBID
 -- | checking if the stats above will go through with the orderbook
 -- | local check
-                          let check                        = settingcheck vSide volumeAmount asksTotal bidsTotal
+                          let check                        = settingcheck vSide' vAmount asksTot' bidsTot'
                           check
 -- | how accumulator stores the values
-                          let newbookDetails = setupBookDetails (startingPoint, maxMinLimit, asksTotal, bidsTotal, totakefromwall, lengthchangeBID, lengthchangeASK ,listASK, listBID, vSide, volumeAmount, spread ,startingprice ,bidAskRatio)
+                          let newbookDetails = setupBookDetails (sPoint, maxMinLmt, asksTot', bidsTot', takeWall, lengchngBid', lengchngAsk' ,listASK', listBID', vSide', vAmount, sprd' ,sPrice ,bidAskR')
                           let insertinInfo = formatAndPrintInfo newbookDetails
                           insertinInfo -- THIS IS ONLY CONSOLE
 -- | returning the orderbook
