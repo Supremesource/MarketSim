@@ -74,18 +74,11 @@ calculateBooks volumeBID volumeASK bidBook askBook =
         askUpdateBook = orderbookChange askBook volumeASK
     in (bidUpdateBook, askUpdateBook)
 
-calculateCurrentBooks :: VolumeSide -> OrderBook -> [(Double,Int)] -> OrderBook -> OrderBook -> [(Double,Int)] -> OrderBook ->(OrderBook, OrderBook)
-calculateCurrentBooks vSide' askUpdateBook listASK' askBook bidUpdateBook listBID' bidBook =
+calculateFinalBooks :: VolumeSide -> OrderBook -> [(Double,Int)] -> OrderBook -> OrderBook -> [(Double,Int)] -> OrderBook ->(OrderBook, OrderBook)
+calculateFinalBooks vSide' askUpdateBook listASK' askBook bidUpdateBook listBID' bidBook =
     let currentbookASK = if vSide' == Buy  then askUpdateBook else listASK' ++ askBook
         currentbookBID = if vSide' == Sell then bidUpdateBook else listBID' ++ bidBook
     in (currentbookASK, currentbookBID)
-
-calculateFinalBooks :: Bool -> OrderBook -> OrderBook -> (OrderBook, OrderBook)
-calculateFinalBooks largSprd' currentbookASK currentbookBID =
-    let finalBookAsk = if largSprd' then tail currentbookASK else currentbookASK
-        finalBookBid = if largSprd' then tail currentbookBID else currentbookBID
-    in (finalBookAsk, finalBookBid)
-
 
 lengthChanges :: OrderBook -> OrderBook -> OrderBook -> OrderBook -> (Int, Int)
 lengthChanges bidUpdateBook bidBook askUpdateBook askBook =
@@ -163,8 +156,8 @@ orderbookLoop ((vAmount, vSide'), bidBook, askBook, gen1, gen2 ,fullwallsASK ,fu
 -- //TODO, possible microoptimization with the stuff below :
 -- | let insertInAsk = if vSide == Buy then [] else listASK
 --  / let insertInBid = if vSide == Sell then [] else listBID    // --
-                          let (currentbookASK, currentbookBID) = calculateCurrentBooks vSide' askUpdateBook listASK' askBook bidUpdateBook listBID' bidBook
-                          let (finalBookAsk, finalBookBid) = calculateFinalBooks largerSpread currentbookASK currentbookBID
+                          let (finalBookAsk, finalBookBid) = calculateFinalBooks vSide' askUpdateBook listASK' askBook bidUpdateBook listBID' bidBook
+                          
 -- | ask in total in terms of count
 -- | bids in total in terms of count
                           let (asktotal, bidtotal) = calculateTotalsCount finalBookAsk finalBookBid

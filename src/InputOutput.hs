@@ -12,8 +12,8 @@ import           System.IO              (IOMode (AppendMode), hClose, hPutStrLn,
                                          openFile)
 import           System.Random          (Random (randomRs), mkStdGen)
 import           Text.Printf            (printf)
--- | internal libraries
 import           Colours
+-- | internal libraries
 import           DataTypes
 import           Filepaths
 import           Lib
@@ -57,17 +57,17 @@ closeHandles3 (handlePosition, handlePosition2, handlePosition3, handlePosition4
 formatAndPrintInfo :: BookStats -> IO ()
 formatAndPrintInfo stats = do
   identifier <- generateId
-  let formatRow x y z = B.pack $ printf ( blue "| %-15s | %-15s | %-15s |\n") x y z
-  let line = B.pack $ blue (replicate 54 '-' ++ "\n")
+  let formatRow x y z = B.pack $ printf ( lime "| %-15s | %-15s | %-15s |\n") x y z
+  let line = B.pack $ lime (replicate 54 '-' ++ "\n")
   B.putStr line
   B.putStr $ formatRow "Field" "Value" "Unit"
   B.putStr line
   B.putStr $ formatRow "ID" identifier ""
-  B.putStr $ formatRow "Spread" (show (roundTo maxDecimal (spread stats))) "$"
+  B.putStr $ formatRow "Spread" (printf ("%." ++ show maxDecimal ++ "f") (spread stats) :: String) "$"
   B.putStr $ formatRow "Asks total" (show (asksTotal stats)) "$"
   B.putStr $ formatRow "Bids total" (show (bidsTotal stats)) "$"
   B.putStr $ formatRow "Bid/Ask ratio" (printf "%.4f" (bidAskRatio stats) :: String) ""
-  B.putStr $ formatRow "Starting price" (show (startingprice stats)) "$" -- If startingPoint is Double
+  B.putStr $ formatRow "Starting price" (printf "%.4f" (startingprice stats) :: String ) "$" -- If startingPoint is Double
   B.putStr $ formatRow "Volume side"   (show (vSide stats)) "" -- If vSide is show-able
   B.putStr $ formatRow "Volume amount" (show (volumeAmount stats)) "$"
   B.putStr $ formatRow "Taken from ASK" (show (lengthchangeBID stats)) "$"

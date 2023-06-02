@@ -7,6 +7,7 @@ module Colours
  , purple
  , cyan
  ,gray
+ , lime
  )
 where
 
@@ -27,3 +28,5 @@ cyan :: String -> String
 cyan = color 36
 gray :: String -> String
 gray = color 37
+lime :: String -> String
+lime = color 92
