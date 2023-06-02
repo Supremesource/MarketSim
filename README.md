@@ -2,28 +2,82 @@
 
 prototype of a market simulation with transparent data
 
-# Important note
 
-- X => NEW LONG
-- Y => NEW SHORT
-- F => CLOSING LONG
-- Z => CLOSING SHORT
-
-needs to get final polish, in terms of:
-
-- more dynamic spread options
-- better psychology ** optional **
-- make code more readable
-- add liquidity factors
--- such as liquidations, leverage etc.
+    Note : 
+    - X = NEW LONG
+    - Y = NEW SHORT
+    - F = CLOSING LONG
+    - Z = CLOSING SHORT
 
 
-- generaly optimize
-- optimize performance (now there is too much unnecessary overwriting)
 
 # User manual
-! Do not forget to specify runSettings in /Settings !
+Do not forget to specify runSettings in /Settings 
 
-have fun!
-![Alt Text](https://www.thisiscolossal.com/wp-content/uploads/2014/03/120430.gif)
+
+# References
+
+- [POSSIBLE SETTINGS](/doc/SETTING.MD)
+
+- [VOLUME PROOF](/doc/setThoryproof.pdf)
+
+- [TODO](doc/TODO.md)
+
+
+## Directory look
+
+```bash
+
+├── App
+│   ├── Filepaths.hs
+│   ├── Main
+│   ├── Main.hs
+│   └── tempCodeRunnerFile.hs
+├── CHANGELOG.md
+├── LICENSE
+├── README.md
+├── Settings
+│   └── RunSettings.hs
+├── Setup.hs
+├── Src
+│   ├── Colours.hs
+│   ├── InputOutput.hs
+│   ├── Lib.hs
+│   ├── Statistics.hs
+│   ├── Util.hs
+│   └── tempCodeRunnerFile.hs
+├── Types
+│   └── DataTypes.hs
+├── backtestapp
+├── data
+│   ├── askbook.txt
+│   └── bidbook.txt
+├── doc
+│   ├── SETTING.MD
+│   ├── TODO.md
+│   ├── contents.txt
+│   ├── observtions.md
+│   └── set thory proof.pdf
+├── hie.yaml
+├── marketsim.cabal
+├── output
+│   ├── bidAskR.txt
+│   ├── bidToAskR.txt
+│   ├── buyVol.txt
+│   ├── eLongs.txt
+│   ├── eShorts.txt
+│   ├── log.txt
+│   ├── nLongs.txt
+│   ├── nShorts.txt
+│   ├── oInterest.txt
+│   ├── pricehistory.txt
+│   ├── sellVol.txt
+│   └── volume.txt
+├── package.yaml
+├── scripts
+│   └── plot_prices.py
+├── stack.yaml
+└── stack.yaml.lock
+
+```
 

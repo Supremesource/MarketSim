@@ -25,23 +25,24 @@ plotCharts = True
 -- | starting value
 -- | you can activate this price point by running `w` - wiping run
 wipingStartingValue :: Int
-wipingStartingValue = 10000
+wipingStartingValue = 1
 
 --〇 ID = NUMPOS
 -- | number of positions you want to take place in the simulation run
 -- | number of positions
 numPositions :: Int
-numPositions = 10000
+numPositions = 5000
 
 --〇 ID = NUMRUN
 -- | number of runs, this is a loop how many times will the simulation repeat itself (random generators are updating each time though)
 numberOfRuns :: Int
-numberOfRuns = 1
+numberOfRuns = 5
 
 --〇 ID = maxM/T
+-- TODO add more complex statistic distribution
 -- | what is the maximum of makers in one transaction , i.e 1000 buy matched with 1000 sell, now the max makers filled in that transaction can be specified below
 maxMakers :: Int
-maxMakers = 100
+maxMakers = 40
 -- | note that max takers is hardcoded to be 95% of maxmakers (done on real market observtions)
 -- ? Not recommended to change this from 0.95
 maxTakers :: Int
@@ -56,7 +57,7 @@ maxTakers = round (fromIntegral maxMakers * (0.95 :: Double))
 -- | 3 = ..
 -- Rounding
 maxDecimal :: Int
-maxDecimal = 2
+maxDecimal = 4
 
 -- ! POSITIONING SETTINGS
 -- 〇 ID = CYCLE
@@ -72,7 +73,7 @@ maxDecimal = 2
 -- | DW = down
 -- | for more info you can check the LIB.hs file, to see how everything works
 runlist :: [Options]
-runlist = [RANDOM,RANDOM,RANDOM,RANDOM, RANDOM, RANDOM, RANDOM,RANDOM,RANDOM,RANDOM]
+runlist = [RANDOM,RANDOM,RANDOM,RANDOM,RANDOM,RANDOM,RANDOM,RANDOM,RANDOM,RANDOM] 
 
 
 --  Volume settings:
@@ -81,31 +82,31 @@ runlist = [RANDOM,RANDOM,RANDOM,RANDOM, RANDOM, RANDOM, RANDOM,RANDOM,RANDOM,RAN
 -- | note that this function only works as a correctness checker for yourslf, exchanges always have a minimum volume allowed by the user, make yours
 -- | not recommended to go below 10 , depends on your maxmakers, maxtakers, there is potential error catching metric implemented, but still set this rather high
 minvolume :: Int
-minvolume = 200
+minvolume = 80
 
 --〇 ID = VOL02
 -- | BUY VOUME
 -- | longs NEW
 basecaseValueLongNew :: Int
-basecaseValueLongNew = 250
+basecaseValueLongNew = 80
 upperBoundLongNew :: Int
-upperBoundLongNew = 1000000
+upperBoundLongNew = 10000
 -- | shorts CLOSE
 basecaseValueShortClose :: Int
-basecaseValueShortClose = 250
+basecaseValueShortClose = 80
 upperBoundShortClose :: Int
-upperBoundShortClose = 800000
+upperBoundShortClose = 11000
 -- | SELL VOLUME
 -- | shorts NEW
 basecaseValueShortNew :: Int
-basecaseValueShortNew = 200
+basecaseValueShortNew = 80
 upperBoundShortNew :: Int
-upperBoundShortNew = 1200000
+upperBoundShortNew = 10500
 -- | longs CLOSE
 basecaseValueLongClose :: Int
-basecaseValueLongClose = 200
+basecaseValueLongClose = 80
 upperBoundLongClose :: Int
-upperBoundLongClose = 500000
+upperBoundLongClose = 12000
 
 -- Statistics :
 -- | Position-Status occurrence:
@@ -118,32 +119,32 @@ upperBoundLongClose = 500000
 -- | OPENING POSITIONS
 -- | BUY VOLUME
 xProbabilityTaker :: Int
-xProbabilityTaker = 40
+xProbabilityTaker = 23
 -- | SELL VOLUME
 yProbabilityTaker :: Int
-yProbabilityTaker = 35
+yProbabilityTaker = 24
 -- | CLOSING POSITION
 -- | BUY VOLUME
 zProbabilityTaker :: Int
-zProbabilityTaker = 15
+zProbabilityTaker = 25
 -- | SELL VOLUME
 fProbabilityTaker :: Int
-fProbabilityTaker = 10
+fProbabilityTaker = 28
 
 --  Maker Probability
 -- | BUY VOLUME
 xProbabilityMaker :: Int
-xProbabilityMaker = 40
+xProbabilityMaker = 27
 -- | SELL VOLUME
 yProbabilityMaker :: Int
-yProbabilityMaker = 40
+yProbabilityMaker = 26
 -- | CLOSING POSITION
 -- | BUY VOLUME
 zProbabilityMaker :: Int
-zProbabilityMaker = 10
+zProbabilityMaker = 24
 -- | SELL VOLUME
 fProbabilityMaker :: Int
-fProbabilityMaker = 10
+fProbabilityMaker = 23
 
 -- ! ORDERBOOK SETINGS
 --  + liquidity settings
@@ -153,39 +154,34 @@ fProbabilityMaker = 10
 --〇 ID = bookMinMax$
 -- ? Minimuim $ amount of order
 minimum' :: Int
-minimum' = 5000 --  minimum order  $ amount
+minimum' = 100 --  minimum order  $ amount
 -- ? Maximum $ amount of order
 maximum' :: Int
-maximum' = 1500000 -- maximum order $ amount
+maximum' = 400000 -- maximum order $ amount
 
 --〇 ID = bookMinMaxMove
 -- | define how to orderbook grid is going to be moving
 -- | Minimum & Maximum UP move in the orderbook structure
 -- | for bid = bid liquidity (< min move + max move <  = more liquidity, vice versa)
+-- TODO add more complex statistical distribuiton
 minUpMove :: Double
-minUpMove = 0.05
+minUpMove = 0.009
 maxUpMove :: Double
-maxUpMove = 0.5
+maxUpMove = 0.01
 -- | Minimum & Maximum DOWN move in the orderbook structure
 -- | for ask = ask liquidity (< min move + max move <  = more liquidity, vice versa)
 minDownMove :: Double
-minDownMove = 0.06
+minDownMove = 0.009
 maxDownMove :: Double
-maxDownMove = 0.5
-
---〇 ID = SPREAD
--- | larger spread
--- TODO small note for myself, i should check if this function behaves correctly, on the low level not just the IO , cause that is working
-largerSpread :: Bool
-largerSpread = False
+maxDownMove = 0.01
 
 --〇 ID = TakeBidAsk
 -- | Size of bid orderbook
 takeamountBID :: Int
-takeamountBID = 6000
+takeamountBID = 10000
 -- | Size of ask orderbook
 takeamountASK :: Int
-takeamountASK = 6000
+takeamountASK = 10000
 
 --  'WALL' SETTINGS:
 --〇 ID = wallLikeHood
@@ -194,10 +190,10 @@ takeamountASK = 6000
 -- | /2  -- (recommended 40-80, possibly even higher, it is going to be `div` by 2 so it gets distributed into bids and asks )
 -- | defines in how many orders in the initial book will a wall occour
 orderwalllikelyhood :: Int
-orderwalllikelyhood = 300
+orderwalllikelyhood = 200
 
 --〇 ID = wallAmp
 -- | Amplifier of Wall  occurrences
 -- | will amplify the maximum to liking (the higher the more the maximum will get multiplied, so the bigger the walls will be)
 wallAmplifier :: Int
-wallAmplifier = 3
+wallAmplifier = 5
