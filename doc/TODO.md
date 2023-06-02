@@ -1,14 +1,14 @@
 
 
-- CATCH POTENTIAL NEGATIVE VALUES IN TUPLES MAKER AND TAKER
+- CATCH POTENTIAL NEGATIVE VALUES IN TUPLES MAKER AND TAKER !!
+- Add beter statistics
+- better error handeling
+- add more complex mechanic checkers, and ensure that the current ones work as intended
 
 
 
-
+, after
+Fronend
 - ADD TIME FRAME FORMATING
+, after
 - LIQUIDITY + LEVERAGE
-
-
-
-reslove the handle management by doing one function for all filewrites, and then closing it at the end
-resolve file rewrites

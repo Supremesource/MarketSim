@@ -1,16 +1,15 @@
 {-# OPTIONS_GHC -Wno-missing-export-lists #-}
-{-# OPTIONS_GHC -Wno-incomplete-patterns #-}
 
 module Statistics where
 -- | module where majoritiy of statistical functions are defined
-
 -- | External libraries
 import           Control.Monad (replicateM)
 import           Data.List     (unfoldr)
 import           System.Random (Random (randomR), RandomGen (split), StdGen,
                                 randomRIO)
 -- | Internal libraries
-import           RunSettings   
+import           Colours
+import           RunSettings
 
 -- important:
 -- you might want to change the distribution these functions, to your statistical needs
@@ -36,9 +35,9 @@ distribution (low, high) = do
       | x > 85 && x <= 91  -> randomRIO  (low, low + round (fromIntegral high * (0.75 :: Double)))
       | x > 91 && x <= 94  -> randomRIO  (low, low + round (fromIntegral high * (0.90 :: Double)))
       | x > 94 && x <= 96  -> randomRIO  (low, high)
-      | x > 96 && x <= 98  -> randomRIO  (low, 2 * high)   
+      | x > 96 && x <= 98  -> randomRIO  (low, 2 * high)
       | x > 98             -> randomRIO  (low, 4 * high)
-      | otherwise          -> error      "Unexpected value for x in distribution function"
+      | otherwise          -> error   $ red   "Unexpected value for x in distribution function"
 
 -- | Orderbook volume probability distribution
 customRandomR :: (RandomGen g) => (Int, Int) -> g -> (Int, g)
@@ -80,6 +79,7 @@ generateVolumes numMakers totalVolume = do
 
 generateRandomPosition :: [Int] -> IO ([(Int, String)], [(Int, String)])
 generateRandomPosition [xProb,yProb, zProb, fProb]  = do
+
   -- | for longs 1 - 2
   x <- distribution (basecaseValueLongNew, upperBoundLongNew)        -- new longs 1
   f <- distribution (basecaseValueLongClose, upperBoundLongClose)    -- closing longs 2
@@ -87,7 +87,7 @@ generateRandomPosition [xProb,yProb, zProb, fProb]  = do
   y <- distribution (basecaseValueShortNew, upperBoundShortNew)      -- new shorts 3
   z <- distribution (basecaseValueShortClose, upperBoundShortClose)  -- closing shorts 4
 -- | options of takers
-  let takeROptions  = 
+  let takeROptions  =
                         [(xProb
                         , (x, "x"))
                         , (yProb
@@ -97,20 +97,20 @@ generateRandomPosition [xProb,yProb, zProb, fProb]  = do
                         , (fProb
                         , (f, "f"))]
   taker' <- weightedRandom takeROptions
--- | Taker and maker probabilitis  
-  let takerProbab  
+-- | Taker and maker probabilitis
+  let takerProbab
         | snd taker' == "x" = [(yProb, (fst taker', "x")), (zProb, (fst taker', "z"))]
         | snd taker' == "y" = [(xProb, (fst taker', "y")), (fProb, (fst taker', "f"))]
         | snd taker' == "z" = [(yProb, (fst taker', "z")), (fProb, (fst taker', "x"))]
         | snd taker' == "f" = [(xProb, (fst taker', "f")), (zProb, (fst taker', "y"))]
-        | otherwise = error "taker' is not valid"
+        | otherwise = error $ red  "taker' is not valid"
   let makerProbab
         | snd taker' == "x" = [(yProbabilityMaker, (x, "y")), (fProbabilityMaker, (x, "f"))]
         | snd taker' == "y" = [(xProbabilityMaker, (y, "x")), (zProbabilityMaker, (y, "z"))]
         | snd taker' == "z" = [(yProbabilityMaker, (z, "y")), (fProbabilityMaker, (z, "f"))]
         | snd taker' == "f" = [(xProbabilityMaker, (f, "x")), (zProbabilityMaker, (f, "z"))]
-        | otherwise = error "maker' is not valid"
--- | local variables  
+        | otherwise = error $ red  "maker' is not valid"
+-- | local variables
   let totalMakerVolume = fst taker'
   numMakers <- randomRIO (1, maxMakers) :: IO Int -- select how many makers
   makerVolumes <- generateVolumes numMakers totalMakerVolume
@@ -122,5 +122,8 @@ generateRandomPosition [xProb,yProb, zProb, fProb]  = do
   takerInfos <- replicateM numTakers (weightedRandom takerProbab)
   let selectedTakers = zip takerVolumes (map snd takerInfos)
   let takerTuple = selectedTakers
+
 -- | return tuple
   return (takerTuple, makerTuple)
+  
+generateRandomPosition _ = error $ red  "Input list in `generateRandomPosition` must contain exactly four elements"

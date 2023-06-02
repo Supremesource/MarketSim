@@ -5,13 +5,14 @@ module Colours
  , green
  , orange
  , purple
+ , cyan
+ ,gray
  )
 where
 
 -- | colours:
 color :: Int -> String -> String
 color code text = "\x1b[" ++ show code ++ "m" ++ text ++ "\x1b[0m"
-
 red :: String -> String
 red = color 31
 blue :: String -> String
@@ -22,3 +23,7 @@ orange :: String -> String
 orange = color 33
 purple :: String -> String
 purple = color 35
+cyan :: String -> String
+cyan = color 36
+gray :: String -> String
+gray = color 37

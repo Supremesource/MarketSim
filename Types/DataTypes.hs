@@ -1,7 +1,7 @@
-{-# LANGUAGE GADTs #-}
+{-# OPTIONS_GHC -Wno-missing-export-lists #-}
 module DataTypes where
 import System.Random ( StdGen )  
-import System.IO
+import System.IO ( Handle )
 
 -- | defining data typ for volume side
 data VolumeSide
