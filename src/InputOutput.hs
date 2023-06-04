@@ -3,6 +3,7 @@ module InputOutput where
 -- | module where the IO is taking place
 
 -- | external libraries
+import           Colours
 import           Control.Exception.Base (bracket)
 import           Control.Monad          (when)
 import qualified Data.ByteString.Char8  as B
@@ -12,7 +13,6 @@ import           System.IO              (IOMode (AppendMode), hClose, hPutStrLn,
                                          openFile)
 import           System.Random          (Random (randomRs), mkStdGen)
 import           Text.Printf            (printf)
-import           Colours
 -- | internal libraries
 import           DataTypes
 import           Filepaths
@@ -80,67 +80,69 @@ filewrites1   stats  = do
  bracket (openFile logPath AppendMode) hClose $ \handle -> do
   identifier <- generateId
 
--- ? WRITING INTO FILES 1 ? --
--- | (goes into log file)
+  -- ? WRITING INTO FILES 1 ? --
+  -- | (goes into log file)
+
+  let doPrint = B.hPutStrLn handle . BC.pack
   hPutStrLn handle $ printf "%-50s %-20s" "\n\n\nID:" identifier
-  B.hPutStrLn handle $ BC.pack $ printf "%-50s" (allCaps "Code configuration for orderbook:")
-  B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps "1. Starting price of the whole run:") (show (startingPoint stats) ++ "$")
-  B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps "2. Order book length (to both sides):") (show takeamount)
-  B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps "3. Ask max up move:")                  (show maxUpMove)
-  B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps "4. Ask min up move:")               (show minUpMove)
-  B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps "5. Bid max down move:")             (show maxDownMove)
-  B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps "6. Bid down min move:")             (show minDownMove)
-  B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps "7. Minimum value of limit order was (hardcoded):") (show minimum' ++ " (actual = " ++ show (minimumlimit (maxMinLimit stats)) ++ ")$")
-  B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps "8. Maximum value of limit order was (hardcoded):") (show maximum' ++ " (actual = " ++ show (maximumlimit (maxMinLimit stats)) ++ ")$")
-  B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps "9. Bid size of the orderbook:")       (show takeamountBID)
-  B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps "10. Ask size of the orderbook:")     (show takeamountASK)
-  B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps "11. ASKS -> BIDS:")                   (show  (asksTotal stats) ++ "$ / " ++ show (bidsTotal stats) ++ "$")
-  B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps "12. Wall occurrences:")               (show orderwalllikelyhood ++ " (i.e. 10 takeamount -> 2 walls -> to bid, ask)")
-  B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps "13. Actually taken to walls:")        (show (totakefromwall stats) ++ ", (it is going to get div by 2)")
-  B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps "14. Wall minimum:")                    (show wallminimum')
-  B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps "15. Wall maximum:")                    (show wallmaximum')
-  B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps "16. Wall amplifier:")                  (show wallAmplifier)
-  B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps "17. Max decimal:")                     (show maxDecimal)
-  B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps "18. Length change of BID:")            (show $ lengthchangeBID stats)
-  B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps "19. Length change of ASK:")           (show  $ lengthchangeASK stats )
-  B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps "20. New Ask List | insertion:")        (show $ listASK stats)
-  B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps "21. New Bid List | insertion:")        (show $ listBID stats)
-  B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps "22. Volume side:")                     (show $ vSide stats)
-  B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps "23. Volume amount:")                  (show $ volumeAmount stats)
-  B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps "24. Spread: ")                         (show (roundTo maxDecimal $ spread stats)) -- TODO fix rounding here
-  B.hPutStrLn handle $ BC.pack $ printf "%-50s %-20s" (allCaps "25. The starting price:")             (show $ startingprice stats) ++ "\n\n\n"
- -- B.hPutStrLn handle $ B.pack $ printf  "%-50s %-20s" (allCaps "\n26. 'partial' Orderbook ASK: \n\n") (take 750 (unlines (map show bookSpreadFactorAsk)))
- -- B.hPutStrLn handle $ B.pack $ printf  "%-50s %-20s" (allCaps "\n27. 'partial' Orderbook BID: \n\n") (take 750 (unlines (map show bookSpreadFactorBid)))
+  doPrint $ printf "%-50s" (allCaps "Code configuration for orderbook:")
+  doPrint $ printf "%-50s %-20s" (allCaps "1. Starting price of the whole run:") (show (startingPoint stats) ++ "$")
+  doPrint $ printf "%-50s %-20s" (allCaps "2. Order book length (to both sides):") (show takeamount)
+  doPrint $ printf "%-50s %-20s" (allCaps "3. Ask max up move:")                  (show maxUpMove)
+  doPrint $ printf "%-50s %-20s" (allCaps "4. Ask min up move:")               (show minUpMove)
+  doPrint $ printf "%-50s %-20s" (allCaps "5. Bid max down move:")             (show maxDownMove)
+  doPrint $ printf "%-50s %-20s" (allCaps "6. Bid down min move:")             (show minDownMove)
+  doPrint $ printf "%-50s %-20s" (allCaps "7. Minimum value of limit order was (hardcoded):") (show minimum' ++ " (actual = " ++ show (minimumlimit (maxMinLimit stats)) ++ ")$")
+  doPrint $ printf "%-50s %-20s" (allCaps "8. Maximum value of limit order was (hardcoded):") (show maximum' ++ " (actual = " ++ show (maximumlimit (maxMinLimit stats)) ++ ")$")
+  doPrint $ printf "%-50s %-20s" (allCaps "9. Bid size of the orderbook:")       (show takeamountBID)
+  doPrint $ printf "%-50s %-20s" (allCaps "10. Ask size of the orderbook:")     (show takeamountASK)
+  doPrint $ printf "%-50s %-20s" (allCaps "11. ASKS -> BIDS:")                   (show  (asksTotal stats) ++ "$ / " ++ show (bidsTotal stats) ++ "$")
+  doPrint $ printf "%-50s %-20s" (allCaps "12. Wall occurrences:")               (show orderwalllikelyhood ++ " (i.e. 10 takeamount -> 2 walls -> to bid, ask)")
+  doPrint $ printf "%-50s %-20s" (allCaps "13. Actually taken to walls:")        (show (totakefromwall stats) ++ ", (it is going to get div by 2)")
+  doPrint $ printf "%-50s %-20s" (allCaps "14. Wall minimum:")                    (show wallminimum')
+  doPrint $ printf "%-50s %-20s" (allCaps "15. Wall maximum:")                    (show wallmaximum')
+  doPrint $ printf "%-50s %-20s" (allCaps "16. Wall amplifier:")                  (show wallAmplifier)
+  doPrint $ printf "%-50s %-20s" (allCaps "17. Max decimal:")                     (show maxDecimal)
+  doPrint $ printf "%-50s %-20s" (allCaps "18. Length change of BID:")            (show $ lengthchangeBID stats)
+  doPrint $ printf "%-50s %-20s" (allCaps "19. Length change of ASK:")           (show  $ lengthchangeASK stats )
+  doPrint $ printf "%-50s %-20s" (allCaps "20. New Ask List | insertion:")        (show $ listASK stats)
+  doPrint $ printf "%-50s %-20s" (allCaps "21. New Bid List | insertion:")        (show $ listBID stats)
+  doPrint $ printf "%-50s %-20s" (allCaps "22. Volume side:")                     (show $ vSide stats)
+  doPrint $ printf "%-50s %-20s" (allCaps "23. Volume amount:")                  (show $ volumeAmount stats)
+  doPrint $ printf "%-50s %-20s" (allCaps "24. Spread: ")                         (show (roundTo maxDecimal $ spread stats)) -- TODO fix rounding here
+  doPrint $ printf "%-50s %-20s" (allCaps "25. The starting price:")             (show $ startingprice stats) ++ "\n\n\n"
+  -- B.hPutStrLn handle $ B.pack $ printf  "%-50s %-20s" (allCaps "\n26. 'partial' Orderbook ASK: \n\n") (take 750 (unlines (map show bookSpreadFactorAsk)))
+  -- B.hPutStrLn handle $ B.pack $ printf  "%-50s %-20s" (allCaps "\n27. 'partial' Orderbook BID: \n\n") (take 750 (unlines (map show bookSpreadFactorBid)))
   hClose handle
--- ? REWRTING INTO FILES 2 ? --
--- | Asociated with the orderbook
--- | rewriting price changes
- bracket (openFile pricePath AppendMode) hClose $ \handlePrice -> do
-  B.hPutStr handlePrice $ BC.pack "\n"
-  B.hPutStrLn handlePrice $ BC.pack (show $ startingprice stats)
-  hClose handlePrice
+  -- ? REWRTING INTO FILES 2 ? --
+  -- | Asociated with the orderbook
+  -- | rewriting price changes
+  bracket (openFile pricePath AppendMode) hClose $ \handlePrice -> do
+    B.hPutStr handlePrice $ BC.pack "\n"
+    B.hPutStrLn handlePrice $ BC.pack (show $ startingprice stats)
+    hClose handlePrice
 
 -- | rewriting bid/ask RATIO
- bracket (openFile bidAskRPath AppendMode) hClose $ \handleRatio -> do
-  hPutStrLn handleRatio (printf "%.4f" $ bidAskRatio stats)
-  hClose handleRatio
+  bracket (openFile bidAskRPath AppendMode) hClose $ \handleRatio -> do
+    hPutStrLn handleRatio (printf "%.4f" $ bidAskRatio stats)
+    hClose handleRatio
 
 -- | rewriting bid TO ask RATIO
- bracket (openFile bidToAskRPath AppendMode) hClose $ \handleTORatio -> do
-  hPutStrLn handleTORatio (show (bidsTotal stats) ++ " / " ++ show (asksTotal stats))
-  hClose handleTORatio
+  bracket (openFile bidToAskRPath AppendMode) hClose $ \handleTORatio -> do
+    hPutStrLn handleTORatio (show (bidsTotal stats) ++ " / " ++ show (asksTotal stats))
+    hClose handleTORatio
 
 
 
 -- | printing stats associated with positioning
 printPositionStats :: RewriteHandle3 -> Int -> (TakerTuple, MakerTuple) -> IO (Int, VolumeSide)
 printPositionStats (handlePosition, handlePosition2,handlePosition3,handlePosition4,handleVol,handleVol2,handleVol3, handleInterest) i (taker, makers) = do
--- | checking if maker & taker tuple is negative
+  -- | checking if maker & taker tuple is negative
   let tupleNegativecheck = Control.Monad.when (not (nonNegative taker) && not (nonNegative makers)) $ error $ red "makers tuple is negative, (something possibly wrong with checker letting you come to this error), \
                               \ check /settings and input different values, \n congratulations on getting the rarest error <(|O|_|O|)> "
   tupleNegativecheck
--- | scope bindings
--- | volumesum
+  -- | scope bindings
+  -- | volumesum
   let volumeSume = foldl (\acc (x, _) -> acc + x) 0 taker
   let sideVol
         | snd (head taker)         == "x"         || snd (head taker)        == "z"         = Buy
@@ -151,7 +153,7 @@ printPositionStats (handlePosition, handlePosition2,handlePosition3,handlePositi
   let sellVOLUME = if sideVol == Sell then volumeSume else 0
   let overalVOLUME = volumeSume
 
--- | goes into console
+  -- | goes into console
   putStrLn   "------------------------------------------"
   putStrLn $ "| Position number    | " ++ show i ++ " 🍻 |"
   putStrLn   "------------------------------------------"
@@ -244,10 +246,6 @@ nonNegative :: TakerTuple -> Bool
 nonNegative []          = True
 nonNegative ((x, _):xs) = (x >= 0) && nonNegative xs
 
-
-
-
-
 -- | overal aggregated data associated with positioning
 printStats :: Stats -> IO ()
 printStats stats = do
@@ -270,7 +268,7 @@ printStats stats = do
   let overalLongs = overalxCount - overalfCount
   let overalShorts = overalyCount - overalzCount
   let longShortRatioLONGS = (fromIntegral overalLongs / fromIntegral (overalLongs + overalShorts)) * 100 :: Double
-  let longShortRatioSHORTS = (fromIntegral overalShorts / fromIntegral (overalLongs + overalShorts)) * 100 :: Double 
+  let longShortRatioSHORTS = (fromIntegral overalShorts / fromIntegral (overalLongs + overalShorts)) * 100 :: Double
   let roundedLongShortRatioL = roundToTwoDecimals longShortRatioLONGS  :: Double
   let roundedLongShortRatioS = roundToTwoDecimals longShortRatioSHORTS :: Double
 

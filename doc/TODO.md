@@ -5,8 +5,7 @@
 - more dynamic spread options
 - better psychology ** optional **
 - LIQUIDITY + LEVERAGE
-- generaly optimize
-- optimize performance (now there is too much unnecessary overwriting)
+
 
 AT THE END DO:
 Fronend

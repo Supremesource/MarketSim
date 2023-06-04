@@ -156,26 +156,36 @@ main = do
 -- | orderbook logc:
       let bidBook =
             if isBidEmpty
-              then do orderbook_bid
+              then orderbook_bid
 
               else fileBidBook
 -- |  ask
       let askBook =
             if isAskEmpty
-              then do orderbook_ask
+              then orderbook_ask
               else fileAskBook
+
 -- ? ADDING STATS FROM 'MAINLOOP' TOGETHER
 -- | price change
       volumesAndSides <- runProgram initStats numberOfRuns
       let initialBookDetailsList = [initialBookDetails]
       let listofvolumes = volumesAndSides
       (_, _, _) <- recursiveList (listofvolumes, bidBook ,askBook, gen1, gen2 ,fullwallsASK, fullwallsBIDS ,initstartingPoint, inittotakefromwall, initialBookDetailsList)
--- | formating price document
-      removeEmptyLines pricePath
-      putStrLn $ gray "OUTPUT SUCCESFULLY GENERATED"
+
+     
 -- | optional warnings
       addsupto100 xProbabilityTaker yProbabilityTaker zProbabilityTaker fProbabilityTaker
       addsupto100 xProbabilityMaker yProbabilityMaker zProbabilityMaker fProbabilityMaker
+
+-- | formating price document
+      removeEmptyLines pricePath
+      putStrLn $ gray "OUTPUT SUCCESFULLY GENERATED"
+
+-- // testing :
+      print $ "List of Vol: \n" ++ show listofvolumes
+    -- print takerX stats
+
+
 -- | calling python script (graph)
 --  TODO make this way more effective, calling the script belowú§
       Control.Monad.when plotCharts $ callCommand "python scripts/plot_prices.py"

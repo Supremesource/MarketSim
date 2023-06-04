@@ -148,9 +148,9 @@ orderbookLoop ((vAmount, vSide'), bidBook, askBook, gen1, gen2 ,fullwallsASK ,fu
                           let (lengchngAsk', lengchngBid') = lengthChanges bidUpdateBook bidBook askUpdateBook askBook
                           let sPrice                        = startingPrices vSide' bidUpdateBook askUpdateBook
                           let (askSetupInsert, bidSetupInsert) = calculateSetupInserts lengchngAsk' lengchngBid' sPrice gen1 gen2
-                          let maxMinLmt :: [[Int]]    = [fullwallsASK, fullwallsBIDS]
+                          let maxMinLmt            :: [[Int]]    = [fullwallsASK, fullwallsBIDS]
                           pricesASK  <- printCustomRandomList lengchngAsk'
-                          pricesBID  <- printRandomList' lengchngBid'
+                          pricesBID    <- printRandomList' lengchngBid'
 -- | the / number is how smaller the insertion will be
                           let (listASK', listBID') = calculateListTuples askSetupInsert bidSetupInsert pricesASK pricesBID
 -- //TODO, possible microoptimization with the stuff below :
