@@ -37,8 +37,8 @@ ghc-options:
 
 library:
   source-dirs: 
-    - Src
-    - App
+    - src
+    - app
     - Settings
     - Types
   exposed-modules: 
@@ -58,7 +58,7 @@ library:
 executables:
   marketsim-exe:
     main:  Main.hs
-    source-dirs:  App
+    source-dirs:  app
     ghc-options:
     - -threaded
     - -rtsopts
