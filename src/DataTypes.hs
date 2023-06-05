@@ -10,6 +10,7 @@ import qualified Data.ByteString.Lazy.Char8 as BL
 
 -- ? JSON Serialization
 
+
 type JSONConfig a = CustomJSON '[OmitNothingFields, FieldLabelModifier '[StripPrefix "user", CamelToSnake]] a
 
 data User = User
@@ -20,11 +21,23 @@ data User = User
   deriving (FromJSON, ToJSON)
   via JSONConfig User
 
+
+-- data FileWrites1
+
+
+
+-- data FileWrites2
+
+
+
+-- data FilWrites3
+
 testData :: [User]
 testData = [User 42 "Alice" Nothing, User 43 "Bob" (Just "xyz")]
-
 test :: IO ()
 test = BL.putStrLn $ encode testData
+
+
 
 -- data PositionsOutput = Output
 --   { ops :: [Op]
