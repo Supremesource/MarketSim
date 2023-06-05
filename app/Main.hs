@@ -74,11 +74,15 @@ mainLoop  aggregatedStats remainingRuns handles = do
 -- | if the number of runs is reached
           printFinal aggregatedStats
           return []
+
+main :: IO ()
+main = test
 -- | main function
 -- TODO run function
 
-main :: IO ()
-main = do
+
+run :: IO ()
+run = do
 -- ? IO
 -- | clening log file before every run
   writeFile logPath ""
