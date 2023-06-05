@@ -37,8 +37,8 @@ library
       Main
       Paths_marketsim
   hs-source-dirs:
-      Src
-      App
+      src
+      app
       Settings
       Types
   default-extensions:
@@ -64,7 +64,7 @@ executable marketsim-exe
       Filepaths
       Paths_marketsim
   hs-source-dirs:
-      App
+      app
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base >=4.7 && <5
