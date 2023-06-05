@@ -1,4 +1,5 @@
 {-# OPTIONS_GHC -Wno-missing-export-lists #-}
+
 module Main where
   -- TODO
     -- | display in charts using elm/ javascript/ https/ css
@@ -22,6 +23,10 @@ import           Lib
 import           RunSettings
 import           Statistics
 import           Util
+
+
+
+
 -- | Entry point of program
 runProgram :: Stats -> Int -> IO [(Int, VolumeSide)]
 runProgram aggregatedStats remainingRuns = do
@@ -70,6 +75,8 @@ mainLoop  aggregatedStats remainingRuns handles = do
           printFinal aggregatedStats
           return []
 -- | main function
+-- TODO run function
+
 main :: IO ()
 main = do
 -- ? IO
@@ -189,3 +196,6 @@ main = do
 -- | calling python script (graph)
 --  TODO make this way more effective, calling the script belowú§
       Control.Monad.when plotCharts $ callCommand "python scripts/plot_prices.py"
+
+
+

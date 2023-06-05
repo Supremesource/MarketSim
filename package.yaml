@@ -22,7 +22,8 @@ dependencies:
 - containers
 - parallel
 - process
-
+- aeson
+- deriving-aeson
 
 ghc-options:
 - -Wall
@@ -40,7 +41,7 @@ library:
     - Src
     - App
     - Settings
-    - Types
+  
   exposed-modules: 
    - Lib
    - InputOutput
@@ -73,6 +74,8 @@ executables:
     - containers
     - parallel
     - process
+    - aeson
+    - deriving-aeson
     
 
 # Comment out the tests section if you don't have test directory or modules.

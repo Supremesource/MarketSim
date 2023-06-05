@@ -40,6 +40,7 @@ openRewrites3 = do
   handleVol2      <- openFile sellVolumePath AppendMode
   handleVol3      <- openFile volumePath AppendMode
   handleInterest  <- openFile openInterestPath AppendMode
+  -- TODO: put file handles on record
   return (handlePosition, handlePosition2, handlePosition3, handlePosition4, handleVol, handleVol2, handleVol3, handleInterest)
 
 closeHandles3 :: RewriteHandle3 -> IO ()
@@ -226,9 +227,9 @@ printPositionStats (handlePosition, handlePosition2,handlePosition3,handlePositi
 checkers :: Stats -> [(String, String)]
 checkers stats =
   [ ("Checker 1", if (offX stats + offZ stats)  - (offY stats + offF stats) /= 0                        then error $ red "fail 1" else "check 1 pass")
-   , ("Checker 2", if ((offX stats + offY stats) - (offZ stats + offF stats)) `div` 2 /= overallOI stats then error $ red "fail 2" else "check 2 pass")
-     , ("Checker 3", if ((takerX stats + takerZ stats)- (makerY stats + makerF stats)) /= 0                then error $ red  "fail 3" else "check 3 pass")
-       , ("Checker 4", if ((takerY stats + takerF stats)- (makerX stats + makerZ stats)) /= 0                then error $ red "fail 4" else "check 4 pass")
+  , ("Checker 2", if ((offX stats + offY stats) - (offZ stats + offF stats)) `div` 2 /= overallOI stats then error $ red "fail 2" else "check 2 pass")
+  , ("Checker 3", if ((takerX stats + takerZ stats)- (makerY stats + makerF stats)) /= 0                then error $ red  "fail 3" else "check 3 pass")
+  , ("Checker 4", if ((takerY stats + takerF stats)- (makerX stats + makerZ stats)) /= 0                then error $ red "fail 4" else "check 4 pass")
          , ("Checker 5", if (takerX stats + takerZ stats) /= buyVolume stats                                   then error $ red "5 fail"               else "check 5 pass")
            , ("Checker 6", if (takerY stats + takerF stats) /= sellVolume stats                                  then error $ red  "6 fail"              else "check 6 pass")
              , ("Checker 7", if ((takerX stats + takerY stats + makerX stats + makerY stats) - (takerZ stats + takerF stats + makerZ stats + makerF stats)) `div` 2 /= overallOI stats then error $ red "7 fail" else "check 7 pass")
@@ -254,10 +255,10 @@ printStats stats = do
                  ,(takerXc stats + takerZc stats, " <- buying")
                  ,(takerYc stats + takerFc stats, " <- selling")
                  ,(takerXc stats + takerZc stats - takerYc stats - takerFc stats, "delta")]
-  let makerCount = [(makerXc stats + makerYc stats + makerFc stats + makerZc stats, " <- count of makers")
-                 ,(makerXc stats + makerZc stats, " <- buying")
-                 ,(makerYc stats + makerFc stats, " <- selling")
-                 ,(makerXc stats + makerZc stats - makerYc stats - makerFc stats, "delta")]
+  let makerCount =[(makerXc stats + makerYc stats + makerFc stats + makerZc stats, " <- count of makers")
+                  ,(makerXc stats + makerZc stats, " <- buying")
+                  ,(makerYc stats + makerFc stats, " <- selling")
+                  ,(makerXc stats + makerZc stats - makerYc stats - makerFc stats, "delta")]
 
 -- //  let lsprediction = [ (if (takerXc stats + takerZc stats) > (makerXc stats + makerZc stats) then "C up" else "C down", if buyVolume stats > sellVolume stats then "V up" else "V down", if offX stats > offY stats then "A up" else "A down")]
 -- | some scope definitions
