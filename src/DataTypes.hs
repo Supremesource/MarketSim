@@ -1,7 +1,39 @@
+{-# LANGUAGE DerivingVia, DataKinds, DeriveGeneric #-}
 {-# OPTIONS_GHC -Wno-missing-export-lists #-}
 module DataTypes where
 import System.Random ( StdGen )  
 import System.IO ( Handle )
+
+import Data.Aeson
+import Deriving.Aeson
+import qualified Data.ByteString.Lazy.Char8 as BL
+
+-- ? JSON Serialization
+
+type JSONConfig a = CustomJSON '[OmitNothingFields, FieldLabelModifier '[StripPrefix "user", CamelToSnake]] a
+
+data User = User
+  { userId :: Int
+  , userName :: String
+  , userAPIToken :: Maybe String
+  } deriving Generic
+  deriving (FromJSON, ToJSON)
+  via JSONConfig User
+
+testData :: [User]
+testData = [User 42 "Alice" Nothing, User 43 "Bob" (Just "xyz")]
+
+test :: IO ()
+test = BL.putStrLn $ encode testData
+
+-- data PositionsOutput = Output
+--   { ops :: [Op]
+--   , princes :: [Prices]
+--   -- ...
+--   }
+
+
+-- ? Types
 
 -- | defining data typ for volume side
 data VolumeSide
@@ -59,7 +91,6 @@ type FullWall = [Int]
 type StartingPoint = Double
 type Totakefromwall = Int
 type Volume = (Int, VolumeSide) 
-
 
 type RewriteHandle3 = (Handle, Handle, Handle, Handle, Handle, Handle, Handle, Handle)
 

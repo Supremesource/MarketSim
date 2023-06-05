@@ -40,16 +40,17 @@ library
       Src
       App
       Settings
-      Types
   default-extensions:
       ImportQualifiedPost
       InstanceSigs
       ScopedTypeVariables
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
   build-depends:
-      base >=4.7 && <5
+      aeson
+    , base >=4.7 && <5
     , bytestring
     , containers
+    , deriving-aeson
     , parallel
     , process
     , random
@@ -67,9 +68,11 @@ executable marketsim-exe
       App
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      base >=4.7 && <5
+      aeson
+    , base >=4.7 && <5
     , bytestring
     , containers
+    , deriving-aeson
     , marketsim
     , parallel
     , process

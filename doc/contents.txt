@@ -4,16 +4,17 @@ main executable
 plot chart.py
 data
 
-
 - `/data` → data files
 
-- `/app` → source code of your executable (entrypoint)
+- `/app` → source code of your executable (entry point)
   - file handling
   - hardcode file paths
   - glue code
 
 - `/src` → core/library source code
-  - algorithms
-  - utilities
-  - 
-
+  - `Util` → utility code, usually not specific to your problem
+    - `Util.IO`
+    - `Util.Stats`
+  - `Generation` → generating simulation data
+  - `Orderbook`  → orderbook data structure
+  - `Simulation` → ??
