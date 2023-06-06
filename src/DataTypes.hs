@@ -11,7 +11,7 @@ import qualified Data.ByteString.Lazy.Char8 as BL
 -- ? JSON Serialization
 
 
-type JSONConfig a = CustomJSON '[OmitNothingFields, FieldLabelModifier '[StripPrefix "user", CamelToSnake]] a
+type JSONConfig a = CustomJSON '[OmitNothingFields, FieldLabelModifier '[StripPrefix "LOG", CamelToSnake]] a
 
 data User = User
   { userId :: Int
@@ -21,23 +21,56 @@ data User = User
   deriving (FromJSON, ToJSON)
   via JSONConfig User
 
+data FileWritesLog = FileWritesLog
+   {  identifierLOG    :: String
+    , startingPointLOG :: Double -- this is pretty much an Double, data type StartingPoint
+    , takeamountLOG  :: Int
+    , maxUpMoveLOG :: Double
+    , minUpMoveLOG :: Double
+    , maxDownMoveLOG :: Double
+    , minDownMoveLOG :: Double
+    , minimum'LOG :: Int
+    , minimumActualLOG :: Int
+    , maximum'LOG :: Int
+    , maximumActualLOG :: Int
+    , takeamountBIDLOG :: Int
+    , takeamountASKLOG :: Int
+    , asksTotalLOG :: Int
+    , bidsTotalLOG :: Int
+    , orderwalllikelyhoodLOG :: Int
+    , totakefromwallLOG :: Int -- this is pretty much an INT, data type TakeFromWall
+    , wallminimum'LOG :: Int
+    , wallmaximum'LOG :: Int
+    , wallAmplifierLOG :: Int
+    , maxDecimalLOG :: Int
+    , lengthchangeBIDLOG :: Int
+    , lengthchangeASKLOG :: Int
+    , listASKLOG :: [(Double, Int)]
+    , listBIDLOG :: [(Double, Int)]
+    , vSideLOG :: String -- this is pretty much string, data type VolumeSid
+    , volumeAmountLOG :: Int
+    , spreadLOG :: Double
+    , startingPriceLOG :: Double
+    } deriving Generic
+  deriving (FromJSON, ToJSON)
+  via JSONConfig FileWritesLog
 
--- data FileWrites1
 
-
+data FileWriteBook = FileWriteBook 
+  { startingPriceBook :: Double
+  , bidAskRatioBook :: String -- formated with printf
+  , bidsTotalBook :: Int
+  , asksTotalBook :: Int
+  } deriving Generic
+  deriving (FromJSON, ToJSON)
+  via JSONConfig FileWriteBook
 
 -- data FileWrites2
-
-
-
--- data FilWrites3
 
 testData :: [User]
 testData = [User 42 "Alice" Nothing, User 43 "Bob" (Just "xyz")]
 test :: IO ()
 test = BL.putStrLn $ encode testData
-
-
 
 -- data PositionsOutput = Output
 --   { ops :: [Op]

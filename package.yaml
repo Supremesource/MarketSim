@@ -24,6 +24,7 @@ dependencies:
 - process
 - aeson
 - deriving-aeson
+- aeson-pretty
 
 ghc-options:
 - -Wall
@@ -76,6 +77,7 @@ executables:
     - process
     - aeson
     - deriving-aeson
+    - aeson-pretty
     
 
 # Comment out the tests section if you don't have test directory or modules.
