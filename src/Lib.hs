@@ -25,11 +25,6 @@ import           DataTypes
 import           RunSettings
 import           Statistics
 
-
-
-
-
-
 -- ? WALLS
 randomListwalls :: IO [Int]
 randomListwalls = do
@@ -338,14 +333,11 @@ randomOptionGen = do
 allCaps :: String -> String
 allCaps = map toUpper
 
-
 trim :: T.Text -> T.Text
 trim = T.strip
 
-
 roundToTwoDecimals :: (RealFrac a, Fractional b) => a -> b
 roundToTwoDecimals x = fromRational (round (x * 100) Data.Ratio.% 100)
-
 
 -- | checking if the file is empty
 isFileEmpty :: FilePath -> IO Bool
@@ -372,8 +364,10 @@ readBook fileName =
 
 
 -- | when wiping run then -> wipe the orderbook + write starting price
-newRunSettings :: FilePath -> FilePath -> FilePath -> FilePath -> FilePath -> FilePath -> FilePath -> FilePath -> FilePath -> FilePath -> FilePath -> FilePath -> FilePath -> FilePath -> Int -> IO ()
-newRunSettings logFile bidFile askFile priceFile nLongFile nShortFile eLongFile eShortFile bidAskRFile bidToAskFile buyVolFile sellVolFile volFile oiFile newValue = do
+newRunSettings :: FilePath -> FilePath -> FilePath -> FilePath -> FilePath 
+  -> FilePath -> FilePath -> FilePath -> FilePath -> FilePath -> FilePath -> FilePath -> FilePath -> FilePath -> Int -> IO ()
+newRunSettings logFile bidFile askFile priceFile nLongFile nShortFile eLongFile 
+      eShortFile bidAskRFile bidToAskFile buyVolFile sellVolFile volFile oiFile newValue = do
   let wipe = ""
   let price = show newValue
   writeFile logFile wipe

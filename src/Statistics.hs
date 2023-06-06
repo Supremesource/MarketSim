@@ -1,12 +1,14 @@
 {-# OPTIONS_GHC -Wno-missing-export-lists #-}
 
 module Statistics where
+
 -- | module where majoritiy of statistical functions are defined
 -- | External libraries
 import           Control.Monad (replicateM)
 import           Data.List     (unfoldr)
 import           System.Random (Random (randomR), RandomGen (split), StdGen,
                                 randomRIO)
+
 -- | Internal libraries
 import           Colours
 import           RunSettings
@@ -18,26 +20,42 @@ distribution :: (Int, Int) -> IO Int
 distribution (low, high) = do
   x <- randomRIO (1, 100) :: IO Int
   case () of
-    _ | high <= 0 -> randomRIO  (0,0)
-      | x == 1             -> randomRIO  (low, low)
-      | x > 1 && x <= 5    -> randomRIO  (low, low + round (fromIntegral high * (0.05 :: Double)))
-      | x > 5 && x <= 10   -> randomRIO  (low, low + round (fromIntegral high * (0.8 :: Double)))
-      | x > 10 && x <= 15  -> randomRIO  (low, low + round (fromIntegral high * (0.10 :: Double)))
-      | x > 15 && x <= 20  -> randomRIO  (low, low + round (fromIntegral high * (0.12 :: Double)))
-      | x > 20 && x <= 30  -> randomRIO  (low, low + round (fromIntegral high * (0.18 :: Double)))
-      | x > 30 && x <= 40  -> randomRIO  (low, low + round (fromIntegral high * (0.22 :: Double)))
-      | x > 40 && x <= 50  -> randomRIO  (low, low + round (fromIntegral high * (0.27 :: Double)))
-      | x > 50 && x <= 60  -> randomRIO  (low, low + round (fromIntegral high * (0.32 :: Double)))
-      | x > 60 && x <= 70  -> randomRIO  (low, low + round (fromIntegral high * (0.37 :: Double)))
-      | x > 70 && x <= 75  -> randomRIO  (low, low + round (fromIntegral high * (0.42 :: Double)))
-      | x > 75 && x <= 80  -> randomRIO  (low, low + round (fromIntegral high * (0.55 :: Double)))
-      | x > 80 && x <= 85  -> randomRIO  (low, low + round (fromIntegral high * (0.65 :: Double)))
-      | x > 85 && x <= 91  -> randomRIO  (low, low + round (fromIntegral high * (0.75 :: Double)))
-      | x > 91 && x <= 94  -> randomRIO  (low, low + round (fromIntegral high * (0.90 :: Double)))
-      | x > 94 && x <= 96  -> randomRIO  (low, high)
-      | x > 96 && x <= 98  -> randomRIO  (low, 2 * high)
-      | x > 98             -> randomRIO  (low, 4 * high)
-      | otherwise          -> error   $ red   "Unexpected value for x in distribution function"
+    _
+      | high <= 0 -> randomRIO (0, 0)
+      | x == 1 -> randomRIO (low, low)
+      | x > 1 && x <= 5 ->
+        randomRIO (low, low + round (fromIntegral high * (0.05 :: Double)))
+      | x > 5 && x <= 10 ->
+        randomRIO (low, low + round (fromIntegral high * (0.8 :: Double)))
+      | x > 10 && x <= 15 ->
+        randomRIO (low, low + round (fromIntegral high * (0.10 :: Double)))
+      | x > 15 && x <= 20 ->
+        randomRIO (low, low + round (fromIntegral high * (0.12 :: Double)))
+      | x > 20 && x <= 30 ->
+        randomRIO (low, low + round (fromIntegral high * (0.18 :: Double)))
+      | x > 30 && x <= 40 ->
+        randomRIO (low, low + round (fromIntegral high * (0.22 :: Double)))
+      | x > 40 && x <= 50 ->
+        randomRIO (low, low + round (fromIntegral high * (0.27 :: Double)))
+      | x > 50 && x <= 60 ->
+        randomRIO (low, low + round (fromIntegral high * (0.32 :: Double)))
+      | x > 60 && x <= 70 ->
+        randomRIO (low, low + round (fromIntegral high * (0.37 :: Double)))
+      | x > 70 && x <= 75 ->
+        randomRIO (low, low + round (fromIntegral high * (0.42 :: Double)))
+      | x > 75 && x <= 80 ->
+        randomRIO (low, low + round (fromIntegral high * (0.55 :: Double)))
+      | x > 80 && x <= 85 ->
+        randomRIO (low, low + round (fromIntegral high * (0.65 :: Double)))
+      | x > 85 && x <= 91 ->
+        randomRIO (low, low + round (fromIntegral high * (0.75 :: Double)))
+      | x > 91 && x <= 94 ->
+        randomRIO (low, low + round (fromIntegral high * (0.90 :: Double)))
+      | x > 94 && x <= 96 -> randomRIO (low, high)
+      | x > 96 && x <= 98 -> randomRIO (low, 2 * high)
+      | x > 98 -> randomRIO (low, 4 * high)
+      | otherwise ->
+        error $ red "Unexpected value for x in distribution function"
 
 -- | Orderbook volume probability distribution
 customRandomR :: (RandomGen g) => (Int, Int) -> g -> (Int, g)
@@ -68,7 +86,10 @@ weightedRandom :: [(Int, a)] -> IO a
 weightedRandom xs = do
   let totalWeight = sum (map fst xs)
   rnd <- randomRIO (1, totalWeight)
-  return $ snd $ head $ dropWhile ((< rnd) . fst) $ scanl1 (\(w1, _) (w2, x) -> (w1 + w2, x)) xs
+  return $
+    snd $
+    head $
+    dropWhile ((< rnd) . fst) $ scanl1 (\(w1, _) (w2, x) -> (w1 + w2, x)) xs
 
 generateVolumes :: Int -> Int -> IO [Int]
 generateVolumes numMakers totalVolume = do
@@ -78,39 +99,41 @@ generateVolumes numMakers totalVolume = do
   return (volumes ++ [lastVolume])
 
 generateRandomPosition :: [Int] -> IO ([(Int, String)], [(Int, String)])
-generateRandomPosition [xProb,yProb, zProb, fProb]  = do
-
+generateRandomPosition [xProb, yProb, zProb, fProb]
   -- | for longs 1 - 2
-  x <- distribution (basecaseValueLongNew, upperBoundLongNew)        -- new longs 1
-  f <- distribution (basecaseValueLongClose, upperBoundLongClose)    -- closing longs 2
+ = do
+  x <- distribution (basecaseValueLongNew, upperBoundLongNew) -- new longs 1
+  f <- distribution (basecaseValueLongClose, upperBoundLongClose) -- closing longs 2
   -- | for shorts 3 - 4
-  y <- distribution (basecaseValueShortNew, upperBoundShortNew)      -- new shorts 3
-  z <- distribution (basecaseValueShortClose, upperBoundShortClose)  -- closing shorts 4
--- | options of takers
-  let takeROptions  =
-                        [(xProb
-                        , (x, "x"))
-                        , (yProb
-                        , (y, "y"))
-                        , (zProb
-                        , (z, "z"))
-                        , (fProb
-                        , (f, "f"))]
+  y <- distribution (basecaseValueShortNew, upperBoundShortNew) -- new shorts 3
+  z <- distribution (basecaseValueShortClose, upperBoundShortClose) -- closing shorts 4
+  let takeROptions =
+        [ (xProb, (x, "x"))
+        , (yProb, (y, "y"))
+        , (zProb, (z, "z"))
+        , (fProb, (f, "f"))
+        ]
   taker' <- weightedRandom takeROptions
--- | Taker and maker probabilitis
   let takerProbab
-        | snd taker' == "x" = [(yProb, (fst taker', "x")), (zProb, (fst taker', "z"))]
-        | snd taker' == "y" = [(xProb, (fst taker', "y")), (fProb, (fst taker', "f"))]
-        | snd taker' == "z" = [(yProb, (fst taker', "z")), (fProb, (fst taker', "x"))]
-        | snd taker' == "f" = [(xProb, (fst taker', "f")), (zProb, (fst taker', "y"))]
-        | otherwise = error $ red  "taker' is not valid"
+        | snd taker' == "x" =
+          [(yProb, (fst taker', "x")), (zProb, (fst taker', "z"))]
+        | snd taker' == "y" =
+          [(xProb, (fst taker', "y")), (fProb, (fst taker', "f"))]
+        | snd taker' == "z" =
+          [(yProb, (fst taker', "z")), (fProb, (fst taker', "x"))]
+        | snd taker' == "f" =
+          [(xProb, (fst taker', "f")), (zProb, (fst taker', "y"))]
+        | otherwise = error $ red "taker' is not valid"
   let makerProbab
-        | snd taker' == "x" = [(yProbabilityMaker, (x, "y")), (fProbabilityMaker, (x, "f"))]
-        | snd taker' == "y" = [(xProbabilityMaker, (y, "x")), (zProbabilityMaker, (y, "z"))]
-        | snd taker' == "z" = [(yProbabilityMaker, (z, "y")), (fProbabilityMaker, (z, "f"))]
-        | snd taker' == "f" = [(xProbabilityMaker, (f, "x")), (zProbabilityMaker, (f, "z"))]
-        | otherwise = error $ red  "maker' is not valid"
--- | local variables
+        | snd taker' == "x" =
+          [(yProbabilityMaker, (x, "y")), (fProbabilityMaker, (x, "f"))]
+        | snd taker' == "y" =
+          [(xProbabilityMaker, (y, "x")), (zProbabilityMaker, (y, "z"))]
+        | snd taker' == "z" =
+          [(yProbabilityMaker, (z, "y")), (fProbabilityMaker, (z, "f"))]
+        | snd taker' == "f" =
+          [(xProbabilityMaker, (f, "x")), (zProbabilityMaker, (f, "z"))]
+        | otherwise = error $ red "maker' is not valid"
   let totalMakerVolume = fst taker'
   numMakers <- randomRIO (1, maxMakers) :: IO Int -- select how many makers
   makerVolumes <- generateVolumes numMakers totalMakerVolume
@@ -122,8 +145,12 @@ generateRandomPosition [xProb,yProb, zProb, fProb]  = do
   takerInfos <- replicateM numTakers (weightedRandom takerProbab)
   let selectedTakers = zip takerVolumes (map snd takerInfos)
   let takerTuple = selectedTakers
-
--- | return tuple
   return (takerTuple, makerTuple)
-  
-generateRandomPosition _ = error $ red  "Input list in `generateRandomPosition` must contain exactly four elements"
+-- | options of takers
+-- | Taker and maker probabilitis
+-- | local variables
+-- | return tuple
+generateRandomPosition _ =
+  error $
+  red
+    "Input list in `generateRandomPosition` must contain exactly four elements"
