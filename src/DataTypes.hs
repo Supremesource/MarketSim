@@ -1,25 +1,17 @@
 {-# LANGUAGE DerivingVia, DataKinds, DeriveGeneric #-}
 {-# OPTIONS_GHC -Wno-missing-export-lists #-}
+{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
+{-# HLINT ignore "Use newtype instead of data" #-}
+{-# LANGUAGE GADTs #-}
 module DataTypes where
 import System.Random ( StdGen )  
-import System.IO ( Handle )
 
 import Data.Aeson
 import Deriving.Aeson
-import qualified Data.ByteString.Lazy.Char8 as BL
 
 -- ? JSON Serialization
+type JSONConfig a = CustomJSON '[OmitNothingFields, FieldLabelModifier '[StripPrefix "DATA", CamelToSnake]] a
 
-
-type JSONConfig a = CustomJSON '[OmitNothingFields, FieldLabelModifier '[StripPrefix "LOG", CamelToSnake]] a
-
-data User = User
-  { userId :: Int
-  , userName :: String
-  , userAPIToken :: Maybe String
-  } deriving Generic
-  deriving (FromJSON, ToJSON)
-  via JSONConfig User
 
 data FileWritesLog = FileWritesLog
    {  identifierLOG    :: String
@@ -65,12 +57,38 @@ data FileWriteBook = FileWriteBook
   deriving (FromJSON, ToJSON)
   via JSONConfig FileWriteBook
 
--- data FileWrites2
 
-testData :: [User]
-testData = [User 42 "Alice" Nothing, User 43 "Bob" (Just "xyz")]
-test :: IO ()
-test = BL.putStrLn $ encode testData
+data PositionData = PositionData
+  {totalXPosition             :: Int
+  ,totalYPosition             :: Int
+  ,totalZPosition             :: Int
+  ,totalFPosition             :: Int
+  ,buyVolumePosition          :: Int
+  ,sellVolumePosition         :: Int
+  ,overalVOLUMEPosition       :: Int
+  ,overalOpenInterestPosition :: Int
+  }deriving Generic
+  deriving (FromJSON, ToJSON)
+  via JSONConfig PositionData
+
+data InitPrice where
+  InitPrice :: {initPrice :: Int} -> InitPrice
+  deriving Generic
+  deriving (FromJSON, ToJSON) via JSONConfig InitPrice
+
+data AskBook = AskBook
+  {askBook :: [(Double, Int)]} deriving Generic
+  deriving (FromJSON, ToJSON) via JSONConfig AskBook
+
+data BidBook = BidBook
+  {bidBook :: [(Double, Int)]} deriving Generic
+  deriving (FromJSON, ToJSON) via JSONConfig BidBook
+
+ 
+initialPositionData :: [PositionData]
+initialPositionData = []
+
+
 
 -- data PositionsOutput = Output
 --   { ops :: [Op]
@@ -138,7 +156,7 @@ type StartingPoint = Double
 type Totakefromwall = Int
 type Volume = (Int, VolumeSide) 
 
-type RewriteHandle3 = (Handle, Handle, Handle, Handle, Handle, Handle, Handle, Handle)
+
 
 type InitBookStats = (StartingPoint , [[Int]] , Int , Int , Totakefromwall , Int , Int, [(Double,Int)],  [(Double,Int)] , VolumeSide, Int, Double, Double, Double)
 
@@ -162,3 +180,6 @@ data BookStats = BookStats {
 type RecursionPass = (VolumeList, OrderBook, OrderBook, Generator, Generator, FullWall, FullWall, StartingPoint, Totakefromwall, [BookStats])
 
 type ListPass = (Volume , OrderBook , OrderBook, Generator, Generator, FullWall, FullWall, StartingPoint, Totakefromwall )
+
+type Position = ([(Int, String)], [(Int, String)])
+

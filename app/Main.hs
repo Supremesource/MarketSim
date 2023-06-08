@@ -9,7 +9,7 @@ module Main where
 
 -- imports
 -- | external libraries
-import           Control.Monad               (forM, when)
+import           Control.Monad
 import           Control.Parallel.Strategies (parList, rseq, using)
 import           System.IO                   (BufferMode (LineBuffering),
                                               hSetBuffering, stdout)
@@ -25,19 +25,19 @@ import           Lib
 import           RunSettings
 import           Statistics
 import           Util
+import          Control.Monad (foldM)
+
 
 
 -- | Entry point of program
 runProgram :: Stats -> Int -> IO [(Int, VolumeSide)]
 runProgram aggregatedStats remainingRuns = do
-  handles <- openRewrites3
-  result <- mainLoop aggregatedStats remainingRuns handles
-  closeHandles3 handles
-  return result
+  mainLoop aggregatedStats remainingRuns []
+
 
 -- | loop initializing the main processes
-mainLoop :: Stats -> Int -> RewriteHandle3 -> IO [(Int, VolumeSide)]
-mainLoop aggregatedStats remainingRuns handles = do
+mainLoop :: Stats -> Int -> [(Int, Position)] -> IO [(Int, VolumeSide)]
+mainLoop aggregatedStats remainingRuns accumulatedStats = do
   if remainingRuns > 0
     then do
       putStrLn "+------------+"
@@ -50,11 +50,8 @@ mainLoop aggregatedStats remainingRuns handles = do
             (processTempleateRun indexPosition randomToTempleate)
       let newAggregatedStats =
             foldl (flip aggregateStats) aggregatedStats positions
-      volumesAndSides <-
-        forM (zip [1 ..] positions) $ \(indexPosition, positionInfo) -> do
-          (volume, side) <-
-            printPositionStats handles indexPosition positionInfo
-          return (volume, side)
+      let newAccumulatedStats =
+            accumulatedStats ++ zip [1 ..] positions
       putStrLn "+------------+"
       putStrLn $ "|END OF RUN " ++ show remainingRuns
       putStrLn "+------------+\n\n"
@@ -63,12 +60,26 @@ mainLoop aggregatedStats remainingRuns handles = do
         "|RUN: " ++ show remainingRuns ++ " CONTENTS & aggregatedStats" ++ "|"
       putStrLn "+------------------------------------+\n"
       printStats newAggregatedStats
-      nextVolumesAndSides <-
-        mainLoop newAggregatedStats (remainingRuns - 1) handles
-      return (volumesAndSides ++ nextVolumesAndSides)
+      mainLoop newAggregatedStats (remainingRuns - 1) newAccumulatedStats
     else do
       printFinal aggregatedStats
-      return []
+
+      -- Accumulate all the results first
+      results <- forM accumulatedStats $ \(indexPosition, positionInfo) -> do
+          (volume, side, acc) <- printPositionStats indexPosition positionInfo initialPositionData
+          return (volume, side, acc)
+
+      -- Now write everything to the file at once
+      let allPositions = concatMap (\(_, _, acc) -> acc) results
+      writePositionsToFile positionInfoP allPositions
+
+      -- Return the results, discarding the [PositionData] part
+      return [(volume, side) | (volume, side, _) <- results]
+
+
+
+
+
 
 -- | "indexPosition" is an index showing the number of that particular position
 -- | IO ()
@@ -93,7 +104,7 @@ run
  -- ? IO
  -- | clening log file before every run
  = do
-  writeFile logPath ""
+  writeFile logP ""
   -- | optimizing the IO to be formated in lines
   hSetBuffering stdout LineBuffering
   -- | Asking user to proceed
@@ -113,20 +124,12 @@ run
         gray
           "\n { you can adjsut starting value in the '..Settings/RunSetting' } "
       newRunSettings
-        logPath
-        bidBookPath
-        askBookPath
-        pricePath
-        newLongsPath
-        newShortsPath
-        exitLongsPath
-        exitShortsPath
-        bidAskRPath
-        bidToAskRPath
-        buyVolumePath
-        sellVolumePath
-        volumePath
-        openInterestPath
+        askBookP
+        bidBookP
+        logP
+        orderBookDetailsP
+        positionInfoP
+        initPriceP
         wipingStartingValue
     else if proceed == "n" || proceed == "N"
            then error (red "stopping program")
@@ -135,12 +138,12 @@ run
            -- | if the settings are not correct, the program will not run
            -- | CHECKING IF FILES ARE EMPTY
            else do
-   
-             isBidEmpty <- isFileEmpty bidBookPath
-             isAskEmpty <- isFileEmpty askBookPath
-             initstartingPoint <- startingPointFromFile pricePath
-             fileBidBook <- readBook bidBookPath
-             fileAskBook <- readBook askBookPath
+
+             isBidEmpty <- isFileEmpty bidBookP
+             isAskEmpty <- isFileEmpty askBookP
+             initstartingPoint <- startingPointFromFile initPriceP
+             fileBidBook <- readBook bidBookP
+             fileAskBook <- readBook askBookP
              -- ? CHECKING SETTINGS
              volumechecker
                minvolume
@@ -224,7 +227,7 @@ run
              volumesAndSides <- runProgram initStats numberOfRuns
              let initialBookDetailsList = [initialBookDetails]
              let listofvolumes = volumesAndSides
-          
+
              (_, _, _) <-
                recursiveList
                  ( listofvolumes
@@ -237,9 +240,9 @@ run
                  , initstartingPoint
                  , inittotakefromwall
                  , initialBookDetailsList)
-        
 
-            
+
+
              -- | optional warnings
              addsupto100
                xProbabilityTaker
@@ -251,14 +254,14 @@ run
                yProbabilityMaker
                zProbabilityMaker
                fProbabilityMaker
-             
-              
+
+
             -- | formating price document
-             removeEmptyLines pricePath
+       --      removeEmptyLines pricePath
              putStrLn $ gray "OUTPUT SUCCESFULLY GENERATED"
 
             -- // testing :
-             print $ "List of Vol: \n" ++ show listofvolumes
+           --  print $ "List of Vol: \n" ++ show listofvolumes
              -- print takerX stats
 
             -- | calling python script (graph)
