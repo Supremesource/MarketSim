@@ -4,7 +4,7 @@ module Lib where
 
 -- | external modules
 
-import Data.Aeson (eitherDecode')
+import Data.Aeson (eitherDecode', eitherDecode)
 
 import           Control.Exception.Base
 import qualified Data.ByteString.Char8  as BS
@@ -23,6 +23,7 @@ import           System.Random          (Random (randomR, randomRs),
 import           Text.Read              (readMaybe)
 import qualified Data.ByteString.Lazy as BL
 import           Data.Aeson.Encode.Pretty (encodePretty)
+
 -- | internal libraries
 import           Colours
 
@@ -363,11 +364,14 @@ readBook fileName =
   bracket
     (openFile fileName ReadMode)
     hClose
-    (\handleRead -> do
-       contents <- BS.hGetContents handleRead
-       let contentsStr = BS.unpack contents
-       return $
-         Data.Maybe.fromMaybe [] (readMaybe contentsStr))
+    (\handle' -> do
+       contents <- BL.hGetContents handle'
+       case eitherDecode contents of
+         Left err -> do
+           putStrLn $ "Error parsing JSON: " ++ err
+           return []
+         Right bookData -> return $ book bookData)
+
 
 
 
