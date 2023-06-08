@@ -19,7 +19,7 @@ import           DataTypes (Options (..))
 --〇 ID = PLTCHRT
 -- | if TRUE you will see price displayed as a chart
 plotCharts :: Bool
-plotCharts = True
+plotCharts = False
 
 --〇 ID = STRVAL
 -- | starting value
@@ -31,12 +31,12 @@ wipingStartingValue = 1
 -- | number of positions you want to take place in the simulation run
 -- | number of positions
 numPositions :: Int
-numPositions = 500
+numPositions = 2
 
 --〇 ID = NUMRUN
 -- | number of runs, this is a loop how many times will the simulation repeat itself (random generators are updating each time though)
 numberOfRuns :: Int
-numberOfRuns = 5
+numberOfRuns = 2
 
 --〇 ID = maxM/T
 -- TODO add more complex statistic distribution

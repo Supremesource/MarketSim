@@ -3,6 +3,9 @@ module Lib where
 -- | moudle aggregating all the functions
 
 -- | external modules
+
+import Data.Aeson (eitherDecode')
+
 import           Control.Exception.Base
 import qualified Data.ByteString.Char8  as BS
 import           Data.Char              (toUpper)
@@ -18,9 +21,14 @@ import           System.Random          (Random (randomR, randomRs),
                                          RandomGen (split), StdGen, mkStdGen,
                                          newStdGen, randomRIO, setStdGen)
 import           Text.Read              (readMaybe)
+import qualified Data.ByteString.Lazy as BL
+import           Data.Aeson.Encode.Pretty (encodePretty)
 -- | internal libraries
 import           Colours
+
 import           DataTypes
+
+
 
 import           RunSettings
 import           Statistics
@@ -365,25 +373,16 @@ readBook fileName =
 
 -- | when wiping run then -> wipe the orderbook + write starting price
 newRunSettings :: FilePath -> FilePath -> FilePath -> FilePath -> FilePath 
-  -> FilePath -> FilePath -> FilePath -> FilePath -> FilePath -> FilePath -> FilePath -> FilePath -> FilePath -> Int -> IO ()
-newRunSettings logFile bidFile askFile priceFile nLongFile nShortFile eLongFile 
-      eShortFile bidAskRFile bidToAskFile buyVolFile sellVolFile volFile oiFile newValue = do
+  -> FilePath -> Int -> IO ()
+newRunSettings askBookF bidBookF logF bookDetailF positionInfoF initPriceF newValue = do
   let wipe = ""
-  let price = show newValue
-  writeFile logFile wipe
-  writeFile bidFile wipe
-  writeFile askFile wipe
-  writeFile nLongFile wipe
-  writeFile nShortFile wipe
-  writeFile eLongFile wipe
-  writeFile eShortFile wipe
-  writeFile bidAskRFile wipe
-  writeFile bidToAskFile wipe
-  writeFile buyVolFile wipe
-  writeFile sellVolFile wipe
-  writeFile volFile wipe
-  writeFile oiFile wipe
-  writeFile priceFile price
+  let price = InitPrice newValue
+  writeFile askBookF      wipe
+  writeFile bidBookF      wipe
+  writeFile logF          wipe
+  writeFile bookDetailF   wipe
+  writeFile positionInfoF wipe
+  BL.writeFile initPriceF (encodePretty price)
 -- | cleaning price history file
 
 removeEmptyLines :: FilePath -> IO ()
@@ -412,4 +411,7 @@ getLastNumberFromFile filePath = do
 
 -- | Define the starting point, maximum and minimum upmove and downmove values, and the maximum number of decimal points
 startingPointFromFile :: FilePath -> IO Double
-startingPointFromFile = getLastNumberFromFile
+startingPointFromFile filePath = do
+  content <- BL.readFile filePath
+  either error (return . fromIntegral . (\(InitPrice x) -> x)) (eitherDecode' content :: Either String InitPrice)
+

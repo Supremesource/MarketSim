@@ -1,4 +1,5 @@
 {-# OPTIONS_GHC -Wno-missing-export-lists #-}
+{-# OPTIONS_GHC -Wno-incomplete-patterns #-}
 
 module InputOutput where
 
@@ -6,8 +7,12 @@ module InputOutput where
 
 -- | external libraries
 import           Colours
+import           Control.Monad
+
 import           Control.Exception.Base (bracket)
-import           Control.Monad          (when)
+import qualified Data.ByteString.Lazy.Char8 as BLC
+
+
 import qualified Data.ByteString.Char8  as B
 import qualified Data.ByteString.Char8  as BC
 import           Data.Time.Clock.POSIX  (getPOSIXTime)
@@ -20,11 +25,13 @@ import           Data.Aeson.Encode.Pretty (encodePretty)
 
 import qualified Data.ByteString.Lazy as BL
 import Data.Maybe (fromMaybe)
+import Data.Aeson (encode)
+import Data.ByteString.Lazy.Char8 (unpack)  -- Note the use of Lazy
 
 -- | internal libraries
 import           DataTypes
 import           Filepaths
-import           Lib                   
+import           Lib
 import           RunSettings
 
 
@@ -37,38 +44,6 @@ generateId = do
   let randomChars = randomRs (0, length symbols - 1) gen
   return $ map (symbols !!) $ take 10 randomChars
 
-openRewrites3 :: IO RewriteHandle3
-openRewrites3 = do
-  handlePosition <- openFile newLongsPath AppendMode
-  handlePosition2 <- openFile newShortsPath AppendMode
-  handlePosition3 <- openFile exitShortsPath AppendMode
-  handlePosition4 <- openFile exitLongsPath AppendMode
-  handleVol <- openFile buyVolumePath AppendMode
-  handleVol2 <- openFile sellVolumePath AppendMode
-  handleVol3 <- openFile volumePath AppendMode
-  handleInterest <- openFile openInterestPath AppendMode
-  -- TODO: put file handles on record
-  return
-    ( handlePosition
-    , handlePosition2
-    , handlePosition3
-    , handlePosition4
-    , handleVol
-    , handleVol2
-    , handleVol3
-    , handleInterest)
-
-closeHandles3 :: RewriteHandle3 -> IO ()
-closeHandles3 (handlePosition, handlePosition2, handlePosition3, handlePosition4
-  , handleVol, handleVol2, handleVol3, handleInterest) = do
-  hClose handlePosition
-  hClose handlePosition2
-  hClose handlePosition3
-  hClose handlePosition4
-  hClose handleVol
-  hClose handleVol2
-  hClose handleVol3
-  hClose handleInterest
 
 formatAndPrintInfo :: BookStats -> IO ()
 formatAndPrintInfo stats = do
@@ -101,45 +76,60 @@ formatAndPrintInfo stats = do
   B.putStr line
 
 
-filewrites1 :: BookStats -> IO ()
-filewrites1 stats = do
 
+filewrites1 :: [BookStats] -> IO ()
+filewrites1 statsList = do
     identifier <- generateId
--- ? WRITING INTO FILES 1 ? --
-  -- | (goes into log file)  
-    let fileWritesLog = FileWritesLog
-          { identifierLOG = identifier
-          , startingPointLOG = startingPoint stats
-          , takeamountLOG = takeamount
-          , maxUpMoveLOG = maxUpMove
-          , minUpMoveLOG = minUpMove
-          , maxDownMoveLOG = maxDownMove
-          , minDownMoveLOG = minDownMove
-          , minimum'LOG = minimum'
-          , maximum'LOG = maximum'
-          ,  maximumActualLOG = fromMaybe 0 $ maximumlimit (maxMinLimit stats)
-          ,  minimumActualLOG = fromMaybe 0 $ minimumlimit (maxMinLimit stats)
-          , takeamountBIDLOG = takeamountBID
-          , takeamountASKLOG = takeamountASK
-          , asksTotalLOG = asksTotal stats
-          , bidsTotalLOG = bidsTotal stats
-          , orderwalllikelyhoodLOG = orderwalllikelyhood
-          , totakefromwallLOG = totakefromwall stats
-          , wallminimum'LOG = wallminimum'
-          , wallmaximum'LOG = wallmaximum'
-          , wallAmplifierLOG = wallAmplifier
-          , maxDecimalLOG = maxDecimal
-          , lengthchangeBIDLOG = lengthchangeBID stats
-          , lengthchangeASKLOG = lengthchangeASK stats
-          , listASKLOG = listASK stats
-          , listBIDLOG = listBID stats
-          , vSideLOG = show (vSide stats)
-          , volumeAmountLOG = volumeAmount stats
-          , spreadLOG = roundTo maxDecimal (spread stats)
-          , startingPriceLOG = startingprice stats
-          } -- append mode
+    let logStats = map (writeStat identifier) statsList
+    let bookStats = map writeBook statsList
+    BL.appendFile logP (encodePretty logStats)
+    BL.appendFile orderBookDetailsP (encodePretty bookStats)
+  where
+    writeStat identifier stats = 
+        let fileWritesLog = FileWritesLog
+              { identifierLOG = identifier
+              , startingPointLOG = startingPoint stats
+              , takeamountLOG = takeamount
+              , maxUpMoveLOG = maxUpMove
+              , minUpMoveLOG = minUpMove
+              , maxDownMoveLOG = maxDownMove
+              , minDownMoveLOG = minDownMove
+              , minimum'LOG = minimum'
+              , maximum'LOG = maximum'
+              ,  maximumActualLOG = fromMaybe 0 $ maximumlimit (maxMinLimit stats)
+              ,  minimumActualLOG = fromMaybe 0 $ minimumlimit (maxMinLimit stats)
+              , takeamountBIDLOG = takeamountBID
+              , takeamountASKLOG = takeamountASK
+              , asksTotalLOG = asksTotal stats
+              , bidsTotalLOG = bidsTotal stats
+              , orderwalllikelyhoodLOG = orderwalllikelyhood
+              , totakefromwallLOG = totakefromwall stats
+              , wallminimum'LOG = wallminimum'
+              , wallmaximum'LOG = wallmaximum'
+              , wallAmplifierLOG = wallAmplifier
+              , maxDecimalLOG = maxDecimal
+              , lengthchangeBIDLOG = lengthchangeBID stats
+              , lengthchangeASKLOG = lengthchangeASK stats
+              , listASKLOG = listASK stats
+              , listBIDLOG = listBID stats
+              , vSideLOG = show (vSide stats)
+              , volumeAmountLOG = volumeAmount stats
+              , spreadLOG = roundTo maxDecimal (spread stats)
+              , startingPriceLOG = startingprice stats
+              } -- append mode
+              in fileWritesLog
 
+    writeBook stats =
+      let bidAskRatioStr = printf "%.4f" $ bidAskRatio stats
+          fileWriteBook = FileWriteBook
+              { startingPriceBook = startingprice stats
+              , bidAskRatioBook = bidAskRatioStr
+              , bidsTotalBook = bidsTotal stats
+              , asksTotalBook = asksTotal stats
+              }
+      in fileWriteBook
 
+  
 {-
   -- ? REWRTING INTO FILES 2 ? --
   -- | Asociated with the orderbook
@@ -159,33 +149,23 @@ filewrites1 stats = do
         (show (bidsTotal stats) ++ " / " ++ show (asksTotal stats))
       hClose handleTORatio
 -}
-    let bidAskRatioStr = printf "%.4f" $ bidAskRatio stats
-    let fileWriteBook = FileWriteBook
-         { startingPriceBook = startingprice stats
-         , bidAskRatioBook = bidAskRatioStr
-         , bidsTotalBook = bidsTotal stats
-         , asksTotalBook = asksTotal stats
-          }
-
-    return (fileWritesLog, fileWriteBook)
 
 -- | rewriting bid/ask RATIO
 -- | rewriting bid TO ask RATIO
 -- | printing stats associated with positioning
 printPositionStats ::
-     RewriteHandle3 -> Int -> (TakerTuple, MakerTuple) -> IO (Int, VolumeSide)
-printPositionStats (handlePosition, handlePosition2, handlePosition3
-  , handlePosition4, handleVol, handleVol2, handleVol3, handleInterest) i (taker, makers)
-  
+    Int -> (TakerTuple, MakerTuple) -> [PositionData] -> IO (Int, VolumeSide, [PositionData])
+printPositionStats i (taker, makers) acc = do
+
  -- | checking if maker & taker tuple is negative
- = do
+
   let tupleNegativecheck =
         Control.Monad.when (not (nonNegative taker) && not (nonNegative makers)) $
         error $
         red
-          "makers tuple is negative, (something possibly wrong with checker\
-          \ letting you come to this error), \
-          \ check /settings and input different values, \n \
+          "makers tuple is negative, (something possibly wrong with checker \
+          \ letting you come to this error),                                \
+          \ check /settings and input different values, \n                  \
           \     congratulations on getting the rarest error <(|O|_|O|)> "
   tupleNegativecheck
   -- | scope bindings
@@ -194,7 +174,7 @@ printPositionStats (handlePosition, handlePosition2, handlePosition3
   let sideVol
         | snd (head taker) == "x" || snd (head taker) == "z" = Buy
         | snd (head taker) == "y" || snd (head taker) == "f" = Sell
-        | otherwise                                          = error $ red 
+        | otherwise                                          = error $ red
           "generating volume failed"
   let overalOpenInterest =
         interestorPlus taker makers - interestorMinus taker makers
@@ -207,18 +187,26 @@ printPositionStats (handlePosition, handlePosition2, handlePosition3
           then volumeSume
           else 0
   let overalVOLUME = volumeSume
-  
+  let fileWritesPosition = PositionData
+        {totalXPosition   = totalX
+        ,totalYPosition   = totalY
+        ,totalZPosition   = totalZ
+        ,totalFPosition   = totalF
+        ,buyVolumePosition  = buyVOLUME
+        ,sellVolumePosition  = sellVOLUME
+        ,overalVOLUMEPosition  = overalVOLUME
+        ,overalOpenInterestPosition = overalOpenInterest
+        }
+  let newAcc = acc ++ [fileWritesPosition]
+
   -- | goes into console
-  putStrLn "------------------------------------------"
   putStrLn $ "| Position number    | " ++ show i ++ " 🍻 |"
-  putStrLn "------------------------------------------"
   putStrLn $ "| Taker                | " ++ show taker
   putStrLn $ "| Makers               | " ++ show makers
   putStrLn $ "| Overal open interest | " ++ show overalOpenInterest
   putStrLn $ "| Volume               | " ++ show overalVOLUME
   putStrLn $ "| Buy volume           | " ++ show buyVOLUME
   putStrLn $ "| Sell volume          | " ++ show sellVOLUME
-  putStrLn "------------------------"
   putStrLn $ "| Taker X count        | " ++ show takercounter_X
   putStrLn $ "| Taker Y count        | " ++ show takercounter_Y
   putStrLn $ "| Taker Z count        | " ++ show takercounter_Z
@@ -227,14 +215,39 @@ printPositionStats (handlePosition, handlePosition2, handlePosition3
   putStrLn $ "| Maker Y count        | " ++ show makerelement_counter_of_Y
   putStrLn $ "| Maker Z count        | " ++ show makerelement_counter_of_Z
   putStrLn $ "| Maker F count        | " ++ show makerelement_counter_of_F
-  putStrLn "------------------------\n"
   putStrLn "----------TOTAL---------"
   putStrLn $ purple "| Total USD X | " ++ show totalX
   putStrLn $ purple "| Total USD Y | " ++ show totalY
   putStrLn $ purple "| Total USD Z | " ++ show totalZ
   putStrLn $ purple "| Total USD F | " ++ show totalF
   putStrLn "------------------------\n"
-  B.hPutStrLn handlePosition $ BC.pack (show totalX)
+  return (volumeSume, sideVol, newAcc)
+  where
+    makerelement_counter_of_X = countElements "x" makers
+    makerelement_counter_of_Y = countElements "y" makers
+    makerelement_counter_of_Z = countElements "z" makers
+    makerelement_counter_of_F = countElements "f" makers
+    takercounter_X            = countElements "x" taker
+    takercounter_Y            = countElements "y" taker
+    takercounter_Z            = countElements "z" taker
+    takercounter_F            = countElements "f" taker
+    totalX                    = orderSize "x" taker + orderSize "x" makers
+    totalY                    = orderSize "y" taker + orderSize "y" makers
+    totalZ                    = orderSize "z" taker + orderSize "z" makers
+    totalF                    = orderSize "f" taker + orderSize "f" makers
+
+writePositionsToFile :: FilePath -> [PositionData] -> IO ()
+writePositionsToFile newLongsPath' positionDataList = do
+    let jsonData = encodePretty positionDataList
+    BL.writeFile newLongsPath' jsonData
+  
+
+
+{-
+
+
+  B.hPutStrLn handlePosition (BL.toStrict $ encodePretty fileWritesPosition)
+  --B.hPutStrLn handlePosition $ BC.pack (show totalX)
   -- | total Y
   B.hPutStrLn handlePosition2 $ BC.pack (show totalY)
   -- | total Z
@@ -249,20 +262,10 @@ printPositionStats (handlePosition, handlePosition2, handlePosition3
   B.hPutStrLn handleVol3 $ BC.pack (show overalVOLUME)
   -- | Overal open interest
   B.hPutStrLn handleInterest $ BC.pack (show overalOpenInterest)
-  return (volumeSume, sideVol)
-  where
-    makerelement_counter_of_X = countElements "x" makers
-    makerelement_counter_of_Y = countElements "y" makers
-    makerelement_counter_of_Z = countElements "z" makers
-    makerelement_counter_of_F = countElements "f" makers
-    takercounter_X            = countElements "x" taker
-    takercounter_Y            = countElements "y" taker
-    takercounter_Z            = countElements "z" taker
-    takercounter_F            = countElements "f" taker
-    totalX                    = orderSize "x" taker + orderSize "x" makers
-    totalY                    = orderSize "y" taker + orderSize "y" makers
-    totalZ                    = orderSize "z" taker + orderSize "z" makers
-    totalF                    = orderSize "f" taker + orderSize "f" makers
+  
+ 
+-} 
+
 
 -- | final overview
 -- ?  REWRTING DATA FILES 3 ? --
@@ -318,7 +321,7 @@ checkers stats =
     , if (takerY stats + takerF stats) - (makerX stats + makerZ stats) /= 0
         then error $ red "check 9 fail"
         else "check 9 pass")
-  
+
 -- | setting checker
   , ( "Checker 10"
     , if basecaseValueLongNew >= upperBoundLongNew

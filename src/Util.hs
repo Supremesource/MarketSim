@@ -2,6 +2,7 @@
 module Util where
 -- | module of utility funcitons
 -- | importing external libraries
+
 import           System.Random (Random (randomRs), RandomGen (split))
 -- | internal libraries
 import           Colours
@@ -129,9 +130,10 @@ calculateTotalsCount finalBookAsk finalBookBid =
 recursiveList :: RecursionPass -> IO (OrderBook, OrderBook, [BookStats])
 -- | base case
 recursiveList ([], bidBook, askBook, _, _, _, _, _, _, bookDetails) = do
-    mapM_ filewrites1 $ tail (reverse bookDetails )
-    writeFile bidBookPath $ show bidBook
-    writeFile askBookPath $ show askBook
+    filewrites1 $ tail(reverse bookDetails)  
+    
+    writeFile bidBookP $ show bidBook
+    writeFile askBookP $ show askBook
     return (bidBook, askBook, bookDetails)
 recursiveList (x:xs, bidBook, askBook, gen1, gen2, fullwallsASK, fullwallsBIDS, sPoint, takeWall, bookDetails) =
     orderbookLoop (x, bidBook, askBook, gen1, gen2, fullwallsASK, fullwallsBIDS, sPoint, takeWall) >>=
