@@ -2,8 +2,9 @@
 module Util where
 -- | module of utility funcitons
 -- | importing external libraries
-
+import qualified Data.ByteString.Lazy as BL
 import           System.Random (Random (randomRs), RandomGen (split))
+import           Data.Aeson (decode, encode)
 -- | internal libraries
 import           Colours
 import           DataTypes
@@ -128,12 +129,14 @@ calculateTotalsCount finalBookAsk finalBookBid =
 
 
 recursiveList :: RecursionPass -> IO (OrderBook, OrderBook, [BookStats])
--- | base case
 recursiveList ([], bidBook, askBook, _, _, _, _, _, _, bookDetails) = do
     filewrites1 $ tail(reverse bookDetails)  
     
-    writeFile bidBookP $ show bidBook
-    writeFile askBookP $ show askBook
+    let writeBidBook = Book { book = bidBook }
+    let writeAskBook = Book { book = askBook }
+    BL.writeFile bidBookP (encode writeBidBook)
+    BL.writeFile askBookP (encode writeAskBook)
+    
     return (bidBook, askBook, bookDetails)
 recursiveList (x:xs, bidBook, askBook, gen1, gen2, fullwallsASK, fullwallsBIDS, sPoint, takeWall, bookDetails) =
     orderbookLoop (x, bidBook, askBook, gen1, gen2, fullwallsASK, fullwallsBIDS, sPoint, takeWall) >>=

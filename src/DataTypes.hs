@@ -3,10 +3,12 @@
 {-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
 {-# HLINT ignore "Use newtype instead of data" #-}
 {-# LANGUAGE GADTs #-}
+{-# LANGUAGE DeriveGeneric, DeriveAnyClass #-}
+
 module DataTypes where
 import System.Random ( StdGen )  
 
-import Data.Aeson
+import Data.Aeson ( FromJSON, ToJSON )
 import Deriving.Aeson
 
 -- ? JSON Serialization
@@ -76,13 +78,10 @@ data InitPrice where
   deriving Generic
   deriving (FromJSON, ToJSON) via JSONConfig InitPrice
 
-data AskBook = AskBook
-  {askBook :: [(Double, Int)]} deriving Generic
-  deriving (FromJSON, ToJSON) via JSONConfig AskBook
-
-data BidBook = BidBook
-  {bidBook :: [(Double, Int)]} deriving Generic
-  deriving (FromJSON, ToJSON) via JSONConfig BidBook
+data Book = Book {
+  book :: [(Double, Int)]
+} deriving (Show, Generic, FromJSON, ToJSON)
+  
 
  
 initialPositionData :: [PositionData]
