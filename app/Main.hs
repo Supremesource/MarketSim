@@ -25,7 +25,6 @@ import           Lib
 import           RunSettings
 import           Statistics
 import           Util
-import          Control.Monad (foldM)
 
 
 
