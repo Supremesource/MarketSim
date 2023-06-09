@@ -99,41 +99,36 @@ generateVolumes numMakers totalVolume = do
   return (volumes ++ [lastVolume])
 
 generateRandomPosition :: [Int] -> IO ([(Int, String)], [(Int, String)])
-generateRandomPosition [xProb, yProb, zProb, fProb]
+generateRandomPosition [xProb, yProb]
   -- | for longs 1 - 2
  = do
   x <- distribution (basecaseValueLongNew, upperBoundLongNew) -- new longs 1
-  f <- distribution (basecaseValueLongClose, upperBoundLongClose) -- closing longs 2
+--  f <- distribution (basecaseValueLongClose, upperBoundLongClose) -- closing longs 2
   -- | for shorts 3 - 4
   y <- distribution (basecaseValueShortNew, upperBoundShortNew) -- new shorts 3
-  z <- distribution (basecaseValueShortClose, upperBoundShortClose) -- closing shorts 4
+--  z <- distribution (basecaseValueShortClose, upperBoundShortClose) -- closing shorts 4
   let takeROptions =
         [ (xProb, (x, "x"))
         , (yProb, (y, "y"))
-        , (zProb, (z, "z"))
-        , (fProb, (f, "f"))
+--        , (zProb, (z, "z"))
+--        , (fProb, (f, "f"))
         ]
   taker' <- weightedRandom takeROptions
   let takerProbab
         | snd taker' == "x" =
-          [(yProb, (fst taker', "x")), (zProb, (fst taker', "z"))]
+          [(yProb, (fst taker', "x"))]
         | snd taker' == "y" =
-          [(xProb, (fst taker', "y")), (fProb, (fst taker', "f"))]
-        | snd taker' == "z" =
-          [(yProb, (fst taker', "z")), (fProb, (fst taker', "x"))]
-        | snd taker' == "f" =
-          [(xProb, (fst taker', "f")), (zProb, (fst taker', "y"))]
+          [(xProb, (fst taker', "y"))]
+
+ 
         | otherwise = error $ red "taker' is not valid"
   let makerProbab
         | snd taker' == "x" =
-          [(yProbabilityMaker, (x, "y")), (fProbabilityMaker, (x, "f"))]
+          [(yProbabilityMaker, (x, "y"))]
         | snd taker' == "y" =
-          [(xProbabilityMaker, (y, "x")), (zProbabilityMaker, (y, "z"))]
-        | snd taker' == "z" =
-          [(yProbabilityMaker, (z, "y")), (fProbabilityMaker, (z, "f"))]
-        | snd taker' == "f" =
-          [(xProbabilityMaker, (f, "x")), (zProbabilityMaker, (f, "z"))]
+          [(xProbabilityMaker, (y, "x"))]
         | otherwise = error $ red "maker' is not valid"
+        
   let totalMakerVolume = fst taker'
   numMakers <- randomRIO (1, maxMakers) :: IO Int -- select how many makers
   makerVolumes <- generateVolumes numMakers totalMakerVolume
@@ -153,4 +148,4 @@ generateRandomPosition [xProb, yProb, zProb, fProb]
 generateRandomPosition _ =
   error $
   red
-    "Input list in `generateRandomPosition` must contain exactly four elements"
+    "Input list in `generateRandomPosition` must contain exactly 2 elements"

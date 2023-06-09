@@ -246,13 +246,11 @@ run
              addsupto100
                xProbabilityTaker
                yProbabilityTaker
-               zProbabilityTaker
-               fProbabilityTaker
+           
              addsupto100
                xProbabilityMaker
                yProbabilityMaker
-               zProbabilityMaker
-               fProbabilityMaker
+         
 
 
             -- | formating price document

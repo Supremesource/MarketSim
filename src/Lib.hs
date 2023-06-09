@@ -256,8 +256,8 @@ positionamountcheck a b | a <  (b * 2) = error (red "\n\nPosition amount must be
 
 -- | warning checker for settings
 -- | helper function for probability settings (/% checker)
-addsupto100 :: Int -> Int -> Int -> Int -> IO ()
-addsupto100 first second thr for | first + second + thr + for == 100 = return ()
+addsupto100 :: Int -> Int -> IO ()
+addsupto100 first second  | first + second  == 100 = return ()
                             | otherwise = putStr (red "\nWarning probabilites in settings do not add up to 100%")
 
 -- ? TEMPLEATE RUN FUNCITOINS
@@ -318,9 +318,9 @@ processTempleateRun i o       = do
   let ifprocess              = currentO   == UP || currentO == UUP
   let templeatedprobability  = if ifprocess then optionProcessor currentO xProbabilityTaker else xProbabilityTaker
   let templeatedprobabilityY = if ifprocess then yProbabilityTaker else optionProcessor currentO yProbabilityTaker
-  let templeatedprobabilityZ = if ifprocess then optionProcessor currentO zProbabilityTaker else zProbabilityTaker
-  let templeatedprobabilityF = if ifprocess then fProbabilityTaker else optionProcessor currentO fProbabilityTaker
-  [templeatedprobability,templeatedprobabilityY,templeatedprobabilityZ,templeatedprobabilityF]
+
+
+  [templeatedprobability,templeatedprobabilityY]
 
 randomOptionGen :: IO Options
 randomOptionGen = do
