@@ -8,26 +8,13 @@ module InputOutput where
 -- | external libraries
 import           Colours
 import           Control.Monad
-
-import           Control.Exception.Base (bracket)
-import qualified Data.ByteString.Lazy.Char8 as BLC
-
-
 import qualified Data.ByteString.Char8  as B
-import qualified Data.ByteString.Char8  as BC
 import           Data.Time.Clock.POSIX  (getPOSIXTime)
-import           System.IO              (IOMode (AppendMode), hClose, hPutStrLn,
-                                         openFile)
 import           System.Random          (Random (randomRs), mkStdGen)
 import           Text.Printf            (printf)
-
 import           Data.Aeson.Encode.Pretty (encodePretty)
-
 import qualified Data.ByteString.Lazy as BL
 import Data.Maybe (fromMaybe)
-import Data.Aeson (encode)
-import Data.ByteString.Lazy.Char8 (unpack)  -- Note the use of Lazy
-
 -- | internal libraries
 import           DataTypes
 import           Filepaths

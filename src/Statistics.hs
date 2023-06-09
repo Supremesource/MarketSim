@@ -8,10 +8,10 @@ import           Control.Monad (replicateM)
 import           Data.List     (unfoldr)
 import           System.Random (Random (randomR), RandomGen (split), StdGen,
                                 randomRIO)
-
 -- | Internal libraries
 import           Colours
 import           RunSettings
+
 
 -- important:
 -- you might want to change the distribution these functions, to your statistical needs

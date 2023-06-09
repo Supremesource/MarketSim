@@ -3,14 +3,10 @@ module Lib where
 -- | moudle aggregating all the functions
 
 -- | external modules
-
 import Data.Aeson (eitherDecode', eitherDecode)
-
 import           Control.Exception.Base
-import qualified Data.ByteString.Char8  as BS
 import           Data.Char              (toUpper)
 import           Data.Foldable          (Foldable (toList))
-import           Data.Maybe             (fromMaybe)
 import           Data.Ratio             ((%))
 import qualified Data.Text              as T
 import qualified Data.Text.IO           as TIO
@@ -20,19 +16,15 @@ import           System.IO              (IOMode (ReadMode), hClose, hFileSize,
 import           System.Random          (Random (randomR, randomRs),
                                          RandomGen (split), StdGen, mkStdGen,
                                          newStdGen, randomRIO, setStdGen)
-import           Text.Read              (readMaybe)
 import qualified Data.ByteString.Lazy as BL
 import           Data.Aeson.Encode.Pretty (encodePretty)
-
 -- | internal libraries
 import           Colours
-
 import           DataTypes
-
-
-
 import           RunSettings
 import           Statistics
+
+
 
 -- ? WALLS
 randomListwalls :: IO [Int]

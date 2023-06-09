@@ -1,15 +1,15 @@
-{-# LANGUAGE DerivingVia, DataKinds, DeriveGeneric #-}
+
 {-# OPTIONS_GHC -Wno-missing-export-lists #-}
 {-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
 {-# HLINT ignore "Use newtype instead of data" #-}
 {-# LANGUAGE GADTs #-}
-{-# LANGUAGE DeriveGeneric, DeriveAnyClass #-}
+{-# LANGUAGE DeriveGeneric, DeriveAnyClass, DerivingVia, DataKinds #-}
 
 module DataTypes where
-import System.Random ( StdGen )  
-
-import Data.Aeson ( FromJSON, ToJSON )
+-- | external libraries
+import System.Random ( StdGen )
 import Deriving.Aeson
+
 
 -- ? JSON Serialization
 type JSONConfig a = CustomJSON '[OmitNothingFields, FieldLabelModifier '[StripPrefix "DATA", CamelToSnake]] a
@@ -50,7 +50,7 @@ data FileWritesLog = FileWritesLog
   via JSONConfig FileWritesLog
 
 
-data FileWriteBook = FileWriteBook 
+data FileWriteBook = FileWriteBook
   { startingPriceBook :: Double
   , bidAskRatioBook :: String -- formated with printf
   , bidsTotalBook :: Int
@@ -81,9 +81,9 @@ data InitPrice where
 data Book = Book {
   book :: [(Double, Int)]
 } deriving (Show, Generic, FromJSON, ToJSON)
-  
 
- 
+
+
 initialPositionData :: [PositionData]
 initialPositionData = []
 
@@ -138,11 +138,11 @@ data Stats = Stats
   , makerF      :: Int
   } deriving Show
 
-data Options = 
-               UP | 
-              UUP | 
-              DW  | 
-              DWW | 
+data Options =
+               UP |
+              UUP |
+              DW  |
+              DWW |
               CN  |
               RANDOM
               deriving  (Eq, Show, Enum, Bounded)
@@ -153,15 +153,15 @@ type Generator = StdGen
 type FullWall = [Int]
 type StartingPoint = Double
 type Totakefromwall = Int
-type Volume = (Int, VolumeSide) 
+type Volume = (Int, VolumeSide)
 
 
 
 type InitBookStats = (StartingPoint , [[Int]] , Int , Int , Totakefromwall , Int , Int, [(Double,Int)],  [(Double,Int)] , VolumeSide, Int, Double, Double, Double)
 
-data BookStats = BookStats { 
+data BookStats = BookStats {
                      startingPoint :: StartingPoint
-                   , maxMinLimit :: [[Int]]                   
+                   , maxMinLimit :: [[Int]]
                    , asksTotal :: Int
                    , bidsTotal :: Int
                    , totakefromwall :: Totakefromwall
@@ -173,7 +173,7 @@ data BookStats = BookStats {
                    , volumeAmount :: Int
                    , spread :: Double
                    , startingprice :: Double
-                   , bidAskRatio :: Double                    
+                   , bidAskRatio :: Double
                    }
 
 type RecursionPass = (VolumeList, OrderBook, OrderBook, Generator, Generator, FullWall, FullWall, StartingPoint, Totakefromwall, [BookStats])

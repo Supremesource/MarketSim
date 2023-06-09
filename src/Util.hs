@@ -4,7 +4,7 @@ module Util where
 -- | importing external libraries
 import qualified Data.ByteString.Lazy as BL
 import           System.Random (Random (randomRs), RandomGen (split))
-import           Data.Aeson (decode, encode)
+import           Data.Aeson (encode)
 -- | internal libraries
 import           Colours
 import           DataTypes
