@@ -119,32 +119,24 @@ upperBoundLongClose = 12000
 -- | OPENING POSITIONS
 -- | BUY VOLUME
 xProbabilityTaker :: Int
-xProbabilityTaker = 23
+xProbabilityTaker = 90
 -- | SELL VOLUME
 yProbabilityTaker :: Int
-yProbabilityTaker = 24
+yProbabilityTaker = 10
 -- | CLOSING POSITION
 -- | BUY VOLUME
-zProbabilityTaker :: Int
-zProbabilityTaker = 25
--- | SELL VOLUME
-fProbabilityTaker :: Int
-fProbabilityTaker = 28
+
 
 --  Maker Probability
 -- | BUY VOLUME
 xProbabilityMaker :: Int
-xProbabilityMaker = 27
+xProbabilityMaker = 50
 -- | SELL VOLUME
 yProbabilityMaker :: Int
-yProbabilityMaker = 26
+yProbabilityMaker = 50
 -- | CLOSING POSITION
 -- | BUY VOLUME
-zProbabilityMaker :: Int
-zProbabilityMaker = 24
--- | SELL VOLUME
-fProbabilityMaker :: Int
-fProbabilityMaker = 23
+
 
 -- ! ORDERBOOK SETINGS
 --  + liquidity settings
