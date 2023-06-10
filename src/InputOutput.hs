@@ -35,9 +35,15 @@ generateId = do
 formatAndPrintInfo :: BookStats -> IO ()
 formatAndPrintInfo stats = do
   identifier <- generateId
+  print "" -- take out
+{- 
+
   let formatRow x y z =
         B.pack $ printf (lime "| %-15s | %-15s | %-15s |\n") x y z
   let line = B.pack $ lime (replicate 54 '-' ++ "\n")
+ 
+
+ 
   B.putStr line
   B.putStr $ formatRow "Field" "Value" "Unit"
   B.putStr line
@@ -62,7 +68,7 @@ formatAndPrintInfo stats = do
   B.putStr $ formatRow "Taken from BID" (show (lengthchangeASK stats)) "$"
   B.putStr line
 
-
+-}
 
 filewrites1 :: [BookStats] -> IO ()
 filewrites1 statsList = do
@@ -186,10 +192,13 @@ printPositionStats i (taker, makers) acc = do
         }
   let newAcc = acc ++ [fileWritesPosition]
 
+ 
+
   -- | goes into console
-  putStrLn $ "| Position number    | " ++ show i ++ " 🍻 |"
-  putStrLn $ "| Taker                | " ++ show taker
-  putStrLn $ "| Makers               | " ++ show makers
+  putStrLn $ "yn| Position number    | " ++ show i ++ "\n\n"
+  putStrLn $ "\n| Taker                | \n\n\n" ++ show taker
+  putStrLn $ "\n| Makers               | \n\n\n" ++ show makers
+   {-
   putStrLn $ "| Overal open interest | " ++ show overalOpenInterest
   putStrLn $ "| Volume               | " ++ show overalVOLUME
   putStrLn $ "| Buy volume           | " ++ show buyVOLUME
@@ -208,6 +217,11 @@ printPositionStats i (taker, makers) acc = do
   putStrLn $ purple "| Total USD Z | " ++ show totalZ
   putStrLn $ purple "| Total USD F | " ++ show totalF
   putStrLn "------------------------\n"
+
+
+
+    -}
+
   return (volumeSume, sideVol, newAcc)
   where
     makerelement_counter_of_X = countElements "x" makers
@@ -374,6 +388,9 @@ printStats stats = do
     (\(name, result) -> putStrLn $ "| " ++ name ++ " | " ++ result ++ " |")
     checkResult
   putStrLn "----------------------------"
+ 
+  {-
+ 
   let statsList =
         [ ("Metric", "Value")
         , ("Taker X", show (takerX stats))
@@ -403,6 +420,9 @@ printStats stats = do
         , ("Value Z", show (offZ stats) ++ "$")
         , ("Value F", show (offF stats) ++ "$")
         ]
+  
+ 
+  
   putStrLn $
     red
       "+------------------------------------------------+---------------------------+"
@@ -420,6 +440,9 @@ printStats stats = do
     "+------------------------------------------------+---------------------------+"
   putStrLn "\n"
 
+
+
+ -}
 -- | how many takers and makers are there
 -- //  let lsprediction = [ (if (takerXc stats + takerZc stats) > (makerXc stats + makerZc stats) then "C up" else "C down", if buyVolume stats > sellVolume stats then "V up" else "V down", if offX stats > offY stats then "A up" else "A down")]
 -- | some scope definitions
@@ -431,6 +454,9 @@ printStats stats = do
 -- | this function is called by the main loop if we reached the runs
 printFinal :: Stats -> IO ()
 printFinal aggregatedStats = do
+  print ""
+
+{-  
   putStrLn $
     unlines
       [ " "
@@ -500,3 +526,6 @@ printFinal aggregatedStats = do
       , ""
       , ""
       ]
+
+
+-}

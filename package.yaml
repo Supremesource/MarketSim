@@ -25,6 +25,7 @@ dependencies:
 - aeson
 - deriving-aeson
 - aeson-pretty
+- random-shuffle
 
 ghc-options:
 - -Wall
@@ -78,6 +79,7 @@ executables:
     - aeson
     - deriving-aeson
     - aeson-pretty
+    - random-shuffle
     
 
 # Comment out the tests section if you don't have test directory or modules.
