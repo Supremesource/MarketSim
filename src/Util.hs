@@ -3,8 +3,11 @@ module Util where
 -- | module of utility funcitons
 -- | importing external libraries
 import qualified Data.ByteString.Lazy as BL
-import           System.Random (Random (randomRs), RandomGen (split))
+import System.Random
+    ( Random(randomRs), RandomGen(split), randomRIO )
 import           Data.Aeson (encode)
+import System.Random.Shuffle (shuffleM)
+import Data.List (splitAt)
 -- | internal libraries
 import           Colours
 import           DataTypes
@@ -12,6 +15,7 @@ import           Filepaths
 import           InputOutput
 import           Lib
 import           RunSettings
+
 
 
 -- | Store the volume result , THIS IS ACCUMULATOR
@@ -130,13 +134,13 @@ calculateTotalsCount finalBookAsk finalBookBid =
 
 recursiveList :: RecursionPass -> IO (OrderBook, OrderBook, [BookStats])
 recursiveList ([], bidBook, askBook, _, _, _, _, _, _, bookDetails) = do
-    filewrites1 $ tail(reverse bookDetails)  
-    
+    filewrites1 $ tail (reverse bookDetails)
+
     let writeBidBook = Book { book = bidBook }
     let writeAskBook = Book { book = askBook }
     BL.writeFile bidBookP (encode writeBidBook)
     BL.writeFile askBookP (encode writeAskBook)
-    
+
     return (bidBook, askBook, bookDetails)
 recursiveList (x:xs, bidBook, askBook, gen1, gen2, fullwallsASK, fullwallsBIDS, sPoint, takeWall, bookDetails) =
     orderbookLoop (x, bidBook, askBook, gen1, gen2, fullwallsASK, fullwallsBIDS, sPoint, takeWall) >>=
@@ -146,37 +150,112 @@ recursiveList (x:xs, bidBook, askBook, gen1, gen2, fullwallsASK, fullwallsBIDS, 
             , fullwallsBIDS, sPoint, takeWall, newBookDetails:bookDetails)
 
 
+
+
+-- ? POSITION FUTURE
+
+type NonMandatory = ((Int,String),(Int,String))
+
+type Mandatory = [(Int,String,String)]
+
+
+
+
+-- PACKAGE CLOSING CONVERSION X & Y TO F & Z
+closingConversion :: (TakerTuple,MakerTuple) -> (TakerTuple, MakerTuple)
+closingConversion (takers,makers )| hasBothXY takers = error "Unsupported tuple format in takers"
+                                | hasBothXY makers = error "Unsupported tuple format in makers"
+                                | otherwise = 
+  (closingconvert filterTakers takers, closingconvert filterMakers makers)        
+  where
+  isValidTuple (_, side) = side == "x" || side == "y"
+  filterTakers = filter isValidTuple
+  filterMakers = filter isValidTuple
+  closingconvert f t = map (\(x,y) -> (x, if y == "x" then "f" else "z")) (f t)
+  hasBothXY xs = "x" `elem` map snd xs && "y" `elem` map snd xs
+
+
+-- | split the future into two parts, force (liquidation) and free (exit)
+splitFuture :: (TakerTuple,MakerTuple) -> IO ((TakerTuple, TakerTuple),(MakerTuple,MakerTuple))
+splitFuture (takerT, makerT) = do
+  shuffleTaker <- shuffleM takerT
+  shuffleMaker <- shuffleM makerT
+
+  -- | make way better statsitics over here
+  let (takerpart1, takerpart2) = splitAt (round ((0.7 :: Double) * fromIntegral (length takerT))) shuffleTaker
+  let (makerpart1, makerpart2) = splitAt (round ((0.7 :: Double) * fromIntegral (length makerT))) shuffleMaker
+  return ((takerpart1, takerpart2), (makerpart1, makerpart2))
+
+
+freePass :: ((TakerTuple, TakerTuple),(MakerTuple,MakerTuple)) 
+  -> (TakerTuple, MakerTuple)  -- Closing capacity
+freePass ((part1, _),(part2,_)) = (part1, part2)
+
+forcePass :: ((TakerTuple, TakerTuple),(MakerTuple,MakerTuple)) 
+  -> (TakerTuple, MakerTuple) -- Force list
+forcePass ((_, part1),(_,part2)) = (part1, part2)
+
+--forcePass
+
+-- | very flexible can be in taker as well as maker side
+positionFutureFree :: (TakerTuple, MakerTuple) -> NonMandatory -- Closing capacity
+positionFutureFree (takerT, makerT) = (sumTaker takerT, sumMaker makerT)
+  where
+    sumTaker xs = (sum [x | (x, _) <- xs], snd (head xs))
+    sumMaker ys = (sum [y | (y, _) <- ys], snd (head ys))
+
+
+
+-- : alsays endsup in takertuple
+-- | form of a closing taker tuple
+positionFutureForce :: (Double ,TakerTuple , MakerTuple ) -> Mandatory -- Force list
+positionFutureForce (sPrice, takerT, makerT )= undefined
+
+-- files future
+
+writeFuture :: NonMandatory -> Mandatory -> IO ()
+writeFuture nonMandatory mandatory = undefined
+
+-- | check if the future file is empty
+isFutureEmpty :: IO Bool
+isFutureEmpty = isFileEmpty posFutureP
+
+
+
+
+
+
 orderbookLoop :: ListPass -> IO (OrderBook, OrderBook, BookStats)
 orderbookLoop ((vAmount, vSide'), bidBook, askBook, gen1, gen2 ,fullwallsASK ,fullwallsBIDS, sPoint, takeWall)   = do
 
 -- | local variables
-                          let (volumeBID, volumeASK) = 
+                          let (volumeBID, volumeASK) =
                                 calculateVolumes vSide' vAmount
-                          let (bidUpdateBook, askUpdateBook) = 
+                          let (bidUpdateBook, askUpdateBook) =
                                 calculateBooks volumeBID volumeASK bidBook askBook
 -- | how much volume took from certain order books
-                          let (lengchngAsk', lengchngBid') = 
+                          let (lengchngAsk', lengchngBid') =
                                 lengthChanges bidUpdateBook bidBook askUpdateBook askBook
                           let sPrice  =
                                startingPrices vSide' bidUpdateBook askUpdateBook
-                          let (askSetupInsert, bidSetupInsert) = 
+                          let (askSetupInsert, bidSetupInsert) =
                                 calculateSetupInserts lengchngAsk' lengchngBid' sPrice gen1 gen2
-                          let maxMinLmt            :: [[Int]]    = 
+                          let maxMinLmt            :: [[Int]]    =
                                 [fullwallsASK, fullwallsBIDS]
                           pricesASK  <- printCustomRandomList lengchngAsk'
                           pricesBID   <- printRandomList' lengchngBid'
 -- | the / number is how smaller the insertion will be
-                          let (listASK', listBID') = 
+                          let (listASK', listBID') =
                                 calculateListTuples askSetupInsert bidSetupInsert pricesASK pricesBID
 -- //TODO, possible microoptimization with the stuff below :
 -- | let insertInAsk = if vSide == Buy then [] else listASK
 --  / let insertInBid = if vSide == Sell then [] else listBID    // --
-                          let (finalBookAsk, finalBookBid) = 
+                          let (finalBookAsk, finalBookBid) =
                                 calculateFinalBooks vSide' askUpdateBook listASK' askBook bidUpdateBook listBID' bidBook
-                          
+
 -- | ask in total in terms of count
 -- | bids in total in terms of count
-                          let (asktotal, bidtotal) = 
+                          let (asktotal, bidtotal) =
                                calculateTotalsCount finalBookAsk finalBookBid
 -- | Ratio between bids and AKS
                           let bidAskR' =

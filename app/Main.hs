@@ -257,6 +257,42 @@ run
        --      removeEmptyLines pricePath
              putStrLn $ gray "OUTPUT SUCCESFULLY GENERATED"
 
+
+
+-- // position management block
+            -- |
+          
+             let testingList = ([(100,"x"),(200,"x"),(300,"x"),(150,"z")], [(100,"f"),(200,"f"),(300,"y"),(150,"f")])
+             
+             putStrLn "testlist \n"
+             print testingList
+
+             let closeConvert = closingConversion testingList
+             
+             putStrLn "\n" 
+             putStrLn "converted \n"
+             print closeConvert
+             
+             splitFuture' <- splitFuture closeConvert
+
+             let nonMandatoryPass = freePass splitFuture'
+             let mandatoryPass = forcePass splitFuture'
+
+             putStrLn "\n" 
+             putStrLn "nonMpass \n"
+             print nonMandatoryPass
+             putStrLn "\n" 
+             putStrLn "mpass \n"
+             print mandatoryPass
+
+             let nonMandatory = positionFutureFree nonMandatoryPass
+            
+             putStrLn "\n"
+             putStrLn "nonMandatory - Module \n"
+             print nonMandatory
+
+
+
             -- // testing :
            --  print $ "List of Vol: \n" ++ show listofvolumes
              -- print takerX stats
@@ -265,3 +301,6 @@ run
             --  TODO make this way more effective, calling the script belowú§
              Control.Monad.when plotCharts $
                callCommand "python scripts/plot_prices.py"
+
+
+--testingList :: (TakerTuple,MakerTuple)
