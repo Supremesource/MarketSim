@@ -61,7 +61,7 @@ library:
 executables:
   marketsim-exe:
     main:  Main.hs
-    source-dirs:  app
+    source-dirs: app
     ghc-options:
     - -threaded
     - -rtsopts
@@ -80,6 +80,15 @@ executables:
     - deriving-aeson
     - aeson-pretty
     - random-shuffle
+  marketsim-server-exe:
+    main:  Main.hs
+    source-dirs: Server
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - marketsim
     
 
 # Comment out the tests section if you don't have test directory or modules.

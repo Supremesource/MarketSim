@@ -31,12 +31,12 @@ wipingStartingValue = 1
 -- | number of positions you want to take place in the simulation run
 -- | number of positions
 numPositions :: Int
-numPositions = 2
+numPositions = 100
 
 --〇 ID = NUMRUN
 -- | number of runs, this is a loop how many times will the simulation repeat itself (random generators are updating each time though)
 numberOfRuns :: Int
-numberOfRuns = 2
+numberOfRuns = 5
 
 --〇 ID = maxM/T
 -- TODO add more complex statistic distribution
