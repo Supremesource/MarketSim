@@ -4,7 +4,7 @@ import axios from "axios";
 // import Link from "next/link";
 
 const Home: NextPage = () => {
-  const data = axios.get("http://127.0.0.1:3000/api/back/books")
+  const data = axios.get("http://127.0.0.1:8000/books");
   return (
     <main>
       <h1> Our first page </h1>
