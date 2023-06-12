@@ -25,7 +25,7 @@ dependencies:
 - aeson
 - deriving-aeson
 - aeson-pretty
-- random-shuffle
+
 
 ghc-options:
 - -Wall
@@ -79,7 +79,7 @@ executables:
     - aeson
     - deriving-aeson
     - aeson-pretty
-    - random-shuffle
+   
   marketsim-server-exe:
     main:  Main.hs
     source-dirs: Server

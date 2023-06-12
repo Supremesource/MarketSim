@@ -177,8 +177,6 @@ infiniteListDown' startPoint gen moves =
   takeWhile (> 0) . map fst $
   iterate (uncurry (nextNumberDown moves)) (startPoint, gen)
 
-
-
 -- ? SOME POSITION INFORMATION
 sumInts :: [(Double, Int)] -> Int
 sumInts lst = sum (map snd lst)
@@ -268,16 +266,13 @@ adjustedlenght x = if length x < 10 then
   error $ red $ "please make sure that the length of `../runsetting/runlist` is larger than " ++ purple "10" ++ red " , currently it is: " ++ purple (show (length x))
   else fromIntegral (length x) / 10
 
-
 runPercentage :: Int -> Double -> [Int]
 runPercentage n listL = [round (fromIntegral n * x) | x <- [0.1,0.2..listL]]
-
 
 processlist :: [Options] -> [Int] -> Int -> Options
 processlist (o:os) (p:ps) x | x <= p = o
                             | otherwise = processlist os ps x
 processlist _ _ _ = error $ red "Invalid input to processlist"
-
 
 randomhandler :: Options -> Options ->  Options
 randomhandler initoption randomGenlocal

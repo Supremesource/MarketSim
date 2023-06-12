@@ -55,7 +55,6 @@ library
     , parallel
     , process
     , random
-    , random-shuffle
     , scotty
     , text
     , time
@@ -80,7 +79,6 @@ executable marketsim-exe
     , parallel
     , process
     , random
-    , random-shuffle
     , scotty
     , text
     , time
@@ -104,7 +102,6 @@ executable marketsim-server-exe
     , parallel
     , process
     , random
-    , random-shuffle
     , scotty
     , text
     , time
