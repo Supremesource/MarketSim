@@ -267,32 +267,12 @@ run
              putStrLn "testlist \n"
              print testingList
 
-             let closeConvert = closingConversion testingList
-             
-             putStrLn "\n" 
-             putStrLn "converted \n"
-             print closeConvert
-             
-             splitFuture' <- splitFuture closeConvert
 
-             let nonMandatoryPass = freePass splitFuture'
-             let mandatoryPass = forcePass splitFuture'
-
-             putStrLn "\n" 
-             putStrLn "nonMpass \n"
-             print nonMandatoryPass
-             putStrLn "\n" 
-             putStrLn "mpass \n"
-             print mandatoryPass
-
-             let nonMandatory = positionFutureFree nonMandatoryPass
+             putStrLn "\n\n\n\n\n\n\n\n\n"
             
-             putStrLn "\n"
-             putStrLn "nonMandatory - Module \n"
-             print nonMandatory
-
-
-
+             posFut <- positionFuture 1000.00 testingList
+             print posFut
+             putStrLn "\n\n\n\n\n\n\n\n\n"
             -- // testing :
            --  print $ "List of Vol: \n" ++ show listofvolumes
              -- print takerX stats

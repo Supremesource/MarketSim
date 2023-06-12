@@ -6,8 +6,7 @@ import qualified Data.ByteString.Lazy as BL
 import System.Random
     ( Random(randomRs), RandomGen(split), randomRIO )
 import           Data.Aeson (encode)
-import System.Random.Shuffle (shuffleM)
-import Data.List (splitAt)
+
 -- | internal libraries
 import           Colours
 import           DataTypes
@@ -154,19 +153,14 @@ recursiveList (x:xs, bidBook, askBook, gen1, gen2, fullwallsASK, fullwallsBIDS, 
 
 -- ? POSITION FUTURE
 
-type NonMandatory = ((Int,String),(Int,String))
-
-type Mandatory = [(Int,String,String)]
-
-
-
+type FutureInfo = [(Double, Int, String)]
 
 -- PACKAGE CLOSING CONVERSION X & Y TO F & Z
 closingConversion :: (TakerTuple,MakerTuple) -> (TakerTuple, MakerTuple)
 closingConversion (takers,makers )| hasBothXY takers = error "Unsupported tuple format in takers"
                                 | hasBothXY makers = error "Unsupported tuple format in makers"
-                                | otherwise = 
-  (closingconvert filterTakers takers, closingconvert filterMakers makers)        
+                                | otherwise =
+  (closingconvert filterTakers takers, closingconvert filterMakers makers)
   where
   isValidTuple (_, side) = side == "x" || side == "y"
   filterTakers = filter isValidTuple
@@ -175,54 +169,52 @@ closingConversion (takers,makers )| hasBothXY takers = error "Unsupported tuple 
   hasBothXY xs = "x" `elem` map snd xs && "y" `elem` map snd xs
 
 
--- | split the future into two parts, force (liquidation) and free (exit)
-splitFuture :: (TakerTuple,MakerTuple) -> IO ((TakerTuple, TakerTuple),(MakerTuple,MakerTuple))
-splitFuture (takerT, makerT) = do
-  shuffleTaker <- shuffleM takerT
-  shuffleMaker <- shuffleM makerT
+-- TODO move this into the stats and also make it customizable or at least point 
+-- to it in the settings
+takenLeverage :: IO Int
+takenLeverage = do
+  x <- randomRIO (1,100) :: IO Int
+  return $ case x of
+     _ | x >= 1  && x <= 85 -> 1
+       | x >= 86 && x <= 90 -> 2
+       | x >= 91 && x <= 93 -> 5
+       | x >= 94 && x <= 95 -> 10
+       | x == 96            -> 15
+       | x == 97            -> 20
+       | x == 98            -> 25
+       | x == 99            -> 50
+       | x == 100           -> 100
+       | otherwise          -> error "something went wrong in takenLeverage"
 
-  -- | make way better statsitics over here
-  let (takerpart1, takerpart2) = splitAt (round ((0.7 :: Double) * fromIntegral (length takerT))) shuffleTaker
-  let (makerpart1, makerpart2) = splitAt (round ((0.7 :: Double) * fromIntegral (length makerT))) shuffleMaker
-  return ((takerpart1, takerpart2), (makerpart1, makerpart2))
 
-
-freePass :: ((TakerTuple, TakerTuple),(MakerTuple,MakerTuple)) 
-  -> (TakerTuple, MakerTuple)  -- Closing capacity
-freePass ((part1, _),(part2,_)) = (part1, part2)
-
-forcePass :: ((TakerTuple, TakerTuple),(MakerTuple,MakerTuple)) 
-  -> (TakerTuple, MakerTuple) -- Force list
-forcePass ((_, part1),(_,part2)) = (part1, part2)
-
---forcePass
-
--- | very flexible can be in taker as well as maker side
-positionFutureFree :: (TakerTuple, MakerTuple) -> NonMandatory -- Closing capacity
-positionFutureFree (takerT, makerT) = (sumTaker takerT, sumMaker makerT)
+                                                  -- (liq price, liq amount, liq side)
+positionFuture :: Double -> (TakerTuple, MakerTuple) -> IO FutureInfo
+positionFuture price (taker, maker)  = do
+  let (takerConver, makerConvert) = closingConversion (taker, maker)
+  let concatTakerMaker = takerConver ++ makerConvert
+  mapM calcPosition concatTakerMaker
   where
-    sumTaker xs = (sum [x | (x, _) <- xs], snd (head xs))
-    sumMaker ys = (sum [y | (y, _) <- ys], snd (head ys))
+    calcPosition (amt, side) = do
+      leverage <- takenLeverage
+      print leverage
+      let liquidationPrice                
+            | leverage /= 1 && side == "z" = (price / fromIntegral leverage) + price
+            | leverage /= 1 && side == "f" = price - (price / fromIntegral leverage)
+            | leverage == 1 && side == "z" = 2 * price
+            | otherwise = 0
+      return (liquidationPrice, amt, side)
 
 
 
--- : alsays endsup in takertuple
--- | form of a closing taker tuple
-positionFutureForce :: (Double ,TakerTuple , MakerTuple ) -> Mandatory -- Force list
-positionFutureForce (sPrice, takerT, makerT )= undefined
 
--- files future
 
-writeFuture :: NonMandatory -> Mandatory -> IO ()
-writeFuture nonMandatory mandatory = undefined
 
 -- | check if the future file is empty
 isFutureEmpty :: IO Bool
 isFutureEmpty = isFileEmpty posFutureP
 
 
-
-
+-- // end of position future
 
 
 orderbookLoop :: ListPass -> IO (OrderBook, OrderBook, BookStats)
