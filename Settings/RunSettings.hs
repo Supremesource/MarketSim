@@ -38,6 +38,9 @@ numPositions = 100
 numberOfRuns :: Int
 numberOfRuns = 5
 
+
+-- ! activate later
+
 --〇 ID = maxM/T
 -- TODO add more complex statistic distribution
 -- | what is the maximum of makers in one transaction , i.e 1000 buy matched with 1000 sell, now the max makers filled in that transaction can be specified below
@@ -47,6 +50,7 @@ maxMakers = 40
 -- ? Not recommended to change this from 0.95
 maxTakers :: Int
 maxTakers = round (fromIntegral maxMakers * (0.95 :: Double))
+
 
 --〇 ID = ROUND
 -- | ROUNDING SETTINGS:
@@ -73,7 +77,7 @@ maxDecimal = 4
 -- | DW = down
 -- | for more info you can check the LIB.hs file, to see how everything works
 runlist :: [Options]
-runlist = [RANDOM,RANDOM,RANDOM,RANDOM,RANDOM,RANDOM,RANDOM,RANDOM,RANDOM,RANDOM] 
+runlist = [DWW,DWW,DWW,DWW,DWW,DWW,DWW,DWW,DWW,DWW] 
 
 
 --  Volume settings:
@@ -115,28 +119,14 @@ upperBoundLongClose = 12000
 
 -- 〇 ID = STAT
 
---  Taker Probability
--- | OPENING POSITIONS
+--  VOLUME Probability
+
 -- | BUY VOLUME
-xProbabilityTaker :: Int
-xProbabilityTaker = 90
+buyTakerProb :: Int
+buyTakerProb = 50
 -- | SELL VOLUME
-yProbabilityTaker :: Int
-yProbabilityTaker = 10
--- | CLOSING POSITION
--- | BUY VOLUME
-
-
---  Maker Probability
--- | BUY VOLUME
-xProbabilityMaker :: Int
-xProbabilityMaker = 50
--- | SELL VOLUME
-yProbabilityMaker :: Int
-yProbabilityMaker = 50
--- | CLOSING POSITION
--- | BUY VOLUME
-
+sellTakerProb :: Int
+sellTakerProb = 50
 
 -- ! ORDERBOOK SETINGS
 --  + liquidity settings

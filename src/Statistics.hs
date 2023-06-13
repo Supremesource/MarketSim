@@ -82,6 +82,9 @@ customRandomRs bounds gen = nums
   where
     nums = unfoldr (Just . customRandomR bounds) gen
 
+
+
+
 weightedRandom :: [(Int, a)] -> IO a
 weightedRandom xs = do
   let totalWeight = sum (map fst xs)
@@ -91,55 +94,57 @@ weightedRandom xs = do
     head $
     dropWhile ((< rnd) . fst) $ scanl1 (\(w1, _) (w2, x) -> (w1 + w2, x)) xs
 
-generateVolumes :: Int -> Int -> IO [Int]
-generateVolumes numMakers totalVolume = do
-  let maxVol = div totalVolume numMakers
-  volumes <- replicateM (numMakers - 1) (randomRIO (1, maxVol))
-  let lastVolume = totalVolume - sum volumes
-  return (volumes ++ [lastVolume])
 
 generateRandomPosition :: [Int] -> IO ([(Int, String)], [(Int, String)])
 generateRandomPosition [xProb, yProb]
   -- | for longs 1 - 2
  = do
-  x <- distribution (basecaseValueLongNew, upperBoundLongNew) -- new longs 1
+  x <- distribution (basecaseValueLongNew, upperBoundLongNew) -- BUY VOL
 --  f <- distribution (basecaseValueLongClose, upperBoundLongClose) -- closing longs 2
   -- | for shorts 3 - 4
-  y <- distribution (basecaseValueShortNew, upperBoundShortNew) -- new shorts 3
+  y <- distribution (basecaseValueShortNew, upperBoundShortNew) -- SELL VOL
 --  z <- distribution (basecaseValueShortClose, upperBoundShortClose) -- closing shorts 4
   let takeROptions =
-        [ (xProb, (x, "x"))
-        , (yProb, (y, "y"))
+        [ (xProb, (x, "BUY"))
+        , (yProb, (y, "SELL"))
 --        , (zProb, (z, "z"))
 --        , (fProb, (f, "f"))
         ]
-  taker' <- weightedRandom takeROptions
-  let takerProbab
-        | snd taker' == "x" =
-          [(yProb, (fst taker', "x"))]
-        | snd taker' == "y" =
-          [(xProb, (fst taker', "y"))]
 
- 
+  taker' <- weightedRandom takeROptions
+--  let maker' = if snd taker' == "BUY" then (fst taker', "SELL") else (fst taker', "BUY")
+
+  let takerProbab
+        | snd taker' == "BUY" =
+          [(xProb, (fst taker', "BUY"))]
+        | snd taker' == "SELL" =
+          [(yProb, (fst taker', "SELL"))]
         | otherwise = error $ red "taker' is not valid"
-  let makerProbab
-        | snd taker' == "x" =
-          [(yProbabilityMaker, (x, "y"))]
-        | snd taker' == "y" =
-          [(xProbabilityMaker, (y, "x"))]
-        | otherwise = error $ red "maker' is not valid"
-        
-  let totalMakerVolume = fst taker'
-  numMakers <- randomRIO (1, maxMakers) :: IO Int -- select how many makers
-  makerVolumes <- generateVolumes numMakers totalMakerVolume
-  makerInfos <- replicateM numMakers (weightedRandom makerProbab)
-  let selectedMakers = zip makerVolumes (map snd makerInfos)
-  let makerTuple = selectedMakers
-  numTakers <- randomRIO (1, maxTakers) :: IO Int -- select how many takers
-  takerVolumes <- generateVolumes numTakers (fst taker')
-  takerInfos <- replicateM numTakers (weightedRandom takerProbab)
+  
+  let oppositeAction "BUY" = "SELL"
+      oppositeAction "SELL" = "BUY"
+      oppositeAction _ = error $ red "Action is not valid"
+
+  let makerAction 
+       | snd taker' == "BUY" || snd taker' == "SELL" =
+         oppositeAction (snd taker')
+       | otherwise = error $ red "taker' is not valid"
+
+  let transactionElements = 1
+
+-- | initialisation of taker and maker lists
+  let takerVolumes = [fst taker']
+  takerInfos <- replicateM transactionElements (weightedRandom takerProbab)
   let selectedTakers = zip takerVolumes (map snd takerInfos)
   let takerTuple = selectedTakers
+
+  let totalMakerVolume = fst taker'
+  let makerVolumes = [totalMakerVolume]
+  let makerInfos = replicate transactionElements makerAction
+  let selectedMakers = zip makerVolumes makerInfos
+  let makerTuple = selectedMakers
+
+  
   return (takerTuple, makerTuple)
 -- | options of takers
 -- | Taker and maker probabilitis

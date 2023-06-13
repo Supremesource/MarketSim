@@ -177,11 +177,11 @@ upperBoundLongClose = 160000
 --  Taker Probability
 -- | OPENING POSITIONS
 -- | BUY VOLUME
-xProbabilityTaker :: Int
-xProbabilityTaker = 27
+buyTakerProb :: Int
+buyTakerProb = 27
 -- | SELL VOLUME
-yProbabilityTaker :: Int
-yProbabilityTaker = 24
+sellTakerProb :: Int
+sellTakerProb = 24
 -- | CLOSING POSITION
 -- | BUY VOLUME
 zProbabilityTaker :: Int
@@ -365,11 +365,11 @@ upperBoundLongClose = 12000
 --  Taker Probability
 -- | OPENING POSITIONS
 -- | BUY VOLUME
-xProbabilityTaker :: Int
-xProbabilityTaker = 23
+buyTakerProb :: Int
+buyTakerProb = 23
 -- | SELL VOLUME
-yProbabilityTaker :: Int
-yProbabilityTaker = 24
+sellTakerProb :: Int
+sellTakerProb = 24
 -- | CLOSING POSITION
 -- | BUY VOLUME
 zProbabilityTaker :: Int

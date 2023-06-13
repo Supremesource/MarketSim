@@ -207,8 +207,6 @@ positionFuture price (taker, maker)  = do
 
 
 
-
-
 -- | check if the future file is empty
 isFutureEmpty :: IO Bool
 isFutureEmpty = isFileEmpty posFutureP
@@ -220,12 +218,12 @@ isFutureEmpty = isFileEmpty posFutureP
 orderbookLoop :: ListPass -> IO (OrderBook, OrderBook, BookStats)
 orderbookLoop ((vAmount, vSide'), bidBook, askBook, gen1, gen2 ,fullwallsASK ,fullwallsBIDS, sPoint, takeWall)   = do
 
--- | local variables
+                          -- | local variables      
                           let (volumeBID, volumeASK) =
                                 calculateVolumes vSide' vAmount
                           let (bidUpdateBook, askUpdateBook) =
                                 calculateBooks volumeBID volumeASK bidBook askBook
--- | how much volume took from certain order books
+                          -- | how much volume took from certain order books
                           let (lengchngAsk', lengchngBid') =
                                 lengthChanges bidUpdateBook bidBook askUpdateBook askBook
                           let sPrice  =
@@ -236,39 +234,55 @@ orderbookLoop ((vAmount, vSide'), bidBook, askBook, gen1, gen2 ,fullwallsASK ,fu
                                 [fullwallsASK, fullwallsBIDS]
                           pricesASK  <- printCustomRandomList lengchngAsk'
                           pricesBID   <- printRandomList' lengchngBid'
--- | the / number is how smaller the insertion will be
+                          -- | the / number is how smaller the insertion will be
                           let (listASK', listBID') =
                                 calculateListTuples askSetupInsert bidSetupInsert pricesASK pricesBID
 -- //TODO, possible microoptimization with the stuff below :
--- | let insertInAsk = if vSide == Buy then [] else listASK
---  / let insertInBid = if vSide == Sell then [] else listBID    // --
+                          -- | let insertInAsk = if vSide == Buy then [] else listASK
+                          --  / let insertInBid = if vSide == Sell then [] else listBID    // --
                           let (finalBookAsk, finalBookBid) =
                                 calculateFinalBooks vSide' askUpdateBook listASK' askBook bidUpdateBook listBID' bidBook
-
--- | ask in total in terms of count
--- | bids in total in terms of count
+                          -- | ask in total in terms of count
+                          -- | bids in total in terms of count
                           let (asktotal, bidtotal) =
                                calculateTotalsCount finalBookAsk finalBookBid
--- | Ratio between bids and AKS
+                          -- | Ratio between bids and AKS
                           let bidAskR' =
                                abs ((bidtotal - asktotal) / (bidtotal + asktotal)) :: Double
--- | Ratio is benefiting :
--- | asks in total -> $$
--- | bids in total -> $$
+                          -- | Ratio is benefiting :
+                          -- | asks in total -> $$
+                          -- | bids in total -> $$
                           let (asksTot', bidsTot') = calculateTotals finalBookAsk finalBookBid
--- | bid ask spread
+                          -- | bid ask spread
                           let (firstelemASK, firstelemBID) = calculateFirstElements finalBookAsk finalBookBid
                           let sprd'  = spread' firstelemASK firstelemBID
--- | checking if the stats above will go through with the orderbook
--- | local check
+                          -- | checking if the stats above will go through with the orderbook
+                          -- | local check
                           let check= settingcheck vSide' vAmount asksTot' bidsTot'
                           check
--- | how accumulator stores the values
+                          -- | how accumulator stores the values
                           let newbookDetails = setupBookDetails (sPoint, maxMinLmt
                                 , asksTot', bidsTot', takeWall, lengchngBid', lengchngAsk' ,listASK'
                                 , listBID', vSide', vAmount, sprd' ,sPrice ,bidAskR')
                           let insertinInfo = formatAndPrintInfo newbookDetails
                           insertinInfo -- THIS IS ONLY CONSOLE
+
+
+-- // DANGER EXPERIMENTAL CODE BELOW
+                          putStrLn "\n\n\n"
+                          print vAmount >> print vSide'
+
+                          putStrLn "\n\n\n"
+                          putStrLn "taker"
+                          numTakers <- randomRIO (1, maxTakers) :: IO Int -- select how many makers
+                          volumeSplitT <- generateVolumes numTakers vAmount -- split the volume
+                          if any (< 0) volumeSplitT  then error "volume split consists of a negative element" else print volumeSplitT
+
+                          putStrLn "maker"
+                          numMakers <- randomRIO (1, maxMakers) :: IO Int -- select how many makers
+                          volumeSplitM <- generateVolumes numMakers vAmount -- split the volume
+                          if any (< 0) volumeSplitM  then error "volume split consists of a negative element" else print volumeSplitM
+
                           -- | returning the orderbook
                           return (finalBookBid, finalBookAsk, newbookDetails)
 
