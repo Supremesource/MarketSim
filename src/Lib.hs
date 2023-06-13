@@ -3,6 +3,7 @@ module Lib where
 -- | moudle aggregating all the functions
 
 -- | external modules
+import           Control.Monad (replicateM)
 import Data.Aeson (eitherDecode', eitherDecode)
 import           Control.Exception.Base
 import           Data.Char              (toUpper)
@@ -23,6 +24,7 @@ import           Colours
 import           DataTypes
 import           RunSettings
 import           Statistics
+import GHC.Float.RealFracMethods (roundDoubleInt)
 
 
 
@@ -244,7 +246,8 @@ volumechecker minimumV a b c d e f g h |    a < minimumV
                                         || f < minimumV
                                         || g < minimumV
                                         || h < minimumV
-                                                  = error (red "\n\nVolume must be greater than minimum volume specified in settings")
+                                                  = error
+                                                   (red "\n\nVolume must be greater than minimum volume specified in settings")
                                       | otherwise = return ()
 
 -- | checking position amount
@@ -311,8 +314,8 @@ processTempleateRun i o       = do
   let currentO'               = processlist runlist process i
   let currentO = if currentO' == RANDOM then o else currentO'
   let ifprocess              = currentO   == UP || currentO == UUP
-  let templeatedprobability  = if ifprocess then optionProcessor currentO xProbabilityTaker else xProbabilityTaker
-  let templeatedprobabilityY = if ifprocess then yProbabilityTaker else optionProcessor currentO yProbabilityTaker
+  let templeatedprobability  = if ifprocess then optionProcessor currentO buyTakerProb else buyTakerProb
+  let templeatedprobabilityY = if ifprocess then sellTakerProb else optionProcessor currentO sellTakerProb
 
 
   [templeatedprobability,templeatedprobabilityY]
@@ -363,7 +366,7 @@ readBook fileName =
 
 
 -- | when wiping run then -> wipe the orderbook + write starting price
-newRunSettings :: FilePath -> FilePath -> FilePath -> FilePath -> FilePath 
+newRunSettings :: FilePath -> FilePath -> FilePath -> FilePath -> FilePath
   -> FilePath -> Int -> IO ()
 newRunSettings askBookF bidBookF logF bookDetailF positionInfoF initPriceF newValue = do
   let wipe = ""
@@ -406,3 +409,9 @@ startingPointFromFile filePath = do
   content <- BL.readFile filePath
   either error (return . fromIntegral . (\(InitPrice x) -> x)) (eitherDecode' content :: Either String InitPrice)
 
+generateVolumes :: Int -> Int -> IO [Int]
+generateVolumes numMakers totalVolume' = do
+  let maxVol =  totalVolume' `div` round ((fromIntegral numMakers :: Double ) / 1.4)
+  volumes <- replicateM (numMakers - 1) (randomRIO (1, maxVol))
+  let lastVolume = totalVolume' - sum volumes
+  return (volumes ++ [lastVolume])

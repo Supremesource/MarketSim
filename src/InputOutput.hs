@@ -165,12 +165,19 @@ printPositionStats i (taker, makers) acc = do
   -- | volumesum
   let volumeSume = foldl (\acc (x, _) -> acc + x) 0 taker
   let sideVol
-        | snd (head taker) == "x" || snd (head taker) == "z" = Buy
-        | snd (head taker) == "y" || snd (head taker) == "f" = Sell
+        | snd (head taker) == "BUY" || snd (head taker) == "BUY" = Buy
+        | snd (head taker) == "SELL" || snd (head taker) == "SELL" = Sell
         | otherwise                                          = error $ red
           "generating volume failed"
+  
+  
+-- ! turn back on once implementation back
+
   let overalOpenInterest =
         interestorPlus taker makers - interestorMinus taker makers
+  
+  
+  
   let buyVOLUME =
         if sideVol == Buy
           then volumeSume

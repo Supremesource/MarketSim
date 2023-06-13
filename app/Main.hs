@@ -154,7 +154,7 @@ run
                upperBoundShortNew
                upperBoundLongClose
                upperBoundShortClose
-             positionamountcheck minvolume maxMakers
+             positionamountcheck minvolume 1 -- TODO take out this 1
             -- ? RANDOM GENERATORS:
              gen1 <- randomGen
              gen2 <- randomGen
@@ -244,12 +244,10 @@ run
 
              -- | optional warnings
              addsupto100
-               xProbabilityTaker
-               yProbabilityTaker
+               buyTakerProb
+               sellTakerProb
            
-             addsupto100
-               xProbabilityMaker
-               yProbabilityMaker
+            
          
 
 
@@ -273,6 +271,7 @@ run
              posFut <- positionFuture 1000.00 testingList
              print posFut
              putStrLn "\n\n\n\n\n\n\n\n\n"
+             print listofvolumes
             -- // testing :
            --  print $ "List of Vol: \n" ++ show listofvolumes
              -- print takerX stats
