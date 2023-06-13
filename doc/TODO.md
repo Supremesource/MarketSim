@@ -25,7 +25,11 @@ just pass it and make it be there. Also activate things like open interest and a
 
 conclusion for 13.6
 
+completed for about 60%
 -- VOLUME -> ORDERBOOKLOOP -> GENERATOR (X,Y) ---[PRICE + GEN]---> POSITION FUTURE
+
+14.6
+-- finish the green txt in util
 
 THAT WOULD BE SUCESS FOR THE DAY !
 

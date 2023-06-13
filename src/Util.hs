@@ -283,6 +283,19 @@ orderbookLoop ((vAmount, vSide'), bidBook, askBook, gen1, gen2 ,fullwallsASK ,fu
                           volumeSplitM <- generateVolumes numMakers vAmount -- split the volume
                           if any (< 0) volumeSplitM  then error "volume split consists of a negative element" else print volumeSplitM
 
+                          isFutureEmpty <- isFutureEmpty
+
+                          -- if yes read the contents and move on isnotemptygenerator
+
+                          -- if empty then write init generator consisting of only opening
+
+                          -- isemptygenerator ..
+
+
+                          -- pass from isemptygenerator to positionfuture
+                          -- isnotemptygenerator --> scanning for liquidation info -> paring "left over empty" with new based off of statistics
+                          -- if liquidation pass as a volume
+
                           -- | returning the orderbook
                           return (finalBookBid, finalBookAsk, newbookDetails)
 
