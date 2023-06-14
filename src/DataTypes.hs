@@ -105,7 +105,7 @@ data VolumeSide
    deriving (Show, Eq, Ord, Enum, Bounded)
 
 -- | maker tuple structure
-type MakerTuple = [(Int, String)]
+type MakerTuple = [(Int, String)] 
 
 -- | taker tuple structure
 type TakerTuple = [(Int, String)]
@@ -180,5 +180,9 @@ type RecursionPass = (VolumeList, OrderBook, OrderBook, Generator, Generator, Fu
 
 type ListPass = (Volume , OrderBook , OrderBook, Generator, Generator, FullWall, FullWall, StartingPoint, Totakefromwall )
 
-type Position = ([(Int, String)], [(Int, String)])
+--type Position = ([(Int, String)], [(Int, String)])
 
+data Transaction = Transaction {
+    takerSide :: TakerTuple
+  , makerSide :: MakerTuple
+} deriving (Show, Generic, FromJSON, ToJSON)

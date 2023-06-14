@@ -272,6 +272,9 @@ run
              print posFut
              putStrLn "\n\n\n\n\n\n\n\n\n"
              print listofvolumes
+
+
+             
             -- // testing :
            --  print $ "List of Vol: \n" ++ show listofvolumes
              -- print takerX stats
