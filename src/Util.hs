@@ -6,7 +6,6 @@ import qualified Data.ByteString.Lazy as BL
 import System.Random
     ( Random(randomRs), RandomGen(split), randomRIO )
 import           Data.Aeson (encode)
-
 -- | internal libraries
 import           Colours
 import           DataTypes
@@ -14,6 +13,7 @@ import           Filepaths
 import           InputOutput
 import           Lib
 import           RunSettings
+import qualified Control.Monad
 
 
 
@@ -153,7 +153,7 @@ recursiveList (x:xs, bidBook, askBook, gen1, gen2, fullwallsASK, fullwallsBIDS, 
 
 -- ? POSITION FUTURE
 
-type FutureInfo = [(Double, Int, String)]
+
 
 -- PACKAGE CLOSING CONVERSION X & Y TO F & Z
 closingConversion :: (TakerTuple,MakerTuple) -> (TakerTuple, MakerTuple)
@@ -197,18 +197,22 @@ positionFuture price (taker, maker)  = do
     calcPosition (amt, side) = do
       leverage <- takenLeverage
       print leverage
-      let liquidationPrice                
+      let liquidationPrice
             | leverage /= 1 && side == "z" = (price / fromIntegral leverage) + price
             | leverage /= 1 && side == "f" = price - (price / fromIntegral leverage)
             | leverage == 1 && side == "z" = 2 * price
             | otherwise = 0
       return (liquidationPrice, amt, side)
 
-takerXprobability :: Int
-takerXprobability = 7
+
 
 oppositeSide :: String -> String
-oppositeSide side = if side == "x" then "y" else "x" 
+oppositeSide side = if side == "x" then "y" else "x"
+
+
+-- TODO move into settings
+takerXprobability :: Int
+takerXprobability = 7
 
 randomSide :: IO String
 randomSide = do
@@ -218,9 +222,9 @@ randomSide = do
 
 initGenerator :: [Int] -> [Int] -> IO (TakerTuple, MakerTuple)
 initGenerator takerLst makerLst = do
-  takerSide <- randomSide
-  let makerside = oppositeSide takerSide
-  let takerT = zip takerLst $ replicate (length takerLst) takerSide
+  takerSide' <- randomSide
+  let makerside = oppositeSide takerSide'
+  let takerT = zip takerLst $ replicate (length takerLst) takerSide'
   let makerT = zip makerLst $ replicate (length makerLst) makerside
   return (takerT, makerT)
 
@@ -229,7 +233,13 @@ initGenerator takerLst makerLst = do
 isFutureEmpty :: IO Bool
 isFutureEmpty = isFileEmpty posFutureP
 
-
+readFuture :: IO (TakerTuple, MakerTuple)
+readFuture = do
+  future <- BL.readFile posFutureP
+  let future' = decode future :: Maybe (TakerTuple, MakerTuple)
+  case future' of
+    Nothing -> error "Error reading future file"
+    Just x  -> return x
 -- // end of position future
 
 
@@ -302,14 +312,30 @@ orderbookLoop ((vAmount, vSide'), bidBook, askBook, gen1, gen2 ,fullwallsASK ,fu
                           if any (< 0) volumeSplitM  then error "volume split consists of a negative element" else print volumeSplitM
 
                           isFutureEmpt <- isFutureEmpty
-                           
-                          ifempty  <- initGenerator volumeSplitT volumeSplitM 
-                          let emptyTaker = fst ifempty
-                          let emptyMaker = snd ifempty
 
-                          let transaction = if isFutureEmpt then 
-                            {takerSide = emptyTaker, makerSide = emptyMaker}  
-                            else undefined
+                          ifempty  <- initGenerator volumeSplitT volumeSplitM
+                          emptyFuture <- positionFuture sPrice ifempty
+
+                          let emptyWrite = Transaction {future = emptyFuture}
+                          let transactionAction =
+                               Control.Monad.when isFutureEmpt $ BL.appendFile posFutureP (encode emptyTransaction)                          
+                          transactionAction
+                          initPositionAcc <- readFuture posFutureP
+
+                          let secondRunGenerator = 
+
+
+{-
+                          let emptyTransaction = 
+                                if isFutureEmpt then do 
+                                          (emptyTaker,emptyMaker) 
+                              else do  
+                                                                  undefined -- readFuture
+                      
+                        -- !  Transaction {takerSide = emptyTaker, makerSide = emptyMaker}
+-}
+                          print sPrice
+                     --     posFuture <- positionFuture -- transaction
                           print isFutureEmpt
 
 

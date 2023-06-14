@@ -180,9 +180,10 @@ type RecursionPass = (VolumeList, OrderBook, OrderBook, Generator, Generator, Fu
 
 type ListPass = (Volume , OrderBook , OrderBook, Generator, Generator, FullWall, FullWall, StartingPoint, Totakefromwall )
 
---type Position = ([(Int, String)], [(Int, String)])
+type Position = ([(Int, String)], [(Int, String)])
+
+type FutureInfo = [(Double, Int, String)]
 
 data Transaction = Transaction {
-    takerSide :: TakerTuple
-  , makerSide :: MakerTuple
-} deriving (Show, Generic, FromJSON, ToJSON)
+    future :: FutureInfo
+  } deriving (Show, Generic, FromJSON, ToJSON)
