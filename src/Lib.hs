@@ -411,7 +411,7 @@ startingPointFromFile filePath = do
 
 generateVolumes :: Int -> Int -> IO [Int]
 generateVolumes numMakers totalVolume' = do
-  let maxVol =  totalVolume' `div` round ((fromIntegral numMakers :: Double ) / 1.4)
+  let maxVol =  totalVolume' `div` round ((fromIntegral numMakers :: Double ) / 1.3)
   volumes <- replicateM (numMakers - 1) (randomRIO (1, maxVol))
   let lastVolume = totalVolume' - sum volumes
   return (volumes ++ [lastVolume])

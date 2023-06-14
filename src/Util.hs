@@ -204,7 +204,25 @@ positionFuture price (taker, maker)  = do
             | otherwise = 0
       return (liquidationPrice, amt, side)
 
+takerXprobability :: Int
+takerXprobability = 7
 
+oppositeSide :: String -> String
+oppositeSide side = if side == "x" then "y" else "x" 
+
+randomSide :: IO String
+randomSide = do
+    randVal <- randomRIO (0, 9) :: IO Int
+    return $ if randVal < takerXprobability then "x" else "y"
+
+
+initGenerator :: [Int] -> [Int] -> IO (TakerTuple, MakerTuple)
+initGenerator takerLst makerLst = do
+  takerSide <- randomSide
+  let makerside = oppositeSide takerSide
+  let takerT = zip takerLst $ replicate (length takerLst) takerSide
+  let makerT = zip makerLst $ replicate (length makerLst) makerside
+  return (takerT, makerT)
 
 
 -- | check if the future file is empty
@@ -283,9 +301,19 @@ orderbookLoop ((vAmount, vSide'), bidBook, askBook, gen1, gen2 ,fullwallsASK ,fu
                           volumeSplitM <- generateVolumes numMakers vAmount -- split the volume
                           if any (< 0) volumeSplitM  then error "volume split consists of a negative element" else print volumeSplitM
 
-                          isFutureEmpty <- isFutureEmpty
+                          isFutureEmpt <- isFutureEmpty
+                           
+                          ifempty  <- initGenerator volumeSplitT volumeSplitM 
+                          let emptyTaker = fst ifempty
+                          let emptyMaker = snd ifempty
 
-                          -- if yes read the contents and move on isnotemptygenerator
+                          let transaction = if isFutureEmpt then 
+                            {takerSide = emptyTaker, makerSide = emptyMaker}  
+                            else undefined
+                          print isFutureEmpt
+
+
+                          -- if no read the contents and move on isnotemptygenerator
 
                           -- if empty then write init generator consisting of only opening
 
