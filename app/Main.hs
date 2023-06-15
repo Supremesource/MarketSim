@@ -294,9 +294,11 @@ run
              posFut <- positionFuture 1000.00 testingList
              print posFut
              putStrLn "\n\n\n\n\n\n\n\n\n"
-             print listofvolumes
-
-
+--             print listofvolumes
+            
+             let futureInfo = [(900,1000,"f"),(1200,700,"z"),(14000,1000,"z"),(100,700,"z")]
+             tst <- liquidationDuty futureInfo 1000.00
+             putStrLn $ "liq " ++ show tst
 
             -- // testing :
            --  print $ "List of Vol: \n" ++ show listofvolumes
