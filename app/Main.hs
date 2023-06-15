@@ -227,9 +227,11 @@ run
              let initialBookDetailsList = [initialBookDetails]
              let listofvolumes = volumesAndSides
 
-             (_, _, _) <-
+             (_, _, _, _,_) <-
                recursiveList
-                 ( listofvolumes
+                ( futureAccLong
+                 ,futureAccShort 
+                 ,listofvolumes
                  , bidBook
                  , askBook
                  , gen1
@@ -238,7 +240,7 @@ run
                  , fullwallsBIDS
                  , initstartingPoint
                  , inittotakefromwall
-                 , initialBookDetailsList)
+                 , initialBookDetailsList )
 
 
 

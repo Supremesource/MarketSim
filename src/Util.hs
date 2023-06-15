@@ -5,7 +5,7 @@ module Util where
 import qualified Data.ByteString.Lazy as BL
 import System.Random
     ( Random(randomRs), RandomGen(split), randomRIO )
-import           Data.Aeson (encode)
+import           Data.Aeson (encode, decode)
 -- | internal libraries
 import           Colours
 import           DataTypes
@@ -131,26 +131,6 @@ calculateTotalsCount finalBookAsk finalBookBid =
     in (asktotal, bidtotal)
 
 
-recursiveList :: RecursionPass -> IO (OrderBook, OrderBook, [BookStats])
-recursiveList ([], bidBook, askBook, _, _, _, _, _, _, bookDetails) = do
-    filewrites1 $ tail (reverse bookDetails)
-
-    let writeBidBook = Book { book = bidBook }
-    let writeAskBook = Book { book = askBook }
-    BL.writeFile bidBookP (encode writeBidBook)
-    BL.writeFile askBookP (encode writeAskBook)
-
-    return (bidBook, askBook, bookDetails)
-recursiveList (x:xs, bidBook, askBook, gen1, gen2, fullwallsASK, fullwallsBIDS, sPoint, takeWall, bookDetails) =
-    orderbookLoop (x, bidBook, askBook, gen1, gen2, fullwallsASK, fullwallsBIDS, sPoint, takeWall) >>=
-    \(newBidBook, newAskBook, newBookDetails) -> do
-        let (newGen1, newGen2) = (fst (split gen1), fst (split gen2))
-        recursiveList (xs, newBidBook, newAskBook, newGen1, newGen2, fullwallsASK
-            , fullwallsBIDS, sPoint, takeWall, newBookDetails:bookDetails)
-
-
-
-
 -- ? POSITION FUTURE
 
 
@@ -233,18 +213,48 @@ initGenerator takerLst makerLst = do
 isFutureEmpty :: IO Bool
 isFutureEmpty = isFileEmpty posFutureP
 
-readFuture :: IO (TakerTuple, MakerTuple)
+readFuture :: IO Transaction
 readFuture = do
-  future <- BL.readFile posFutureP
-  let future' = decode future :: Maybe (TakerTuple, MakerTuple)
+  futurePos <- BL.readFile posFutureP
+  let future' = decode futurePos :: Maybe Transaction
   case future' of
     Nothing -> error "Error reading future file"
     Just x  -> return x
+
+
+filterFuture :: String -> Transaction -> FutureInfo
+filterFuture pos transaction = filter (\(_, _, s) -> s == pos) (future transaction)
 -- // end of position future
 
 
-orderbookLoop :: ListPass -> IO (OrderBook, OrderBook, BookStats)
-orderbookLoop ((vAmount, vSide'), bidBook, askBook, gen1, gen2 ,fullwallsASK ,fullwallsBIDS, sPoint, takeWall)   = do
+
+
+futureAccLong :: FutureInfo
+futureAccLong = [(0, 0, "")]
+
+futureAccShort :: FutureInfo
+futureAccShort = [(0, 0, "")]
+
+
+recursiveList :: RecursionPass -> IO (FutureInfo,FutureInfo,OrderBook, OrderBook, [BookStats])
+recursiveList (longinfo,shortinfo,[], bidBook, askBook, _, _, _, _, _, _, bookDetails) = do
+    filewrites1 $ tail (reverse bookDetails)
+
+    let writeBidBook = Book { book = bidBook }
+    let writeAskBook = Book { book = askBook }
+    BL.writeFile bidBookP (encode writeBidBook)
+    BL.writeFile askBookP (encode writeAskBook)
+
+    return (longinfo,shortinfo,bidBook, askBook, bookDetails)
+recursiveList (longinfo, shortinfo, x:xs, bidBook, askBook, gen1, gen2, fullwallsASK, fullwallsBIDS, sPoint, takeWall, bookDetails) =
+    orderbookLoop (longinfo, shortinfo, x, bidBook, askBook, gen1, gen2, fullwallsASK, fullwallsBIDS, sPoint, takeWall) >>=
+    \(newLonginfo,newShortinfo,newBidBook, newAskBook, newBookDetails) -> do
+        let (newGen1, newGen2) = (fst (split gen1), fst (split gen2))
+        recursiveList (newLonginfo,newShortinfo,xs, newBidBook, newAskBook, newGen1, newGen2, fullwallsASK
+            , fullwallsBIDS, sPoint, takeWall, newBookDetails:bookDetails)
+
+orderbookLoop :: ListPass -> IO (FutureInfo, FutureInfo, OrderBook, OrderBook, BookStats)
+orderbookLoop (longinfo,shortinfo,(vAmount, vSide'), bidBook, askBook, gen1, gen2 ,fullwallsASK ,fullwallsBIDS, sPoint, takeWall)   = do
 
                           -- | local variables      
                           let (volumeBID, volumeASK) =
@@ -295,8 +305,29 @@ orderbookLoop ((vAmount, vSide'), bidBook, askBook, gen1, gen2 ,fullwallsASK ,fu
                           let insertinInfo = formatAndPrintInfo newbookDetails
                           insertinInfo -- THIS IS ONLY CONSOLE
 
+                          print sPrice
+                     --     posFuture <- positionFuture -- transaction
+                          --print isFutureEmpt
 
--- // DANGER EXPERIMENTAL CODE BELOW
+                          -- if no read the contents and move on isnotemptygenerator
+
+                          -- if empty then write init generator consisting of only opening
+
+                          -- isemptygenerator ..
+
+
+                          -- pass from isemptygenerator to positionfuture
+                          -- isnotemptygenerator --> scanning for liquidation info -> paring "left over empty" with new based off of statistics
+                          -- if liquidation pass as a volume
+
+                          -- | returning the orderbook
+                          return (longinfo,shortinfo,finalBookBid, finalBookAsk, newbookDetails)
+
+{-
+firstRun :: IO (FutureInfo, FutureInfo)
+firstRun = do
+-- // DANGER EXPERIMENTAL CODE BELOW                       
+                          -- only splits volume
                           putStrLn "\n\n\n"
                           print vAmount >> print vSide'
 
@@ -311,21 +342,33 @@ orderbookLoop ((vAmount, vSide'), bidBook, askBook, gen1, gen2 ,fullwallsASK ,fu
                           volumeSplitM <- generateVolumes numMakers vAmount -- split the volume
                           if any (< 0) volumeSplitM  then error "volume split consists of a negative element" else print volumeSplitM
 
+
+
+                          -- first run
                           isFutureEmpt <- isFutureEmpty
 
                           ifempty  <- initGenerator volumeSplitT volumeSplitM
                           emptyFuture <- positionFuture sPrice ifempty
 
                           let emptyWrite = Transaction {future = emptyFuture}
-                          let transactionAction =
-                               Control.Monad.when isFutureEmpt $ BL.appendFile posFutureP (encode emptyTransaction)                          
-                          transactionAction
-                          initPositionAcc <- readFuture posFutureP
+                          let transactionActionEmpty =
+                               Control.Monad.when isFutureEmpt $ BL.appendFile posFutureP (encode emptyWrite)
+                          transactionActionEmpty
 
-                          let secondRunGenerator = 
+                          -- accs
+                          initPositionAcc <- readFuture                         
+                          let (newLongsAcc, newShortsAcc) = (filterFuture "f" initPositionAcc, filterFuture "z" initPositionAcc)
+
+                          putStrLn $ "\nF fltr:\n" ++  show newLongsAcc
+                          putStrLn $ "\nZ fltr:\n" ++  show newShortsAcc
+
+                          print initPositionAcc
+                          return (newLongsAcc, newShortsAcc)
+                       
 
 
-{-
+
+
                           let emptyTransaction = 
                                 if isFutureEmpt then do 
                                           (emptyTaker,emptyMaker) 
@@ -334,24 +377,6 @@ orderbookLoop ((vAmount, vSide'), bidBook, askBook, gen1, gen2 ,fullwallsASK ,fu
                       
                         -- !  Transaction {takerSide = emptyTaker, makerSide = emptyMaker}
 -}
-                          print sPrice
-                     --     posFuture <- positionFuture -- transaction
-                          print isFutureEmpt
-
-
-                          -- if no read the contents and move on isnotemptygenerator
-
-                          -- if empty then write init generator consisting of only opening
-
-                          -- isemptygenerator ..
-
-
-                          -- pass from isemptygenerator to positionfuture
-                          -- isnotemptygenerator --> scanning for liquidation info -> paring "left over empty" with new based off of statistics
-                          -- if liquidation pass as a volume
-
-                          -- | returning the orderbook
-                          return (finalBookBid, finalBookAsk, newbookDetails)
 
 
 -- | helper funciton for the funciton below (where is everything starting at)

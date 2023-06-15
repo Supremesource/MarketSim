@@ -176,9 +176,11 @@ data BookStats = BookStats {
                    , bidAskRatio :: Double
                    }
 
-type RecursionPass = (VolumeList, OrderBook, OrderBook, Generator, Generator, FullWall, FullWall, StartingPoint, Totakefromwall, [BookStats])
+type RecursionPass = (FutureInfo, FutureInfo, VolumeList, OrderBook, OrderBook, Generator, Generator, FullWall, FullWall, StartingPoint, Totakefromwall, [BookStats] )
 
-type ListPass = (Volume , OrderBook , OrderBook, Generator, Generator, FullWall, FullWall, StartingPoint, Totakefromwall )
+type FutureAcc = (FutureInfo, FutureInfo)
+
+type ListPass = (FutureInfo, FutureInfo, Volume , OrderBook , OrderBook, Generator, Generator, FullWall, FullWall, StartingPoint, Totakefromwall )
 
 type Position = ([(Int, String)], [(Int, String)])
 
