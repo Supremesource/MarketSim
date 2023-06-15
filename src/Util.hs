@@ -403,7 +403,8 @@ firstRun vAmount vSide' sPrice = do
                           putStrLn $ "\nZ fltr:\n" ++  show newShortsAcc
 -}
                  
-                          
+normalRun :: (FutureInfo, FutureInfo) -> Int -> VolumeSide -> Double -> IO (FutureInfo, FutureInfo)
+normalRun = undefined                         
 
 
 
