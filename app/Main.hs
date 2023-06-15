@@ -129,6 +129,7 @@ run
         orderBookDetailsP
         positionInfoP
         initPriceP
+        posFutureP
         wipingStartingValue
     else if proceed == "n" || proceed == "N"
            then error (red "stopping program")
@@ -227,10 +228,28 @@ run
              let initialBookDetailsList = [initialBookDetails]
              let listofvolumes = volumesAndSides
 
+             isFutureEmpt <- isFutureEmpty
+             print isFutureEmpt
+
+
+
+             initAccLongFuture <- if isFutureEmpt
+                       then return futureAccLong
+                       else do
+                         filterFuture "f" <$> readFuture
+            
+             initAccShortFuture <- if isFutureEmpt
+                       then return futureAccLong
+                       else do
+                         filterFuture "z" <$> readFuture
+            
+            
+
+
              (_, _, _, _,_) <-
                recursiveList
-                ( futureAccLong
-                 ,futureAccShort 
+                ( initAccLongFuture
+                 ,initAccShortFuture
                  ,listofvolumes
                  , bidBook
                  , askBook
@@ -242,15 +261,17 @@ run
                  , inittotakefromwall
                  , initialBookDetailsList )
 
-
+             -- TODO take this out of there
+             print $ "hh111" ++ show initAccLongFuture
+             print initAccShortFuture
 
              -- | optional warnings
              addsupto100
                buyTakerProb
                sellTakerProb
-           
-            
-         
+
+
+
 
 
             -- | formating price document
@@ -261,22 +282,22 @@ run
 
 -- // position management block
             -- |
-          
+
              let testingList = ([(100,"x"),(200,"x"),(300,"x"),(150,"z")], [(100,"f"),(200,"f"),(300,"y"),(150,"f")])
-             
+
              putStrLn "testlist \n"
              print testingList
 
 
              putStrLn "\n\n\n\n\n\n\n\n\n"
-            
+
              posFut <- positionFuture 1000.00 testingList
              print posFut
              putStrLn "\n\n\n\n\n\n\n\n\n"
              print listofvolumes
 
 
-             
+
             -- // testing :
            --  print $ "List of Vol: \n" ++ show listofvolumes
              -- print takerX stats

@@ -366,16 +366,16 @@ readBook fileName =
 
 
 -- | when wiping run then -> wipe the orderbook + write starting price
-newRunSettings :: FilePath -> FilePath -> FilePath -> FilePath -> FilePath
-  -> FilePath -> Int -> IO ()
-newRunSettings askBookF bidBookF logF bookDetailF positionInfoF initPriceF newValue = do
+newRunSettings :: FilePath -> FilePath -> FilePath -> FilePath -> FilePath-> FilePath -> FilePath -> Int -> IO ()
+newRunSettings askBookF bidBookF logF bookDetailF positionInfoF initPriceF posFutureF newValue  = do
   let wipe = ""
   let price = InitPrice newValue
-  writeFile askBookF      wipe
-  writeFile bidBookF      wipe
-  writeFile logF          wipe
-  writeFile bookDetailF   wipe
-  writeFile positionInfoF wipe
+  writeFile askBookF       wipe
+  writeFile bidBookF       wipe
+  writeFile logF           wipe
+  writeFile bookDetailF    wipe
+  writeFile positionInfoF  wipe
+  writeFile posFutureF     wipe
   BL.writeFile initPriceF (encodePretty price)
 -- | cleaning price history file
 
