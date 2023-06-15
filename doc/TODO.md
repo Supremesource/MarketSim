@@ -31,6 +31,12 @@ completed for about 60%
 14.6
 -- finish the green txt in util
 
+16.6
+
+add functional second run function and forced circulation, fix positioning writing. Then move onto fronend practicing, would be success for the day.
+
+
+
 THAT WOULD BE SUCESS FOR THE DAY !
 
 AT THE END DO:
