@@ -52,6 +52,7 @@ maxTakers :: Int
 maxTakers = round (fromIntegral maxMakers * (0.95 :: Double))
 
 
+
 --〇 ID = ROUND
 -- | ROUNDING SETTINGS:
 -- | max decimals in the orderbook
@@ -127,6 +128,9 @@ buyTakerProb = 50
 -- | SELL VOLUME
 sellTakerProb :: Int
 sellTakerProb = 50
+
+stopProb :: Int
+stopProb = 7
 
 -- ! ORDERBOOK SETINGS
 --  + liquidity settings

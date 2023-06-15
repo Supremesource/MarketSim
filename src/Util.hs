@@ -13,7 +13,7 @@ import           Filepaths
 import           InputOutput
 import           Lib
 import           RunSettings
-import qualified Control.Monad
+import Control.Monad 
 
 
 
@@ -227,6 +227,23 @@ filterFuture pos transaction = filter (\(_, _, s) -> s == pos) (future transacti
 -- // end of position future
 
 
+-- ? liquidations
+randomLiquidationEvent :: IO String
+randomLiquidationEvent = do
+  randVal <- randomRIO (0, 9) :: IO Int
+  when (stopProb > 9) $ error ("maxStop prob is 9 you have: " ++ show stopProb)
+  return $ if randVal < stopProb then "stp" else "liq"
+
+liquidationDuty :: FutureInfo -> Double -> IO ([(Int,String,String)], FutureInfo)
+liquidationDuty futureInfo price = do
+    liquidationEvents <- mapM (\(p, n, s) -> if price <= p then randomLiquidationEvent >>= \event -> return (n, s, event) else return (0, "", "")) futureInfo
+    let liquidationList = filter (\(n, _, event) -> n /= 0 && event /= "") liquidationEvents
+    let updatedFutureInfo = filter (\(p,_,_) -> price > p) futureInfo
+    return (liquidationList, updatedFutureInfo)
+
+
+
+-- ? accumulators for future info
 futureAccLong :: FutureInfo
 futureAccLong = [(0, 0, "")]
 
@@ -247,7 +264,6 @@ recursiveList (longinfo,shortinfo,[], bidBook, askBook, _, _, _, _, _, _, bookDe
     BL.writeFile askBookP (encode writeAskBook)
 
     return (longinfo,shortinfo,bidBook, askBook, bookDetails)
-
 
 recursiveList (longinfo, shortinfo, x:xs, bidBook, askBook, gen1, gen2,
     fullwallsASK, fullwallsBIDS, sPoint, takeWall, bookDetails) =
