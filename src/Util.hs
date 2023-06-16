@@ -13,7 +13,7 @@ import           Filepaths
 import           InputOutput
 import           Lib
 import           RunSettings
-import Control.Monad 
+import Control.Monad
 
 
 
@@ -207,6 +207,18 @@ initGenerator takerLst makerLst = do
   return (takerT, makerT)
 
 
+{-
+secondGenerator :: [Int] -> [Int] -> (FutureInfo,FutureInfo) -> IO (TakerTuple, MakerTuple)
+secondGenerator takerLst makerLst (toTakeFromLong,toTakeFromShort) = do
+  takerSide' <- randomSide
+
+
+
+
+  return (takerT, makerT)
+
+-}
+
 -- | check if the future file is empty
 isFutureEmpty :: IO Bool
 isFutureEmpty = isFileEmpty posFutureP
@@ -234,12 +246,21 @@ randomLiquidationEvent = do
   when (stopProb > 9) $ error ("maxStop prob is 9 you have: " ++ show stopProb)
   return $ if randVal < stopProb then "stp" else "liq"
 
-liquidationDuty :: FutureInfo -> Double -> IO ([(Int,String,String)], FutureInfo)
-liquidationDuty futureInfo price = do
-    liquidationEvents <- mapM (\(p, n, s) -> if price <= p then randomLiquidationEvent >>= \event -> return (n, s, event) else return (0, "", "")) futureInfo
-    let liquidationList = filter (\(n, _, event) -> n /= 0 && event /= "") liquidationEvents
-    let updatedFutureInfo = filter (\(p,_,_) -> price > p) futureInfo
-    return (liquidationList, updatedFutureInfo)
+liquidationDuty :: FutureInfo -> FutureInfo -> Double -> IO ([(Int,String,String)], (FutureInfo, FutureInfo))
+liquidationDuty futureInfoL futureInfoS price = do
+    let liquidationFunction = mapM (\(p, n, s) -> if price <= p then randomLiquidationEvent >>= \event -> return (n, s, event) else return (0, "", ""))
+
+    liquidationEventsL <- liquidationFunction futureInfoL
+    liquidationEventsS <- liquidationFunction futureInfoS
+
+    let liquidationListL = filter (\(n, _, _) -> n /= 0) liquidationEventsL
+    let liquidationListS = filter (\(n, _, _) -> n /= 0) liquidationEventsS
+
+    let updatedFutureInfoL = filter (\(p,_,_) -> price > p) futureInfoL
+    let updatedFutureInfoS = filter (\(p,_,_) -> price > p) futureInfoS
+
+    return (liquidationListL ++ liquidationListS, (updatedFutureInfoL, updatedFutureInfoS))
+
 
 
 
@@ -285,7 +306,7 @@ orderbookLoop :: ListPass
 orderbookLoop (longinfo,shortinfo,(vAmount,vSide'),bidBook,askBook,gen1,gen2,fullwallsASK,fullwallsBIDS,sPoint,takeWall)= do
 
 
-                          
+
 
                           -- | local variables      
                           let (volumeBID, volumeASK) =
@@ -335,16 +356,25 @@ orderbookLoop (longinfo,shortinfo,(vAmount,vSide'),bidBook,askBook,gen1,gen2,ful
                                 , listBID', vSide', vAmount, sprd' ,sPrice ,bidAskR')
                           let insertinInfo = formatAndPrintInfo newbookDetails
                           insertinInfo -- THIS IS ONLY CONSOLE
-
                           print sPrice
 
                           -- ? position future
   -- | check if the future file is empty     
-             
-                          isFutureEmpt <- isFutureEmpty
 
-                          initialRun <- firstRun vAmount vSide' sPrice
-                          let newPositionFuture = if isFutureEmpt then initialRun else (longinfo,shortinfo)
+                          isFutureEmpt <- isFutureEmpty
+                          numTakers <- randomRIO (1, maxTakers) :: IO Int -- select how many takers
+                          numMakers <- randomRIO (1, maxMakers) :: IO Int -- select how many makers
+                          volumeSplitT <- generateVolumes numTakers vAmount -- split the volume
+                          volumeSplitM <- generateVolumes numMakers vAmount -- split the volume
+                          initialRun <- firstRun (volumeSplitT,volumeSplitM) sPrice
+
+                          liquidated <- liquidationDuty longinfo shortinfo sPrice
+                          let liquidationIO = fst liquidated
+                          print liquidationIO
+                          let liquidationsInfo = snd liquidated
+                          let longliq = fst liquidationsInfo
+                          let shortliq = snd liquidationsInfo
+                          let newPositionFuture = if isFutureEmpt then initialRun else (longliq,shortliq)
 
 
 
@@ -366,22 +396,23 @@ orderbookLoop (longinfo,shortinfo,(vAmount,vSide'),bidBook,askBook,gen1,gen2,ful
                           return (fst newPositionFuture, snd newPositionFuture,finalBookBid, finalBookAsk, newbookDetails)
 
 
-firstRun :: Int -> VolumeSide -> Double -> IO (FutureInfo, FutureInfo)
-firstRun vAmount vSide' sPrice = do
+firstRun :: ([Int],[Int]) -> Double
+  -> IO (FutureInfo, FutureInfo) -- updated acc
+firstRun (volumeSplitT, volumeSplitM)  sPrice = do
 -- // DANGER EXPERIMENTAL CODE BELOW                       
                           -- only splits volume
                           putStrLn "\n\n\n"
-                          print vAmount >> print vSide'
+                          --print vAmount >> print vSide'
 
                           putStrLn "\n\n\n"
                           putStrLn "taker"
-                          numTakers <- randomRIO (1, maxTakers) :: IO Int -- select how many makers
-                          volumeSplitT <- generateVolumes numTakers vAmount -- split the volume
+
+                         -- volumeSplitT <- generateVolumes numTakers vAmount -- split the volume
                           if any (< 0) volumeSplitT  then error "volume split consists of a negative element" else print volumeSplitT
 
                           putStrLn "maker"
-                          numMakers <- randomRIO (1, maxMakers) :: IO Int -- select how many makers
-                          volumeSplitM <- generateVolumes numMakers vAmount -- split the volume
+
+                        --  volumeSplitM <- generateVolumes numMakers vAmount -- split the volume
                           if any (< 0) volumeSplitM  then error "volume split consists of a negative element" else print volumeSplitM
 
                           -- main process
@@ -390,11 +421,11 @@ firstRun vAmount vSide' sPrice = do
                           emptyFuture <- positionFuture sPrice ifempty
 
                           let emptyWrite = Transaction {future = emptyFuture}
-                          
+
                           Control.Monad.when isFutureEmpt $ BL.appendFile posFutureP (encode emptyWrite)
-                      
+
                           -- final
-                        
+
                           let (newLongsAcc, newShortsAcc) = (filterFuture "f" emptyWrite, filterFuture "z" emptyWrite)
 
                           return (newLongsAcc, newShortsAcc)
@@ -402,9 +433,22 @@ firstRun vAmount vSide' sPrice = do
                           putStrLn $ "\nF fltr:\n" ++  show newLongsAcc
                           putStrLn $ "\nZ fltr:\n" ++  show newShortsAcc
 -}
-                 
-normalRun :: (FutureInfo, FutureInfo) -> Int -> VolumeSide -> Double -> IO (FutureInfo, FutureInfo)
-normalRun = undefined                         
+
+normalRun :: ([Int],[Int]) -> (FutureInfo, FutureInfo) -> Double
+    -> IO
+          ([(Int,String,String)] -- liqudation list
+
+          , FutureInfo  -- returning new acc for future longs
+          , FutureInfo) -- returning new acc for future shorts
+
+normalRun (volumeSplitT, volumeSplitM) (oldLongFuture, oldShortFutur) sPrice = do
+
+
+  let liquidationList = undefined
+  let newLongsAcc     = undefined
+  let newShortsAcc    = undefined
+
+  return (liquidationList, newLongsAcc, newShortsAcc)
 
 
 
