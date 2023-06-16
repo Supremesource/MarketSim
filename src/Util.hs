@@ -246,19 +246,34 @@ randomLiquidationEvent = do
   when (stopProb > 9) $ error ("maxStop prob is 9 you have: " ++ show stopProb)
   return $ if randVal < stopProb then "stp" else "liq"
 
-liquidationDuty :: FutureInfo -> FutureInfo -> Double -> IO ([(Int,String,String)], (FutureInfo, FutureInfo))
+liquidationDuty :: FutureInfo -> FutureInfo -> Double 
+  -> IO ([(Int,String,String)]      -- info about the liquidation
+        , (FutureInfo, FutureInfo)) -- updated futures
 liquidationDuty futureInfoL futureInfoS price = do
-    let liquidationFunction = mapM (\(p, n, s) -> if price <= p then randomLiquidationEvent >>= \event -> return (n, s, event) else return (0, "", ""))
+    let liquidationFunction = mapM (\(p, n, s) -> 
+            (if (price <= p && s == "f") || (price >= p && s == "z") 
+             then randomLiquidationEvent >>= \event -> return (n, s, event) 
+             else return (0, "", "")))
 
     liquidationEventsL <- liquidationFunction futureInfoL
+    putStrLn "liquidationEventsL \n\n"
+    print liquidationEventsL
     liquidationEventsS <- liquidationFunction futureInfoS
-
+    print liquidationEventsS
     let liquidationListL = filter (\(n, _, _) -> n /= 0) liquidationEventsL
     let liquidationListS = filter (\(n, _, _) -> n /= 0) liquidationEventsS
+    putStrLn "\n\n\n"
+    print liquidationListL
+    putStrLn "\n\n\n short"
+    print liquidationListS
 
-    let updatedFutureInfoL = filter (\(p,_,_) -> price > p) futureInfoL
-    let updatedFutureInfoS = filter (\(p,_,_) -> price > p) futureInfoS
 
+    let updatedFutureInfoL = filter (\(p,_,_) -> price >= p) futureInfoL
+    let updatedFutureInfoS = filter (\(p,_,_) -> price <= p) futureInfoS
+    putStrLn "\n\n\n longsL:"
+    print updatedFutureInfoL
+    putStrLn "\n\n\n shortsL:"
+    print updatedFutureInfoS
     return (liquidationListL ++ liquidationListS, (updatedFutureInfoL, updatedFutureInfoS))
 
 
@@ -271,9 +286,12 @@ futureAccLong = [(0, 0, "")]
 futureAccShort :: FutureInfo
 futureAccShort = [(0, 0, "")]
 
+initPositioningAcc :: NewPositioning
+initPositioningAcc = ([],[])
 
-recursiveList :: RecursionPass -> IO (FutureInfo,FutureInfo,OrderBook, OrderBook, [BookStats])
-recursiveList (longinfo,shortinfo,[], bidBook, askBook, _, _, _, _, _, _, bookDetails) = do
+
+recursiveList :: RecursionPass -> IO (NewPositioning,FutureInfo,FutureInfo,OrderBook, OrderBook, [BookStats])
+recursiveList (posinfo,longinfo,shortinfo,[], bidBook, askBook, _, _, _, _, _, _, bookDetails) = do
 
     filewrites1 $ tail (reverse bookDetails)
     let writeBidBook = Book { book = bidBook }
@@ -284,17 +302,17 @@ recursiveList (longinfo,shortinfo,[], bidBook, askBook, _, _, _, _, _, _, bookDe
     BL.writeFile bidBookP (encode writeBidBook)
     BL.writeFile askBookP (encode writeAskBook)
 
-    return (longinfo,shortinfo,bidBook, askBook, bookDetails)
+    return (posinfo,longinfo,shortinfo,bidBook, askBook, bookDetails)
 
-recursiveList (longinfo, shortinfo, x:xs, bidBook, askBook, gen1, gen2,
+recursiveList (posinfo,longinfo, shortinfo, x:xs, bidBook, askBook, gen1, gen2,
     fullwallsASK, fullwallsBIDS, sPoint, takeWall, bookDetails) =
 
- orderbookLoop (longinfo, shortinfo, x, bidBook, askBook, gen1
+ orderbookLoop (posinfo,longinfo, shortinfo, x, bidBook, askBook, gen1
     , gen2, fullwallsASK, fullwallsBIDS, sPoint, takeWall) >>=
-    \(newLonginfo,newShortinfo,newBidBook, newAskBook, newBookDetails) -> do
+    \(newPosInfo,newLonginfo,newShortinfo,newBidBook, newAskBook, newBookDetails) -> do
 
   let (newGen1, newGen2) = (fst (split gen1), fst (split gen2))
-  recursiveList (newLonginfo,newShortinfo,xs,newBidBook,newAskBook,newGen1,newGen2
+  recursiveList (newPosInfo,newLonginfo,newShortinfo,xs,newBidBook,newAskBook,newGen1,newGen2
     ,fullwallsASK,fullwallsBIDS,sPoint,takeWall,newBookDetails:bookDetails)
 
 
@@ -302,8 +320,8 @@ recursiveList (longinfo, shortinfo, x:xs, bidBook, askBook, gen1, gen2,
 
 
 orderbookLoop :: ListPass
-      -> IO (FutureInfo,FutureInfo,OrderBook,OrderBook,BookStats)
-orderbookLoop (longinfo,shortinfo,(vAmount,vSide'),bidBook,askBook,gen1,gen2,fullwallsASK,fullwallsBIDS,sPoint,takeWall)= do
+      -> IO (NewPositioning,FutureInfo,FutureInfo,OrderBook,OrderBook,BookStats)
+orderbookLoop (posinfo,longinfo,shortinfo,(vAmount,vSide'),bidBook,askBook,gen1,gen2,fullwallsASK,fullwallsBIDS,sPoint,takeWall)= do
 
 
 
@@ -362,42 +380,58 @@ orderbookLoop (longinfo,shortinfo,(vAmount,vSide'),bidBook,askBook,gen1,gen2,ful
   -- | check if the future file is empty     
 
                           isFutureEmpt <- isFutureEmpty
-                          numTakers <- randomRIO (1, maxTakers) :: IO Int -- select how many takers
-                          numMakers <- randomRIO (1, maxMakers) :: IO Int -- select how many makers
-                          volumeSplitT <- generateVolumes numTakers vAmount -- split the volume
-                          volumeSplitM <- generateVolumes numMakers vAmount -- split the volume
-                          initialRun <- firstRun (volumeSplitT,volumeSplitM) sPrice
+                          numTakers    <- randomRIO (1, maxTakers) :: IO Int -- select how many takers
+                          numMakers    <- randomRIO (1, maxMakers) :: IO Int -- select how many makers
+                          volumeSplitT <- generateVolumes numTakers vAmount  -- split the volume
+                          volumeSplitM <- generateVolumes numMakers vAmount  -- split the volume
 
-                          liquidated <- liquidationDuty longinfo shortinfo sPrice
+                          liquidated   <- liquidationDuty longinfo shortinfo sPrice
+                          print longinfo
+                          print shortinfo
                           let liquidationIO = fst liquidated
-                          print liquidationIO
+                          putStrLn $ "\nliquidations: " ++ show liquidationIO
+
+
                           let liquidationsInfo = snd liquidated
-                          let longliq = fst liquidationsInfo
+                          let liquidationsInfo' = fst liquidated
+                          putStrLn $ "\nliquidations2: " ++ show liquidationsInfo
+                          putStrLn $ "\nliquidations3: " ++ show liquidationsInfo'
+                          let longliq =  fst liquidationsInfo
                           let shortliq = snd liquidationsInfo
-                          let newPositionFuture = if isFutureEmpt then initialRun else (longliq,shortliq)
+
+                          initRun <- firstRun (volumeSplitT ,volumeSplitM ) sPrice
+                          putStrLn "initRun\n"
+                          print initRun
 
 
-
-                     --     posFuture <- positionFuture -- transaction
-                          --print isFutureEmpt
-
+                          print $ "hj" ++ show isFutureEmpt
+                          let newPositionFuture = if isFutureEmpt then fst initRun else (longliq, shortliq)
+                          let newPositions =  snd initRun -- (TakerTuple,MakerTuple)
+                        
+                          -- posFuture <- positionFuture -- transaction
+                          -- print isFutureEmpt
                           -- if no read the contents and move on isnotemptygenerator
-
-                          -- if empty then write init generator consisting of only opening
-
+                          -- if empty then write init generator consisting of only opening|+)
                           -- isemptygenerator ..
-
-
                           -- pass from isemptygenerator to positionfuture
                           -- isnotemptygenerator --> scanning for liquidation info -> paring "left over empty" with new based off of statistics
                           -- if liquidation pass as a volume
-
                           -- | returning the orderbook
-                          return (fst newPositionFuture, snd newPositionFuture,finalBookBid, finalBookAsk, newbookDetails)
+                          return (newPositions,fst newPositionFuture, snd newPositionFuture,finalBookBid, finalBookAsk, newbookDetails)
+
+{-
+getNewPositionFuture isFutureEmpt volumeSplit sPrice info liquidated = do
+    if isFutureEmpt
+                        then firstRun volumeSplit sPrice
+                        else do
+                            undefined
+                            return (longliq, shortliq)
+-}
+
 
 
 firstRun :: ([Int],[Int]) -> Double
-  -> IO (FutureInfo, FutureInfo) -- updated acc
+  -> IO ((FutureInfo, FutureInfo),NewPositioning) -- updated acc
 firstRun (volumeSplitT, volumeSplitM)  sPrice = do
 -- // DANGER EXPERIMENTAL CODE BELOW                       
                           -- only splits volume
@@ -417,9 +451,14 @@ firstRun (volumeSplitT, volumeSplitM)  sPrice = do
 
                           -- main process
                           isFutureEmpt <- isFutureEmpty
-                          ifempty  <- initGenerator volumeSplitT volumeSplitM
-                          emptyFuture <- positionFuture sPrice ifempty
+                          ifempty      <- initGenerator volumeSplitT volumeSplitM
+                          print ifempty
 
+                          emptyFuture  <- positionFuture sPrice ifempty
+                          putStrLn "\n\n\n\n"
+                          print "xh1"
+                          print emptyFuture
+                          putStrLn "\n\n\n\n"
                           let emptyWrite = Transaction {future = emptyFuture}
 
                           Control.Monad.when isFutureEmpt $ BL.appendFile posFutureP (encode emptyWrite)
@@ -428,7 +467,7 @@ firstRun (volumeSplitT, volumeSplitM)  sPrice = do
 
                           let (newLongsAcc, newShortsAcc) = (filterFuture "f" emptyWrite, filterFuture "z" emptyWrite)
 
-                          return (newLongsAcc, newShortsAcc)
+                          return ((newLongsAcc, newShortsAcc), ifempty)
 {-
                           putStrLn $ "\nF fltr:\n" ++  show newLongsAcc
                           putStrLn $ "\nZ fltr:\n" ++  show newShortsAcc

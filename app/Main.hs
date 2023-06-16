@@ -5,6 +5,7 @@ module Main where
     -- | display in charts using elm/ javascript/ https/ css
     -- | make frontend more efficient the way the python script is called now is just terrible+
     -- | better UI with timeframes
+    -- | fix negative orderbook levels on bids by stopping ask generation at that point as well, (probable stop ask gen at that point)
   -- TODO
 
 -- imports
@@ -39,9 +40,13 @@ mainLoop :: Stats -> Int -> [(Int, Position)] -> IO [(Int, VolumeSide)]
 mainLoop aggregatedStats remainingRuns accumulatedStats = do
   if remainingRuns > 0
     then do
+     
+   {-  
       putStrLn "+------------+"
       putStrLn $ "|RUN ID   " ++ show remainingRuns
       putStrLn "+------------+"
+     -}
+     
       positions <-
         forM [1 .. numPositions] $ \indexPosition -> do
           randomToTempleate <- randomOptionGen
@@ -51,6 +56,8 @@ mainLoop aggregatedStats remainingRuns accumulatedStats = do
             foldl (flip aggregateStats) aggregatedStats positions
       let newAccumulatedStats =
             accumulatedStats ++ zip [1 ..] positions
+
+{-   
       putStrLn "+------------+"
       putStrLn $ "|END OF RUN " ++ show remainingRuns
       putStrLn "+------------+\n\n"
@@ -59,6 +66,10 @@ mainLoop aggregatedStats remainingRuns accumulatedStats = do
         "|RUN: " ++ show remainingRuns ++ " CONTENTS & aggregatedStats" ++ "|"
       putStrLn "+------------------------------------+\n"
       printStats newAggregatedStats
+-}   
+   
+   
+   
       mainLoop newAggregatedStats (remainingRuns - 1) newAccumulatedStats
     else do
       printFinal aggregatedStats
@@ -246,9 +257,10 @@ run
             
 
 
-             (_, _, _, _,_) <-
+             (_, _, _, _,_, _) <-
                recursiveList
-                ( initAccLongFuture
+                ( initPositioningAcc
+                 ,initAccLongFuture
                  ,initAccShortFuture
                  ,listofvolumes
                  , bidBook
@@ -262,7 +274,7 @@ run
                  , initialBookDetailsList )
 
              -- TODO take this out of there
-             print $ "hh111" ++ show initAccLongFuture
+            -- print $ "hh111" ++ show initAccLongFuture
              print initAccShortFuture
 
              -- | optional warnings
@@ -296,9 +308,10 @@ run
              putStrLn "\n\n\n\n\n\n\n\n\n"
 --             print listofvolumes
             
-             let futureInfo = [(900,1000,"f"),(1200,700,"z"),(14000,1000,"z"),(100,700,"z")]
-  --           tst <- liquidationDuty futureInfo 1000.00
-  --           putStrLn $ "liq " ++ show tst
+             let futureInfo1 = [(900,1000,"z"),(1200,700,"z"),(14000,1000,"z"),(100,700,"z")] 
+             let futureInfo2 = [(900,1000,"f"),(1200,700,"f"),(14000,1000,"f"),(100,700,"f")] 
+             tst <- liquidationDuty futureInfo1 futureInfo2 1000.0
+             putStrLn $ "liq " ++ show tst
 
             -- // testing :
            --  print $ "List of Vol: \n" ++ show listofvolumes

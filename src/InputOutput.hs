@@ -202,10 +202,12 @@ printPositionStats i (taker, makers) acc = do
  
 
   -- | goes into console
+  
+  {-
   putStrLn $ "yn| Position number    | " ++ show i ++ "\n\n"
   putStrLn $ "\n| Taker                | \n\n\n" ++ show taker
   putStrLn $ "\n| Makers               | \n\n\n" ++ show makers
-   {-
+   
   putStrLn $ "| Overal open interest | " ++ show overalOpenInterest
   putStrLn $ "| Volume               | " ++ show overalVOLUME
   putStrLn $ "| Buy volume           | " ++ show buyVOLUME
