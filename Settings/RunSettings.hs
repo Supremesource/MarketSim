@@ -52,6 +52,9 @@ maxTakers :: Int
 maxTakers = round (fromIntegral maxMakers * (0.95 :: Double))
 
 
+-- | in terms of newly opened positions
+
+
 
 --〇 ID = ROUND
 -- | ROUNDING SETTINGS:
@@ -129,8 +132,19 @@ buyTakerProb = 50
 sellTakerProb :: Int
 sellTakerProb = 50
 
+
+
+-- ? all Prob have a minimum value of 1 and maximum value of 10 ! 
+-- | otherwise an error will be thrown
 stopProb :: Int
 stopProb = 7
+
+-- TODO move into settings
+takerxProb :: Int
+takerxProb = 7
+
+closingProb :: Int
+closingProb = 5
 
 -- ! ORDERBOOK SETINGS
 --  + liquidity settings

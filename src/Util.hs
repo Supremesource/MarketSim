@@ -291,14 +291,14 @@ positionFuture price (taker, maker)  = do
 oppositeSide :: String -> String
 oppositeSide side = if side == "x" then "y" else "x"
 
--- TODO move into settings
-takerXprobability :: Int
-takerXprobability = 7
+
 
 randomSide :: IO String
 randomSide = do
-    randVal <- randomRIO (0, 9) :: IO Int
-    return $ if randVal < takerXprobability then "x" else "y"
+    randVal <- randomRIO (1, 10) :: IO Int
+    unless (takerxProb >= 1 && takerxProb <= 10) $ error "takerxProb must be between 1 and 10"
+
+    return $ if randVal < takerxProb then "x" else "y"
 
 
 initGenerator :: [Int] -> [Int] -> IO (TakerTuple, MakerTuple)
@@ -309,15 +309,11 @@ initGenerator takerLst makerLst = do
   let makerT = zip makerLst $ replicate (length makerLst) makerside
   return (takerT, makerT)
 
-closingProbab :: Int
-closingProbab = 8
 
 
 normalGenerator :: [Int] -> [Int] -> (FutureInfo,FutureInfo) -> IO (TakerTuple, MakerTuple)
 normalGenerator takerLst makerLst (toTakeFromLong, toTakeFromShort) = do
-  let checker = when (closingProbab > 9 || closingProbab < 0) $ error "closingProbab must be between 0 and 9"
-  checker
-
+  unless (closingProb >= 1 && closingProb <= 10) $ error "closingProb must be between 1 and 10"
   let genType = if sum takerLst + sum makerLst >= sum (map (\(_,n,_) -> n) toTakeFromLong) &&
                     sum takerLst + sum makerLst >= sum (map (\(_,n,_) -> n) toTakeFromShort)
                     then openingGen else normalGen
@@ -338,12 +334,12 @@ normalGenerator takerLst makerLst (toTakeFromLong, toTakeFromShort) = do
       let closingSideM = if makerside == "x" then "z" else "f"
       takerT <- mapM (\val ->
          do
-        randVal <- randomRIO (0, 9) :: IO Int
-        let sideT = if randVal < closingProbab then closingSideT else takerSide'
+        randVal <- randomRIO (1, 10) :: IO Int
+        let sideT = if randVal < closingProb then closingSideT else takerSide'
         return (val, sideT)) takerLst
       makerT <- mapM (\val -> do
-        randVal <- randomRIO (0, 9) :: IO Int
-        let sideM = if randVal < closingProbab then closingSideM else makerside
+        randVal <- randomRIO (1, 10) :: IO Int
+        let sideM = if randVal < closingProb then closingSideM else makerside
         return (val, sideM)) makerLst
       return (takerT, makerT)
 
@@ -387,12 +383,17 @@ filterFuture pos transaction = filter (\(_, _, s) -> s == pos) (future transacti
 filterTuple :: String -> [(Int, String)] -> [(Int, String)]
 filterTuple pos = filter (\(_, s) -> s == pos)
 
-filterFutureAmount :: [(Int, String)] -> FutureInfo -> FutureInfo
+
+-- TODO : make this funciton more realistic with shuffeling emelemnts 
+-- | and equal "taking out"  more than just deleting one by one
+filterFutureAmount :: [(Int, String)] -- Tuple of positions to take out
+                      -> FutureInfo  -- old futureInfo 
+                      -> FutureInfo -- returns a new futureInfo
 filterFutureAmount [] futureInfo = futureInfo
 filterFutureAmount _ [] = []
 filterFutureAmount ((n, s) : ns) ((liq, amt, sid) : futureInfo)
     | n < amt = filterFutureAmount ns ((liq, amt - n, sid) : futureInfo)
-    | otherwise = filterFutureAmount ns ((liq, amt, sid) : filterFutureAmount [(n - amt, s)] futureInfo)
+    | otherwise = filterFutureAmount ((n - amt, s) : ns) futureInfo
 
 
 filterFutureClose :: Position -> (FutureInfo, FutureInfo) -> IO (FutureInfo, FutureInfo)
@@ -417,8 +418,8 @@ tuplesToSides ((n,s):takerT, makerT) = if isTakerLong s
 -- ? liquidations
 randomLiquidationEvent :: IO String
 randomLiquidationEvent = do
-  randVal <- randomRIO (0, 9) :: IO Int
-  when (stopProb > 9) $ error ("maxStop prob is 9 you have: " ++ show stopProb)
+  randVal <- randomRIO (1, 10) :: IO Int
+  unless (stopProb >= 1 && stopProb <= 10) $ error ("maxStop is 10 you have: " ++ show stopProb)
   return $ if randVal < stopProb then "stp" else "liq"
 
 liquidationDuty :: FutureInfo -> FutureInfo -> Double
@@ -512,11 +513,20 @@ normalRun :: ([Int],[Int]) -> (FutureInfo, FutureInfo) -> Double
           ((FutureInfo , FutureInfo) -- updated acc
           , NewPositioning)       -- position list
 normalRun (volumeSplitT, volumeSplitM) (oldLongFuture, oldShortFutur) sPrice = do
-  newPositioning <- normalGenerator volumeSplitT volumeSplitM (oldLongFuture, oldShortFutur)
-  posFut <- positionFuture sPrice newPositioning
+  
+  newPositioning <- normalGenerator volumeSplitT volumeSplitM (oldLongFuture, oldShortFutur) -- THIS works
+  
+  posFut <- positionFuture sPrice newPositioning -- THIS WORKS
+ 
   let converToTransaction = Transaction {future = posFut}
-  let (filteredLongFuture,  filteredShortFuture) = (filterFuture "f" converToTransaction, filterFuture "z" converToTransaction)
-  let orderedTuple = tuplesToSides newPositioning
+  let (filteredLongFuture,  filteredShortFuture) = (filterFuture "f" converToTransaction, filterFuture "z" converToTransaction) -- THIS WORKS
+
+ 
+  let orderedTuple = tuplesToSides newPositioning -- ! problem here
+  -- TODO make a filtered tuple funciton -> recieves z and f mixed with x and y 
+  -- TODO returns only z and f in order z first then f
+  putStrLn "\n\nordered tuples\n"
+  print orderedTuple
   let (filteredLongTuple, filteredShortTuple) = orderedTuple
   let (newLongsAcc,newShortsAcc) = (filterFutureAmount filteredLongTuple filteredLongFuture, filterFutureAmount filteredShortTuple filteredShortFuture)
 

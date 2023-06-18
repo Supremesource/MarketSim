@@ -318,26 +318,52 @@ run
             
              let futureInfo1 = [(900,100000,"z"),(1200,70000,"z"),(14000,100000,"z"),(100,70000,"z")] :: FutureInfo 
              let futureInfo2 = [(900,100000,"f"),(1200,70000,"f"),(14000,100000,"f"),(100,70000,"f")] :: FutureInfo
-             tst <- liquidationDuty futureInfo1 futureInfo2 1000.0
-             putStrLn $ "liq " ++ show tst
-
+            
+            
+             liquidated <- liquidationDuty futureInfo1 futureInfo2 1000.0
+             putStrLn $ "liq " ++ show liquidated
+             
              putStrLn "\n\n\n\n\n\n\n\n\n"
              let volumeList1= [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000]
-
              let volumeList2 = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000]
+             let startingPric = 1000.0
              genZ <- normalGenerator volumeList1 volumeList2 (futureInfo2, futureInfo1)
-             print genZ
+             --print genZ
 
              putStrLn "\n\n\n\n\n\n\n\n\n" 
+             putStrLn "\n\n\n\n\n\n\n\n\n"
+             putStrLn "\n\n\n\n\n\n\n\n\n"
+                 {-
+                    Testing the normal run funciton          
+                 -}   
+             let positioningTupleLong = [(10000,"f"),(90000,"f"), (50000,"f")]
+             let positioningTupleShort = [(10000,"z"),(90000,"z"), (50000,"z")]
              
+             establishRunNormal <- normalRun (volumeList1, volumeList2 )(futureInfo2, futureInfo1) startingPric 
+             print establishRunNormal
+
+            {-
+             putStrLn "\n\n\n\n\n\n\n\n\n"
+             print $ fst establishRunNormal
+             putStrLn "\n\n\n New Positions:"
+             print $ snd establishRunNormal
+             putStrLn "\n\n\n\n\n\n\n\n\n"
+             print $ filterFutureAmount positioningTupleLong  futureInfo2 
+
+-}
 
 
-            -- // testing :
-           --  print $ "List of Vol: \n" ++ show listofvolumes
+
+
+
+
+
+             -- // testing :
+             --  print $ "List of Vol: \n" ++ show listofvolumes
              -- print takerX stats
 
             -- | calling python script (graph)
-            --  TODO make this way more effective, calling the script belowú§
+            --  TODO make this way more effective, calling the script below
              Control.Monad.when plotCharts $
                callCommand "python scripts/plot_prices.py"
 
