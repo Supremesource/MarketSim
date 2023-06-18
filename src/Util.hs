@@ -1,4 +1,5 @@
 {-# OPTIONS_GHC -Wno-missing-export-lists #-}
+{-# LANGUAGE TupleSections #-}
 module Util where
 -- | module of utility funcitons
 -- | importing external libraries
@@ -55,6 +56,59 @@ setupBookDetails (startingP', maxMinL' ,asksTot', bidsTot', takewall', lengchngB
                                             , bidAskRatio       = bidAskR'
                                             }
 
+
+
+-- | helper funciton for the funciton below (where is everything starting at)
+initStats :: Stats
+initStats = Stats 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+-- | aggregating  stats together
+aggregateStats :: (TakerTuple, MakerTuple) -> Stats -> Stats
+aggregateStats (taker, makers) stats  =
+  Stats
+          { overallOI = overallOI stats + interestorPlus taker makers - interestorMinus taker makers,
+            totalVolume = totalVolume stats + foldl (\acc (x, _) -> acc + x) 0 taker,
+            buyVolume =
+              buyVolume stats + foldl (\acc (x, y) -> if y == "x" || y == "z" then acc + x else acc) 0 taker,
+            sellVolume =
+              sellVolume stats + foldl (\acc (x, y) -> if y == "y" || y == "f" then acc + x else acc) 0 taker,
+            takerXc =
+              takerXc stats + countElements "x" taker,
+            takerYc =
+              takerYc stats + countElements "y" taker,
+            takerZc =
+              takerZc stats + countElements "z" taker,
+            takerFc =
+              takerFc stats + countElements "f" taker,
+            makerXc =
+              makerXc stats
+                + countElements "x" makers,
+            makerYc = makerYc stats + countElements "y" makers ,
+            makerZc =
+              makerZc stats + countElements "z" makers,
+            makerFc =
+              makerFc stats
+                +  countElements "f" makers,
+            offX = offX stats + orderSize "x" taker + orderSize "x" makers,
+            offY = offY stats + orderSize "y" taker + orderSize "y" makers,
+            offZ = offZ stats + orderSize "z" taker + orderSize "z" makers,
+            offF = offF stats + orderSize "f" taker + orderSize "f" makers,
+            takerX =
+              takerX stats + orderSize "x" taker,
+            takerY =
+              takerY stats + orderSize "y" taker,
+            takerZ =
+              takerZ stats + orderSize "z" taker,
+            takerF =
+              takerF stats + orderSize "f" taker,
+            makerX =
+              makerX stats + orderSize "x" makers,
+            makerY =
+              makerY stats + orderSize "y" makers,
+            makerZ =
+              makerZ stats + orderSize "z" makers,
+            makerF =
+              makerF stats + orderSize "f" makers
+      }
 
 settingcheck :: VolumeSide -> Int -> Int -> Int -> IO ()
 settingcheck vSide' volumeA' asksTot' bidsTot' = do
@@ -130,16 +184,65 @@ calculateTotalsCount finalBookAsk finalBookBid =
         bidtotal = fromIntegral (length finalBookBid)
     in (asktotal, bidtotal)
 
+-- ! Most comperhensive SUMMARY of the WHOLE program
+                                                                              {-
+# HOW DOES THE POSITION MANAGEMENT WORK ? 
+  /function is called recursively until the list of orders is empty
+  
+  1. First we take a list of volumes generated from other module
+  2. With this list we change the orderbook -> Price change happens
+  3. The list is passed into a `spitter` that spilts the list into `transactions`
+  
+  Now the fun begins 
+  we check if there are alredy any positions generated, if not we will have to 
+  generate them in the initGenerator (i should put this into the same generator
+  , cause it does not really matter where i generate it)
+  then we put these new positions (X, Y where x  = long, y = short)
+  into a `basket` that represent the positons that can be closed.
+  
+  Now this basket is managed in terms of statistically asigning leverage
+ as well as liquidation price.
+ Now we have a list of positions that can be closed, with their liquidation price
+ We can move onto the second run through our recrusive function.
 
--- ? POSITION FUTURE
+ / Run 2. 
+ Now we know which positions can be closed as well as some liquidation prices
+ so same as in run 1 we send our volume list into the orderbook -> change the price
+ after we change the price we check if some position in that liquidation list 
+ should have been liquidated, if so we take it out of our basked of positions
+ that can close and send the volume as Z or F (depends if it was a long or short
+ ,who got liquidated). Now this `liquidation duty` transaction has to be pared
+ with a counterparty of where we generate a opposite site that can consist of
+ more than one position so we split the counterside volume and assign either
+ new positions as a counterparty or exiting ones from our basket.
 
+ Now we know there is no liquidation in our basked and we will make sense
+ of the volume list that came to our funciton in the first place. 
+ This is done by taking the volume list splitting it (same as the initial run)
+ but the difference here is that we assign z and f for all of the transaction
+ participains. Now we know how many exiting positions we had. So we take them
+ out of our basked. We pass the new positioning as well as the new `Position future`
+ which is the basket of potenitaly exiting positions. And we repeat the process
+ until we reach our base case which is `[]` -> meaning we have no more volume.
 
+ This is the time when we take out the accumulators: 
+ 1. Orderbook
+ 2. Positioning
+ 3. Position Future
 
+ And we write from the computer memory into external jsons. Then we 
+ can move onto the frontend/ do another simulation run with different settings. 
+
+                                                                              -}
+
+-- ! POSITION FUTURE
+
+-- ? funcitons for the position future
 -- PACKAGE CLOSING CONVERSION X & Y TO F & Z
 closingConversion :: (TakerTuple,MakerTuple) -> (TakerTuple, MakerTuple)
 closingConversion (takers,makers )| hasBothXY takers = error "Unsupported tuple format in takers"
-                                | hasBothXY makers = error "Unsupported tuple format in makers"
-                                | otherwise =
+                                  | hasBothXY makers = error "Unsupported tuple format in makers"
+                                  | otherwise =
   (closingconvert filterTakers takers, closingconvert filterMakers makers)
   where
   isValidTuple (_, side) = side == "x" || side == "y"
@@ -148,7 +251,7 @@ closingConversion (takers,makers )| hasBothXY takers = error "Unsupported tuple 
   closingconvert f t = map (\(x,y) -> (x, if y == "x" then "f" else "z")) (f t)
   hasBothXY xs = "x" `elem` map snd xs && "y" `elem` map snd xs
 
-
+-- statisctics thing determining leverage
 -- TODO move this into the stats and also make it customizable or at least point 
 -- to it in the settings
 takenLeverage :: IO Int
@@ -206,24 +309,66 @@ initGenerator takerLst makerLst = do
   let makerT = zip makerLst $ replicate (length makerLst) makerside
   return (takerT, makerT)
 
-
-{-
-secondGenerator :: [Int] -> [Int] -> (FutureInfo,FutureInfo) -> IO (TakerTuple, MakerTuple)
-secondGenerator takerLst makerLst (toTakeFromLong,toTakeFromShort) = do
-  takerSide' <- randomSide
+closingProbab :: Int
+closingProbab = 8
 
 
+normalGenerator :: [Int] -> [Int] -> (FutureInfo,FutureInfo) -> IO (TakerTuple, MakerTuple)
+normalGenerator takerLst makerLst (toTakeFromLong, toTakeFromShort) = do
+  let checker = when (closingProbab > 9 || closingProbab < 0) $ error "closingProbab must be between 0 and 9"
+  checker
+
+  let genType = if sum takerLst + sum makerLst >= sum (map (\(_,n,_) -> n) toTakeFromLong) &&
+                    sum takerLst + sum makerLst >= sum (map (\(_,n,_) -> n) toTakeFromShort)
+                    then openingGen else normalGen
+  genType
+  where
+    openingGen :: IO (TakerTuple, MakerTuple)
+    openingGen = do
+      takerSide' <- randomSide
+      let makerside = oppositeSide takerSide'
+      let takerT = zip takerLst $ replicate (length takerLst) takerSide'
+      let makerT = zip makerLst $ replicate (length makerLst) makerside
+      return (takerT, makerT)
+    normalGen :: IO (TakerTuple, MakerTuple)
+    normalGen = do
+      takerSide' <- randomSide
+      let makerside = oppositeSide takerSide'
+      let closingSideT = if takerSide' == "x" then "z" else "f"
+      let closingSideM = if makerside == "x" then "z" else "f"
+      takerT <- mapM (\val ->
+         do
+        randVal <- randomRIO (0, 9) :: IO Int
+        let sideT = if randVal < closingProbab then closingSideT else takerSide'
+        return (val, sideT)) takerLst
+      makerT <- mapM (\val -> do
+        randVal <- randomRIO (0, 9) :: IO Int
+        let sideM = if randVal < closingProbab then closingSideM else makerside
+        return (val, sideM)) makerLst
+      return (takerT, makerT)
 
 
-  return (takerT, makerT)
+  -- let long tuple  = (/(_,n,s) -> (x, y) where x = map sum (n) where y = fst (s))
+  -- let short tuple = (/(_,n,s) -> (x, y) where x = map sum (n) where y = fst (s))
+  --takeOutOfFuture = undefined
 
--}
+        {-
+                      secondGenerator :: [Int] -> [Int] -> (FutureInfo,FutureInfo) -> IO (TakerTuple, MakerTuple)
+                      secondGenerator takerLst makerLst (toTakeFromLong,toTakeFromShort) = do
+                        takerSide' <- randomSide
+
+
+
+
+                        return (takerT, makerT)
+
+        -}
+
+-- ? helper funcitons for position management
 
 -- | check if the future file is empty
 isFutureEmpty :: IO Bool
 isFutureEmpty = isFileEmpty posFutureP
-
-
 
 readFuture :: IO Transaction
 readFuture = do
@@ -236,7 +381,37 @@ readFuture = do
 
 filterFuture :: String -> Transaction -> FutureInfo
 filterFuture pos transaction = filter (\(_, _, s) -> s == pos) (future transaction)
+
 -- // end of position future
+
+filterTuple :: String -> [(Int, String)] -> [(Int, String)]
+filterTuple pos = filter (\(_, s) -> s == pos)
+
+filterFutureAmount :: [(Int, String)] -> FutureInfo -> FutureInfo
+filterFutureAmount [] futureInfo = futureInfo
+filterFutureAmount _ [] = []
+filterFutureAmount ((n, s) : ns) ((liq, amt, sid) : futureInfo)
+    | n < amt = filterFutureAmount ns ((liq, amt - n, sid) : futureInfo)
+    | otherwise = filterFutureAmount ns ((liq, amt, sid) : filterFutureAmount [(n - amt, s)] futureInfo)
+
+
+filterFutureClose :: Position -> (FutureInfo, FutureInfo) -> IO (FutureInfo, FutureInfo)
+filterFutureClose (closingLong,closingShort) (oldLong,oldShort) {-output (newLong,newShort-} = do
+  let formatedTupleLong  = filterTuple "z" closingLong
+  let formatedTupleShort = filterTuple "f" closingShort
+  let filteredFutureLong  = filterFutureAmount formatedTupleLong oldLong
+  let filteredFutureShort = filterFutureAmount formatedTupleShort oldShort
+  return (filteredFutureLong, filteredFutureShort)
+
+isTakerLong :: String -> Bool
+isTakerLong side = side == "x"
+-- | this is a helper funtion for deciding the bias of the normal Run
+tuplesToSides :: (TakerTuple, MakerTuple) -> Position -- long tuple, short tuple
+tuplesToSides ([], makerT) = (makerT, [])
+tuplesToSides ((n,s):takerT, makerT) = if isTakerLong s
+                                        then ((n,s):takerT, makerT)
+                                        else (makerT,(n,s):takerT)
+
 
 
 -- ? liquidations
@@ -246,13 +421,13 @@ randomLiquidationEvent = do
   when (stopProb > 9) $ error ("maxStop prob is 9 you have: " ++ show stopProb)
   return $ if randVal < stopProb then "stp" else "liq"
 
-liquidationDuty :: FutureInfo -> FutureInfo -> Double 
+liquidationDuty :: FutureInfo -> FutureInfo -> Double
   -> IO ([(Int,String,String)]      -- info about the liquidation
         , (FutureInfo, FutureInfo)) -- updated futures
 liquidationDuty futureInfoL futureInfoS price = do
-    let liquidationFunction = mapM (\(p, n, s) -> 
-            (if (price <= p && s == "f") || (price >= p && s == "z") 
-             then randomLiquidationEvent >>= \event -> return (n, s, event) 
+    let liquidationFunction = mapM (\(p, n, s) ->
+            (if (price <= p && s == "f") || (price >= p && s == "z")
+             then randomLiquidationEvent >>= \event -> return (n, s, event)
              else return (0, "", "")))
 
     liquidationEventsL <- liquidationFunction futureInfoL
@@ -262,24 +437,103 @@ liquidationDuty futureInfoL futureInfoS price = do
     print liquidationEventsS
     let liquidationListL = filter (\(n, _, _) -> n /= 0) liquidationEventsL
     let liquidationListS = filter (\(n, _, _) -> n /= 0) liquidationEventsS
-    putStrLn "\n\n\n"
-    print liquidationListL
-    putStrLn "\n\n\n short"
-    print liquidationListS
-
+    putStrLn "\n\n\n"      -- TODO: remove
+    print liquidationListL -- TODO: remove
+    putStrLn "\n\n\n short"-- TODO: remove 
+    print liquidationListS -- TODO: remove
 
     let updatedFutureInfoL = filter (\(p,_,_) -> price >= p) futureInfoL
     let updatedFutureInfoS = filter (\(p,_,_) -> price <= p) futureInfoS
-    putStrLn "\n\n\n longsL:"
-    print updatedFutureInfoL
-    putStrLn "\n\n\n shortsL:"
-    print updatedFutureInfoS
+    putStrLn "\n\n\n longsL:" -- TODO: remove
+    print updatedFutureInfoL  -- TODO: remove
+    putStrLn "\n\n\n shortsL:" -- TODO: remove
+    print updatedFutureInfoS  -- TODO: remove
     return (liquidationListL ++ liquidationListS, (updatedFutureInfoL, updatedFutureInfoS))
 
 
+-- ? Postion  Generatorts
+-- | cycle management
 
 
--- ? accumulators for future info
+firstRun :: ([Int],[Int]) -> Double
+  -> IO ((FutureInfo, FutureInfo),NewPositioning) -- updated acc
+firstRun (volumeSplitT, volumeSplitM)  sPrice = do
+                  {-
+                getNewPositionFuture isFutureEmpt volumeSplit sPrice info liquidated = do
+                    if isFutureEmpt
+                                        then firstRun volumeSplit sPrice
+                                        else do
+                                            undefined
+                                            return (longliq, shortl6iq)
+                -}
+-- // DANGER EXPERIMENTAL CODE BELOW                       
+                          -- only splits volume
+                          putStrLn "\n\n\n"
+                          --print vAmount >> print vSide'
+
+                          putStrLn "\n\n\n"
+                          putStrLn "taker"
+
+                          -- volumeSplitT <- generateVolumes numTakers vAmount -- split the volume
+                          if any (< 0) volumeSplitT  then error "volume split consists of a negative element" else print volumeSplitT
+
+                          putStrLn "maker"
+
+                          --  volumeSplitM <- generateVolumes numMakers vAmount -- split the volume
+                          if any (< 0) volumeSplitM  then error "volume split consists of a negative element" else print volumeSplitM
+                          -- main process
+                          isFutureEmpt <- isFutureEmpty
+                          ifempty      <- initGenerator volumeSplitT volumeSplitM
+                          print ifempty
+
+                          emptyFuture  <- positionFuture sPrice ifempty
+                          putStrLn "\n\n\n\n"
+                          print "xh1"
+                          print emptyFuture
+                          putStrLn "\n\n\n\n"
+                          let emptyWrite = Transaction {future = emptyFuture}
+
+                          Control.Monad.when isFutureEmpt $ BL.appendFile posFutureP (encode emptyWrite)
+
+                          -- final
+                          let (newLongsAcc, newShortsAcc) = (filterFuture "f" emptyWrite, filterFuture "z" emptyWrite)
+                          print "hdh"
+                          print newLongsAcc
+                          print newShortsAcc
+                          return ((newLongsAcc, newShortsAcc), ifempty)
+{-
+                          putStrLn $ "\nF fltr:\n" ++  show newLongsAcc
+                          putStrLn $ "\nZ fltr:\n" ++  show newShortsAcc
+-}
+
+
+normalRun :: ([Int],[Int]) -> (FutureInfo, FutureInfo) -> Double
+    -> IO
+          ((FutureInfo , FutureInfo) -- updated acc
+          , NewPositioning)       -- position list
+normalRun (volumeSplitT, volumeSplitM) (oldLongFuture, oldShortFutur) sPrice = do
+  newPositioning <- normalGenerator volumeSplitT volumeSplitM (oldLongFuture, oldShortFutur)
+  posFut <- positionFuture sPrice newPositioning
+  let converToTransaction = Transaction {future = posFut}
+  let (filteredLongFuture,  filteredShortFuture) = (filterFuture "f" converToTransaction, filterFuture "z" converToTransaction)
+  let orderedTuple = tuplesToSides newPositioning
+  let (filteredLongTuple, filteredShortTuple) = orderedTuple
+  let (newLongsAcc,newShortsAcc) = (filterFutureAmount filteredLongTuple filteredLongFuture, filterFutureAmount filteredShortTuple filteredShortFuture)
+
+  -- put posFut into trasaction
+  -- filter into Z and F
+  -- make a funciton that filter x and y from taker tuple and a maker tuple
+  -- pass long info & short into filterFutureAmount 
+  -- updateFromOldFuture 
+  -- filter the future
+  -- filter the new positions as a new future
+  -- return new positions
+
+  return ((newLongsAcc, newShortsAcc), newPositioning)
+
+
+-- ? position acccumulator
+-- | accumulators for future info
 futureAccLong :: FutureInfo
 futureAccLong = [(0, 0, "")]
 
@@ -290,6 +544,8 @@ initPositioningAcc :: NewPositioning
 initPositioningAcc = ([],[])
 
 
+
+-- ? processor part
 recursiveList :: RecursionPass -> IO (NewPositioning,FutureInfo,FutureInfo,OrderBook, OrderBook, [BookStats])
 recursiveList (posinfo,longinfo,shortinfo,[], bidBook, askBook, _, _, _, _, _, _, bookDetails) = do
 
@@ -301,6 +557,7 @@ recursiveList (posinfo,longinfo,shortinfo,[], bidBook, askBook, _, _, _, _, _, _
     BL.writeFile posFutureP writePositionFuture'
     BL.writeFile bidBookP (encode writeBidBook)
     BL.writeFile askBookP (encode writeAskBook)
+    print $ "positioning " ++ show posinfo
 
     return (posinfo,longinfo,shortinfo,bidBook, askBook, bookDetails)
 
@@ -317,14 +574,9 @@ recursiveList (posinfo,longinfo, shortinfo, x:xs, bidBook, askBook, gen1, gen2,
 
 
 
-
-
 orderbookLoop :: ListPass
       -> IO (NewPositioning,FutureInfo,FutureInfo,OrderBook,OrderBook,BookStats)
 orderbookLoop (posinfo,longinfo,shortinfo,(vAmount,vSide'),bidBook,askBook,gen1,gen2,fullwallsASK,fullwallsBIDS,sPoint,takeWall)= do
-
-
-
 
                           -- | local variables      
                           let (volumeBID, volumeASK) =
@@ -374,7 +626,13 @@ orderbookLoop (posinfo,longinfo,shortinfo,(vAmount,vSide'),bidBook,askBook,gen1,
                                 , listBID', vSide', vAmount, sprd' ,sPrice ,bidAskR')
                           let insertinInfo = formatAndPrintInfo newbookDetails
                           insertinInfo -- THIS IS ONLY CONSOLE
-                          print sPrice
+
+                          print sPrice -- TODO: remove
+
+
+
+
+
 
                           -- ? position future
   -- | check if the future file is empty     
@@ -399,15 +657,26 @@ orderbookLoop (posinfo,longinfo,shortinfo,(vAmount,vSide'),bidBook,askBook,gen1,
                           let longliq =  fst liquidationsInfo
                           let shortliq = snd liquidationsInfo
 
-                          initRun <- firstRun (volumeSplitT ,volumeSplitM ) sPrice
+
                           putStrLn "initRun\n"
-                          print initRun
+                          initRun <- firstRun (volumeSplitT ,volumeSplitM ) sPrice
+                          otherRun <- normalRun (volumeSplitT ,volumeSplitM ) (longliq, shortliq) sPrice
+
+
 
 
                           print $ "hj" ++ show isFutureEmpt
-                          let newPositionFuture = if isFutureEmpt then fst initRun else (longliq, shortliq)
-                          let newPositions =  snd initRun -- (TakerTuple,MakerTuple)
-                        
+                          let newPositionFuture = if isFutureEmpt then fst initRun else fst otherRun
+
+                          -- (TakerTuple,MakerTuple)
+                          let newPositions :: NewPositioning =
+                                            if isFutureEmpt
+                                              then let ((taker1, maker1), (taker2, maker2)) = (snd initRun, posinfo)
+                                                  in (taker1 ++ taker2, maker1 ++ maker2)
+                                              else let ((taker1, maker1), (taker2, maker2)) = (snd otherRun, posinfo)
+                                                  in (taker1 ++ taker2, maker1 ++ maker2)
+
+
                           -- posFuture <- positionFuture -- transaction
                           -- print isFutureEmpt
                           -- if no read the contents and move on isnotemptygenerator
@@ -419,131 +688,5 @@ orderbookLoop (posinfo,longinfo,shortinfo,(vAmount,vSide'),bidBook,askBook,gen1,
                           -- | returning the orderbook
                           return (newPositions,fst newPositionFuture, snd newPositionFuture,finalBookBid, finalBookAsk, newbookDetails)
 
-{-
-getNewPositionFuture isFutureEmpt volumeSplit sPrice info liquidated = do
-    if isFutureEmpt
-                        then firstRun volumeSplit sPrice
-                        else do
-                            undefined
-                            return (longliq, shortliq)
--}
 
-
-
-firstRun :: ([Int],[Int]) -> Double
-  -> IO ((FutureInfo, FutureInfo),NewPositioning) -- updated acc
-firstRun (volumeSplitT, volumeSplitM)  sPrice = do
--- // DANGER EXPERIMENTAL CODE BELOW                       
-                          -- only splits volume
-                          putStrLn "\n\n\n"
-                          --print vAmount >> print vSide'
-
-                          putStrLn "\n\n\n"
-                          putStrLn "taker"
-
-                         -- volumeSplitT <- generateVolumes numTakers vAmount -- split the volume
-                          if any (< 0) volumeSplitT  then error "volume split consists of a negative element" else print volumeSplitT
-
-                          putStrLn "maker"
-
-                        --  volumeSplitM <- generateVolumes numMakers vAmount -- split the volume
-                          if any (< 0) volumeSplitM  then error "volume split consists of a negative element" else print volumeSplitM
-
-                          -- main process
-                          isFutureEmpt <- isFutureEmpty
-                          ifempty      <- initGenerator volumeSplitT volumeSplitM
-                          print ifempty
-
-                          emptyFuture  <- positionFuture sPrice ifempty
-                          putStrLn "\n\n\n\n"
-                          print "xh1"
-                          print emptyFuture
-                          putStrLn "\n\n\n\n"
-                          let emptyWrite = Transaction {future = emptyFuture}
-
-                          Control.Monad.when isFutureEmpt $ BL.appendFile posFutureP (encode emptyWrite)
-
-                          -- final
-
-                          let (newLongsAcc, newShortsAcc) = (filterFuture "f" emptyWrite, filterFuture "z" emptyWrite)
-
-                          return ((newLongsAcc, newShortsAcc), ifempty)
-{-
-                          putStrLn $ "\nF fltr:\n" ++  show newLongsAcc
-                          putStrLn $ "\nZ fltr:\n" ++  show newShortsAcc
--}
-
-normalRun :: ([Int],[Int]) -> (FutureInfo, FutureInfo) -> Double
-    -> IO
-          ([(Int,String,String)] -- liqudation list
-
-          , FutureInfo  -- returning new acc for future longs
-          , FutureInfo) -- returning new acc for future shorts
-
-normalRun (volumeSplitT, volumeSplitM) (oldLongFuture, oldShortFutur) sPrice = do
-
-
-  let liquidationList = undefined
-  let newLongsAcc     = undefined
-  let newShortsAcc    = undefined
-
-  return (liquidationList, newLongsAcc, newShortsAcc)
-
-
-
-
-
-
-
--- | helper funciton for the funciton below (where is everything starting at)
-initStats :: Stats
-initStats = Stats 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
--- | aggregating  stats together
-aggregateStats :: (TakerTuple, MakerTuple) -> Stats -> Stats
-aggregateStats (taker, makers) stats  =
-  Stats
-          { overallOI = overallOI stats + interestorPlus taker makers - interestorMinus taker makers,
-            totalVolume = totalVolume stats + foldl (\acc (x, _) -> acc + x) 0 taker,
-            buyVolume =
-              buyVolume stats + foldl (\acc (x, y) -> if y == "x" || y == "z" then acc + x else acc) 0 taker,
-            sellVolume =
-              sellVolume stats + foldl (\acc (x, y) -> if y == "y" || y == "f" then acc + x else acc) 0 taker,
-            takerXc =
-              takerXc stats + countElements "x" taker,
-            takerYc =
-              takerYc stats + countElements "y" taker,
-            takerZc =
-              takerZc stats + countElements "z" taker,
-            takerFc =
-              takerFc stats + countElements "f" taker,
-            makerXc =
-              makerXc stats
-                + countElements "x" makers,
-            makerYc = makerYc stats + countElements "y" makers ,
-            makerZc =
-              makerZc stats + countElements "z" makers,
-            makerFc =
-              makerFc stats
-                +  countElements "f" makers,
-            offX = offX stats + orderSize "x" taker + orderSize "x" makers,
-            offY = offY stats + orderSize "y" taker + orderSize "y" makers,
-            offZ = offZ stats + orderSize "z" taker + orderSize "z" makers,
-            offF = offF stats + orderSize "f" taker + orderSize "f" makers,
-            takerX =
-              takerX stats + orderSize "x" taker,
-            takerY =
-              takerY stats + orderSize "y" taker,
-            takerZ =
-              takerZ stats + orderSize "z" taker,
-            takerF =
-              takerF stats + orderSize "f" taker,
-            makerX =
-              makerX stats + orderSize "x" makers,
-            makerY =
-              makerY stats + orderSize "y" makers,
-            makerZ =
-              makerZ stats + orderSize "z" makers,
-            makerF =
-              makerF stats + orderSize "f" makers
-      }
 
