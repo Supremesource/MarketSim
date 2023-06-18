@@ -306,12 +306,31 @@ run
              posFut <- positionFuture 1000.00 testingList
              print posFut
              putStrLn "\n\n\n\n\n\n\n\n\n"
---             print listofvolumes
+        
+        
+          
             
-             let futureInfo1 = [(900,1000,"z"),(1200,700,"z"),(14000,1000,"z"),(100,700,"z")] 
-             let futureInfo2 = [(900,1000,"f"),(1200,700,"f"),(14000,1000,"f"),(100,700,"f")] 
+             
+             
+             
+             
+             --             print listofvolumes
+            
+             let futureInfo1 = [(900,100000,"z"),(1200,70000,"z"),(14000,100000,"z"),(100,70000,"z")] :: FutureInfo 
+             let futureInfo2 = [(900,100000,"f"),(1200,70000,"f"),(14000,100000,"f"),(100,70000,"f")] :: FutureInfo
              tst <- liquidationDuty futureInfo1 futureInfo2 1000.0
              putStrLn $ "liq " ++ show tst
+
+             putStrLn "\n\n\n\n\n\n\n\n\n"
+             let volumeList1= [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000]
+
+             let volumeList2 = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000]
+             genZ <- normalGenerator volumeList1 volumeList2 (futureInfo2, futureInfo1)
+             print genZ
+
+             putStrLn "\n\n\n\n\n\n\n\n\n" 
+             
+
 
             -- // testing :
            --  print $ "List of Vol: \n" ++ show listofvolumes
