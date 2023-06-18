@@ -35,7 +35,9 @@ completed for about 60%
 
 add functional second run function and forced circulation, fix positioning writing. Then move onto fronend practicing, would be success for the day.
 
-
+19.6
+finish TODO in util so normal run works
+pass liquidatoion volume
 
 THAT WOULD BE SUCESS FOR THE DAY !
 
