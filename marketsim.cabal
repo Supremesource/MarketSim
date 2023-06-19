@@ -34,6 +34,7 @@ library
       DataTypes
       Colours
   other-modules:
+      PosCycle
       Main
       Paths_marketsim
   hs-source-dirs:

@@ -340,17 +340,10 @@ run
              let positioningTupleShort = [(10000,"z"),(90000,"z"), (50000,"z")]
              
              establishRunNormal <- normalRun (volumeList1, volumeList2 )(futureInfo2, futureInfo1) startingPric 
+             putStrLn "established run:"
              print establishRunNormal
+            
 
-            {-
-             putStrLn "\n\n\n\n\n\n\n\n\n"
-             print $ fst establishRunNormal
-             putStrLn "\n\n\n New Positions:"
-             print $ snd establishRunNormal
-             putStrLn "\n\n\n\n\n\n\n\n\n"
-             print $ filterFutureAmount positioningTupleLong  futureInfo2 
-
--}
 
 
 

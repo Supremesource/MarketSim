@@ -92,9 +92,9 @@ executables:
     
 
 # Comment out the tests section if you don't have test directory or modules.
-# tests:
-#   marketsim-test:
-#     main:                Spec.hs
+#  tests:
+#    marketsim-test:
+#      main:                Spec.hs
 #     source-dirs:         test
 #     ghc-options:
 #     - -threaded
