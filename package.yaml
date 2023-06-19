@@ -53,6 +53,8 @@ library:
    - RunSettings
    - DataTypes
    - Colours
+   - Generator
+   - PosCycle
   default-extensions:
    - ImportQualifiedPost
    - InstanceSigs

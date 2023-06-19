@@ -29,7 +29,7 @@ recursiveList (posinfo,longinfo,shortinfo,[], bidBook, askBook, _, _, _, _, _, _
     BL.writeFile posFutureP writePositionFuture'
     BL.writeFile bidBookP (encode writeBidBook)
     BL.writeFile askBookP (encode writeAskBook)
-    print $ "positioning " ++ show posinfo
+   -- print $ "positioning " ++ show posinfo
 
     return (posinfo,longinfo,shortinfo,bidBook, askBook, bookDetails)
 
@@ -49,7 +49,6 @@ recursiveList (posinfo,longinfo, shortinfo, x:xs, bidBook, askBook, gen1, gen2,
 orderbookLoop :: ListPass
       -> IO (NewPositioning,FutureInfo,FutureInfo,OrderBook,OrderBook,BookStats)
 orderbookLoop (posinfo,longinfo,shortinfo,(vAmount,vSide'),bidBook,askBook,gen1,gen2,fullwallsASK,fullwallsBIDS,sPoint,takeWall)= do
-
                           -- | local variables      
                           let (volumeBID, volumeASK) =
                                 calculateVolumes vSide' vAmount
@@ -100,66 +99,47 @@ orderbookLoop (posinfo,longinfo,shortinfo,(vAmount,vSide'),bidBook,askBook,gen1,
                           insertinInfo -- THIS IS ONLY CONSOLE
 
 
-
-
-
-
-
-
-
-
-                          -- ? position future
-  -- | check if the future file is empty     
-
-                          isFutureEmpt <- isFutureEmpty
+                          -- ? POSITION FUTURE  
+                          -- | check if the future file is empty                    
                           numTakers    <- randomRIO (1, maxTakers) :: IO Int -- select how many takers
                           numMakers    <- randomRIO (1, maxMakers) :: IO Int -- select how many makers
                           volumeSplitT <- generateVolumes numTakers vAmount  -- split the volume
                           volumeSplitM <- generateVolumes numMakers vAmount  -- split the volume
-
                           liquidated   <- liquidationDuty longinfo shortinfo sPrice
+                          
 
                           let liquidationIO = fst liquidated
-                          putStrLn $ "\nliquidations: " ++ show liquidationIO
-
-
                           let liquidationsInfo = snd liquidated
                           let liquidationsInfo' = fst liquidated
-
                           let longliq =  fst liquidationsInfo
                           let shortliq = snd liquidationsInfo
+                          run <- normalRun (volumeSplitT ,volumeSplitM ) (longliq, shortliq) sPrice
+                         
+                         
 
-
-
-                          initRun <- firstRun (volumeSplitT ,volumeSplitM ) sPrice
-                          otherRun <- normalRun (volumeSplitT ,volumeSplitM ) (longliq, shortliq) sPrice
-
-                          let otherRunSeq = let ((firstOld, secondOld), (firstNew, secondNew), newPositioning) = otherRun
+                          let otherRunSeq = let ((firstOld, secondOld), (firstNew, secondNew), newPositioning) = run
                                         in ((futureInfoToSeq firstOld, futureInfoToSeq secondOld), 
                                             (futureInfoToSeq firstNew, futureInfoToSeq secondNew), 
                                             newPositioning)
 
-
-
-                          let concatOtherRun = (\((frst, fst'), (scnd, snd'), _) -> 
+                          let concatOtherRun = (\((frst, fst'), (snd',scnd ), _) ->  
                                                                         (seqToFutureInfo $ frst <> scnd, 
                                                                         seqToFutureInfo $ fst' <> snd')) otherRunSeq
 
+                          let newPositionFuture = concatOtherRun
 
-                          let newPositionFuture = if isFutureEmpt then fst initRun else concatOtherRun
-
-
-
+                          -- TODO get rid of that `++` and use `<>` instead
                           -- (TakerTuple,MakerTuple)
-                          let newPositions :: NewPositioning =
-                                            if isFutureEmpt
-                                              then let ((taker1, maker1), (taker2, maker2)) = (snd initRun, posinfo)
-                                                  in (taker1 ++ taker2, maker1 ++ maker2)
-                                              else let ((taker1, maker1), (taker2, maker2)) = ((\(_, _, laste) -> laste) otherRun, posinfo)
-                                                  in (taker1 ++ taker2, maker1 ++ maker2)
+                          let newPositions :: NewPositioning =                                        
+                                    let ((taker1, maker1), (maker2,taker2)) = ((\(_, _, laste) -> laste) run, posinfo)
+                                          in (taker1 ++ taker2, maker1 ++ maker2)
+
+                          -- | returning the accumulators
+                          return (newPositions,fst newPositionFuture, snd newPositionFuture,finalBookBid, finalBookAsk, newbookDetails)
 
 
-                          -- posFuture <- positionFuture -- transaction
+
+                           -- posFuture <- positionFuture -- transaction
                           -- print isFutureEmpt
                           -- if no read the contents and move on isnotemptygenerator
                           -- if empty then write init generator consisting of only opening|+)
@@ -168,4 +148,3 @@ orderbookLoop (posinfo,longinfo,shortinfo,(vAmount,vSide'),bidBook,askBook,gen1,
                           -- isnotemptygenerator --> scanning for liquidation info -> paring "left over empty" with new based off of statistics
                           -- if liquidation pass as a volume
                           -- | returning the orderbook
-                          return (newPositions,fst newPositionFuture, snd newPositionFuture,finalBookBid, finalBookAsk, newbookDetails)

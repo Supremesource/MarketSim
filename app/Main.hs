@@ -26,7 +26,8 @@ import           Lib
 import           RunSettings
 import           Statistics
 import           Util
-
+import           Generator
+import           PosCycle
 
 
 -- | Entry point of program
@@ -40,13 +41,13 @@ mainLoop :: Stats -> Int -> [(Int, Position)] -> IO [(Int, VolumeSide)]
 mainLoop aggregatedStats remainingRuns accumulatedStats = do
   if remainingRuns > 0
     then do
-     
+
    {-  
       putStrLn "+------------+"
       putStrLn $ "|RUN ID   " ++ show remainingRuns
       putStrLn "+------------+"
      -}
-     
+
       positions <-
         forM [1 .. numPositions] $ \indexPosition -> do
           randomToTempleate <- randomOptionGen
@@ -66,10 +67,10 @@ mainLoop aggregatedStats remainingRuns accumulatedStats = do
         "|RUN: " ++ show remainingRuns ++ " CONTENTS & aggregatedStats" ++ "|"
       putStrLn "+------------------------------------+\n"
       printStats newAggregatedStats
--}   
-   
-   
-   
+-}
+
+
+
       mainLoop newAggregatedStats (remainingRuns - 1) newAccumulatedStats
     else do
       printFinal aggregatedStats
@@ -248,13 +249,13 @@ run
                        then return futureAccLong
                        else do
                          filterFuture "f" <$> readFuture
-            
+
              initAccShortFuture <- if isFutureEmpt
                        then return futureAccLong
                        else do
                          filterFuture "z" <$> readFuture
-            
-            
+
+
 
 
              (_, _, _, _,_, _) <-
@@ -291,62 +292,8 @@ run
              putStrLn $ gray "OUTPUT SUCCESFULLY GENERATED"
 
 
-
--- // position management block
-            -- |
-
-             let testingList = ([(100,"x"),(200,"x"),(300,"x"),(150,"z")], [(100,"f"),(200,"f"),(300,"y"),(150,"f")])
-
-             putStrLn "testlist \n"
-             print testingList
-
-
-             putStrLn "\n\n\n\n\n\n\n\n\n"
-
-             posFut <- positionFuture 1000.00 testingList
-             print posFut
-             putStrLn "\n\n\n\n\n\n\n\n\n"
-        
-        
-          
-            
-             
-             
-             
-             
-             --             print listofvolumes
-            
-             let futureInfo1 = [(900,100000,"z"),(1200,70000,"z"),(14000,100000,"z"),(100,70000,"z")] :: FutureInfo 
-             let futureInfo2 = [(900,100000,"f"),(1200,70000,"f"),(14000,100000,"f"),(100,70000,"f")] :: FutureInfo
-            
-            
-             liquidated <- liquidationDuty futureInfo1 futureInfo2 1000.0
-             putStrLn $ "liq " ++ show liquidated
-             
-             putStrLn "\n\n\n\n\n\n\n\n\n"
-             let volumeList1= [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000]
-             let volumeList2 = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000]
-             let startingPric = 1000.0
-             genZ <- normalGenerator volumeList1 volumeList2 (futureInfo2, futureInfo1)
-             --print genZ
-
-             putStrLn "\n\n\n\n\n\n\n\n\n" 
-             putStrLn "\n\n\n\n\n\n\n\n\n"
-             putStrLn "\n\n\n\n\n\n\n\n\n"
-                 {-
-                    Testing the normal run funciton          
-                 -}   
-             let positioningTupleLong = [(10000,"f"),(90000,"f"), (50000,"f")]
-             let positioningTupleShort = [(10000,"z"),(90000,"z"), (50000,"z")]
-             
-             establishRunNormal <- normalRun (volumeList1, volumeList2 )(futureInfo2, futureInfo1) startingPric 
-             putStrLn "established run:"
-             print establishRunNormal
-            
-
-
-
-
+             let demo = posFutureTestEnviromentHighlyDanngerous
+             demo
 
 
 
