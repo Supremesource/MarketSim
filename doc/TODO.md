@@ -39,7 +39,15 @@ add functional second run function and forced circulation, fix positioning writi
 finish TODO in util so normal run works
 pass liquidatoion volume
 
+
+20.6 
+Add liquidation circulation
+finish testing everything and implement complex checking mechanisms
+
 THAT WOULD BE SUCESS FOR THE DAY !
+
+
+
 
 AT THE END DO:
 Fronend

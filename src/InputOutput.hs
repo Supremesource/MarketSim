@@ -8,7 +8,6 @@ module InputOutput where
 -- | external libraries
 import           Colours
 import           Control.Monad
-import qualified Data.ByteString.Char8  as B
 import           Data.Time.Clock.POSIX  (getPOSIXTime)
 import           System.Random          (Random (randomRs), mkStdGen)
 import           Text.Printf            (printf)
