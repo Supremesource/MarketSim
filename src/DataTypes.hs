@@ -175,17 +175,14 @@ data BookStats = BookStats {
                    , startingprice :: Double
                    , bidAskRatio :: Double
                    }
-type NewPositioning = (TakerTuple, MakerTuple)
 
-type RecursionPass = (NewPositioning, FutureInfo, FutureInfo, VolumeList, OrderBook, OrderBook, Generator, Generator, FullWall, FullWall, StartingPoint, Totakefromwall, [BookStats] )
-
-type FutureAcc = (FutureInfo, FutureInfo)
-
-type ListPass = (NewPositioning,FutureInfo, FutureInfo, Volume , OrderBook , OrderBook, Generator, Generator, FullWall, FullWall, StartingPoint, Totakefromwall )
-
-type Position = ([(Int, String)], [(Int, String)])
-
-type FutureInfo = [(Double, Int, String)]
+type NewPositioning   =   (TakerTuple, MakerTuple)
+type LiquidationCall  =   [(Int,String,String)] 
+type RecursionPass    =   (LiquidationCall,NewPositioning, FutureInfo, FutureInfo, VolumeList, OrderBook, OrderBook, Generator, Generator, FullWall, FullWall, StartingPoint, Totakefromwall, [BookStats] )
+type FutureAcc        =   (FutureInfo, FutureInfo)
+type ListPass         =   (LiquidationCall,NewPositioning,FutureInfo, FutureInfo, Volume , OrderBook , OrderBook, Generator, Generator, FullWall, FullWall, StartingPoint, Totakefromwall )
+type Position         =   ([(Int, String)], [(Int, String)])
+type FutureInfo       =   [(Double, Int, String)]
 
 data Transaction = Transaction {
     future :: FutureInfo

@@ -4,9 +4,11 @@ module PosCycle where
 -- | module of utility funcitons
 -- | importing external libraries
 import qualified Data.ByteString.Lazy as BL
+import qualified Data.Sequence as Seq
+import Data.Foldable (toList)
 import System.Random
     ( randomRIO )
-import           Data.Aeson (encode, decode)
+import           Data.Aeson (decode)
 import Control.Monad
 import qualified Data.Bifunctor
 
@@ -16,6 +18,10 @@ import           Filepaths
 import           Lib
 import           RunSettings
 import           Util
+
+
+
+-- ! POSITION FUTURE
 
 -- ! Most comperhensive SUMMARY of the WHOLE program
                                                                               {-
@@ -67,8 +73,6 @@ import           Util
  can move onto the frontend/ do another simulation run with different settings. 
 
                                                                               -}
-
--- ! POSITION FUTURE
 
 -- ? funcitons for the position future
 -- PACKAGE CLOSING CONVERSION X & Y TO F & Z
@@ -125,7 +129,6 @@ oppositeSide :: String -> String
 oppositeSide side = if side == "x" then "y" else "x"
 
 
-
 randomSide :: IO String
 randomSide = do
     randVal <- randomRIO (1, 10) :: IO Int
@@ -141,7 +144,6 @@ initGenerator takerLst makerLst = do
   let takerT = zip takerLst $ replicate (length takerLst) takerSide'
   let makerT = zip makerLst $ replicate (length makerLst) makerside
   return (takerT, makerT)
-
 
 
 normalGenerator :: [Int] -> [Int] -> (FutureInfo,FutureInfo) -> IO (TakerTuple, MakerTuple)
@@ -177,22 +179,6 @@ normalGenerator takerLst makerLst (toTakeFromLong, toTakeFromShort) = do
       return (takerT, makerT)
 
 
-  -- let long tuple  = (/(_,n,s) -> (x, y) where x = map sum (n) where y = fst (s))
-  -- let short tuple = (/(_,n,s) -> (x, y) where x = map sum (n) where y = fst (s))
-  --takeOutOfFuture = undefined
-
-        {-
-                      secondGenerator :: [Int] -> [Int] -> (FutureInfo,FutureInfo) -> IO (TakerTuple, MakerTuple)
-                      secondGenerator takerLst makerLst (toTakeFromLong,toTakeFromShort) = do
-                        takerSide' <- randomSide
-
-
-
-
-                        return (takerT, makerT)
-
-        -}
-
 -- ? helper funcitons for position management
 
 -- | check if the future file is empty
@@ -206,7 +192,6 @@ readFuture = do
   case future' of
     Nothing -> error "Error reading future file"
     Just x  -> return x
-
 
 filterFuture :: String -> Transaction -> FutureInfo
 filterFuture pos transaction = filter (\(_, _, s) -> s == pos) (future transaction)
@@ -246,8 +231,6 @@ tuplesToSides ((n,s):takerT, makerT) = if isTakerBuying s
                                         then ((n,s):takerT, makerT)
                                         else (makerT,(n,s):takerT)
 
-
-
 -- ? liquidations
 randomLiquidationEvent :: IO String
 randomLiquidationEvent = do
@@ -264,124 +247,114 @@ liquidationDuty futureInfoL futureInfoS price = do
              then randomLiquidationEvent >>= \event -> return (n, s, event)
              else return (0, "", "")))
 
-    liquidationEventsL <- liquidationFunction futureInfoL
-    putStrLn "liquidationEventsL \n\n"
- 
+    liquidationEventsL <- liquidationFunction futureInfoL 
     liquidationEventsS <- liquidationFunction futureInfoS
 
-    let liquidationListL = filter (\(n, _, _) -> n /= 0) liquidationEventsL
-    let liquidationListS = filter (\(n, _, _) -> n /= 0) liquidationEventsS
-    putStrLn "\n\n\n"            -- TODO: remove
-   
-    putStrLn "\n\n\n short"      -- TODO: remove 
-
-
+    let liquidationListL   = filter (\(n, _, _) -> n /= 0) liquidationEventsL
+    let liquidationListS   = filter (\(n, _, _) -> n /= 0) liquidationEventsS
     let updatedFutureInfoL = filter (\(p,_,_) -> price <= p) futureInfoL
     let updatedFutureInfoS = filter (\(p,_,_) -> price >= p) futureInfoS
-    putStrLn "\n\n\n longsL:"  -- TODO: remove
-
-    putStrLn "\n\n\n shortsL:" -- TODO: remove
 
     return (liquidationListL ++ liquidationListS, (updatedFutureInfoL, updatedFutureInfoS))
 
 
 -- ? Postion  Generatorts
 -- | cycle management
-
-{-
-firstRun :: ([Int],[Int]) -> Double
-  -> IO ((FutureInfo, FutureInfo),NewPositioning) -- updated acc
-firstRun (volumeSplitT, volumeSplitM)  sPrice = do
-                  {-
-                getNewPositionFuture isFutureEmpt volumeSplit sPrice info liquidated = do
-                    if isFutureEmpt
-                                        then firstRun volumeSplit sPrice
-                                        else do
-                                            undefined
-                                            return (longliq, shortl6iq)
-                -}
--- // DANGER EXPERIMENTAL CODE BELOW                       
-                          -- only splits volume
-                          putStrLn "\n\n\n"
-                          --print vAmount >> print vSide'
-
-
-                          -- volumeSplitT <- generateVolumes numTakers vAmount -- split the volume
-                          if any (< 0) volumeSplitT  then error "volume split consists of a negative element" else print volumeSplitT
-
-                          putStrLn "maker"
-
-                          --  volumeSplitM <- generateVolumes numMakers vAmount -- split the volume
-                          if any (< 0) volumeSplitM  then error "volume split consists of a negative element" else print volumeSplitM
-                          -- main process
-                          isFutureEmpt <- isFutureEmpty
-                          ifempty      <- initGenerator volumeSplitT volumeSplitM
-                         
-
-                          emptyFuture  <- positionFuture sPrice ifempty
-                          putStrLn "\n\n\n\n"
-                      
-                          putStrLn "\n\n\n\n"
-                          let emptyWrite = Transaction {future = emptyFuture}
-
-                          Control.Monad.when isFutureEmpt $ BL.appendFile posFutureP (encode emptyWrite)
-
-                          -- final
-                          let (newLongsAcc, newShortsAcc) = (filterFuture "f" emptyWrite, filterFuture "z" emptyWrite)
-
-                          return ((newLongsAcc, newShortsAcc), ifempty)
-{-
-                          putStrLn $ "\nF fltr:\n" ++  show newLongsAcc
-                          putStrLn $ "\nZ fltr:\n" ++  show newShortsAcc
--}
--}
-
 -- ? PUTTING IT ALL TOGETHER
 
-normalRun :: ([Int],[Int]) -> (FutureInfo, FutureInfo) -> Double
-    -> IO
-          ( (FutureInfo , FutureInfo) -- updated old acc
-          , (FutureInfo , FutureInfo) -- updated new acc
-          ,  NewPositioning)          -- position list
-normalRun (volumeSplitT, volumeSplitM) (oldLongFuture, oldShortFuture) sPrice = do
 
-  newPositioning <- normalGenerator volumeSplitT volumeSplitM (oldLongFuture, oldShortFuture) -- THIS works
-  posFut <- positionFuture sPrice newPositioning -- THIS WORKS, this should be added to the old one
+normalRun :: ([Int],[Int]) -> (FutureInfo, FutureInfo) -> NewPositioning -> Double
+    -> IO ((  FutureInfo              -- # updated accumulator long
+            , FutureInfo)             -- # updated accumulator short
+            , NewPositioning)         -- # updated accumulator positions
 
+                                                                             {-
+# FUNCTION EXPLINATION
+
+input: `([Int],[Int]) -> (FutureInfo, FutureInfo) -> NewPositioning -> Double`
+where: `split of volume for taker and maker -> old future (acc) -> old Positions (acc)
+          current price
+
+  PROCESS: 
+
+  1. generate new positioning from the volume list
+  , this is being done by NormalGenerator
+  , note that this takes the old future accumulators as well
+  , hence if there are no previous positions that should close
+  , we generate them, and if there are, we take them into an account.
+  
+  2. generate new future:
+  , the future stands for positions with closing mandate 
+  , (z -> close short ,  f -> close long)
+  , this is being done by positionFuture, where we pass the current price
+  , as well as the transaction from the step 1.
+  
+  3. filter out the old future
+  , then we split the future into:
+  , closing long & closing short
+  , we split the transaction into 
+  , closing long & closing short
+  , we take out the closing long from the old long future 
+  , and the closing short from the old short future
+
+  4. return the new future and positioning
+  , finally a transaction is returned
+  , the new future coming out of the transaction is returned
+  , updated old future is returned
+
+output: ` updated accumulators for FUTURE
+       -> New position accumulators      `
+                                                                              -}
+            
+normalRun (volumeSplitT, volumeSplitM) (oldShortFuture, oldLongFuture) oldPositions sPrice = do
+
+  newPositioning <- normalGenerator volumeSplitT volumeSplitM (oldLongFuture, oldShortFuture) 
+  posFut <- positionFuture sPrice newPositioning 
+  
   let converToTransaction = Transaction {future = posFut}
-  let (filteredLongFuture,  filteredShortFuture) = (filterFuture "f" converToTransaction, filterFuture "z" converToTransaction) -- THIS WORKS
-
-
-  let orderedTuple = tuplesToSides newPositioning -- ! problem here
-  let (longTuple,shortTuple) =  Data.Bifunctor.bimap (filterTuple "z") (filterTuple "f") orderedTuple
- 
-
-  -- TODO make a filtered tuple funciton -> recieves z and f mixed with x and y 
-  -- TODO returns only z and f in order z first then f
-
-
+  let (filteredLongFuture,  filteredShortFuture) 
+        = (filterFuture "f" converToTransaction, filterFuture "z" converToTransaction) 
+  let orderedTupleNew = tuplesToSides newPositioning 
+  let orderedTupleOld = tuplesToSides oldPositions
+  let (longTuple,shortTuple) =  Data.Bifunctor.bimap (filterTuple "z") (filterTuple "f") orderedTupleNew
   let (filteredShortTuple, filteredLongTuple) = (longTuple,shortTuple)
+  let (newLongsAcc,newShortsAcc) =
+       (filterFutureAmount filteredLongTuple oldLongFuture, filterFutureAmount filteredShortTuple oldShortFuture)
+  
+  let otherRunSeq = let ((firstOld, secondOld), (firstNew, secondNew), newPos) =  ((newLongsAcc,newShortsAcc), (filteredLongFuture,filteredShortFuture),newPositioning)
+                                        in ((futureInfoToSeq firstOld, futureInfoToSeq secondOld), 
+                                            (futureInfoToSeq firstNew, futureInfoToSeq secondNew), 
+                                            newPos)
+  -- | FutureInfo
+  let updatedFutureAcc = (\((frst, fst'), (snd',scnd ), _) ->  
+                                    (seqToFutureInfo $ frst <> scnd, 
+                                    seqToFutureInfo $ fst' <> snd')) otherRunSeq                         
+  -- | (TakerTuple,MakerTuple)
+  let updatedPositionAcc :: NewPositioning =                                        
+        let ((taker1, maker1), (taker2,maker2)) = (orderedTupleNew,  orderedTupleOld)
+            takerSeq1 = Seq.fromList taker1
+            takerSeq2 = Seq.fromList taker2
+            makerSeq1 = Seq.fromList maker1
+            makerSeq2 = Seq.fromList maker2
+        in 
+-- TODO get rid of the performance issues within the convertion into list
+       (toList $ takerSeq1 Seq.>< takerSeq2, toList $ makerSeq1 Seq.>< makerSeq2)
 
-  let (newLongsAcc,newShortsAcc) = (filterFutureAmount filteredLongTuple oldLongFuture, filterFutureAmount filteredShortTuple oldShortFuture)
+  return (updatedFutureAcc, updatedPositionAcc)
 
- -- let (finalNewLongsAcc,finalNewShortsAcc) = (filteredLongFuture ++ newLongsAcc , filteredShortFuture ++ newShortsAcc )
-  -- let (addToAccLong,addToAccShort) = (newLongsAcc ++ filteredLongFuture, newShortsAcc ++ filteredShortFuture)
-  --test <- newPositioning
-  -- put posFut into trasaction
-  -- filter into Z and F
-  -- make a funciton that filter x and y from taker tuple and a maker tuple
-  -- pass long info & short into filterFutureAmount 
-  -- updateFromOldFuture 
-  -- filter the future
-  -- filter the new positions as a new future
-  -- return new positions
 
-  return ((newLongsAcc,newShortsAcc), (filteredLongFuture,filteredShortFuture),newPositioning)
 
+-- | cycle management
+-- ? testing potenital bugs
+-- TODO remove this whole function !
+
+
+-- ! comment this funciton if you don't want to perform any tests
 posFutureTestEnviromentHighlyDanngerous :: IO ()
 posFutureTestEnviromentHighlyDanngerous = do
   -- // position management block
-            -- |
+            
+             -- DEFINE DATA
              let startingPric = 1000.0
              let testingList = ([(100,"x"),(200,"x"),(300,"x"),(150,"z")],  -- TAKER
                                 [(100,"f"),(200,"f"),(300,"y"),(150,"f")])  -- MAKER
@@ -397,41 +370,45 @@ posFutureTestEnviromentHighlyDanngerous = do
              let positioningTupleLong = [(10000,"f"),(90000,"f"), (50000,"f")]
              let positioningTupleShort = [(10000,"z"),(90000,"z"), (50000,"z")]
 
-             liquidated <- liquidationDuty futureInfo1 futureInfo2 startingPric
+
+
+             liquidated <- liquidationDuty futureInfo2 futureInfo1 startingPric
+             
+             let liquidationInfo1 = fst liquidated
              let liquidationsInfo = snd liquidated
-             putStrLn "liquidationsInfo: "
-             print liquidationsInfo
              let longliq =  fst liquidationsInfo
              let shortliq = snd liquidationsInfo
-             establishRunNormal <- normalRun (volumeList1, volumeList2 )(longliq, shortliq) startingPric 
+             establishRunNormal <- normalRun (volumeList1, volumeList2 )(longliq, shortliq) testingList startingPric 
+
+             -- IO        
+             putStrLn "DEFINED DATA: \n"
+             putStrLn "\nTESTING LIST: "
+             print testingList
+             putStrLn "\nFUTURE INFO LONG: "
+             print futureInfo2
+             putStrLn "\nFUTURE INFO SHORT: "
+             print futureInfo1
+             putStrLn "\nVOLUME LIST 1: "
+             print volumeList1
+             putStrLn "\nVOLUME LIST 2: "
+             print volumeList2
+             putStrLn "\nSTARTING PRICE: "
+             print startingPric
              
-             let otherRunSeq = let ((firstOld, secondOld), (firstNew, secondNew), newPositioning) = establishRunNormal
-                          in ((futureInfoToSeq firstOld, futureInfoToSeq secondOld), 
-                              (futureInfoToSeq firstNew, futureInfoToSeq secondNew), 
-                              newPositioning)
+             putStrLn "\n\nLIQUIDATIONS: \n"
+             print liquidationsInfo
+             putStrLn "\n\nAdditional liquidation info: \n"
+             print liquidationInfo1
 
-             let concatOtherRun = (\((frst, fst'), (snd',scnd ), _) -> 
-                                                          (seqToFutureInfo $ frst <> scnd, 
-                                                          seqToFutureInfo $ fst' <> snd')) otherRunSeq
+             putStrLn "\n\nRUN: \n"
+             let ((newPosFutureShort, newPosFutureLong), (newPositionsLong, newPositionsShort)) = establishRunNormal
+             putStrLn "\nnewPosFutureLong:\n"
+             print newPosFutureLong
+             putStrLn "\nnewPosFutureShort:\n"
+             print newPosFutureShort
+             putStrLn "\nnewPositions:\n"
+             print newPositionsLong
+             print newPositionsShort
 
-             
 
-             let newPositions :: NewPositioning =        -- ! problem within                                 
-                                    let ((taker1, maker1), (maker2,taker2)) = ((\(_, _, laste) -> laste) establishRunNormal, testingList)
-                                          in (taker1 ++ taker2, maker1 ++ maker2)
-    
-    
-             putStrLn "\n\n\n\n establishRunNormal:"
-             print  establishRunNormal
-
-             putStrLn "\n\n\n\n otherRunSeq:" 
-             print concatOtherRun
-
-             putStrLn "\n\n\n\n Position:" 
-             print newPositions
-               
          
-
-
-            
-        
