@@ -7,6 +7,8 @@ import qualified Data.ByteString.Lazy as BL
 import System.Random
     ( RandomGen(split), randomRIO )
 import           Data.Aeson (encode)
+import qualified Data.Sequence as Seq
+import Data.Foldable (toList)
 
 -- | internal libraries
 import           DataTypes
@@ -18,8 +20,8 @@ import           PosCycle
 import           Util
 
 -- ? processor part
-recursiveList :: RecursionPass -> IO (NewPositioning,FutureInfo,FutureInfo,OrderBook, OrderBook, [BookStats])
-recursiveList (posinfo,longinfo,shortinfo,[], bidBook, askBook, _, _, _, _, _, _, bookDetails) = do
+recursiveList :: RecursionPass -> IO (LiquidationCall,NewPositioning,FutureInfo,FutureInfo,OrderBook, OrderBook, [BookStats])
+recursiveList (liqinfo,posinfo,longinfo,shortinfo,[], bidBook, askBook, _, _, _, _, _, _, bookDetails) = do
 
     filewrites1 $ tail (reverse bookDetails)
     let writeBidBook = Book { book = bidBook }
@@ -29,26 +31,31 @@ recursiveList (posinfo,longinfo,shortinfo,[], bidBook, askBook, _, _, _, _, _, _
     BL.writeFile posFutureP writePositionFuture'
     BL.writeFile bidBookP (encode writeBidBook)
     BL.writeFile askBookP (encode writeAskBook)
+    putStrLn "test liq acc: "
+    print liqinfo
    -- print $ "positioning " ++ show posinfo
 
-    return (posinfo,longinfo,shortinfo,bidBook, askBook, bookDetails)
+    return (liqinfo,posinfo,longinfo,shortinfo,bidBook, askBook, bookDetails)
 
-recursiveList (posinfo,longinfo, shortinfo, x:xs, bidBook, askBook, gen1, gen2,
+recursiveList (liqinfo,posinfo,longinfo, shortinfo, x:xs, bidBook, askBook, gen1, gen2,
     fullwallsASK, fullwallsBIDS, sPoint, takeWall, bookDetails) =
 
- orderbookLoop (posinfo,longinfo, shortinfo, x, bidBook, askBook, gen1
+ orderbookLoop (liqinfo,posinfo,longinfo, shortinfo, x, bidBook, askBook, gen1
     , gen2, fullwallsASK, fullwallsBIDS, sPoint, takeWall) >>=
-    \(newPosInfo,newLonginfo,newShortinfo,newBidBook, newAskBook, newBookDetails) -> do
+    \(newliqinfo,newPosInfo,newLonginfo,newShortinfo,newBidBook, newAskBook, newBookDetails) -> do
 
   let (newGen1, newGen2) = (fst (split gen1), fst (split gen2))
-  recursiveList (newPosInfo,newLonginfo,newShortinfo,xs,newBidBook,newAskBook,newGen1,newGen2
+  recursiveList (newliqinfo,newPosInfo,newLonginfo,newShortinfo,xs,newBidBook,newAskBook,newGen1,newGen2
     ,fullwallsASK,fullwallsBIDS,sPoint,takeWall,newBookDetails:bookDetails)
 
 
 
 orderbookLoop :: ListPass
-      -> IO (NewPositioning,FutureInfo,FutureInfo,OrderBook,OrderBook,BookStats)
-orderbookLoop (posinfo,longinfo,shortinfo,(vAmount,vSide'),bidBook,askBook,gen1,gen2,fullwallsASK,fullwallsBIDS,sPoint,takeWall)= do
+      -> IO (LiquidationCall,NewPositioning,FutureInfo,FutureInfo,OrderBook,OrderBook,BookStats)
+orderbookLoop (liqinfo,posinfo,longinfo,shortinfo,(vAmount,vSide'),bidBook,askBook,gen1,gen2,fullwallsASK,fullwallsBIDS,sPoint,takeWall)= do
+                      
+                          -- # ----------------- FUNCTION -------------------- # 
+                          -- TODO make function purely for this called orderbook  
                           -- | local variables      
                           let (volumeBID, volumeASK) =
                                 calculateVolumes vSide' vAmount
@@ -68,13 +75,21 @@ orderbookLoop (posinfo,longinfo,shortinfo,(vAmount,vSide'),bidBook,askBook,gen1,
                           -- | the / number is how smaller the insertion will be
                           let (listASK', listBID') =
                                 calculateListTuples askSetupInsert bidSetupInsert pricesASK pricesBID
--- //TODO, possible microoptimization with the stuff below :
+                         -- //TODO, possible microoptimization with the stuff below :
                           -- | let insertInAsk = if vSide == Buy then [] else listASK
                           --  / let insertInBid = if vSide == Sell then [] else listBID    // --
                           let (finalBookAsk, finalBookBid) =
                                 calculateFinalBooks vSide' askUpdateBook listASK' askBook bidUpdateBook listBID' bidBook
+                          -- # ----------------- FUNCTION -------------------- # 
+                     
+
+
+
+
+                          -- # ----------------- FUNCTION -------------------- # 
+                          -- TODO make funciton purely for this called additional book info
                           -- | ask in total in terms of count
-                          -- | bids in total in terms of count
+                          -- | bids in total in terms of count                  
                           let (asktotal, bidtotal) =
                                calculateTotalsCount finalBookAsk finalBookBid
                           -- | Ratio between bids and AKS
@@ -97,8 +112,15 @@ orderbookLoop (posinfo,longinfo,shortinfo,(vAmount,vSide'),bidBook,askBook,gen1,
                                 , listBID', vSide', vAmount, sprd' ,sPrice ,bidAskR')
                           let insertinInfo = formatAndPrintInfo newbookDetails
                           insertinInfo -- THIS IS ONLY CONSOLE
+                          -- # ----------------- FUNCTION -------------------- # 
 
 
+
+
+
+
+                          -- # ----------------- FUNCTION -------------------- # 
+                          -- TODO make a funciton purely for this called position info
                           -- ? POSITION FUTURE  
                           -- | check if the future file is empty                    
                           numTakers    <- randomRIO (1, maxTakers) :: IO Int -- select how many takers
@@ -107,39 +129,22 @@ orderbookLoop (posinfo,longinfo,shortinfo,(vAmount,vSide'),bidBook,askBook,gen1,
                           volumeSplitM <- generateVolumes numMakers vAmount  -- split the volume
                           liquidated   <- liquidationDuty longinfo shortinfo sPrice
                           
-
                           let liquidationIO = fst liquidated
                           let liquidationsInfo = snd liquidated
                           let liquidationsInfo' = fst liquidated
                           let longliq =  fst liquidationsInfo
                           let shortliq = snd liquidationsInfo
-                          run <- normalRun (volumeSplitT ,volumeSplitM ) (longliq, shortliq) sPrice
+                          run <- normalRun (volumeSplitT ,volumeSplitM ) (longliq, shortliq) posinfo sPrice
                          
-                         
-
-                          let otherRunSeq = let ((firstOld, secondOld), (firstNew, secondNew), newPositioning) = run
-                                        in ((futureInfoToSeq firstOld, futureInfoToSeq secondOld), 
-                                            (futureInfoToSeq firstNew, futureInfoToSeq secondNew), 
-                                            newPositioning)
-
-                          let concatOtherRun = (\((frst, fst'), (snd',scnd ), _) ->  
-                                                                        (seqToFutureInfo $ frst <> scnd, 
-                                                                        seqToFutureInfo $ fst' <> snd')) otherRunSeq
-
-                          let newPositionFuture = concatOtherRun
-
-                          -- TODO get rid of that `++` and use `<>` instead
-                          -- (TakerTuple,MakerTuple)
-                          let newPositions :: NewPositioning =                                        
-                                    let ((taker1, maker1), (maker2,taker2)) = ((\(_, _, laste) -> laste) run, posinfo)
-                                          in (taker1 ++ taker2, maker1 ++ maker2)
-
+                          let ((newPosFutureShort, newPosFutureLong), newPositions) = run
+                        -- # ----------------- FUNCTION -------------------- #
+                                                                     
                           -- | returning the accumulators
-                          return (newPositions,fst newPositionFuture, snd newPositionFuture,finalBookBid, finalBookAsk, newbookDetails)
+                          return (liqinfo,newPositions,newPosFutureLong, newPosFutureShort,finalBookBid, finalBookAsk, newbookDetails)
+                       
 
 
-
-                           -- posFuture <- positionFuture -- transaction
+                          -- posFuture <- positionFuture -- transaction
                           -- print isFutureEmpt
                           -- if no read the contents and move on isnotemptygenerator
                           -- if empty then write init generator consisting of only opening|+)

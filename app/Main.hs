@@ -89,7 +89,7 @@ mainLoop aggregatedStats remainingRuns accumulatedStats = do
 
 
 
-
+-- ! PUT EVERYTHING INTO WAY MORE FUNCTIONS
 
 
 -- | "indexPosition" is an index showing the number of that particular position
@@ -258,21 +258,23 @@ run
 
 
 
-             (_, _, _, _,_, _) <-
+             (_, _, _, _,_, _,_) <-
                recursiveList
-                ( initPositioningAcc
-                 ,initAccLongFuture
-                 ,initAccShortFuture
-                 ,listofvolumes
-                 , bidBook
-                 , askBook
-                 , gen1
-                 , gen2
-                 , fullwallsASK
-                 , fullwallsBIDS
-                 , initstartingPoint
-                 , inittotakefromwall
-                 , initialBookDetailsList )
+
+                (   initLiquidationAcc
+                  , initPositioningAcc
+                  , initAccLongFuture
+                  , initAccShortFuture
+                  , listofvolumes
+                  , bidBook
+                  , askBook
+                  , gen1
+                  , gen2
+                  , fullwallsASK
+                  , fullwallsBIDS
+                  , initstartingPoint
+                  , inittotakefromwall
+                  , initialBookDetailsList )
 
              -- TODO take this out of there
             -- print $ "hh111" ++ show initAccLongFuture

@@ -1,5 +1,5 @@
 {-# OPTIONS_GHC -Wno-missing-export-lists #-}
-{-# LANGUAGE TupleSections #-}
+
 module Util where
 -- | module of utility funcitons
 -- | importing external libraries
@@ -32,6 +32,21 @@ initialBookDetails = BookStats
   , startingprice   = 0.0
   , bidAskRatio     = 0.0
   }
+
+-- ? position acccumulator
+-- | accumulators for future info
+futureAccLong :: FutureInfo
+futureAccLong = [(0, 0, "")]
+
+futureAccShort :: FutureInfo
+futureAccShort = [(0, 0, "")]
+
+initPositioningAcc :: NewPositioning
+initPositioningAcc = ([],[])
+
+initLiquidationAcc :: LiquidationCall
+initLiquidationAcc = []
+
 
 setupBookDetails :: InitBookStats -> BookStats
 setupBookDetails (startingP', maxMinL' ,asksTot', bidsTot', takewall', lengchngBid'
@@ -181,18 +196,6 @@ calculateTotalsCount finalBookAsk finalBookBid =
     in (asktotal, bidtotal)
 
 
-
-
--- ? position acccumulator
--- | accumulators for future info
-futureAccLong :: FutureInfo
-futureAccLong = [(0, 0, "")]
-
-futureAccShort :: FutureInfo
-futureAccShort = [(0, 0, "")]
-
-initPositioningAcc :: NewPositioning
-initPositioningAcc = ([],[])
 
 -- Conversion functions
 futureInfoToSeq :: FutureInfo -> Seq (Double, Int, String)
