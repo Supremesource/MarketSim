@@ -47,7 +47,8 @@ finish testing everything and implement complex checking mechanisms
 THAT WOULD BE SUCESS FOR THE DAY !
 
 
-
+21.6
+fix Z position taking out of F future
 
 AT THE END DO:
 Fronend

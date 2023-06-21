@@ -241,7 +241,7 @@ run
              let listofvolumes = volumesAndSides
 
              isFutureEmpt <- isFutureEmpty
-             print isFutureEmpt
+           --  print isFutureEmpt
 
 
 
@@ -278,7 +278,7 @@ run
 
              -- TODO take this out of there
             -- print $ "hh111" ++ show initAccLongFuture
-             print initAccShortFuture
+         
 
              -- | optional warnings
              addsupto100
@@ -295,7 +295,7 @@ run
 
 
              let demo = posFutureTestEnviromentHighlyDanngerous
-             demo
+             --demo
 
 
 
