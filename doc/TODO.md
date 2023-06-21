@@ -47,10 +47,13 @@ finish testing everything and implement complex checking mechanisms
 THAT WOULD BE SUCESS FOR THE DAY !
 
 
-21.6
-fix Z position taking out of F future
+22 . 6
+
+Take the liquidations to the end make correct writing with a corresponding data
+
 
 AT THE END DO:
 Fronend
 - ADD TIME FRAME FORMATING
+
 
