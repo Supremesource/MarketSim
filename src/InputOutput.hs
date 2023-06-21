@@ -34,7 +34,7 @@ generateId = do
 formatAndPrintInfo :: BookStats -> IO ()
 formatAndPrintInfo stats = do
   identifier <- generateId
-  print "" -- take out
+  putStrLn "\n" -- take out
 {- 
 
   let formatRow x y z =
@@ -462,7 +462,7 @@ printStats stats = do
 -- | this function is called by the main loop if we reached the runs
 printFinal :: Stats -> IO ()
 printFinal aggregatedStats = do
-  print ""
+   print "\n" -- get rid of
 
 {-  
   putStrLn $

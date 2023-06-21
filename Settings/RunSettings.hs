@@ -31,12 +31,12 @@ wipingStartingValue = 1
 -- | number of positions you want to take place in the simulation run
 -- | number of positions
 numPositions :: Int
-numPositions = 100
+numPositions = 8
 
 --〇 ID = NUMRUN
 -- | number of runs, this is a loop how many times will the simulation repeat itself (random generators are updating each time though)
 numberOfRuns :: Int
-numberOfRuns = 5
+numberOfRuns = 1
 
 
 -- ! activate later
@@ -45,7 +45,7 @@ numberOfRuns = 5
 -- TODO add more complex statistic distribution
 -- | what is the maximum of makers in one transaction , i.e 1000 buy matched with 1000 sell, now the max makers filled in that transaction can be specified below
 maxMakers :: Int
-maxMakers = 40
+maxMakers = 4
 -- | note that max takers is hardcoded to be 95% of maxmakers (done on real market observtions)
 -- ? Not recommended to change this from 0.95
 maxTakers :: Int
@@ -144,7 +144,7 @@ takerxProb :: Int
 takerxProb = 7
 
 closingProb :: Int
-closingProb = 5
+closingProb = 9
 
 -- ! ORDERBOOK SETINGS
 --  + liquidity settings

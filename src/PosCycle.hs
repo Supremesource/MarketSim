@@ -12,6 +12,7 @@ import           Data.Aeson (decode)
 import Control.Monad
 import qualified Data.Bifunctor
 
+
 -- | internal libraries
 import           DataTypes
 import           Filepaths
@@ -116,7 +117,6 @@ positionFuture price (taker, maker)  = do
   where
     calcPosition (amt, side) = do
       leverage <- takenLeverage
-      print leverage
       let liquidationPrice
             | leverage /= 1 && side == "z" = (price / fromIntegral leverage) + price
             | leverage /= 1 && side == "f" = price - (price / fromIntegral leverage)
@@ -230,7 +230,7 @@ tuplesToSides ([], makerT) = (makerT, [])
 tuplesToSides ((n,s):takerT, makerT) = if isTakerBuying s
                                         then ((n,s):takerT, makerT)
                                         else (makerT,(n,s):takerT)
-
+-- ! FINE
 -- ? liquidations
 randomLiquidationEvent :: IO String
 randomLiquidationEvent = do
@@ -255,14 +255,20 @@ liquidationDuty futureInfoL futureInfoS price = do
     let updatedFutureInfoL = filter (\(p,_,_) -> price <= p) futureInfoL
     let updatedFutureInfoS = filter (\(p,_,_) -> price >= p) futureInfoS
 
-    return (liquidationListL ++ liquidationListS, (updatedFutureInfoL, updatedFutureInfoS))
+    -- filter the updatedFutureInfoL from futureInfoL
+    let newFutureInfoL = filter (\x -> not (x `elem` updatedFutureInfoL)) futureInfoL
 
+    -- filter the updatedFutureInfoS from futureInfoS
+    let newFutureInfoS = filter (\x -> not (x `elem` updatedFutureInfoS)) futureInfoS
+
+    return (liquidationListL ++ liquidationListS, (newFutureInfoL, newFutureInfoS))
+-- ! fine
 
 -- ? Postion  Generatorts
 -- | cycle management
 -- ? PUTTING IT ALL TOGETHER
 
-
+-- ! bug
 normalRun :: ([Int],[Int]) -> (FutureInfo, FutureInfo) -> NewPositioning -> Double
     -> IO ((  FutureInfo              -- # updated accumulator long
             , FutureInfo)             -- # updated accumulator short
@@ -280,7 +286,7 @@ where: `split of volume for taker and maker -> old future (acc) -> old Positions
   1. generate new positioning from the volume list
   , this is being done by NormalGenerator
   , note that this takes the old future accumulators as well
-  , hence if there are no previous positions that should close
+  , hence if there are no pre\vious positions that should close
   , we generate them, and if there are, we take them into an account.
   
   2. generate new future:
@@ -306,7 +312,7 @@ output: ` updated accumulators for FUTURE
        -> New position accumulators      `
                                                                               -}
             
-normalRun (volumeSplitT, volumeSplitM) (oldShortFuture, oldLongFuture) oldPositions sPrice = do
+normalRun (volumeSplitT, volumeSplitM) (oldLongFuture, oldShortFuture) oldPositions sPrice = do
 
   newPositioning <- normalGenerator volumeSplitT volumeSplitM (oldLongFuture, oldShortFuture) 
   posFut <- positionFuture sPrice newPositioning 
@@ -318,10 +324,10 @@ normalRun (volumeSplitT, volumeSplitM) (oldShortFuture, oldLongFuture) oldPositi
   let orderedTupleOld = tuplesToSides oldPositions
   let (longTuple,shortTuple) =  Data.Bifunctor.bimap (filterTuple "z") (filterTuple "f") orderedTupleNew
   let (filteredShortTuple, filteredLongTuple) = (longTuple,shortTuple)
-  let (newLongsAcc,newShortsAcc) =
+  let (newShortsAcc,newLongsAcc) = -- ! changed order 
        (filterFutureAmount filteredLongTuple oldLongFuture, filterFutureAmount filteredShortTuple oldShortFuture)
   
-  let otherRunSeq = let ((firstOld, secondOld), (firstNew, secondNew), newPos) =  ((newLongsAcc,newShortsAcc), (filteredLongFuture,filteredShortFuture),newPositioning)
+  let otherRunSeq = let ((firstOld, secondOld), (firstNew, secondNew), newPos) =  ((newLongsAcc,newShortsAcc), (filteredLongFuture,filteredShortFuture),newPositioning) -- ! (filteredLongFuture,filteredShortFuture)
                                         in ((futureInfoToSeq firstOld, futureInfoToSeq secondOld), 
                                             (futureInfoToSeq firstNew, futureInfoToSeq secondNew), 
                                             newPos)
@@ -356,8 +362,12 @@ posFutureTestEnviromentHighlyDanngerous = do
             
              -- DEFINE DATA
              let startingPric = 1000.0
-             let testingList = ([(100,"x"),(200,"x"),(300,"x"),(150,"z")],  -- TAKER
-                                [(100,"f"),(200,"f"),(300,"y"),(150,"f")])  -- MAKER
+
+                                --  TRY TO SWITHCH THE ORDER AND SEE IF BUGS OCCOURS
+             let testingList = (
+                                [(100,"f"),(200,"f"),(300,"y"),(150,"f")]    -- | TAKER | - buy taker
+                                ,[(100,"x"),(200,"x"),(300,"x"),(150,"z")]   -- | MAKER | - sell taker -- ! that is the bug
+                                ) 
 
              let futureInfo2 = [(900,100000,"f"),(1200,70000,"f"),(14000,100000,"f"),(100,70000,"f")] :: FutureInfo -- FUTURE INFO LONG
              let futureInfo1 = [(900,100000,"z"),(1200,70000,"z"),(14000,100000,"z"),(100,70000,"z")] :: FutureInfo -- FUTURE INFO SHORT
@@ -376,7 +386,7 @@ posFutureTestEnviromentHighlyDanngerous = do
              
              let liquidationInfo1 = fst liquidated
              let liquidationsInfo = snd liquidated
-             let longliq =  fst liquidationsInfo
+             let longliq  =  fst liquidationsInfo
              let shortliq = snd liquidationsInfo
              establishRunNormal <- normalRun (volumeList1, volumeList2 )(longliq, shortliq) testingList startingPric 
 
@@ -395,7 +405,7 @@ posFutureTestEnviromentHighlyDanngerous = do
              putStrLn "\nSTARTING PRICE: "
              print startingPric
              
-             putStrLn "\n\nLIQUIDATIONS: \n"
+             putStrLn "\n\nLIQUIDATION FREE FUTURE: \n"
              print liquidationsInfo
              putStrLn "\n\nAdditional liquidation info: \n"
              print liquidationInfo1

@@ -31,9 +31,13 @@ recursiveList (liqinfo,posinfo,longinfo,shortinfo,[], bidBook, askBook, _, _, _,
     BL.writeFile posFutureP writePositionFuture'
     BL.writeFile bidBookP (encode writeBidBook)
     BL.writeFile askBookP (encode writeAskBook)
-    putStrLn "test liq acc: "
+   
+   {-
+    putStrLn "test liq acc: \n"
     print liqinfo
+    putStrLn "------\n\n"
    -- print $ "positioning " ++ show posinfo
+   -}
 
     return (liqinfo,posinfo,longinfo,shortinfo,bidBook, askBook, bookDetails)
 
@@ -53,6 +57,7 @@ recursiveList (liqinfo,posinfo,longinfo, shortinfo, x:xs, bidBook, askBook, gen1
 orderbookLoop :: ListPass
       -> IO (LiquidationCall,NewPositioning,FutureInfo,FutureInfo,OrderBook,OrderBook,BookStats)
 orderbookLoop (liqinfo,posinfo,longinfo,shortinfo,(vAmount,vSide'),bidBook,askBook,gen1,gen2,fullwallsASK,fullwallsBIDS,sPoint,takeWall)= do
+                      
                       
                           -- # ----------------- FUNCTION -------------------- # 
                           -- TODO make function purely for this called orderbook  
@@ -128,19 +133,34 @@ orderbookLoop (liqinfo,posinfo,longinfo,shortinfo,(vAmount,vSide'),bidBook,askBo
                           volumeSplitT <- generateVolumes numTakers vAmount  -- split the volume
                           volumeSplitM <- generateVolumes numMakers vAmount  -- split the volume
                           liquidated   <- liquidationDuty longinfo shortinfo sPrice
-                          
+                       --   print "infos"
+                       --   print longinfo
+                          print shortinfo
                           let liquidationIO = fst liquidated
-                          let liquidationsInfo = snd liquidated
-                          let liquidationsInfo' = fst liquidated
-                          let longliq =  fst liquidationsInfo
-                          let shortliq = snd liquidationsInfo
+                          let liquidationFuture = snd liquidated
+
+                          let longliq =  fst liquidationFuture
+                          let shortliq = snd liquidationFuture
+                          let newLiqInfo = liquidationIO 
                           run <- normalRun (volumeSplitT ,volumeSplitM ) (longliq, shortliq) posinfo sPrice
+
                          
                           let ((newPosFutureShort, newPosFutureLong), newPositions) = run
+                     --     putStrLn "liquidations \n"
+                      --    print longliq
+                        --  print shortliq
+
+                          putStrLn "\n\n\ntest  short /future/: \n"
+                          print newPosFutureShort
+                          putStrLn "test  long /future/: \n"
+                          print newPosFutureLong
+                          putStrLn "test positions: \n"
+                          print newPositions
+                          putStrLn "\n\n\n"
                         -- # ----------------- FUNCTION -------------------- #
                                                                      
                           -- | returning the accumulators
-                          return (liqinfo,newPositions,newPosFutureLong, newPosFutureShort,finalBookBid, finalBookAsk, newbookDetails)
+                          return (newLiqInfo,newPositions,newPosFutureLong, newPosFutureShort,finalBookBid, finalBookAsk, newbookDetails)
                        
 
 
