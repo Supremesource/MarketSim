@@ -146,8 +146,8 @@ initGenerator takerLst makerLst = do
   return (takerT, makerT)
 
 
-normalGenerator :: [Int] -> [Int] -> (FutureInfo,FutureInfo) -> IO (TakerTuple, MakerTuple)
-normalGenerator takerLst makerLst (toTakeFromLong, toTakeFromShort) = do
+normalGenerator :: [Int] -> [Int] -> (FutureInfo,FutureInfo) -> String -> IO (TakerTuple, MakerTuple)
+normalGenerator takerLst makerLst (toTakeFromLong, toTakeFromShort) liqSide = do
   unless (closingProb >= 1 && closingProb <= 10) $ error "closingProb must be between 1 and 10"
   let genType = if sum takerLst + sum makerLst >= sum (map (\(_,n,_) -> n) toTakeFromLong) &&
                     sum takerLst + sum makerLst >= sum (map (\(_,n,_) -> n) toTakeFromShort)
@@ -157,20 +157,23 @@ normalGenerator takerLst makerLst (toTakeFromLong, toTakeFromShort) = do
     openingGen :: IO (TakerTuple, MakerTuple)
     openingGen = do
       takerSide' <- randomSide
-      let makerside = oppositeSide takerSide'
-      let takerT = zip takerLst $ replicate (length takerLst) takerSide'
+      let finalTakerSide = if liqSide /= "" then liqSide else takerSide'
+
+      let makerside = oppositeSide finalTakerSide
+      let takerT = zip takerLst $ replicate (length takerLst) finalTakerSide
       let makerT = zip makerLst $ replicate (length makerLst) makerside
       return (takerT, makerT)
     normalGen :: IO (TakerTuple, MakerTuple)
     normalGen = do
       takerSide' <- randomSide
-      let makerside = oppositeSide takerSide'
-      let closingSideT = if takerSide' == "x" then "z" else "f"
+      let finalTakerSide = if liqSide /= "" then liqSide else takerSide'
+      let makerside = oppositeSide finalTakerSide
+      let closingSideT = if finalTakerSide == "x" then "z" else "f"
       let closingSideM = if makerside == "x" then "z" else "f"
       takerT <- mapM (\val ->
          do
         randVal <- randomRIO (1, 10) :: IO Int
-        let sideT = if randVal < closingProb then closingSideT else takerSide'
+        let sideT = if randVal < closingProb then closingSideT else finalTakerSide
         return (val, sideT)) takerLst
       makerT <- mapM (\val -> do
         randVal <- randomRIO (1, 10) :: IO Int
@@ -247,7 +250,7 @@ liquidationDuty futureInfoL futureInfoS price = do
              then randomLiquidationEvent >>= \event -> return (n, s, event)
              else return (0, "", "")))
 
-    liquidationEventsL <- liquidationFunction futureInfoL 
+    liquidationEventsL <- liquidationFunction futureInfoL
     liquidationEventsS <- liquidationFunction futureInfoS
 
     let liquidationListL   = filter (\(n, _, _) -> n /= 0) liquidationEventsL
@@ -256,10 +259,10 @@ liquidationDuty futureInfoL futureInfoS price = do
     let updatedFutureInfoS = filter (\(p,_,_) -> price >= p) futureInfoS
 
     -- filter the updatedFutureInfoL from futureInfoL
-    let newFutureInfoL = filter (\x -> not (x `elem` updatedFutureInfoL)) futureInfoL
+    let newFutureInfoL = filter (`notElem` updatedFutureInfoL) futureInfoL
 
     -- filter the updatedFutureInfoS from futureInfoS
-    let newFutureInfoS = filter (\x -> not (x `elem` updatedFutureInfoS)) futureInfoS
+    let newFutureInfoS = filter (`notElem` updatedFutureInfoS) futureInfoS
 
     return (liquidationListL ++ liquidationListS, (newFutureInfoL, newFutureInfoS))
 -- ! fine
@@ -269,7 +272,7 @@ liquidationDuty futureInfoL futureInfoS price = do
 -- ? PUTTING IT ALL TOGETHER
 
 -- ! bug
-normalRun :: ([Int],[Int]) -> (FutureInfo, FutureInfo) -> NewPositioning -> Double
+normalRun :: ([Int],[Int]) -> (FutureInfo, FutureInfo) -> NewPositioning -> Double -> String
     -> IO ((  FutureInfo              -- # updated accumulator long
             , FutureInfo)             -- # updated accumulator short
             , NewPositioning)         -- # updated accumulator positions
@@ -311,55 +314,54 @@ where: `split of volume for taker and maker -> old future (acc) -> old Positions
 output: ` updated accumulators for FUTURE
        -> New position accumulators      `
                                                                               -}
-            
-normalRun (volumeSplitT, volumeSplitM) (oldLongFuture, oldShortFuture) oldPositions sPrice = do
 
-  newPositioning <- normalGenerator volumeSplitT volumeSplitM (oldLongFuture, oldShortFuture) 
-  posFut <- positionFuture sPrice newPositioning 
-  
+normalRun (volumeSplitT, volumeSplitM) (oldLongFuture, oldShortFuture) oldPositions sPrice liqSide = do
+
+  newPositioning <- normalGenerator volumeSplitT volumeSplitM (oldLongFuture, oldShortFuture) liqSide
+  posFut <- positionFuture sPrice newPositioning
+
   let converToTransaction = Transaction {future = posFut}
-  let (filteredLongFuture,  filteredShortFuture) 
-        = (filterFuture "f" converToTransaction, filterFuture "z" converToTransaction) 
-  let orderedTupleNew = tuplesToSides newPositioning 
+  let (filteredLongFuture,  filteredShortFuture)
+        = (filterFuture "f" converToTransaction, filterFuture "z" converToTransaction)
+  let orderedTupleNew = tuplesToSides newPositioning
   let orderedTupleOld = tuplesToSides oldPositions
   let (longTuple,shortTuple) =  Data.Bifunctor.bimap (filterTuple "z") (filterTuple "f") orderedTupleNew
   let (filteredShortTuple, filteredLongTuple) = (longTuple,shortTuple)
   let (newShortsAcc,newLongsAcc) = -- ! changed order 
        (filterFutureAmount filteredLongTuple oldLongFuture, filterFutureAmount filteredShortTuple oldShortFuture)
-  
+
   let otherRunSeq = let ((firstOld, secondOld), (firstNew, secondNew), newPos) =  ((newLongsAcc,newShortsAcc), (filteredLongFuture,filteredShortFuture),newPositioning) -- ! (filteredLongFuture,filteredShortFuture)
-                                        in ((futureInfoToSeq firstOld, futureInfoToSeq secondOld), 
-                                            (futureInfoToSeq firstNew, futureInfoToSeq secondNew), 
+                                        in ((futureInfoToSeq firstOld, futureInfoToSeq secondOld),
+                                            (futureInfoToSeq firstNew, futureInfoToSeq secondNew),
                                             newPos)
   -- | FutureInfo
-  let updatedFutureAcc = (\((frst, fst'), (snd',scnd ), _) ->  
-                                    (seqToFutureInfo $ frst <> scnd, 
-                                    seqToFutureInfo $ fst' <> snd')) otherRunSeq                         
+  let updatedFutureAcc = (\((frst, fst'), (snd',scnd ), _) ->
+                                    (seqToFutureInfo $ frst <> scnd,
+                                    seqToFutureInfo $ fst' <> snd')) otherRunSeq
   -- | (TakerTuple,MakerTuple)
-  let updatedPositionAcc :: NewPositioning =                                        
+  let updatedPositionAcc :: NewPositioning =
         let ((taker1, maker1), (taker2,maker2)) = (orderedTupleNew,  orderedTupleOld)
             takerSeq1 = Seq.fromList taker1
             takerSeq2 = Seq.fromList taker2
             makerSeq1 = Seq.fromList maker1
             makerSeq2 = Seq.fromList maker2
-        in 
--- TODO get rid of the performance issues within the convertion into list
+        in
+
        (toList $ takerSeq1 Seq.>< takerSeq2, toList $ makerSeq1 Seq.>< makerSeq2)
 
   return (updatedFutureAcc, updatedPositionAcc)
 
 
 
+
 -- | cycle management
 -- ? testing potenital bugs
 -- TODO remove this whole function !
-
-
 -- ! comment this funciton if you don't want to perform any tests
 posFutureTestEnviromentHighlyDanngerous :: IO ()
 posFutureTestEnviromentHighlyDanngerous = do
   -- // position management block
-            
+
              -- DEFINE DATA
              let startingPric = 1000.0
 
@@ -367,11 +369,11 @@ posFutureTestEnviromentHighlyDanngerous = do
              let testingList = (
                                 [(100,"f"),(200,"f"),(300,"y"),(150,"f")]    -- | TAKER | - buy taker
                                 ,[(100,"x"),(200,"x"),(300,"x"),(150,"z")]   -- | MAKER | - sell taker -- ! that is the bug
-                                ) 
+                                )
 
              let futureInfo2 = [(900,100000,"f"),(1200,70000,"f"),(14000,100000,"f"),(100,70000,"f")] :: FutureInfo -- FUTURE INFO LONG
              let futureInfo1 = [(900,100000,"z"),(1200,70000,"z"),(14000,100000,"z"),(100,70000,"z")] :: FutureInfo -- FUTURE INFO SHORT
-             
+
              -- already split volumes
              let volumeList1= [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000]
              let volumeList2 = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000]
@@ -383,12 +385,12 @@ posFutureTestEnviromentHighlyDanngerous = do
 
 
              liquidated <- liquidationDuty futureInfo2 futureInfo1 startingPric
-             
+
              let liquidationInfo1 = fst liquidated
              let liquidationsInfo = snd liquidated
              let longliq  =  fst liquidationsInfo
              let shortliq = snd liquidationsInfo
-             establishRunNormal <- normalRun (volumeList1, volumeList2 )(longliq, shortliq) testingList startingPric 
+             establishRunNormal <- normalRun (volumeList1, volumeList2 ) (longliq, shortliq) testingList startingPric ""
 
              -- IO        
              putStrLn "DEFINED DATA: \n"
@@ -404,7 +406,7 @@ posFutureTestEnviromentHighlyDanngerous = do
              print volumeList2
              putStrLn "\nSTARTING PRICE: "
              print startingPric
-             
+
              putStrLn "\n\nLIQUIDATION FREE FUTURE: \n"
              print liquidationsInfo
              putStrLn "\n\nAdditional liquidation info: \n"
@@ -421,4 +423,3 @@ posFutureTestEnviromentHighlyDanngerous = do
              print newPositionsShort
 
 
-         

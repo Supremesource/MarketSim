@@ -262,6 +262,7 @@ run
                recursiveList
 
                 (   initLiquidationAcc
+                  , initLiquidationAcc
                   , initPositioningAcc
                   , initAccLongFuture
                   , initAccShortFuture
