@@ -177,11 +177,22 @@ data BookStats = BookStats {
                    }
 
 type NewPositioning   =   (TakerTuple, MakerTuple)
-type LiquidationCall  =   [(Int,String,String)] 
-type RecursionPass    =   (LiquidationCall,NewPositioning, FutureInfo, FutureInfo, VolumeList, OrderBook, OrderBook, Generator, Generator, FullWall, FullWall, StartingPoint, Totakefromwall, [BookStats] )
+
+type MarginCall       =   [(Int,String,String)] 
+
+type RecursionPass    =   (MarginCall, MarginCall, NewPositioning, FutureInfo, 
+                           FutureInfo, VolumeList, OrderBook, OrderBook, Generator
+                           , Generator, FullWall, FullWall, StartingPoint
+                           , Totakefromwall, [BookStats] )
+
 type FutureAcc        =   (FutureInfo, FutureInfo)
-type ListPass         =   (LiquidationCall,NewPositioning,FutureInfo, FutureInfo, Volume , OrderBook , OrderBook, Generator, Generator, FullWall, FullWall, StartingPoint, Totakefromwall )
+
+type ListPass         =   (MarginCall, NewPositioning,FutureInfo, FutureInfo,
+                           Volume , OrderBook , OrderBook, Generator, Generator,
+                           FullWall, FullWall, StartingPoint, Totakefromwall )
+
 type Position         =   ([(Int, String)], [(Int, String)])
+
 type FutureInfo       =   [(Double, Int, String)]
 
 data Transaction = Transaction {

@@ -44,7 +44,7 @@ futureAccShort = [(0, 0, "")]
 initPositioningAcc :: NewPositioning
 initPositioningAcc = ([],[])
 
-initLiquidationAcc :: LiquidationCall
+initLiquidationAcc :: MarginCall
 initLiquidationAcc = []
 
 
