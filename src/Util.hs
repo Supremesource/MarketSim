@@ -69,7 +69,7 @@ setupBookDetails (startingP', maxMinL' ,asksTot', bidsTot', takewall', lengchngB
 
 
 
--- | helper funciton for the funciton below (where is everything starting at)
+-- | helper funciton for the funciton below (where everything is starting at)
 initStats :: Stats
 initStats = Stats 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
 -- | aggregating  stats together
@@ -120,6 +120,7 @@ aggregateStats (taker, makers) stats  =
             makerF =
               makerF stats + orderSize "f" makers
       }
+
 
 settingcheck :: VolumeSide -> Int -> Int -> Int -> IO ()
 settingcheck vSide' volumeA' asksTot' bidsTot' = do

@@ -46,6 +46,7 @@ recursiveList (liqinfo,writeLiqInfo,posinfo,longinfo, shortinfo, x:xs, bidBook, 
     \(newliqinfo,newWriteLiqInfo,newPosInfo,newLonginfo,newShortinfo,newBidBook, newAskBook, newBookDetails, additionalVolAcc) -> do
 
   let (newGen1, newGen2) = (fst (split gen1), fst (split gen2))
+  -- TODO get rid of the concat here for something more efficient
   recursiveList (newliqinfo,writeLiqInfo ++ newWriteLiqInfo,newPosInfo,newLonginfo,newShortinfo,additionalVolAcc ++ xs,newBidBook,newAskBook,newGen1,newGen2
     ,fullwallsASK,fullwallsBIDS,sPoint,takeWall,newBookDetails:bookDetails)
 
@@ -86,15 +87,6 @@ orderbookLoop (liqinfo,posinfo,longinfo,shortinfo,(vAmount,vSide'),bidBook,askBo
             let nullLiqInfo = if null newLiqInfo then [(0,"","")] else newLiqInfo 
 
             return (newLiqInfo, nullLiqInfo, newPositions,newPosFutureLong, newPosFutureShort,finalBookBid, finalBookAsk, newbookDetails, [(vAmount,vSide')])
-
-
-
--- TODO make an accumulator, that the volume head is going to get passed into
--- in the orderbook loop seciton
--- the head is going to get passed onto the start of the volume list in local variable
--- for recrusiveList
-
-
 
 -- | orderbook main processing
 orderBookProcess :: ListPass -> IO (Double,OrderBook,OrderBook, [[Int]], Int,Int, [(Double,Int)], [(Double,Int)])
