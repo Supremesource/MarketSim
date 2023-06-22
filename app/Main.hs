@@ -56,6 +56,7 @@ mainLoop aggregatedStats remainingRuns accumulatedStats = do
       let newAggregatedStats =
             foldl (flip aggregateStats) aggregatedStats positions
       let newAccumulatedStats =
+        -- TODO check if conncat is safe here
             accumulatedStats ++ zip [1 ..] positions
 
 {-   

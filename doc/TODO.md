@@ -52,6 +52,21 @@ THAT WOULD BE SUCESS FOR THE DAY !
 Take the liquidations to the end make correct writing with a corresponding data
 
 
+TODO 23 . 6
+pass everything from recursive base case into the aggregated stats 
+take positioning out of main and add it into the generator itself
+above the recursive list
+
+
+then do
+Optimization: Fix sequence to list transitions, fix conncat performances
+finish data writing
+
+
+24.6
+Add multiple correctness checker mechanics
+
+
 AT THE END DO:
 Fronend
 - ADD TIME FRAME FORMATING

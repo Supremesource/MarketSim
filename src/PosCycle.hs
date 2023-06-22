@@ -324,7 +324,9 @@ normalRun (volumeSplitT, volumeSplitM) (oldLongFuture, oldShortFuture) oldPositi
   let (filteredLongFuture,  filteredShortFuture)
         = (filterFuture "f" converToTransaction, filterFuture "z" converToTransaction)
   let orderedTupleNew = tuplesToSides newPositioning
-  let orderedTupleOld = tuplesToSides oldPositions
+  let unorderedTupleNew = newPositioning
+  --let orderedTupleOld = tuplesToSides oldPositions
+  let unorderedTupleOld = oldPositions
   let (longTuple,shortTuple) =  Data.Bifunctor.bimap (filterTuple "z") (filterTuple "f") orderedTupleNew
   let (filteredShortTuple, filteredLongTuple) = (longTuple,shortTuple)
   let (newShortsAcc,newLongsAcc) = -- ! changed order 
@@ -340,7 +342,7 @@ normalRun (volumeSplitT, volumeSplitM) (oldLongFuture, oldShortFuture) oldPositi
                                     seqToFutureInfo $ fst' <> snd')) otherRunSeq
   -- | (TakerTuple,MakerTuple)
   let updatedPositionAcc :: NewPositioning =
-        let ((taker1, maker1), (taker2,maker2)) = (orderedTupleNew,  orderedTupleOld)
+        let ((taker1, maker1), (taker2,maker2)) = (unorderedTupleNew, unorderedTupleOld)
             takerSeq1 = Seq.fromList taker1
             takerSeq2 = Seq.fromList taker2
             makerSeq1 = Seq.fromList maker1
