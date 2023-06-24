@@ -72,6 +72,8 @@ setupBookDetails (startingP', maxMinL' ,asksTot', bidsTot', takewall', lengchngB
 -- | helper funciton for the funciton below (where everything is starting at)
 initStats :: Stats
 initStats = Stats 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+
+
 -- | aggregating  stats together
 aggregateStats :: (TakerTuple, MakerTuple) -> Stats -> Stats
 aggregateStats (taker, makers) stats  =
@@ -195,8 +197,6 @@ calculateTotalsCount finalBookAsk finalBookBid =
     let asktotal = fromIntegral (length finalBookAsk)
         bidtotal = fromIntegral (length finalBookBid)
     in (asktotal, bidtotal)
-
-
 
 -- Conversion functions
 futureInfoToSeq :: FutureInfo -> Seq (Double, Int, String)

@@ -32,7 +32,12 @@ recursiveList (_,writeLiqInfo,posinfo,longinfo,shortinfo,[], bidBook, askBook, _
     BL.writeFile posFutureP writePositionFuture'
     BL.writeFile bidBookP (encode writeBidBook)
     BL.writeFile askBookP (encode writeAskBook)
-    print writeLiqInfo
+    let testStats = aggregateStats posinfo initStats
+    print testStats
+
+
+--    print writeLiqInfo
+
 
     return (writeLiqInfo,posinfo,longinfo,shortinfo,bidBook, askBook, bookDetails)
 
