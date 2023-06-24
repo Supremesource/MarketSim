@@ -354,8 +354,6 @@ normalRun (volumeSplitT, volumeSplitM) (oldLongFuture, oldShortFuture) oldPositi
   return (updatedFutureAcc, updatedPositionAcc)
 
 
-
-
 -- | cycle management
 -- ? testing potenital bugs
 -- TODO remove this whole function !

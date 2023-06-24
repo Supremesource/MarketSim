@@ -70,8 +70,6 @@ mainLoop aggregatedStats remainingRuns accumulatedStats = do
       printStats newAggregatedStats
 -}
 
-
-
       mainLoop newAggregatedStats (remainingRuns - 1) newAccumulatedStats
     else do
       printFinal aggregatedStats
@@ -244,8 +242,6 @@ run
              isFutureEmpt <- isFutureEmpty
            --  print isFutureEmpt
 
-
-
              initAccLongFuture <- if isFutureEmpt
                        then return futureAccLong
                        else do
@@ -255,9 +251,6 @@ run
                        then return futureAccLong
                        else do
                          filterFuture "z" <$> readFuture
-
-
-
 
              (_, _, _, _,_, _,_) <-
                recursiveList
@@ -288,9 +281,6 @@ run
                sellTakerProb
 
 
-
-
-
             -- | formating price document
        --      removeEmptyLines pricePath
              putStrLn $ gray "OUTPUT SUCCESFULLY GENERATED"
@@ -298,9 +288,6 @@ run
 
              let demo = posFutureTestEnviromentHighlyDanngerous
              --demo
-
-
-
 
              -- // testing :
              --  print $ "List of Vol: \n" ++ show listofvolumes

@@ -35,6 +35,7 @@ library
       Colours
       Generator
       PosCycle
+      Tests
   other-modules:
       Main
       Paths_marketsim
@@ -42,6 +43,7 @@ library
       src
       app
       Settings
+      property-test
   default-extensions:
       ImportQualifiedPost
       InstanceSigs
