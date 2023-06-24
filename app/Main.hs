@@ -252,7 +252,7 @@ run
                        else do
                          filterFuture "z" <$> readFuture
 
-             (_, _, _, _,_, _,_) <-
+             (_, _, _, _,_, _,_,_) <-
                recursiveList
 
                 (   initLiquidationAcc
@@ -269,7 +269,8 @@ run
                   , fullwallsBIDS
                   , initstartingPoint
                   , inittotakefromwall
-                  , initialBookDetailsList )
+                  , initialBookDetailsList 
+                  , [initStats])
 
              -- TODO take this out of there
             -- print $ "hh111" ++ show initAccLongFuture

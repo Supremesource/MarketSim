@@ -20,9 +20,9 @@ import           PosCycle
 import           Util
 
 -- ? processor part
-recursiveList :: RecursionPass  -> IO (MarginCall,NewPositioning,FutureInfo,FutureInfo,OrderBook, OrderBook, [BookStats])
+recursiveList :: RecursionPass  -> IO (MarginCall,NewPositioning,FutureInfo,FutureInfo,OrderBook, OrderBook, [BookStats], [Stats])
 -- base case do block
-recursiveList (_,writeLiqInfo,posinfo,longinfo,shortinfo,[], bidBook, askBook, _, _, _, _, _, _, bookDetails)  = do
+recursiveList (_,writeLiqInfo,posinfo,longinfo,shortinfo,[], bidBook, askBook, _, _, _, _, _, _, bookDetails, posStats)  = do
 
     filewrites1 $ tail (reverse bookDetails)
     let writeBidBook = Book { book = bidBook }
@@ -32,33 +32,34 @@ recursiveList (_,writeLiqInfo,posinfo,longinfo,shortinfo,[], bidBook, askBook, _
     BL.writeFile posFutureP writePositionFuture'
     BL.writeFile bidBookP (encode writeBidBook)
     BL.writeFile askBookP (encode writeAskBook)
-    let testStats = aggregateStats posinfo initStats
-    print testStats
+    putStrLn "postats: \n"
+    print posStats
+
+    putStrLn "test \n"
+    print $ aggregateStats ([(500,"x"), (900, "x")], [(500,"y"), (100,"y"), (800,"y")]) initStats
 
 
 --    print writeLiqInfo
-
-
-    return (writeLiqInfo,posinfo,longinfo,shortinfo,bidBook, askBook, bookDetails)
+    return (writeLiqInfo,posinfo,longinfo,shortinfo,bidBook, askBook, bookDetails, posStats)
 
 
 -- general case do block
 recursiveList (liqinfo,writeLiqInfo,posinfo,longinfo, shortinfo, x:xs, bidBook, askBook, gen1, gen2,
-    fullwallsASK, fullwallsBIDS, sPoint, takeWall, bookDetails)  =
+    fullwallsASK, fullwallsBIDS, sPoint, takeWall, bookDetails, posStats)  =
 
  orderbookLoop (liqinfo,posinfo,longinfo, shortinfo, x, bidBook, askBook, gen1
     , gen2, fullwallsASK, fullwallsBIDS, sPoint, takeWall) >>=
-    \(newliqinfo,newWriteLiqInfo,newPosInfo,newLonginfo,newShortinfo,newBidBook, newAskBook, newBookDetails, additionalVolAcc) -> do
+    \(newliqinfo,newWriteLiqInfo,newPosInfo,newLonginfo,newShortinfo,newBidBook, newAskBook, newBookDetails, additionalVolAcc, newPosStats) -> do
 
   let (newGen1, newGen2) = (fst (split gen1), fst (split gen2))
   -- TODO get rid of the concat here for something more efficient
   recursiveList (newliqinfo,writeLiqInfo ++ newWriteLiqInfo,newPosInfo,newLonginfo,newShortinfo,additionalVolAcc ++ xs,newBidBook,newAskBook,newGen1,newGen2
-    ,fullwallsASK,fullwallsBIDS,sPoint,takeWall,newBookDetails:bookDetails)
+    ,fullwallsASK,fullwallsBIDS,sPoint,takeWall,newBookDetails:bookDetails,newPosStats:posStats)
 
 
-orderbookLoop :: ListPass 
+orderbookLoop :: ListPass
  -> IO (MarginCall, MarginCall, NewPositioning,FutureInfo,FutureInfo,OrderBook,OrderBook,BookStats
-       , VolumeList) -- additional volume accumulator in case of liquidation
+       , VolumeList, Stats) -- additional volume accumulator in case of liquidation
 orderbookLoop (liqinfo,posinfo,longinfo,shortinfo,(vAmount,vSide'),bidBook,askBook,gen1,gen2,fullwallsASK,fullwallsBIDS,sPoint,takeWall) = do
 
       let (volumeLIQ, sideLIQ, _) = case liqinfo of
@@ -72,26 +73,37 @@ orderbookLoop (liqinfo,posinfo,longinfo,shortinfo,(vAmount,vSide'),bidBook,askBo
 
       if null volumeLIQ then  do
             -- | NO LIQUIDAITON PROCESSING
-            orderBookGeneration <- orderBookProcess (liqinfo,posinfo,longinfo,shortinfo,(vAmount,vSide'),bidBook,askBook,gen1,gen2,fullwallsASK,fullwallsBIDS,sPoint,takeWall) 
+            orderBookGeneration <- orderBookProcess (liqinfo,posinfo,longinfo,shortinfo,(vAmount,vSide'),bidBook,askBook,gen1,gen2,fullwallsASK,fullwallsBIDS,sPoint,takeWall)
             let (sPrice, finalBookAsk, finalBookBid, maxMinLmt, lengchngBid', lengchngAsk', listASK', listBID') = orderBookGeneration
             orderBookDetails    <- additionalBookInfo finalBookAsk finalBookBid vSide' vAmount sPoint maxMinLmt takeWall lengchngBid' lengchngAsk' listASK' listBID' sPrice
             let newbookDetails = orderBookDetails
             positionGenerator <- positionCycle sPrice liqinfo longinfo shortinfo vAmount posinfo
             let (newLiqInfo,newPositions,newPosFutureLong, newPosFutureShort) = positionGenerator
             let nullLiqInfo = if null newLiqInfo then [(0,"","")] else newLiqInfo
-
-            return (newLiqInfo, nullLiqInfo, newPositions,newPosFutureLong, newPosFutureShort,finalBookBid, finalBookAsk, newbookDetails, [])
+            print "taker :"
+            print $ fst newPositions
+            print "maker :"
+            print $ snd newPositions
+            let newStats = aggregateStats  (newPositions :: (TakerTuple, MakerTuple)) initStats
+            print newStats
+            return (newLiqInfo, nullLiqInfo, newPositions,newPosFutureLong, newPosFutureShort,finalBookBid, finalBookAsk, newbookDetails, [], newStats)
       else do
             -- | LIQUIDAITON PROCESSING
             orderBookGenerationLiquidation <- orderBookProcess (liqinfo,posinfo,longinfo,shortinfo,(wholeLIQvolume,wholeLIQside),bidBook,askBook,gen1,gen2,fullwallsASK,fullwallsBIDS,sPoint,takeWall)
             let (sPrice, finalBookAsk, finalBookBid, maxMinLmt, lengchngBid', lengchngAsk', listASK', listBID') = orderBookGenerationLiquidation
             orderBookDetailsLiquidation    <- additionalBookInfo finalBookAsk finalBookBid wholeLIQside wholeLIQvolume sPoint maxMinLmt takeWall lengchngBid' lengchngAsk' listASK' listBID' sPrice
-            let newbookDetails = orderBookDetailsLiquidation 
+            let newbookDetails = orderBookDetailsLiquidation
             positionGeneratorLiquidation  <- positionCycle sPrice liqinfo longinfo shortinfo wholeLIQvolume posinfo
             let (newLiqInfo,newPositions,newPosFutureLong, newPosFutureShort) = positionGeneratorLiquidation
-            let nullLiqInfo = if null newLiqInfo then [(0,"","")] else newLiqInfo 
+            let nullLiqInfo = if null newLiqInfo then [(0,"","")] else newLiqInfo
+            let newStats = aggregateStats newPositions initStats --- fix pass only the positions that are truly new
+            print "taker :"
+            print $ fst newPositions
+            print "maker :"
+            print $ snd newPositions
+            print newStats
+            return (newLiqInfo, nullLiqInfo, newPositions,newPosFutureLong, newPosFutureShort,finalBookBid, finalBookAsk, newbookDetails, [(vAmount,vSide')], newStats)
 
-            return (newLiqInfo, nullLiqInfo, newPositions,newPosFutureLong, newPosFutureShort,finalBookBid, finalBookAsk, newbookDetails, [(vAmount,vSide')])
 
 -- | orderbook main processing
 orderBookProcess :: ListPass -> IO (Double,OrderBook,OrderBook, [[Int]], Int,Int, [(Double,Int)], [(Double,Int)])
@@ -171,12 +183,12 @@ additionalBookInfo finalBookAsk finalBookBid vSide' vAmount sPoint maxMinLmt tak
 positionCycle ::  Double -> MarginCall -> FutureInfo -> FutureInfo -> Int -> NewPositioning
       -> IO (MarginCall, NewPositioning, FutureInfo, FutureInfo)
 positionCycle sPrice liqinfo longinfo shortinfo vAmount posinfo = do
-      
+
       let (_, sideLIQ, _) = case liqinfo of
                   [] -> ([], [], [])
                   _  -> unzip3 liqinfo
       let liquidationString = if null sideLIQ then "" else head sideLIQ
-      
+
       -- TODO make a funciton purely for this called position info
       -- ? POSITION FUTURE  
       -- | check if the future file is empty                    

@@ -174,6 +174,7 @@ data BookStats = BookStats {
                    , spread :: Double
                    , startingprice :: Double
                    , bidAskRatio :: Double
+                   
                    }
 
 type NewPositioning   =   (TakerTuple, MakerTuple)
@@ -183,13 +184,13 @@ type MarginCall       =   [(Int,String,String)]
 type RecursionPass    =   (MarginCall, MarginCall, NewPositioning, FutureInfo, 
                            FutureInfo, VolumeList, OrderBook, OrderBook, Generator
                            , Generator, FullWall, FullWall, StartingPoint
-                           , Totakefromwall, [BookStats] )
+                           , Totakefromwall, [BookStats], [Stats] )
 
 type FutureAcc        =   (FutureInfo, FutureInfo)
 
 type ListPass         =   (MarginCall, NewPositioning,FutureInfo, FutureInfo,
                            Volume , OrderBook , OrderBook, Generator, Generator,
-                           FullWall, FullWall, StartingPoint, Totakefromwall )
+                           FullWall, FullWall, StartingPoint, Totakefromwall)
 
 type Position         =   ([(Int, String)], [(Int, String)])
 
