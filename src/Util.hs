@@ -204,3 +204,7 @@ futureInfoToSeq = fromList
 
 seqToFutureInfo :: Seq (Double, Int, String) -> FutureInfo
 seqToFutureInfo = toList
+
+sumList :: Num a => [a] -> [a]
+sumList xs = [sum xs]
+

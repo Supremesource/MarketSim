@@ -25,7 +25,8 @@ dependencies:
 - aeson
 - deriving-aeson
 - aeson-pretty
-
+- QuickCheck
+- hspec
 
 ghc-options:
 - -Wall
@@ -83,6 +84,8 @@ executables:
     - aeson
     - deriving-aeson
     - aeson-pretty
+    - QuickCheck
+    - hspec
    
   marketsim-server-exe:
     main:  Main.hs
@@ -94,15 +97,16 @@ executables:
     dependencies:
     - marketsim
     
-
 # Comment out the tests section if you don't have test directory or modules.
-#  tests:
-#    marketsim-test:
-#      main:                Spec.hs
-#     source-dirs:         test
-#     ghc-options:
-#     - -threaded
-#     - -rtsopts
-#     - -with-rtsopts=-N
-#     dependencies:
-#     - marketsim
+tests:
+  marketsim-test:
+    main:                Spec.hs
+    source-dirs:         test
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - marketsim
+    - hspec
+    - QuickCheck

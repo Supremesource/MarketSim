@@ -126,7 +126,7 @@ positionFuture price (taker, maker)  = do
 
 
 oppositeSide :: String -> String
-oppositeSide side = if side == "x" then "y" else "x"
+oppositeSide side = if side == "x" || side == "z" then "y" else "x"
 
 
 randomSide :: IO String
@@ -157,24 +157,39 @@ normalGenerator takerLst makerLst (toTakeFromLong, toTakeFromShort) liqSide = do
     openingGen :: IO (TakerTuple, MakerTuple)
     openingGen = do
       takerSide' <- randomSide
+      putStrLn "\nTHE LIQUI SIDE IS: \n"
+      putStrLn liqSide
       let finalTakerSide = if liqSide /= "" then liqSide else takerSide'
+      let editedTakerLst = if liqSide /= "" then sumList takerLst else takerLst
+
+
 
       let makerside = oppositeSide finalTakerSide
-      let takerT = zip takerLst $ replicate (length takerLst) finalTakerSide
+      let takerT = zip editedTakerLst $ replicate (length takerLst) finalTakerSide
       let makerT = zip makerLst $ replicate (length makerLst) makerside
       return (takerT, makerT)
     normalGen :: IO (TakerTuple, MakerTuple)
     normalGen = do
+
       takerSide' <- randomSide
+      putStrLn "\nTHE LIQUI SIDE IS: \n"
+      putStrLn liqSide
+
       let finalTakerSide = if liqSide /= "" then liqSide else takerSide'
+      let editedTakerLst = if liqSide /= "" then sumList takerLst else takerLst
       let makerside = oppositeSide finalTakerSide
-      let closingSideT = if finalTakerSide == "x" then "z" else "f"
+
+      let closingSideT
+            | finalTakerSide == "x" && liqSide == "" = "z"
+            | finalTakerSide == "y" && liqSide == "" = "f"
+            | otherwise = finalTakerSide
+
       let closingSideM = if makerside == "x" then "z" else "f"
       takerT <- mapM (\val ->
          do
         randVal <- randomRIO (1, 10) :: IO Int
         let sideT = if randVal < closingProb then closingSideT else finalTakerSide
-        return (val, sideT)) takerLst
+        return (val, sideT)) editedTakerLst
       makerT <- mapM (\val -> do
         randVal <- randomRIO (1, 10) :: IO Int
         let sideM = if randVal < closingProb then closingSideM else makerside
@@ -315,7 +330,8 @@ output: ` updated accumulators for FUTURE
        -> New position accumulators      `
                                                                               -}
 
-normalRun (volumeSplitT, volumeSplitM) (oldLongFuture, oldShortFuture) oldPositions sPrice liqSide = do
+normalRun (volumeSplitT, volumeSplitM) (oldLongFuture, oldShortFuture) oldPositions -- TODO TAKE OUT oldPositions
+  sPrice liqSide = do
 
   newPositioning <- normalGenerator volumeSplitT volumeSplitM (oldLongFuture, oldShortFuture) liqSide
   posFut <- positionFuture sPrice newPositioning
@@ -326,12 +342,13 @@ normalRun (volumeSplitT, volumeSplitM) (oldLongFuture, oldShortFuture) oldPositi
   let orderedTupleNew = tuplesToSides newPositioning
   let unorderedTupleNew = newPositioning
   --let orderedTupleOld = tuplesToSides oldPositions
-  let unorderedTupleOld = oldPositions
+  -- let unorderedTupleOld = oldPositions
   let (longTuple,shortTuple) =  Data.Bifunctor.bimap (filterTuple "z") (filterTuple "f") orderedTupleNew
   let (filteredShortTuple, filteredLongTuple) = (longTuple,shortTuple)
   let (newShortsAcc,newLongsAcc) = -- ! changed order 
        (filterFutureAmount filteredLongTuple oldLongFuture, filterFutureAmount filteredShortTuple oldShortFuture)
 
+  -- TODO get rid of unnecessary to list transitions
   let otherRunSeq = let ((firstOld, secondOld), (firstNew, secondNew), newPos) =  ((newLongsAcc,newShortsAcc), (filteredLongFuture,filteredShortFuture),newPositioning) -- ! (filteredLongFuture,filteredShortFuture)
                                         in ((futureInfoToSeq firstOld, futureInfoToSeq secondOld),
                                             (futureInfoToSeq firstNew, futureInfoToSeq secondNew),
@@ -340,18 +357,9 @@ normalRun (volumeSplitT, volumeSplitM) (oldLongFuture, oldShortFuture) oldPositi
   let updatedFutureAcc = (\((frst, fst'), (snd',scnd ), _) ->
                                     (seqToFutureInfo $ frst <> scnd,
                                     seqToFutureInfo $ fst' <> snd')) otherRunSeq
-  -- | (TakerTuple,MakerTuple)
-  let updatedPositionAcc :: NewPositioning =
-        let ((taker1, maker1), (taker2,maker2)) = (unorderedTupleNew, unorderedTupleOld)
-            takerSeq1 = Seq.fromList taker1
-            takerSeq2 = Seq.fromList taker2
-            makerSeq1 = Seq.fromList maker1
-            makerSeq2 = Seq.fromList maker2
-        in
 
-       (toList $ takerSeq1 Seq.>< takerSeq2, toList $ makerSeq1 Seq.>< makerSeq2)
 
-  return (updatedFutureAcc, updatedPositionAcc)
+  return (updatedFutureAcc, unorderedTupleNew)
 
 
 -- | cycle management
