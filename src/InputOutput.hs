@@ -88,8 +88,8 @@ filewrites1 statsList = do
               , minDownMoveLOG = minDownMove
               , minimum'LOG = minimum'
               , maximum'LOG = maximum'
-              ,  maximumActualLOG = fromMaybe 0 $ maximumlimit (maxMinLimit stats)
-              ,  minimumActualLOG = fromMaybe 0 $ minimumlimit (maxMinLimit stats)
+              ,  maximumActualLOG = fromMaybe 0 $ maxList (maxMinLimit stats)
+              ,  minimumActualLOG = fromMaybe 0 $ minList (maxMinLimit stats)
               , takeamountBIDLOG = takeamountBID
               , takeamountASKLOG = takeamountASK
               , asksTotalLOG = asksTotal stats
@@ -240,10 +240,10 @@ printPositionStats i (taker, makers) acc = do
     takercounter_Y            = countElements "y" taker
     takercounter_Z            = countElements "z" taker
     takercounter_F            = countElements "f" taker
-    totalX                    = orderSize "x" taker + orderSize "x" makers
-    totalY                    = orderSize "y" taker + orderSize "y" makers
-    totalZ                    = orderSize "z" taker + orderSize "z" makers
-    totalF                    = orderSize "f" taker + orderSize "f" makers
+    totalX                    = elementSize "x" taker + elementSize "x" makers
+    totalY                    = elementSize "y" taker + elementSize "y" makers
+    totalZ                    = elementSize "z" taker + elementSize "z" makers
+    totalF                    = elementSize "f" taker + elementSize "f" makers
 
 writePositionsToFile :: FilePath -> [PositionData] -> IO ()
 writePositionsToFile newLongsPath' positionDataList = do

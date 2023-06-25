@@ -4,6 +4,7 @@ module Lib where
 
 -- | external modules
 import           Control.Monad (replicateM)
+import Text.Printf (printf)
 import Data.Aeson (eitherDecode', eitherDecode)
 import           Control.Exception.Base
 import           Data.Char              (toUpper)
@@ -42,6 +43,13 @@ printCustomRandomList n = do
   let randomList = takeCustomRandom gen n
   return randomList
 
+-- another version with different random generator
+printRandomList' :: Int -> IO [Int]
+printRandomList' n = do
+  gen <- newStdGen'
+  let randomList = takeCustomRandom gen n
+  return randomList
+
 -- | price list implemented only for bids
 newStdGen' :: IO StdGen
 newStdGen' = do
@@ -50,11 +58,7 @@ newStdGen' = do
   setStdGen newGen
   return newGen
 
-printRandomList' :: Int -> IO [Int]
-printRandomList' n = do
-  gen <- newStdGen'
-  let randomList = takeCustomRandom gen n
-  return randomList
+
 
 -- | (the maximum' is recommended as a minumum)
 wallminimum' :: Int
@@ -80,9 +84,9 @@ randomGen = do
   return $ mkStdGen seed
 
 -- | generating next numbers
--- Function to generate the next number in the upMove list
-nextNumber :: [Double] -> Double -> StdGen -> (Double, StdGen)
-nextNumber moves prev gen = (newNum, newGen)
+-- Function to generate the next step/number in the upMove list
+nextNumberUp :: [Double] -> Double -> StdGen -> (Double, StdGen)
+nextNumberUp moves prev gen = (newNum, newGen)
   where
     listSize = length moves
     (index, newGen) = randomR (0, listSize - 1) gen
@@ -91,22 +95,23 @@ nextNumber moves prev gen = (newNum, newGen)
 
 -- | Function to generate the next number in the downMove list
 nextNumberDown :: [Double] -> Double -> StdGen -> (Double, StdGen)
-nextNumberDown moves prev gen = (newNum, newGen)
+nextNumberDown moves prev gen = (newNum', newGen)
   where
     listSize = length moves
     (index, newGen) = randomR (0, listSize - 1) gen
     delta = moves !! index
     newNum = roundTo maxDecimal (prev - delta)
+    newNum' = if newNum < 0 then 0.001 else newNum
 
 -- | end of generating next numbers
 -- | Generating ask list
-infiniteList :: Double -> StdGen -> [Double] -> [Double]
-infiniteList start gen moves =
-  map fst $ iterate (uncurry (nextNumber moves)) (start, gen)
+infiniteListUpConstant :: Double -> StdGen -> [Double] -> [Double]
+infiniteListUpConstant start gen moves =
+  map fst $ iterate (uncurry (nextNumberUp moves)) (start, gen)
 
 -- | Generating bid list
-infiniteListDown :: Double -> StdGen -> [Double] -> [Double]
-infiniteListDown start gen moves =
+infiniteListDownConstant :: Double -> StdGen -> [Double] -> [Double]
+infiniteListDownConstant start gen moves =
   takeWhile (> 0) . map fst $
   iterate (uncurry (nextNumberDown moves)) (start, gen)
 -- | list management for the orderbook 2
@@ -115,22 +120,24 @@ infiniteListDown start gen moves =
 zipToTuples :: [Double] -> [Int] -> [(Double, Int)]
 zipToTuples = zip
 
-addAt :: Int -> Int -> [Int] -> [Int]
-addAt idx val lst =
+-- sums the order wall into the normal orderbook
+sumAt :: Int -> Int -> [Int] -> [Int]
+sumAt idx val lst =
   let (pre, post) = splitAt idx lst
    in case post of
 -- | When the list is empty, append the value.
         []       -> pre ++ [val]
         (x:rest) -> pre ++ (val + x) : rest
--- |randomly inserting walls
-insertRandomly :: [Int] -> [Int] -> IO [Int]
-insertRandomly [] target = return target
-insertRandomly (x:xs) target = do
-  pos <- randomRIO (0, length target)
-  insertRandomly xs (addAt pos x target)
 
+        
+-- |randomly inserting walls
+-- randomly choosing where that sum should be inserted
 randomlyInsert :: [Int] -> [Int] -> IO [Int]
-randomlyInsert = insertRandomly
+randomlyInsert [] target = return target
+randomlyInsert (x:xs) target = do
+  pos <- randomRIO (0, length target)
+  randomlyInsert xs (sumAt pos x target)
+
 
 -- | this works for bids (we need to spit the list into two halfes, the first one is going to bids)
 firstPartList :: [Int] -> [Int]
@@ -145,14 +152,14 @@ secondPartList lst = drop halfLen lst
     halfLen = (length lst + 1) `div` 2
 
 
-minimumlimit :: (Ord a, Foldable t, Functor t) => t [a] -> Maybe a
-minimumlimit xs = if all null (toList xs)
+minList :: (Ord a, Foldable t, Functor t) => t [a] -> Maybe a
+minList xs = if all null (toList xs)
                   then Nothing
                   else Just (minimum . fmap minimum $ xs)
 
 
-maximumlimit :: (Ord a, Foldable t, Functor t) => t [a] -> Maybe a
-maximumlimit xs = if all null (toList xs)
+maxList :: (Ord a, Foldable t, Functor t) => t [a] -> Maybe a
+maxList xs = if all null (toList xs)
                   then Nothing
                   else Just (maximum . fmap maximum $ xs)
 
@@ -164,18 +171,19 @@ orderbookChange ((price, volume):xs) amount
   | amount <= 0 = (price, volume) : xs
   | amount >= volume = orderbookChange xs (amount - volume)
   | otherwise = (price, volume - amount) : xs
+
 -- | helper for inserting into bid and ask orderbook
-lengthchange :: [(Double, Int)] -> [(Double, Int)] -> Int
-lengthchange xs ys = abs (length xs - length ys)
+bookNumChange :: [(Double, Int)] -> [(Double, Int)] -> Int
+bookNumChange xs ys = abs (length xs - length ys)
 
 -- | Generating ask list
-infiniteList' :: Double -> StdGen -> [Double] -> [Double]
-infiniteList' startPoint gen moves =
-  map fst $ iterate (uncurry (nextNumber moves)) (startPoint, gen)
+infiniteListUpChange :: Double -> StdGen -> [Double] -> [Double]
+infiniteListUpChange startPoint gen moves =
+  map fst $ iterate (uncurry (nextNumberUp moves)) (startPoint, gen)
 
 -- | Generating bid list (the updated one)
-infiniteListDown' :: Double -> StdGen -> [Double] -> [Double]
-infiniteListDown' startPoint gen moves =
+infiniteListDownChange :: Double -> StdGen -> [Double] -> [Double]
+infiniteListDownChange startPoint gen moves =
   takeWhile (> 0) . map fst $
   iterate (uncurry (nextNumberDown moves)) (startPoint, gen)
 
@@ -184,7 +192,10 @@ sumInts :: [(Double, Int)] -> Int
 sumInts lst = sum (map snd lst)
 
 spread' :: Double -> Double -> Double
-spread' askHead bidHead = abs (askHead - bidHead)
+spread' askHead bidHead = roundedResult
+    where
+        result = abs (askHead - bidHead)
+        roundedResult = read $ printf "%.5f" result
 
 sideProbability :: Double -> IO Bool
 sideProbability trueProbability
@@ -197,12 +208,12 @@ sideProbability trueProbability
 countElements :: String -> MakerTuple -> Int
 countElements x = length . filter ((== x) . snd)
 
-orderSize :: String -> MakerTuple -> Int
-orderSize x = sum . map fst . filter ((== x) . snd)
+elementSize :: String -> MakerTuple -> Int
+elementSize x = sum . map fst . filter ((== x) . snd)
 
 -- | putting voume side and amount into a tuple
-volumecounter :: (Int,String) -> (Int,String)
-volumecounter (n,a) = if a == "x" || a == "z" then (n,"buy") else (n,"sell")
+--volumecounter :: (Int,String) -> (Int,String)
+--volumecounter (n,a) = if a == "x" || a == "z" then (n,"buy") else (n,"sell")
 
 -- ? OPEN INTEREST FUNCTIONS
 interestorMinus :: TakerTuple -> MakerTuple -> Int
@@ -261,16 +272,19 @@ addsupto100 :: Int -> Int -> IO ()
 addsupto100 first second  | first + second  == 100 = return ()
                             | otherwise = putStr (red "\nWarning probabilites in settings do not add up to 100%")
 
+
+
+
 -- ? TEMPLEATE RUN FUNCITOINS
 
 -- | helper function for runPercenatge
-adjustedlenght :: [Options] -> Double
-adjustedlenght x = if length x < 10 then
-  error $ red $ "please make sure that the length of `../runsetting/runlist` is larger than " ++ purple "10" ++ red " , currently it is: " ++ purple (show (length x))
-  else fromIntegral (length x) / 10
+toIntegralLenght :: [Options] -> Double
+toIntegralLenght x = fromIntegral (length x) 
 
-runPercentage :: Int -> Double -> [Int]
-runPercentage n listL = [round (fromIntegral n * x) | x <- [0.1,0.2..listL]]
+
+-- TODO start from here
+runPercentage :: Int -> Double  -> [Int]
+runPercentage n listEnd = [round (fromIntegral n * x) | x <- [1/listEnd,2/listEnd..1]]
 
 processlist :: [Options] -> [Int] -> Int -> Options
 processlist (o:os) (p:ps) x | x <= p = o
@@ -310,7 +324,7 @@ templeaterunSELL a op = case op of
 processTempleateRun :: Int -> Options -> [Int]
 processTempleateRun i o       = do
 -- | local variables
-  let process                 = runPercentage numPositions (adjustedlenght runlist)
+  let process                 = runPercentage numPositions (toIntegralLenght runlist) 
   let currentO'               = processlist runlist process i
   let currentO = if currentO' == RANDOM then o else currentO'
   let ifprocess              = currentO   == UP || currentO == UUP
@@ -325,6 +339,9 @@ randomOptionGen = do
   let options = [UP, UUP,CN, DWW, DW]
   idx <- randomRIO (0, length options - 1)
   return (options !! idx)
+
+
+
 
 -- ? IO related functions
 -- |` IO help `
