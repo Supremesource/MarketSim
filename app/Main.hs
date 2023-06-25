@@ -184,13 +184,13 @@ run
              let setupASK =
                    take
                      takeamountASK
-                     (tail (infiniteList initstartingPoint gen1 upMoves)) `using`
+                     (tail (infiniteListUpConstant initstartingPoint gen1 upMoves)) `using`
                    parList rseq
              -- | liquidity for ask, the limit setup gradient
              let setupBID =
                    take
                      takeamountBID
-                     (tail (infiniteListDown initstartingPoint gen2 downMoves)) `using`
+                     (tail (infiniteListDownConstant initstartingPoint gen2 downMoves)) `using`
                    parList rseq
             -- | generating prices for ASKS $$ amount
              amountASK <- printCustomRandomList takeamountASK
@@ -200,7 +200,7 @@ run
              let usdamountASK = amountASK :: [Int]
              let usdamountBID = amountBID :: [Int]
              -- | Price walls (limit)
-             -- | generate the size of limit walls (in terms of it's occurrence)
+             -- | generate limit walls (in terms of their occurrence)
              let inittotakefromwall = taketowalls $ 2 * takeamount
              -- | generating walls, this is an infinite list
              pricewalls <- randomListwalls
@@ -215,6 +215,7 @@ run
              -- | full wall build, the list is 2* as long tho functions below will make it usable for bids and asks
              fullwallsBIDS <-
                randomlyInsert pricesBids1 (take takeamountBID usdamountBID)
+             
              -- ? ADDING DATA TOGETHER
              -- | adding orderbook together & generating additional data
              -- |zipping so that we have orderwalls in  -> orderbook is built

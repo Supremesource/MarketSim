@@ -101,26 +101,26 @@ aggregateStats (taker, makers) stats  =
             makerFc =
               makerFc stats
                 +  countElements "f" makers,
-            offX = offX stats + orderSize "x" taker + orderSize "x" makers,
-            offY = offY stats + orderSize "y" taker + orderSize "y" makers,
-            offZ = offZ stats + orderSize "z" taker + orderSize "z" makers,
-            offF = offF stats + orderSize "f" taker + orderSize "f" makers,
+            offX = offX stats + elementSize "x" taker + elementSize "x" makers,
+            offY = offY stats + elementSize "y" taker + elementSize "y" makers,
+            offZ = offZ stats + elementSize "z" taker + elementSize "z" makers,
+            offF = offF stats + elementSize "f" taker + elementSize "f" makers,
             takerX =
-              takerX stats + orderSize "x" taker,
+              takerX stats + elementSize "x" taker,
             takerY =
-              takerY stats + orderSize "y" taker,
+              takerY stats + elementSize "y" taker,
             takerZ =
-              takerZ stats + orderSize "z" taker,
+              takerZ stats + elementSize "z" taker,
             takerF =
-              takerF stats + orderSize "f" taker,
+              takerF stats + elementSize "f" taker,
             makerX =
-              makerX stats + orderSize "x" makers,
+              makerX stats + elementSize "x" makers,
             makerY =
-              makerY stats + orderSize "y" makers,
+              makerY stats + elementSize "y" makers,
             makerZ =
-              makerZ stats + orderSize "z" makers,
+              makerZ stats + elementSize "z" makers,
             makerF =
-              makerF stats + orderSize "f" makers
+              makerF stats + elementSize "f" makers
       }
 
 
@@ -156,7 +156,7 @@ calculateFinalBooks vSide' askUpdateBook listASK' askBook bidUpdateBook listBID'
 
 lengthChanges :: OrderBook -> OrderBook -> OrderBook -> OrderBook -> (Int, Int)
 lengthChanges bidUpdateBook bidBook askUpdateBook askBook =
-    (lengthchange bidUpdateBook bidBook, lengthchange askUpdateBook askBook)
+    (bookNumChange bidUpdateBook bidBook, bookNumChange askUpdateBook askBook)
 
 startingPrices :: VolumeSide -> OrderBook -> OrderBook -> Double
 startingPrices vSide' bidUpdateBook askUpdateBook =
@@ -188,8 +188,8 @@ calculateSetupInserts :: Int -> Int -> Double -> Generator -> Generator -> ([Dou
 calculateSetupInserts lengchngAsk' lengchngBid' sPrice gen1 gen2 =
     let upMovesInsert = take takeamountASK $ randomRs (minUpMove, maxUpMove) gen1
         downMovesInsert = take takeamountBID $ randomRs (minDownMove, maxDownMove) gen2
-        askSetupInsert = take lengchngAsk' (tail (infiniteList' sPrice gen1 upMovesInsert))
-        bidSetupInsert = take lengchngBid' (tail (infiniteListDown' sPrice gen2 downMovesInsert))
+        askSetupInsert = take lengchngAsk' (tail (infiniteListUpChange sPrice gen1 upMovesInsert))
+        bidSetupInsert = take lengchngBid' (tail (infiniteListDownChange sPrice gen2 downMovesInsert))
     in (askSetupInsert, bidSetupInsert)
 
 calculateTotalsCount :: OrderBook -> OrderBook -> (Double, Double)
