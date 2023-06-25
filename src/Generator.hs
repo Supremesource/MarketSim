@@ -19,6 +19,9 @@ import           RunSettings
 import           PosCycle
 import           Util
 
+
+-- TODO think about the order of the arguments
+-- | there might be a need to reverse some data so the order is correct
 -- ? processor part
 recursiveList :: RecursionPass  -> IO (MarginCall,NewPositioning,FutureInfo,FutureInfo,OrderBook, OrderBook, [BookStats], [Stats])
 -- base case do block
@@ -32,11 +35,11 @@ recursiveList (_,writeLiqInfo,posinfo,longinfo,shortinfo,[], bidBook, askBook, _
     BL.writeFile posFutureP writePositionFuture'
     BL.writeFile bidBookP (encode writeBidBook)
     BL.writeFile askBookP (encode writeAskBook)
-    putStrLn "postats: \n"
+    putStrLn "\npostats: \n"
+    -- TODO reverse and take out the head which is only zeros
     print posStats
-
-    putStrLn "test \n"
-    print $ aggregateStats ([(500,"x"), (900, "x")], [(500,"y"), (100,"y"), (800,"y")]) initStats
+    putStrLn "\n  LIQUIDATION INFO: \n"
+    print writeLiqInfo
 
 
 --    print writeLiqInfo
@@ -53,10 +56,11 @@ recursiveList (liqinfo,writeLiqInfo,posinfo,longinfo, shortinfo, x:xs, bidBook, 
 
   let (newGen1, newGen2) = (fst (split gen1), fst (split gen2))
   -- TODO get rid of the concat here for something more efficient
+
   recursiveList (newliqinfo,writeLiqInfo ++ newWriteLiqInfo,newPosInfo,newLonginfo,newShortinfo,additionalVolAcc ++ xs,newBidBook,newAskBook,newGen1,newGen2
     ,fullwallsASK,fullwallsBIDS,sPoint,takeWall,newBookDetails:bookDetails,newPosStats:posStats)
 
-
+-- TODO concat the liquidations
 orderbookLoop :: ListPass
  -> IO (MarginCall, MarginCall, NewPositioning,FutureInfo,FutureInfo,OrderBook,OrderBook,BookStats
        , VolumeList, Stats) -- additional volume accumulator in case of liquidation
@@ -72,35 +76,45 @@ orderbookLoop (liqinfo,posinfo,longinfo,shortinfo,(vAmount,vSide'),bidBook,askBo
       print sideLIQ
 
       if null volumeLIQ then  do
-            -- | NO LIQUIDAITON PROCESSING
+            -- | NO LIQUIDATION PROCESSING
             orderBookGeneration <- orderBookProcess (liqinfo,posinfo,longinfo,shortinfo,(vAmount,vSide'),bidBook,askBook,gen1,gen2,fullwallsASK,fullwallsBIDS,sPoint,takeWall)
             let (sPrice, finalBookAsk, finalBookBid, maxMinLmt, lengchngBid', lengchngAsk', listASK', listBID') = orderBookGeneration
             orderBookDetails    <- additionalBookInfo finalBookAsk finalBookBid vSide' vAmount sPoint maxMinLmt takeWall lengchngBid' lengchngAsk' listASK' listBID' sPrice
             let newbookDetails = orderBookDetails
+          
             positionGenerator <- positionCycle sPrice liqinfo longinfo shortinfo vAmount posinfo
-            let (newLiqInfo,newPositions,newPosFutureLong, newPosFutureShort) = positionGenerator
+            let (newLiqInfo,newPositions,localPositions,newPosFutureLong, newPosFutureShort) = positionGenerator
+            
             let nullLiqInfo = if null newLiqInfo then [(0,"","")] else newLiqInfo
-            print "taker :"
-            print $ fst newPositions
-            print "maker :"
-            print $ snd newPositions
-            let newStats = aggregateStats  (newPositions :: (TakerTuple, MakerTuple)) initStats
+            putStrLn "\ntaker :\n"
+            print $ fst localPositions
+            putStrLn "\nmaker :\n"
+            print $ snd localPositions
+            putStrLn "\nstats: \n"
+            let newStats = aggregateStats  localPositions initStats
             print newStats
+            putStrLn "\n Agg positions: \n"
+            print newPositions
+
             return (newLiqInfo, nullLiqInfo, newPositions,newPosFutureLong, newPosFutureShort,finalBookBid, finalBookAsk, newbookDetails, [], newStats)
       else do
-            -- | LIQUIDAITON PROCESSING
-            orderBookGenerationLiquidation <- orderBookProcess (liqinfo,posinfo,longinfo,shortinfo,(wholeLIQvolume,wholeLIQside),bidBook,askBook,gen1,gen2,fullwallsASK,fullwallsBIDS,sPoint,takeWall)
+            -- | LIQUIDATION PROCESSING
+            let bookProcessInput = (liqinfo,posinfo,longinfo,shortinfo,(wholeLIQvolume,wholeLIQside),bidBook,askBook,gen1,gen2,fullwallsASK,fullwallsBIDS,sPoint,takeWall)
+            orderBookGenerationLiquidation <- orderBookProcess bookProcessInput
             let (sPrice, finalBookAsk, finalBookBid, maxMinLmt, lengchngBid', lengchngAsk', listASK', listBID') = orderBookGenerationLiquidation
             orderBookDetailsLiquidation    <- additionalBookInfo finalBookAsk finalBookBid wholeLIQside wholeLIQvolume sPoint maxMinLmt takeWall lengchngBid' lengchngAsk' listASK' listBID' sPrice
             let newbookDetails = orderBookDetailsLiquidation
             positionGeneratorLiquidation  <- positionCycle sPrice liqinfo longinfo shortinfo wholeLIQvolume posinfo
-            let (newLiqInfo,newPositions,newPosFutureLong, newPosFutureShort) = positionGeneratorLiquidation
+            let (newLiqInfo,newPositions,localPositions,newPosFutureLong, newPosFutureShort) = positionGeneratorLiquidation
+            putStrLn "\n NEW POSITIONS from LIQUIDATION: \n"
+            print localPositions
+            putStrLn "\n\n"
             let nullLiqInfo = if null newLiqInfo then [(0,"","")] else newLiqInfo
-            let newStats = aggregateStats newPositions initStats --- fix pass only the positions that are truly new
+            let newStats = aggregateStats localPositions initStats -- //fix pass only the positions that are truly new
             print "taker :"
-            print $ fst newPositions
+            print $ fst localPositions
             print "maker :"
-            print $ snd newPositions
+            print $ snd localPositions
             print newStats
             return (newLiqInfo, nullLiqInfo, newPositions,newPosFutureLong, newPosFutureShort,finalBookBid, finalBookAsk, newbookDetails, [(vAmount,vSide')], newStats)
 
@@ -139,7 +153,7 @@ orderBookProcess (_,_,_,_,(vAmount,vSide'),bidBook,askBook,gen1,gen2,fullwallsAS
             return (sPrice, finalBookAsk, finalBookBid, maxMinLmt, lengchngBid', lengchngAsk', listASK', listBID')
 
 
-
+--type Price = Double
 
 
 -- | continuing orderbook processing, with additional data
@@ -181,7 +195,8 @@ additionalBookInfo finalBookAsk finalBookBid vSide' vAmount sPoint maxMinLmt tak
 
 -- | position cycle -- ! does not need to recive liquidation info
 positionCycle ::  Double -> MarginCall -> FutureInfo -> FutureInfo -> Int -> NewPositioning
-      -> IO (MarginCall, NewPositioning, FutureInfo, FutureInfo)
+      -> IO (MarginCall, NewPositioning, NewPositioning, FutureInfo, FutureInfo)
+            -- TODO: maybe convert to record?
 positionCycle sPrice liqinfo longinfo shortinfo vAmount posinfo = do
 
       let (_, sideLIQ, _) = case liqinfo of
@@ -211,6 +226,20 @@ positionCycle sPrice liqinfo longinfo shortinfo vAmount posinfo = do
       run <- normalRun (volumeSplitT ,volumeSplitM ) (longliq, shortliq) posinfo sPrice liquidationString
 
       let ((newPosFutureShort, newPosFutureLong), newPositions) = run
+      -- | (TakerTuple,MakerTuple)
+      -- TODO convert into seq and keep it until base case
+      let updatedPositionAcc :: NewPositioning =
+            let ((taker1, maker1), (taker2,maker2)) = (newPositions, posinfo )
+                takerSeq1 = Seq.fromList taker1
+                takerSeq2 = Seq.fromList taker2
+                makerSeq1 = Seq.fromList maker1
+                makerSeq2 = Seq.fromList maker2
+            in
+            (toList $ takerSeq1 Seq.>< takerSeq2, toList $ makerSeq1 Seq.>< makerSeq2)
+
+
+
+      
       --     putStrLn "liquidations \n"
       --    print longliq
       --  print shortliq
@@ -222,7 +251,7 @@ positionCycle sPrice liqinfo longinfo shortinfo vAmount posinfo = do
       putStrLn "test positions: \n"
       print newPositions
       putStrLn "\n\n\n"
-      return (newLiqInfo, newPositions, newPosFutureLong,  newPosFutureShort)
+      return (newLiqInfo, updatedPositionAcc,newPositions, newPosFutureLong,  newPosFutureShort)
 
 
 
