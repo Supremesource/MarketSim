@@ -74,7 +74,7 @@ data PositionData = PositionData
   via JSONConfig PositionData
 
 data InitPrice where
-  InitPrice :: {initPrice :: Int} -> InitPrice
+  InitPrice :: {initPrice :: Double} -> InitPrice
   deriving Generic
   deriving (FromJSON, ToJSON) via JSONConfig InitPrice
 
@@ -140,7 +140,7 @@ data Stats = Stats
 
 data Options =
                UP |
-              UUP |
+              UPP |
               DW  |
               DWW |
               CN  |

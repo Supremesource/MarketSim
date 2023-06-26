@@ -3,7 +3,7 @@ module Lib where
 -- | moudle aggregating all the functions
 
 -- | external modules
-import           Control.Monad (replicateM)
+import           Control.Monad (replicateM, when)
 import Text.Printf (printf)
 import Data.Aeson (eitherDecode', eitherDecode)
 import           Control.Exception.Base
@@ -129,7 +129,7 @@ sumAt idx val lst =
         []       -> pre ++ [val]
         (x:rest) -> pre ++ (val + x) : rest
 
-        
+
 -- |randomly inserting walls
 -- randomly choosing where that sum should be inserted
 randomlyInsert :: [Int] -> [Int] -> IO [Int]
@@ -279,10 +279,10 @@ addsupto100 first second  | first + second  == 100 = return ()
 
 -- | helper function for runPercenatge
 toIntegralLenght :: [Options] -> Double
-toIntegralLenght x = fromIntegral (length x) 
+toIntegralLenght x = fromIntegral (length x)
 
 
--- TODO start from here
+
 runPercentage :: Int -> Double  -> [Int]
 runPercentage n listEnd = [round (fromIntegral n * x) | x <- [1/listEnd,2/listEnd..1]]
 
@@ -299,13 +299,14 @@ randomhandler initoption randomGenlocal
 optionProcessor :: Options -> Int -> Int
 optionProcessor a i = case a of
   UP  -> templeaterunBUY i a
-  UUP -> templeaterunBUY i a
+  UPP -> templeaterunBUY i a
   _   -> templeaterunSELL i a
 
+-- TODO change to more realistic probability amplifier
 templeaterunBUY :: Int -> Options -> Int
 templeaterunBUY a op = case op of
   UP  -> a * 2  -- increasing b vol by 200%
-  UUP -> a * 4  -- increasing b vol by 400%
+  UPP -> a * 4  -- increasing b vol by 400%
   DW  -> a      -- doing nothing to downtrend
   DWW -> a      -- extreme downtrend doing nothing
   CN  -> a
@@ -314,7 +315,7 @@ templeaterunBUY a op = case op of
 templeaterunSELL :: Int -> Options -> Int
 templeaterunSELL a op = case op of
   UP  -> a      -- nothing
-  UUP -> a      -- nothing
+  UPP -> a      -- nothing
   DW  -> a * 2  -- increasing s vol by 200%
   DWW -> a * 4  -- increasing s vol by 400%
   CN  -> a
@@ -324,19 +325,17 @@ templeaterunSELL a op = case op of
 processTempleateRun :: Int -> Options -> [Int]
 processTempleateRun i o       = do
 -- | local variables
-  let process                 = runPercentage numPositions (toIntegralLenght runlist) 
+  let process                 = runPercentage numPositions (toIntegralLenght runlist)
   let currentO'               = processlist runlist process i
   let currentO = if currentO' == RANDOM then o else currentO'
-  let ifprocess              = currentO   == UP || currentO == UUP
-  let templeatedprobability  = if ifprocess then optionProcessor currentO buyTakerProb else buyTakerProb
-  let templeatedprobabilityY = if ifprocess then sellTakerProb else optionProcessor currentO sellTakerProb
-
-
+  let ifprocess               = currentO   == UP || currentO == UPP
+  let templeatedprobability   = if ifprocess then optionProcessor currentO buyTakerProb else buyTakerProb
+  let templeatedprobabilityY  = if ifprocess then sellTakerProb else optionProcessor currentO sellTakerProb
   [templeatedprobability,templeatedprobabilityY]
 
 randomOptionGen :: IO Options
 randomOptionGen = do
-  let options = [UP, UUP,CN, DWW, DW]
+  let options = [UP, UPP,CN, DWW, DW]
   idx <- randomRIO (0, length options - 1)
   return (options !! idx)
 
@@ -386,7 +385,7 @@ readBook fileName =
 newRunSettings :: FilePath -> FilePath -> FilePath -> FilePath -> FilePath-> FilePath -> FilePath -> Int -> IO ()
 newRunSettings askBookF bidBookF logF bookDetailF positionInfoF initPriceF posFutureF newValue  = do
   let wipe = ""
-  let price = InitPrice newValue
+  let price = InitPrice (fromIntegral newValue)
   writeFile askBookF       wipe
   writeFile bidBookF       wipe
   writeFile logF           wipe
@@ -412,23 +411,22 @@ roundTo n x = (fromInteger . round $ x * (10 ^ n)) / (10.0 ^^ n)
 -- | makes sure numbers are different with each run
 -- | Initialize a random generator with a seed based on the current time
 
-
--- | Read the contents of the file and return the last number
-getLastNumberFromFile :: FilePath -> IO Double
-getLastNumberFromFile filePath = do
-  content <- readFile filePath
-  let numbers = map read (words content) :: [Double]
-  return $ if null numbers then 0 else last numbers
-
 -- | Define the starting point, maximum and minimum upmove and downmove values, and the maximum number of decimal points
 startingPointFromFile :: FilePath -> IO Double
 startingPointFromFile filePath = do
   content <- BL.readFile filePath
-  either error (return . fromIntegral . (\(InitPrice x) -> x)) (eitherDecode' content :: Either String InitPrice)
+  let result = either error (return . initPrice) (eitherDecode' content :: Either String InitPrice)
+  toDouble <- result
+  Control.Monad.when (toDouble < 0) $ error $ red "Starting price cannot be negative"
+  return toDouble
+
 
 generateVolumes :: Int -> Int -> IO [Int]
-generateVolumes numMakers totalVolume' = do
-  let maxVol =  totalVolume' `div` round ((fromIntegral numMakers :: Double ) / 1.2)
-  volumes <- replicateM (numMakers - 1) (randomRIO (1, maxVol))
+generateVolumes numPos totalVolume' = do
+  Control.Monad.when (numPos < 1) $ error $ red "Number of transactions cannot be less than 1"
+  Control.Monad.when (totalVolume' < 1) $ error $ red "Total volume cannot be less than 1"
+  Control.Monad.when (totalVolume' < numPos) $ error $ red "Total volume cannot be less than number of transactions"
+  let maxVol =  totalVolume' `div` round ((fromIntegral numPos :: Double ) / 1.2)
+  volumes <- replicateM (numPos - 1) (randomRIO (1, maxVol))
   let lastVolume = totalVolume' - sum volumes
   return (volumes ++ [lastVolume])
