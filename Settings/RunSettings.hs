@@ -72,10 +72,10 @@ maxDecimal = 4
 -- | CUSTOM RUN SETTINGS:
 -- | how run is going to be structured
 -- | you can choose from the following options:
--- | RANDOM -> UP, UUP, CN, DWW, DW
+-- | RANDOM -> UP, UPP, CN, DWW, DW
 -- | RANDOM = random
 -- | UP = up
--- | UUP = up up
+-- | UPP = up up
 -- | CN = constant / consolidation
 -- | DWW = down down
 -- | DW = down
