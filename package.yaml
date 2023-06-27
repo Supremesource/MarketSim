@@ -27,7 +27,7 @@ dependencies:
 - aeson-pretty
 - QuickCheck
 - hspec
-
+ 
 ghc-options:
 - -Wall
 - -Wcompat
@@ -86,6 +86,7 @@ executables:
     - aeson-pretty
     - QuickCheck
     - hspec
+
    
   marketsim-server-exe:
     main:  Main.hs

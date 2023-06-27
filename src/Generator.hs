@@ -18,21 +18,28 @@ import           Lib
 import           RunSettings
 import           PosCycle
 import           Util
+import Data.Sequence (Seq, fromList, (><))
 
 
 -- TODO think about the order of the arguments
 -- | there might be a need to reverse some data so the order is correct
 -- ? processor part
-recursiveList :: RecursionPass  -> IO (MarginCall,NewPositioning,FutureInfo,FutureInfo,OrderBook, OrderBook, [BookStats], [Stats])
--- base case do block
+recursiveList :: RecursionPass  -> IO
+      (Seq (Int, String, String),
+      (Seq (Int,String), Seq (Int,String)),
+      Seq (Double,Int,String),
+      Seq (Double,Int,String),
+      OrderBook, OrderBook, [BookStats], [Stats])
+
+  -- base case do block
 recursiveList (_,writeLiqInfo,posinfo,longinfo,shortinfo,[], bidBook, askBook, _, _, _, _, _, _, bookDetails, posStats)  = do
 
     filewrites1 $ tail (reverse bookDetails)
     let writeBidBook = Book { book = bidBook }
     let writeAskBook = Book { book = askBook }
-    let writePositionFuture = Transaction { future = longinfo ++ shortinfo }
-    let writePositionFuture' = encode writePositionFuture
-    BL.writeFile posFutureP writePositionFuture'
+    --let writePositionFuture = Transaction { future = longinfo ++ shortinfo }
+    --let writePositionFuture' = encode writePositionFuture
+    --BL.writeFile posFutureP writePositionFuture'
     BL.writeFile bidBookP (encode writeBidBook)
     BL.writeFile askBookP (encode writeAskBook)
     putStrLn "\npostats: \n"
@@ -57,18 +64,26 @@ recursiveList (liqinfo,writeLiqInfo,posinfo,longinfo, shortinfo, x:xs, bidBook, 
   let (newGen1, newGen2) = (fst (split gen1), fst (split gen2))
   -- TODO get rid of the concat here for something more efficient
 
-  recursiveList (newliqinfo,writeLiqInfo ++ newWriteLiqInfo,newPosInfo,newLonginfo,newShortinfo,additionalVolAcc ++ xs,newBidBook,newAskBook,newGen1,newGen2
+  recursiveList (newliqinfo, writeLiqInfo >< newWriteLiqInfo,newPosInfo,newLonginfo,newShortinfo,additionalVolAcc ++ xs,newBidBook,newAskBook,newGen1,newGen2
     ,fullwallsASK,fullwallsBIDS,sPoint,takeWall,newBookDetails:bookDetails,newPosStats:posStats)
+
+
 
 -- TODO concat the liquidations
 orderbookLoop :: ListPass
- -> IO (MarginCall, MarginCall, NewPositioning,FutureInfo,FutureInfo,OrderBook,OrderBook,BookStats
+ -> IO (Seq (Int, String, String), Seq (Int,String,String)
+        , (Seq (Int,String), Seq (Int,String))
+        ,  Seq (Double,Int,String)
+        ,  Seq (Double,Int,String)
+
+        ,OrderBook,OrderBook,BookStats
        , VolumeList, Stats) -- additional volume accumulator in case of liquidation
 orderbookLoop (liqinfo,posinfo,longinfo,shortinfo,(vAmount,vSide'),bidBook,askBook,gen1,gen2,fullwallsASK,fullwallsBIDS,sPoint,takeWall) = do
 
-      let (volumeLIQ, sideLIQ, _) = case liqinfo of
+      let (volumeLIQ, sideLIQ, _) = case toList liqinfo of
                   [] -> ([], [], [])
-                  _  -> unzip3 liqinfo
+                  _  -> unzip3 $ toList liqinfo
+
       let wholeLIQvolume = sum volumeLIQ
       let wholeLIQside = if head sideLIQ == "z" then Buy else Sell
       putStrLn "LIQUIDATIONS: "
@@ -81,11 +96,14 @@ orderbookLoop (liqinfo,posinfo,longinfo,shortinfo,(vAmount,vSide'),bidBook,askBo
             let (sPrice, finalBookAsk, finalBookBid, maxMinLmt, lengchngBid', lengchngAsk', listASK', listBID') = orderBookGeneration
             orderBookDetails    <- additionalBookInfo finalBookAsk finalBookBid vSide' vAmount sPoint maxMinLmt takeWall lengchngBid' lengchngAsk' listASK' listBID' sPrice
             let newbookDetails = orderBookDetails
-          
-            positionGenerator <- positionCycle sPrice liqinfo longinfo shortinfo vAmount posinfo
+
+            positionGenerator <- positionCycle sPrice (toList liqinfo) longinfo shortinfo vAmount posinfo
             let (newLiqInfo,newPositions,localPositions,newPosFutureLong, newPosFutureShort) = positionGenerator
-            
-            let nullLiqInfo = if null newLiqInfo then [(0,"","")] else newLiqInfo
+
+
+
+            let nullLiqInfo = if null newLiqInfo then fromList [(0,"","")] else newLiqInfo
+
             putStrLn "\ntaker :\n"
             print $ fst localPositions
             putStrLn "\nmaker :\n"
@@ -104,12 +122,12 @@ orderbookLoop (liqinfo,posinfo,longinfo,shortinfo,(vAmount,vSide'),bidBook,askBo
             let (sPrice, finalBookAsk, finalBookBid, maxMinLmt, lengchngBid', lengchngAsk', listASK', listBID') = orderBookGenerationLiquidation
             orderBookDetailsLiquidation    <- additionalBookInfo finalBookAsk finalBookBid wholeLIQside wholeLIQvolume sPoint maxMinLmt takeWall lengchngBid' lengchngAsk' listASK' listBID' sPrice
             let newbookDetails = orderBookDetailsLiquidation
-            positionGeneratorLiquidation  <- positionCycle sPrice liqinfo longinfo shortinfo wholeLIQvolume posinfo
+            positionGeneratorLiquidation  <- positionCycle sPrice (toList liqinfo) longinfo shortinfo wholeLIQvolume posinfo
             let (newLiqInfo,newPositions,localPositions,newPosFutureLong, newPosFutureShort) = positionGeneratorLiquidation
             putStrLn "\n NEW POSITIONS from LIQUIDATION: \n"
             print localPositions
             putStrLn "\n\n"
-            let nullLiqInfo = if null newLiqInfo then [(0,"","")] else newLiqInfo
+            let nullLiqInfo = if null newLiqInfo then fromList [(0,"","")] else newLiqInfo
             let newStats = aggregateStats localPositions initStats -- //fix pass only the positions that are truly new
             print "taker :"
             print $ fst localPositions
@@ -117,6 +135,8 @@ orderbookLoop (liqinfo,posinfo,longinfo,shortinfo,(vAmount,vSide'),bidBook,askBo
             print $ snd localPositions
             print newStats
             return (newLiqInfo, nullLiqInfo, newPositions,newPosFutureLong, newPosFutureShort,finalBookBid, finalBookAsk, newbookDetails, [(vAmount,vSide')], newStats)
+
+
 
 
 -- | orderbook main processing
@@ -193,9 +213,18 @@ additionalBookInfo finalBookAsk finalBookBid vSide' vAmount sPoint maxMinLmt tak
             return newbookDetails
 
 
+-- ! add records as data types
+
+type SeqNewPositioning = Seq NewPositioning
+
 -- | position cycle -- ! does not need to recive liquidation info
-positionCycle ::  Double -> MarginCall -> FutureInfo -> FutureInfo -> Int -> NewPositioning
-      -> IO (MarginCall, NewPositioning, NewPositioning, FutureInfo, FutureInfo)
+positionCycle ::  Double -> MarginCall -> Seq (Double,Int,String) -> Seq (Double,Int,String) -> Int ->  (Seq (Int,String), Seq (Int,String))
+
+      -> IO (Seq (Int, String, String), -- [(Int, String, String)]
+            (Seq (Int, String), Seq (Int, String)),  -- (Seq (Int, String), Seq (Int, String))
+            NewPositioning ,  -- NewPositioning
+            Seq (Double, Int, String), Seq (Double, Int, String)) -- Seq (Double, Int, String), Seq (Double, Int, String))
+
             -- TODO: maybe convert to record?
 positionCycle sPrice liqinfo longinfo shortinfo vAmount posinfo = do
 
@@ -212,37 +241,41 @@ positionCycle sPrice liqinfo longinfo shortinfo vAmount posinfo = do
       volumeSplitT <- generateVolumes numTakers vAmount  -- split the volume
       volumeSplitM <- generateVolumes numMakers vAmount  -- split the volume
       liquidated   <- liquidationDuty longinfo shortinfo sPrice
+
       --   print "infos"
       --   print longinfo
 
-      let liquidationIO = fst liquidated
-      putStrLn "\n liquidation IO \n"
-      print liquidationIO
-      let liquidationFuture = snd liquidated
+      let (liquidationIO,liquidationFuture ) = liquidated
+      let (longliq,shortliq) =   liquidationFuture
 
-      let longliq =  fst liquidationFuture
-      let shortliq = snd liquidationFuture
+
       let newLiqInfo = liquidationIO
-      run <- normalRun (volumeSplitT ,volumeSplitM ) (longliq, shortliq) posinfo sPrice liquidationString
+      run <- normalRun (volumeSplitT ,volumeSplitM ) (longliq, shortliq) sPrice liquidationString
 
       let ((newPosFutureShort, newPosFutureLong), newPositions) = run
       -- | (TakerTuple,MakerTuple)
+
       -- TODO convert into seq and keep it until base case
-      let updatedPositionAcc :: NewPositioning =
+      let updatedPositionAcc  =
             let ((taker1, maker1), (taker2,maker2)) = (newPositions, posinfo )
                 takerSeq1 = Seq.fromList taker1
-                takerSeq2 = Seq.fromList taker2
+                takerSeq2 = taker2
                 makerSeq1 = Seq.fromList maker1
-                makerSeq2 = Seq.fromList maker2
+                makerSeq2 = maker2
             in
-            (toList $ takerSeq1 Seq.>< takerSeq2, toList $ makerSeq1 Seq.>< makerSeq2)
+            (takerSeq1 Seq.>< takerSeq2, makerSeq1 Seq.>< makerSeq2)
 
 
 
-      
+
       --     putStrLn "liquidations \n"
-      --    print longliq
-      --  print shortliq
+      --     print longliq
+      --     print shortliq
+
+
+      putStrLn "\n liquidation IO \n"
+      print liquidationIO
+
 
       putStrLn "\n\n\ntest  short /future/: \n"
       print newPosFutureShort
@@ -251,7 +284,9 @@ positionCycle sPrice liqinfo longinfo shortinfo vAmount posinfo = do
       putStrLn "test positions: \n"
       print newPositions
       putStrLn "\n\n\n"
-      return (newLiqInfo, updatedPositionAcc,newPositions, newPosFutureLong,  newPosFutureShort)
+
+
+      return (newLiqInfo, updatedPositionAcc, newPositions, newPosFutureLong,  newPosFutureShort)
 
 
 
