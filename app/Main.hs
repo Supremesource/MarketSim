@@ -35,8 +35,47 @@ import           System.Random.Stateful      (StdGen)
 import           Util
 
 main :: IO ()
-main = initialSetup
+main = initRun
 
+initRun :: IO ()
+initRun = do
+  -- | clening log file before every runProgram
+  writeFile logP ""
+  -- | optimizing the IO to be formated in lines
+  hSetBuffering stdout LineBuffering
+  -- | Asking user to proceed
+  putStrLn $
+    cyan $
+    "Proceed (_ / n)" ++ gray "\n\n { for runProgram-restore press - (w) }"
+  proceed <- getLine
+  -- | WIPING runProgram == TRUE
+  -- | When wiping runProgram is runProgramning the whole code is not evaluated
+  -- | Wiping all of the text files, and changing the starting point
+  if proceed == "W" || proceed == "w"
+    -- | user wants to proceed with the simulation generation
+    -- | checking settings, catching potential bugs in the setting specified by user
+    -- | if the settings are not correct, the program will not runProgram
+    -- | CHECKING IF FILES ARE EMPTY
+    then do
+      let sayStart = show wipingStartingValue
+      putStrLn $ purple "YOU DELETED OUTPUT & DATA FILES"
+      putStr $ gray "\nnew starting value will be set to: $"
+      putStrLn $ purple $ show sayStart
+      putStrLn $
+        gray
+          "\n { you can adjsut starting value in the '..Settings/runProgramSetting' } "
+      newrunProgramSettings
+        askBookP
+        bidBookP
+        logP
+        orderBookDetailsP
+        positionInfoP
+        initPriceP
+        posFutureP
+        wipingStartingValue
+    else if proceed == "n" || proceed == "N"
+           then error (red "stopping program")
+           else runProgram
 
 --  Entry points of program
 runProgram :: IO ()
@@ -176,45 +215,6 @@ generator isBidEmpty isAskEmpty orderbook_bid orderbook_ask fileBidBook fileAskB
        --      removeEmptyLines pricePath
   putStrLn $ gray "OUTPUT SUCCESFULLY GENERATED"
 
-initialSetup :: IO ()
-initialSetup = do
-  -- | clening log file before every runProgram
-  writeFile logP ""
-  -- | optimizing the IO to be formated in lines
-  hSetBuffering stdout LineBuffering
-  -- | Asking user to proceed
-  putStrLn $
-    cyan $
-    "Proceed (_ / n)" ++ gray "\n\n { for runProgram-restore press - (w) }"
-  proceed <- getLine
-  -- | WIPING runProgram == TRUE
-  -- | When wiping runProgram is runProgramning the whole code is not evaluated
-  -- | Wiping all of the text files, and changing the starting point
-  if proceed == "W" || proceed == "w"
-    -- | user wants to proceed with the simulation generation
-    -- | checking settings, catching potential bugs in the setting specified by user
-    -- | if the settings are not correct, the program will not runProgram
-    -- | CHECKING IF FILES ARE EMPTY
-    then do
-      let sayStart = show wipingStartingValue
-      putStrLn $ purple "YOU DELETED OUTPUT & DATA FILES"
-      putStr $ gray "\nnew starting value will be set to: $"
-      putStrLn $ purple $ show sayStart
-      putStrLn $
-        gray
-          "\n { you can adjsut starting value in the '..Settings/runProgramSetting' } "
-      newrunProgramSettings
-        askBookP
-        bidBookP
-        logP
-        orderBookDetailsP
-        positionInfoP
-        initPriceP
-        posFutureP
-        wipingStartingValue
-    else if proceed == "n" || proceed == "N"
-           then error (red "stopping program")
-           else runProgram
 
 
 -- checking settings, so bugs are caught before the program is runProgramning
