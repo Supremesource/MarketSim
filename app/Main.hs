@@ -17,7 +17,7 @@ import           System.IO                   (BufferMode (LineBuffering),
                                               hSetBuffering, stdout)
 
 --import           System.Process              (callCommand)
-import           Data.Sequence               (fromList)
+import           Data.Sequence               (fromList, Seq)
 import           System.Random               (Random (randomRs))
 
 
@@ -85,6 +85,8 @@ runProgram = do
   initstartingPoint <- startingPointFromFile initPriceP
   fileBidBook <- readBook bidBookP
   fileAskBook <- readBook askBookP
+  let seqFileBidBook = fromList fileBidBook 
+  let seqFileAskBook = fromList fileAskBook
              --  CHECKING SETTINGS
   localCheck
             --  RANDOM GENERATORS:
@@ -100,8 +102,8 @@ runProgram = do
     isAskEmpty
     orderbook_bid
     orderbook_ask
-    fileBidBook
-    fileAskBook
+    seqFileBidBook
+    seqFileAskBook
     gen1
     gen2
     fullwallsASK
@@ -156,10 +158,10 @@ noRemainingrunProgram aggregatedStats accumulatedStats = do
 generator ::
      Bool
   -> Bool
-  -> [(Double, Int)]
-  -> [(Double, Int)]
-  -> [(Double, Int)]
-  -> [(Double, Int)]
+  -> Seq (Double, Int)
+  -> Seq (Double, Int)
+  -> Seq (Double, Int)
+  -> Seq (Double, Int)
   -> StdGen
   -> StdGen
   -> [Int]
@@ -242,7 +244,7 @@ orderBook ::
      Double
   -> StdGen
   -> StdGen
-  -> IO ([(Double, Int)], [(Double, Int)], [Int], [Int], Int)
+  -> IO (Seq (Double, Int), Seq (Double, Int), [Int], [Int], Int)
 orderBook initstartingPoint gen1 gen2
              -- ! - ORDERBOOK - ! --
              -- | the price simulation is starting at
@@ -288,7 +290,7 @@ orderBook initstartingPoint gen1 gen2
              -- |zipping so that we have orderwalls in  -> orderbook is built
              -- | zipping prices with $ AMOUNT
   let (orderbook_ask, orderbook_bid) =
-        (zipToTuples setupASK fullwallsASK, zipToTuples setupBID fullwallsBIDS)
+        (fromList $ zipToTuples setupASK fullwallsASK, fromList $ zipToTuples setupBID fullwallsBIDS)
              
 -- | the orderbook path which should change the bid price
              -- | orderbook logc:
