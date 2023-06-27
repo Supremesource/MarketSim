@@ -147,6 +147,7 @@ data Options =
               RANDOM
               deriving  (Eq, Show, Enum, Bounded)
 
+type SeqOrderBook = Seq (Double, Int)
 type OrderBook = [(Double, Int)]
 type VolumeList = [(Int, VolumeSide)]
 type Generator = StdGen
@@ -181,8 +182,8 @@ type NewPositioning   =   (TakerTuple, MakerTuple)
 
 type MarginCall       =   [(Int,String,String)] 
 
-type RecursionPass    =   (Seq (Int,String,String), Seq (Int,String,String),  (Seq (Int,String), Seq (Int,String)),  Seq (Double,Int,String), 
-                            Seq (Double,Int,String), VolumeList, OrderBook, OrderBook, Generator
+type GenerationPass    =   (Seq (Int,String,String), Seq (Int,String,String),  (Seq (Int,String), Seq (Int,String)),  Seq (Double,Int,String), 
+                            Seq (Double,Int,String), VolumeList, SeqOrderBook , SeqOrderBook, Generator
                            , Generator, FullWall, FullWall, StartingPoint
                            , Totakefromwall, [BookStats], [Stats] )
 
@@ -190,7 +191,7 @@ type FutureAcc        =   (FutureInfo, FutureInfo)
 
 type ListPass         =   (Seq (Int,String,String), (Seq (Int,String), Seq (Int,String)),  Seq (Double,Int,String), 
                            Seq (Double,Int,String),
-                           Volume , OrderBook , OrderBook, Generator, Generator,
+                           Volume , SeqOrderBook , SeqOrderBook, Generator, Generator,
                            FullWall, FullWall, StartingPoint, Totakefromwall)
 
 type Position         =   ([(Int, String)], [(Int, String)])

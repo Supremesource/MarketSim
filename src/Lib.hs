@@ -22,6 +22,8 @@ import           System.Random             (Random (randomR, randomRs),
                                             RandomGen (split), StdGen, mkStdGen,
                                             newStdGen, randomRIO, setStdGen)
 import           Text.Printf               (printf)
+import           Data.Sequence             (Seq, (<|), viewl, ViewL(..))
+
 
 -- | internal libraries
 import           Colours
@@ -180,16 +182,16 @@ maxList xs =
 
 
 -- | for price changes:
-orderbookChange :: [(Double, Int)] -> Int -> [(Double, Int)]
-orderbookChange [] _ = []
-orderbookChange ((price, volume):xs) amount
-  | amount <= 0      = (price, volume) : xs
-  | amount >= volume = orderbookChange xs (amount - volume)
-  | otherwise        = (price, volume - amount) : xs
-
+orderbookChange :: Seq (Double, Int) -> Int -> Seq (Double, Int)
+orderbookChange xs amount = case viewl xs of
+  EmptyL -> xs
+  (price, volume) :< rest
+    | amount <= 0      -> xs
+    | amount >= volume -> orderbookChange rest (amount - volume)
+    | otherwise        -> (price, volume - amount) <| rest
 
 -- | helper for inserting into bid and ask orderbook
-bookNumChange :: [(Double, Int)] -> [(Double, Int)] -> Int
+bookNumChange :: Seq (Double, Int) -> Seq (Double, Int) -> Int
 bookNumChange xs ys = abs (length xs - length ys)
 
 

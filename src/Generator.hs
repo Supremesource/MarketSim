@@ -27,15 +27,16 @@ import           Util
 -- | there might be a need to reverse some data so the order is correct
 -- ? processor part
 generaterunProgram ::
-     RecursionPass
+     GenerationPass
   -> IO ( Seq (Int, String, String)
         , (Seq (Int, String), Seq (Int, String))
         , Seq (Double, Int, String)
         , Seq (Double, Int, String)
-        , OrderBook
-        , OrderBook
+        , SeqOrderBook 
+        , SeqOrderBook 
         , [BookStats]
         , [Stats])
+
 -- base case do block
 generaterunProgram (_, writeLiqInfo, posinfo, longinfo, shortinfo, [], bidBook, askBook, _, _, _, _, _, _, bookDetails, posStats) = do
   filewrites1 $ tail (reverse bookDetails)
@@ -87,7 +88,7 @@ generaterunProgram (liqinfo, writeLiqInfo, posinfo, longinfo, shortinfo, x:xs, b
       , newPosInfo
       , newLonginfo
       , newShortinfo
-      , additionalVolAcc ++ xs
+      , additionalVolAcc ++ xs -- `++` should not be a significant performance bottleneck here
       , newBidBook
       , newAskBook
       , newGen1
@@ -108,8 +109,8 @@ orderbookLoop ::
         , (Seq (Int, String), Seq (Int, String))
         , Seq (Double, Int, String)
         , Seq (Double, Int, String)
-        , OrderBook
-        , OrderBook
+        , SeqOrderBook 
+        , SeqOrderBook 
         , BookStats
         , VolumeList
         , Stats -- additional volume accumulator in case of liquidation
@@ -127,6 +128,8 @@ orderbookLoop (liqinfo, posinfo, longinfo, shortinfo, (vAmount, vSide'), bidBook
   putStrLn "LIQUIDATIONS: "
   print volumeLIQ
   print sideLIQ
+  
+  -- make into a function null volumeLIQ
   if null volumeLIQ
             -- | NO LIQUIDATION PROCESSING
     then do
@@ -148,19 +151,9 @@ orderbookLoop (liqinfo, posinfo, longinfo, shortinfo, (vAmount, vSide'), bidBook
       let (sPrice, finalBookAsk, finalBookBid, maxMinLmt, lengchngBid', lengchngAsk', listASK', listBID') =
             orderBookGeneration
       orderBookDetails <-
-        additionalBookInfo
-          finalBookAsk
-          finalBookBid
-          vSide'
-          vAmount
-          sPoint
-          maxMinLmt
-          takeWall
-          lengchngBid'
-          lengchngAsk'
-          listASK'
-          listBID'
-          sPrice
+        additionalBookInfo finalBookAsk finalBookBid  vSide' vAmount  sPoint
+        maxMinLmt takeWall  lengchngBid' lengchngAsk' listASK' listBID' sPrice
+      
       let newbookDetails = orderBookDetails
       positionGenerator <-
         positionCycle sPrice (toList liqinfo) longinfo shortinfo vAmount posinfo
@@ -190,6 +183,8 @@ orderbookLoop (liqinfo, posinfo, longinfo, shortinfo, (vAmount, vSide'), bidBook
         , newbookDetails
         , []
         , newStats)
+ 
+ -- Make into a function 
     else do
       let bookProcessInput =
             ( liqinfo
@@ -258,27 +253,31 @@ orderbookLoop (liqinfo, posinfo, longinfo, shortinfo, (vAmount, vSide'), bidBook
         , [(vAmount, vSide')]
         , newStats)
 
+
 -- | orderbook main processing
 orderBookProcess ::
      ListPass
   -> IO ( Double
-        , OrderBook
-        , OrderBook
+        , SeqOrderBook
+        , SeqOrderBook
         , [[Int]]
         , Int
         , Int
-        , [(Double, Int)]
-        , [(Double, Int)])
+        , SeqOrderBook
+        , SeqOrderBook)
+
 orderBookProcess (_, _, _, _, (vAmount, vSide'), bidBook, askBook, gen1, gen2, fullwallsASK, fullwallsBIDS, _, _)
             
--- TODO make function purely for this called orderbook
-            
+
+            -- TODO implement sequencing
 -- | local variables
  = do
   let (volumeBID, volumeASK) = calculateVolumes vSide' vAmount
-  let (bidUpdateBook, askUpdateBook) =
+ 
+  let (bidUpdateBook, askUpdateBook) = -- Sequenced
         calculateBooks volumeBID volumeASK bidBook askBook
             -- | how much volume took from certain order books
+  
   let (lengchngAsk', lengchngBid') =
         lengthChanges bidUpdateBook bidBook askUpdateBook askBook
   let sPrice = startingPrices vSide' bidUpdateBook askUpdateBook
@@ -391,7 +390,7 @@ positionCycle ::
         , Seq (Double, Int, String)
         , Seq (Double, Int, String) -- Seq (Double, Int, String), Seq (Double, Int, String))
          )-- TODO: maybe convert to record?
-         
+
 positionCycle sPrice liqinfo longinfo shortinfo vAmount posinfo = do
   let (_, sideLIQ, _) =
         case liqinfo of

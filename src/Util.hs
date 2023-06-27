@@ -3,7 +3,7 @@
 module Util where
 
 import           Data.Foldable (toList)
-import           Data.Sequence (Seq, empty, fromList, singleton)
+import           Data.Sequence (Seq, empty, fromList, singleton, (><), ViewL (EmptyL, (:<)), viewl)
 -- | module of utility funcitons
 -- | importing external libraries
 import           System.Random (Random (randomRs))
@@ -144,44 +144,53 @@ calculateVolumes vSide' volumeA' =
       then volumeA'
       else 0)
 
-calculateBooks :: Int -> Int -> OrderBook -> OrderBook -> (OrderBook, OrderBook)
+calculateBooks :: Int -> Int -> SeqOrderBook -> SeqOrderBook -> (SeqOrderBook, SeqOrderBook)
 calculateBooks volumeBID volumeASK bidBook askBook =
   let bidUpdateBook = orderbookChange bidBook volumeBID
       askUpdateBook = orderbookChange askBook volumeASK
    in (bidUpdateBook, askUpdateBook)
 
+
+
+
+-- TODO implement sequencing
 calculateFinalBooks ::
      VolumeSide
-  -> OrderBook
-  -> [(Double, Int)]
-  -> OrderBook
-  -> OrderBook
-  -> [(Double, Int)]
-  -> OrderBook
-  -> (OrderBook, OrderBook)
+  -> SeqOrderBook 
+  -> Seq (Double, Int) 
+  -> SeqOrderBook 
+  -> SeqOrderBook 
+  -> Seq (Double, Int) 
+  -> SeqOrderBook 
+  -> (SeqOrderBook, SeqOrderBook) 
 calculateFinalBooks vSide' askUpdateBook listASK' askBook bidUpdateBook listBID' bidBook =
   let currentbookASK =
         if vSide' == Buy
           then askUpdateBook
-          else listASK' ++ askBook
+          else listASK' >< askBook
+     
       currentbookBID =
         if vSide' == Sell
           then bidUpdateBook
-          else listBID' ++ bidBook
+          else listBID' >< bidBook
    in (currentbookASK, currentbookBID)
 
-lengthChanges :: OrderBook -> OrderBook -> OrderBook -> OrderBook -> (Int, Int)
+lengthChanges :: SeqOrderBook -> SeqOrderBook -> SeqOrderBook -> SeqOrderBook -> (Int, Int)
 lengthChanges bidUpdateBook bidBook askUpdateBook askBook =
   (bookNumChange bidUpdateBook bidBook, bookNumChange askUpdateBook askBook)
 
-startingPrices :: VolumeSide -> OrderBook -> OrderBook -> Double
+startingPrices :: VolumeSide -> SeqOrderBook -> SeqOrderBook -> Double
 startingPrices vSide' bidUpdateBook askUpdateBook =
   max
     (if vSide' == Sell
-       then fst (head bidUpdateBook)
+       then case viewl bidUpdateBook of
+              (price, _) :< _ -> price
+              EmptyL          -> 0
        else 0)
     (if vSide' == Buy
-       then fst (head askUpdateBook)
+       then case viewl askUpdateBook of
+              (price, _) :< _ -> price
+              EmptyL          -> 0
        else 0)
 
 divisionValue :: Double
