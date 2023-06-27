@@ -33,10 +33,10 @@ completed for about 60%
 
 16.6
 
-add functional second run function and forced circulation, fix positioning writing. Then move onto fronend practicing, would be success for the day.
+add functional second runProgram function and forced circulation, fix positioning writing. Then move onto fronend practicing, would be success for the day.
 
 19.6
-finish TODO in util so normal run works
+finish TODO in util so normal runProgram works
 pass liquidatoion volume
 
 

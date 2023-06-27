@@ -2,17 +2,17 @@ romFile, takeamount,
                                               taketowalls, volumechecker,
                                               zipToTuples, positionamountcheck)
 
-import           RunSettings
+import           runProgramSettings
 import           Statistics                  (generateRandomPosition)
 import           Util                        (aggregateStats, initStats,
-                                              recursiveList)
+                                              generaterunProgram)
 
 
 
 
 mainLoop :: Stats -> Int -> IO [(Int, VolumeSide)]
-mainLoop aggregatedStats remainingRuns = do
-      if remainingRuns > 0
+mainLoop aggregatedStats remainingrunPrograms = do
+      if remainingrunPrograms > 0
         then do
           positions <- replicateM numPositions generateRandomPosition
           let newAggregatedStats = foldl (flip aggregateStats) aggregatedStats positions
@@ -28,7 +28,7 @@ mainLoop aggregatedStats remainingRuns = do
 
           putStrLn "--------"
           printStats newAggregatedStats
-          nextVolumesAndSides <- mainLoop newAggregatedStats (remainingRuns - 1)
+          nextVolumesAndSides <- mainLoop newAggregatedStats (remainingrunPrograms - 1)
 
 
           return (volumesAndSides ++ nextVolumesAndSides)
@@ -58,5 +58,5 @@ main = do
   isBidEmpty  <- isFileEmpty bidBookPath
   isAskEmpty  <- isFileEmpty askBookPath
   hSetBuffering stdout LineBuffering
-  -- WIPING RUN == TRUE
-  -- when wiping run is running the whole code is not evaluated
+  -- WIPING runProgram == TRUE
+  -- when wiping runProgram is runProgramning the whole code is not evaluated

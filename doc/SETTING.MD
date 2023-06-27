@@ -10,7 +10,7 @@ note: the loading time on this one might be a bit longer (expected around 32 sec
 ```Haskell
 - STRVAL         = 10000
 - NUMPOS         = 10000
-- NUMRUN         = 5
+- NUMrunProgram         = 5
 - maxM/T         = 100
 - ROUND          = 3
 - CYCLE          :
@@ -41,7 +41,7 @@ note: the loading time on this one might be a bit longer (expected around 32 sec
 ```Haskell
 - STRVAL         = 1
 - NUMPOS         = 5000
-- NUMRUN         = 5
+- NUMrunProgram         = 5
 - maxM/T         = 40
 - ROUND          = 4
 - CYCLE          :
@@ -82,20 +82,20 @@ plotCharts = True
 
 --〇 ID = STRVAL
 -- | starting value
--- | you can activate this price point by running `w` - wiping run
+-- | you can activate this price point by runProgramning `w` - wiping runProgram
 wipingStartingValue :: Int
 wipingStartingValue = 10000
 
 --〇 ID = NUMPOS
--- | number of positions you want to take place in the simulation run
+-- | number of positions you want to take place in the simulation runProgram
 -- | number of positions
 numPositions :: Int
 numPositions = 8000
 
---〇 ID = NUMRUN
--- | number of runs, this is a loop how many times will the simulation repeat itself (random generators are updating each time though)
-numberOfRuns :: Int
-numberOfRuns = 5
+--〇 ID = NUMrunProgram
+-- | number of runPrograms, this is a loop how many times will the simulation repeat itself (random generators are updating each time though)
+numberOfrunPrograms :: Int
+numberOfrunPrograms = 5
 
 --〇 ID = maxM/T
 -- TODO add more complex statistic distribution
@@ -120,8 +120,8 @@ maxDecimal = 3
 
 -- ! POSITIONING SETTINGS
 -- 〇 ID = CYCLE
--- | CUSTOM RUN SETTINGS:
--- | how run is going to be structured
+-- | CUSTOM runProgram SETTINGS:
+-- | how runProgram is going to be structured
 -- | you can choose from the following options:
 -- | RANDOM -> UP, UPP, CN, DWW, DW
 -- | RANDOM = random
@@ -131,8 +131,8 @@ maxDecimal = 3
 -- | DWW = down down
 -- | DW = down
 -- | for more info you can check the LIB.hs file, to see how everything works
-runlist :: [Options]
-runlist = [RANDOM,RANDOM,RANDOM,RANDOM,RANDOM,RANDOM,RANDOM,RANDOM,RANDOM,RANDOM] 
+runProgramlist :: [Options]
+runProgramlist = [RANDOM,RANDOM,RANDOM,RANDOM,RANDOM,RANDOM,RANDOM,RANDOM,RANDOM,RANDOM] 
 
 
 --  Volume settings:
@@ -270,20 +270,20 @@ plotCharts = True
 
 --〇 ID = STRVAL
 -- | starting value
--- | you can activate this price point by running `w` - wiping run
+-- | you can activate this price point by runProgramning `w` - wiping runProgram
 wipingStartingValue :: Int
 wipingStartingValue = 1
 
 --〇 ID = NUMPOS
--- | number of positions you want to take place in the simulation run
+-- | number of positions you want to take place in the simulation runProgram
 -- | number of positions
 numPositions :: Int
 numPositions = 5000
 
---〇 ID = NUMRUN
--- | number of runs, this is a loop how many times will the simulation repeat itself (random generators are updating each time though)
-numberOfRuns :: Int
-numberOfRuns = 5
+--〇 ID = NUMrunProgram
+-- | number of runPrograms, this is a loop how many times will the simulation repeat itself (random generators are updating each time though)
+numberOfrunPrograms :: Int
+numberOfrunPrograms = 5
 
 --〇 ID = maxM/T
 -- TODO add more complex statistic distribution
@@ -308,8 +308,8 @@ maxDecimal = 4
 
 -- ! POSITIONING SETTINGS
 -- 〇 ID = CYCLE
--- | CUSTOM RUN SETTINGS:
--- | how run is going to be structured
+-- | CUSTOM runProgram SETTINGS:
+-- | how runProgram is going to be structured
 -- | you can choose from the following options:
 -- | RANDOM -> UP, UPP, CN, DWW, DW
 -- | RANDOM = random
@@ -319,8 +319,8 @@ maxDecimal = 4
 -- | DWW = down down
 -- | DW = down
 -- | for more info you can check the LIB.hs file, to see how everything works
-runlist :: [Options]
-runlist = [RANDOM,RANDOM,RANDOM,RANDOM,RANDOM,RANDOM,RANDOM,RANDOM,RANDOM,RANDOM] 
+runProgramlist :: [Options]
+runProgramlist = [RANDOM,RANDOM,RANDOM,RANDOM,RANDOM,RANDOM,RANDOM,RANDOM,RANDOM,RANDOM] 
 
 
 --  Volume settings:

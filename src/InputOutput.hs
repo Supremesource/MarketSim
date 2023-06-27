@@ -459,7 +459,7 @@ printStats stats = do
 
 -- | printing the results formated as a table
 -- | final IO ()
--- | this function is called by the main loop if we reached the runs
+-- | this function is called by the main loop if we reached the runPrograms
 printFinal :: Stats -> IO ()
 printFinal aggregatedStats = do
    print "\n" -- get rid of
