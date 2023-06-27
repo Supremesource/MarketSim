@@ -8,7 +8,7 @@ import Control.Monad (unless)
 
 
 import Lib
-import RunSettings
+import runProgramSettings
 import Util
 import DataTypes
 
@@ -161,7 +161,7 @@ testsLib = hspec $ do
       let list3 = interestorPlus list1 list2
       list3 `shouldBe` 7
 
--- TEMPLEATE RUN FUNCTIONS
+-- TEMPLEATE runProgram FUNCTIONS
 
   describe "Lib.toIntegralLenght" $ do
     it "returns length of a list as a double" $ do
@@ -169,27 +169,27 @@ testsLib = hspec $ do
       let length = toIntegralLenght options
       length `shouldBe` 14
 
-  describe "Lib.runPercentage" $ do
-    it "returns what positions have which run periods" $ do
+  describe "Lib.runProgramPercentage" $ do
+    it "returns what positions have which runProgram periods" $ do
       let lengthEnd = 3
       let numberOfPositions = 1000
-      let run = runPercentage numberOfPositions lengthEnd 
-      run `shouldBe` [333,667,1000]
+      let runProgram = runProgramPercentage numberOfPositions lengthEnd 
+      runProgram `shouldBe` [333,667,1000]
 
   describe "Lib.processlist" $ do
-    it "returns a current run peroid from options" $ do
+    it "returns a current runProgram peroid from options" $ do
       let options = [DWW,DW,UP,UPP]
       let list =  [250,500,750,1000]
       let number = 999
-      let run = processlist options list number
-      run `shouldBe`  UPP
+      let runProgram = processlist options list number
+      runProgram `shouldBe`  UPP
 
   describe "Lib.randomhandler" $ do
     it "returs second option passed into the function in case of `RANDOM` as first input" $ do
       let option = RANDOM
       let generatedOption = UPP
-      let run = randomhandler option generatedOption
-      run `shouldBe` UPP
+      let runProgram = randomhandler option generatedOption
+      runProgram `shouldBe` UPP
 
   describe "Lib.optionProcessor" $ do
     it "returns a new probability for volume /UPP" $ do
@@ -206,12 +206,12 @@ testsLib = hspec $ do
       newProbability `shouldBe` 40
 
 {-   
-  describe "Lib.processTempleateRun" $ do
+  describe "Lib.processTempleaterunProgram" $ do
     it "returns a list of new volume probabilities" $ do
-      let runIndx = 99
+      let runProgramIndx = 99
       let option = DW
-      let run = processTempleateRun runIndx option
-      run `shouldBe` [0,0,0,0,0,0,0,0,0,100]
+      let runProgram = processTempleaterunProgram runProgramIndx option
+      runProgram `shouldBe` [0,0,0,0,0,0,0,0,0,100]
 -}   
   describe "Lib.randomOptionGen" $ do
     it "returns one of 4 different options" $ do

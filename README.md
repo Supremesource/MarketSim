@@ -12,7 +12,7 @@ prototype of a market simulation with transparent data
 
 
 # User manual
-Do not forget to specify runSettings in /Settings 
+Do not forget to specify runProgramSettings in /Settings 
 
 
 # References

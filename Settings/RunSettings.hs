@@ -8,7 +8,7 @@ import           DataTypes (Options (..))
 
 -- Contents:
 -- | !GENERAL SETTINGS / simulation settings
--- | !POSITIONING SETTINGS / run cycle
+-- | !POSITIONING SETTINGS / runProgram cycle
 -- | !ORDERBOOK SETTINGS / liquidity  / order walls / orderbook structure
 
 
@@ -23,20 +23,20 @@ plotCharts = False
 
 --〇 ID = STRVAL
 -- | starting value
--- | you can activate this price point by running `w` - wiping run
+-- | you can activate this price point by runProgramning `w` - wiping runProgram
 wipingStartingValue :: Int
 wipingStartingValue = 1
 
 --〇 ID = NUMPOS
--- | number of positions you want to take place in the simulation run
+-- | number of positions you want to take place in the simulation runProgram
 -- | number of positions
 numPositions :: Int
 numPositions = 5
 
---〇 ID = NUMRUN
--- | number of runs, this is a loop how many times will the simulation repeat itself (random generators are updating each time though)
-numberOfRuns :: Int
-numberOfRuns = 1
+--〇 ID = NUMrunProgram
+-- | number of runPrograms, this is a loop how many times will the simulation repeat itself (random generators are updating each time though)
+numberOfrunPrograms :: Int
+numberOfrunPrograms = 1
 
 
 -- ! activate later
@@ -69,8 +69,8 @@ maxDecimal = 4
 
 -- ! POSITIONING SETTINGS
 -- 〇 ID = CYCLE
--- | CUSTOM RUN SETTINGS:
--- | how run is going to be structured
+-- | CUSTOM runProgram SETTINGS:
+-- | how runProgram is going to be structured
 -- | you can choose from the following options:
 -- | RANDOM -> UP, UPP, CN, DWW, DW
 -- | RANDOM = random
@@ -80,8 +80,8 @@ maxDecimal = 4
 -- | DWW = down down
 -- | DW = down
 -- | for more info you can check the LIB.hs file, to see how everything works
-runlist :: [Options]
-runlist = [DWW,DWW,DWW,DWW,DWW,DWW,DWW,DWW,DWW,DWW] 
+runProgramlist :: [Options]
+runProgramlist = [DWW,DWW,DWW,DWW,DWW,DWW,DWW,DWW,DWW,DWW] 
 
 
 --  Volume settings:

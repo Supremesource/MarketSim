@@ -25,13 +25,13 @@ def plot_prices(prices):
     output_file("../output/prices.html", mode="inline", root_dir=None)
 
     # create a new plot with a title and axis labels
-    p = figure(title="Price History", x_axis_label='Run Number', y_axis_label='Price', sizing_mode="stretch_both")
+    p = figure(title="Price History", x_axis_label='runProgram Number', y_axis_label='Price', sizing_mode="stretch_both")
 
     # add a line renderer with legend and line thickness
     p.line(list(range(len(prices))), prices, legend_label="Price", line_width=2)
 
     # Adding tools for interaction
-    hover = HoverTool(tooltips=[('Run Number', '$index'), ('Price', '$y')])
+    hover = HoverTool(tooltips=[('runProgram Number', '$index'), ('Price', '$y')])
     p.add_tools(hover, BoxZoomTool(), PanTool(), ResetTool(), SaveTool(), FullscreenTool())
 
     # Highlight maximum and minimum price in the graph
