@@ -5,7 +5,7 @@ module PosCycle where
 -- | importing external libraries
 import qualified Data.ByteString.Lazy as BL
 import qualified Data.Sequence as Seq
-import Data.Foldable (toList)
+
 import System.Random
     ( randomRIO )
 import           Data.Aeson (decode)
@@ -19,6 +19,8 @@ import           Filepaths
 import           Lib
 import           RunSettings
 import           Util
+import Data.Sequence (Seq, (><), ViewL ((:<)), (<|))
+import Data.Monoid
 
 
 
@@ -145,12 +147,13 @@ initGenerator takerLst makerLst = do
   let makerT = zip makerLst $ replicate (length makerLst) makerside
   return (takerT, makerT)
 
+type SeqFutureInfo = (Seq (Double, Int,String), Seq (Double, Int,String))
 
-normalGenerator :: [Int] -> [Int] -> (FutureInfo,FutureInfo) -> String -> IO (TakerTuple, MakerTuple)
+normalGenerator :: [Int] -> [Int] -> SeqFutureInfo -> String -> IO (TakerTuple, MakerTuple)
 normalGenerator takerLst makerLst (toTakeFromLong, toTakeFromShort) liqSide = do
   unless (closingProb >= 1 && closingProb <= 10) $ error "closingProb must be between 1 and 10"
-  let genType = if sum takerLst + sum makerLst >= sum (map (\(_,n,_) -> n) toTakeFromLong) &&
-                    sum takerLst + sum makerLst >= sum (map (\(_,n,_) -> n) toTakeFromShort)
+  let genType = if sum takerLst + sum makerLst >= getSum (foldMap (\(_,n,_) -> Sum n) toTakeFromLong) &&
+                    sum takerLst + sum makerLst >= getSum (foldMap (\(_,n,_) -> Sum n) toTakeFromShort)
                     then openingGen else normalGen
   genType
   where
@@ -162,12 +165,11 @@ normalGenerator takerLst makerLst (toTakeFromLong, toTakeFromShort) liqSide = do
       let finalTakerSide = if liqSide /= "" then liqSide else takerSide'
       let editedTakerLst = if liqSide /= "" then sumList takerLst else takerLst
 
-
-
       let makerside = oppositeSide finalTakerSide
       let takerT = zip editedTakerLst $ replicate (length takerLst) finalTakerSide
       let makerT = zip makerLst $ replicate (length makerLst) makerside
       return (takerT, makerT)
+   
     normalGen :: IO (TakerTuple, MakerTuple)
     normalGen = do
 
@@ -220,19 +222,25 @@ filterTuple :: String -> [(Int, String)] -> [(Int, String)]
 filterTuple pos = filter (\(_, s) -> s == pos)
 
 
+type SeqFuture = Seq (Double,Int,String)
+
 -- TODO : make this funciton more realistic with shuffeling emelemnts 
 -- | and equal "taking out"  more than just deleting one by one
 filterFutureAmount :: [(Int, String)] -- Tuple of positions to take out
-                      -> FutureInfo  -- old futureInfo 
-                      -> FutureInfo -- returns a new futureInfo
+                      -> SeqFuture  -- old futureInfo 
+                      -> SeqFuture -- returns a new futureInfo
+filterFutureAmount _ Seq.Empty = Seq.Empty
 filterFutureAmount [] futureInfo = futureInfo
-filterFutureAmount _ [] = []
-filterFutureAmount ((n, s) : ns) ((liq, amt, sid) : futureInfo)
-    | n < amt = filterFutureAmount ns ((liq, amt - n, sid) : futureInfo)
-    | otherwise = filterFutureAmount ((n - amt, s) : ns) futureInfo
+filterFutureAmount ((n, s) : ns) futureInfo = 
+    case Seq.viewl futureInfo of
+        Seq.EmptyL -> Seq.Empty
+        ((liq, amt, sid) :< rest) ->
+            if n < amt 
+                then filterFutureAmount ns ((liq, amt - n, sid) <| rest)
+                else filterFutureAmount ((n - amt, s) : ns) rest
 
 
-filterFutureClose :: Position -> (FutureInfo, FutureInfo) -> IO (FutureInfo, FutureInfo)
+filterFutureClose :: Position -> (SeqFuture, SeqFuture) -> IO (SeqFuture, SeqFuture)
 filterFutureClose (closingLong,closingShort) (oldLong,oldShort) {-output (newLong,newShort-} = do
   let formatedTupleLong  = filterTuple "z" closingLong
   let formatedTupleShort = filterTuple "f" closingShort
@@ -256,9 +264,10 @@ randomLiquidationEvent = do
   unless (stopProb >= 1 && stopProb <= 10) $ error ("maxStop is 10 you have: " ++ show stopProb)
   return $ if randVal < stopProb then "stp" else "liq"
 
-liquidationDuty :: FutureInfo -> FutureInfo -> Double
-  -> IO ([(Int,String,String)]      -- info about the liquidation
-        , (FutureInfo, FutureInfo)) -- updated futures
+
+liquidationDuty :: SeqFuture -> SeqFuture -> Double
+  -> IO (Seq (Int,String,String)      -- info about the liquidation
+        , (SeqFuture, SeqFuture)) -- updated futures
 liquidationDuty futureInfoL futureInfoS price = do
     let liquidationFunction = mapM (\(p, n, s) ->
             (if (price <= p && s == "f") || (price >= p && s == "z")
@@ -268,29 +277,32 @@ liquidationDuty futureInfoL futureInfoS price = do
     liquidationEventsL <- liquidationFunction futureInfoL
     liquidationEventsS <- liquidationFunction futureInfoS
 
-    let liquidationListL   = filter (\(n, _, _) -> n /= 0) liquidationEventsL
-    let liquidationListS   = filter (\(n, _, _) -> n /= 0) liquidationEventsS
-    let updatedFutureInfoL = filter (\(p,_,_) -> price <= p) futureInfoL
-    let updatedFutureInfoS = filter (\(p,_,_) -> price >= p) futureInfoS
+    let liquidationListL   = Seq.filter (\(n, _, _) -> n /= 0) liquidationEventsL
+    let liquidationListS   = Seq.filter (\(n, _, _) -> n /= 0) liquidationEventsS
+    let updatedFutureInfoL = Seq.filter (\(p,_,_) -> price <= p) futureInfoL
+    let updatedFutureInfoS = Seq.filter (\(p,_,_) -> price >= p) futureInfoS
 
     -- filter the updatedFutureInfoL from futureInfoL
-    let newFutureInfoL = filter (`notElem` updatedFutureInfoL) futureInfoL
+    let newFutureInfoL = Seq.filter (`notElem` updatedFutureInfoL) futureInfoL
 
     -- filter the updatedFutureInfoS from futureInfoS
-    let newFutureInfoS = filter (`notElem` updatedFutureInfoS) futureInfoS
+    let newFutureInfoS = Seq.filter (`notElem` updatedFutureInfoS) futureInfoS
 
-    return (liquidationListL ++ liquidationListS, (newFutureInfoL, newFutureInfoS))
+    return (liquidationListL >< liquidationListS, (newFutureInfoL, newFutureInfoS))
+
+
 -- ! fine
 
 -- ? Postion  Generatorts
 -- | cycle management
 -- ? PUTTING IT ALL TOGETHER
 
--- ! bug
-normalRun :: ([Int],[Int]) -> (FutureInfo, FutureInfo) -> NewPositioning -> Double -> String
-    -> IO ((  FutureInfo              -- # updated accumulator long
-            , FutureInfo)             -- # updated accumulator short
-            , NewPositioning)         -- # updated accumulator positions
+
+
+normalRun :: ([Int],[Int]) -> SeqFutureInfo  -> Double -> String
+  
+    -> IO (   SeqFutureInfo           -- # updated accumulator long # updated accumulator short
+            , NewPositioning)        -- # updated accumulator positions
 
                                                                              {-
 # FUNCTION EXPLINATION
@@ -330,7 +342,7 @@ output: ` updated accumulators for FUTURE
        -> New position accumulators      `
                                                                               -}
 
-normalRun (volumeSplitT, volumeSplitM) (oldLongFuture, oldShortFuture) oldPositions -- TODO TAKE OUT oldPositions
+normalRun (volumeSplitT, volumeSplitM) (oldLongFuture, oldShortFuture)  -- TODO TAKE OUT oldPositions
   sPrice liqSide = do
 
   newPositioning <- normalGenerator volumeSplitT volumeSplitM (oldLongFuture, oldShortFuture) liqSide
@@ -341,6 +353,7 @@ normalRun (volumeSplitT, volumeSplitM) (oldLongFuture, oldShortFuture) oldPositi
         = (filterFuture "f" converToTransaction, filterFuture "z" converToTransaction)
   let orderedTupleNew = tuplesToSides newPositioning
   let unorderedTupleNew = newPositioning
+
   --let orderedTupleOld = tuplesToSides oldPositions
   -- let unorderedTupleOld = oldPositions
   let (longTuple,shortTuple) =  Data.Bifunctor.bimap (filterTuple "z") (filterTuple "f") orderedTupleNew
@@ -349,19 +362,22 @@ normalRun (volumeSplitT, volumeSplitM) (oldLongFuture, oldShortFuture) oldPositi
        (filterFutureAmount filteredLongTuple oldLongFuture, filterFutureAmount filteredShortTuple oldShortFuture)
 
   -- TODO get rid of unnecessary to list transitions
-  let otherRunSeq = let ((firstOld, secondOld), (firstNew, secondNew), newPos) =  ((newLongsAcc,newShortsAcc), (filteredLongFuture,filteredShortFuture),newPositioning) -- ! (filteredLongFuture,filteredShortFuture)
-                                        in ((futureInfoToSeq firstOld, futureInfoToSeq secondOld),
+  let futureToSeq = let ((firstOld, secondOld), (firstNew, secondNew), newPos) =  ((newLongsAcc,newShortsAcc), (filteredLongFuture,filteredShortFuture),newPositioning) -- ! (filteredLongFuture,filteredShortFuture)
+                                        in (( firstOld,  secondOld),
                                             (futureInfoToSeq firstNew, futureInfoToSeq secondNew),
                                             newPos)
   -- | FutureInfo
   let updatedFutureAcc = (\((frst, fst'), (snd',scnd ), _) ->
-                                    (seqToFutureInfo $ frst <> scnd,
-                                    seqToFutureInfo $ fst' <> snd')) otherRunSeq
+                                    (  frst <> scnd,
+                                       fst' <> snd')) futureToSeq
 
 
-  return (updatedFutureAcc, unorderedTupleNew)
+  return (updatedFutureAcc -- # already concat to new accumulator
+                  , unorderedTupleNew)  -- # returning in a raw form to positionCycle
 
 
+
+{-
 -- | cycle management
 -- ? testing potenital bugs
 -- TODO remove this whole function !
@@ -430,4 +446,5 @@ posFutureTestEnviromentHighlyDanngerous = do
              print newPositionsLong
              print newPositionsShort
 
-
+ -- ! add to tests
+-}

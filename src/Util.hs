@@ -5,7 +5,7 @@ module Util where
 -- | importing external libraries
 import System.Random
     ( Random(randomRs) )
-import Data.Sequence (Seq, fromList)
+import Data.Sequence (Seq, fromList, empty, singleton)
 import Data.Foldable (toList)
 -- | internal libraries
 import           Colours
@@ -41,11 +41,11 @@ futureAccLong = [(0, 0, "")]
 futureAccShort :: FutureInfo
 futureAccShort = [(0, 0, "")]
 
-initPositioningAcc :: NewPositioning
-initPositioningAcc = ([],[])
+initPositioningAcc :: (Seq (Int, String), Seq (Int, String))
+initPositioningAcc = (empty,empty)
 
-initLiquidationAcc :: MarginCall
-initLiquidationAcc = []
+initLiquidationAcc ::  Seq (Int,String,String)
+initLiquidationAcc = empty
 
 
 setupBookDetails :: InitBookStats -> BookStats

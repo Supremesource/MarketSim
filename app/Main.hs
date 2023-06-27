@@ -16,6 +16,7 @@ import           System.IO                   (BufferMode (LineBuffering),
                                               hSetBuffering, stdout)
 import           System.Process              (callCommand)
 import           System.Random               (Random (randomRs))
+import           Data.Sequence (fromList)
 
 -- | internal libraries
 import           Colours
@@ -30,6 +31,24 @@ import           Generator
 import           PosCycle
 
 
+{-   
+      putStrLn "+------------+"
+      putStrLn $ "|END OF RUN " ++ show remainingRuns
+      putStrLn "+------------+\n\n"
+      putStrLn "+------------------------------------+"
+      putStrLn $
+        "|RUN: " ++ show remainingRuns ++ " CONTENTS & aggregatedStats" ++ "|"
+      putStrLn "+------------------------------------+\n"
+      printStats newAggregatedStats
+-}
+
+ {-  
+      putStrLn "+------------+"
+      putStrLn $ "|RUN ID   " ++ show remainingRuns
+      putStrLn "+------------+"
+     -}
+
+
 -- | Entry point of program
 runProgram :: Stats -> Int -> IO [(Int, VolumeSide)]
 runProgram aggregatedStats remainingRuns = do
@@ -42,12 +61,7 @@ mainLoop aggregatedStats remainingRuns accumulatedStats = do
   if remainingRuns > 0
     then do
 
-   {-  
-      putStrLn "+------------+"
-      putStrLn $ "|RUN ID   " ++ show remainingRuns
-      putStrLn "+------------+"
-     -}
-
+  
       positions <-
         forM [1 .. numPositions] $ \indexPosition -> do
           randomToTempleate <- randomOptionGen
@@ -59,16 +73,7 @@ mainLoop aggregatedStats remainingRuns accumulatedStats = do
         -- TODO check if conncat is safe here
             accumulatedStats ++ zip [1 ..] positions
 
-{-   
-      putStrLn "+------------+"
-      putStrLn $ "|END OF RUN " ++ show remainingRuns
-      putStrLn "+------------+\n\n"
-      putStrLn "+------------------------------------+"
-      putStrLn $
-        "|RUN: " ++ show remainingRuns ++ " CONTENTS & aggregatedStats" ++ "|"
-      putStrLn "+------------------------------------+\n"
-      printStats newAggregatedStats
--}
+
 
       mainLoop newAggregatedStats (remainingRuns - 1) newAccumulatedStats
     else do
@@ -259,8 +264,9 @@ run
                 (   initLiquidationAcc
                   , initLiquidationAcc
                   , initPositioningAcc
-                  , initAccLongFuture
-                  , initAccShortFuture
+                  , fromList initAccLongFuture
+                  , fromList initAccShortFuture
+                 
                   , listofvolumes
                   , bidBook
                   , askBook
@@ -288,7 +294,7 @@ run
              putStrLn $ gray "OUTPUT SUCCESFULLY GENERATED"
 
 
-             let demo = posFutureTestEnviromentHighlyDanngerous
+           
              --demo
 
              -- // testing :

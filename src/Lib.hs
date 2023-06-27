@@ -339,9 +339,6 @@ randomOptionGen = do
   idx <- randomRIO (0, length options - 1)
   return (options !! idx)
 
-
-
-
 -- ? IO related functions
 -- |` IO help `
 -- | function to help print (helping functions in main to function correctly)

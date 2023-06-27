@@ -9,7 +9,7 @@ module DataTypes where
 -- | external libraries
 import System.Random ( StdGen )
 import Deriving.Aeson
-
+import Data.Sequence (Seq)
 
 -- ? JSON Serialization
 type JSONConfig a = CustomJSON '[OmitNothingFields, FieldLabelModifier '[StripPrefix "DATA", CamelToSnake]] a
@@ -181,14 +181,15 @@ type NewPositioning   =   (TakerTuple, MakerTuple)
 
 type MarginCall       =   [(Int,String,String)] 
 
-type RecursionPass    =   (MarginCall, MarginCall, NewPositioning, FutureInfo, 
-                           FutureInfo, VolumeList, OrderBook, OrderBook, Generator
+type RecursionPass    =   (Seq (Int,String,String), Seq (Int,String,String),  (Seq (Int,String), Seq (Int,String)),  Seq (Double,Int,String), 
+                            Seq (Double,Int,String), VolumeList, OrderBook, OrderBook, Generator
                            , Generator, FullWall, FullWall, StartingPoint
                            , Totakefromwall, [BookStats], [Stats] )
 
 type FutureAcc        =   (FutureInfo, FutureInfo)
 
-type ListPass         =   (MarginCall, NewPositioning,FutureInfo, FutureInfo,
+type ListPass         =   (Seq (Int,String,String), (Seq (Int,String), Seq (Int,String)),  Seq (Double,Int,String), 
+                           Seq (Double,Int,String),
                            Volume , OrderBook , OrderBook, Generator, Generator,
                            FullWall, FullWall, StartingPoint, Totakefromwall)
 
