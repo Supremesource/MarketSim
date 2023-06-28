@@ -182,10 +182,7 @@ type NewPositioning   =   (TakerTuple, MakerTuple)
 
 type MarginCall       =   [(Int,String,String)] 
 
-type GenerationPass    =   (Seq (Int,String,String), Seq (Int,String,String),  (Seq (Int,String), Seq (Int,String)),  Seq (Double,Int,String), 
-                            Seq (Double,Int,String), VolumeList, SeqOrderBook , SeqOrderBook, Generator
-                           , Generator, FullWall, FullWall, StartingPoint
-                           , Totakefromwall, [BookStats], [Stats] )
+
 
 type FutureAcc        =   (FutureInfo, FutureInfo)
 
