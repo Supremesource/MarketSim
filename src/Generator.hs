@@ -22,7 +22,7 @@ import           PosCycle
 import           RunSettings
 import           Util
 
-
+    
 -- TODO think about the order of the arguments
 -- | there might be a need to reverse some data so the order is correct
 -- ? processor part
@@ -40,18 +40,32 @@ generaterunProgram ::
 -- base case do block
 generaterunProgram (_, writeLiqInfo, posinfo, longinfo, shortinfo, [], bidBook, askBook, _, _, _, _, _, _, bookDetails, posStats) = do
   filewrites1 $ tail (reverse bookDetails)
-  let writeBidBook = Book {book = bidBook}
-  let writeAskBook = Book {book = askBook}
+  let writeBidBook = Book {book = toList bidBook}
+  let writeAskBook = Book {book = toList askBook}
     --let writePositionFuture = Transaction { future = longinfo ++ shortinfo }
     --let writePositionFuture' = encode writePositionFuture
     --BL.writeFile posFutureP writePositionFuture'
   BL.writeFile bidBookP (encode writeBidBook)
   BL.writeFile askBookP (encode writeAskBook)
-  putStrLn "\npostats: \n"
-    -- TODO reverse and take out the head which is only zeros
-  print posStats
-  putStrLn "\n  LIQUIDATION INFO: \n"
+
+  putStrLn "Test output: \n\n\n"
+  putStrLn "Liquidations: \n\n\n"
   print writeLiqInfo
+  putStrLn "Positions: \n\n\n"
+  print posinfo
+  putStrLn "Longs: \n\n\n"
+  print longinfo
+  putStrLn "Shorts: \n\n\n"
+  print shortinfo
+  putStrLn "Book Details: \n\n\n"
+  print bookDetails
+  putStrLn "Position Stats: \n\n\n"
+  print  posStats
+
+
+
+    -- TODO reverse and take out the head which is only zeros
+
   return
     ( writeLiqInfo
     , posinfo
@@ -125,9 +139,7 @@ orderbookLoop (liqinfo, posinfo, longinfo, shortinfo, (vAmount, vSide'), bidBook
         if head sideLIQ == "z"
           then Buy
           else Sell
-  putStrLn "LIQUIDATIONS: "
-  print volumeLIQ
-  print sideLIQ
+
   
   -- make into a function null volumeLIQ
   if null volumeLIQ
@@ -163,15 +175,9 @@ orderbookLoop (liqinfo, posinfo, longinfo, shortinfo, (vAmount, vSide'), bidBook
             if null newLiqInfo
               then fromList [(0, "", "")]
               else newLiqInfo
-      putStrLn "\ntaker :\n"
-      print $ fst localPositions
-      putStrLn "\nmaker :\n"
-      print $ snd localPositions
-      putStrLn "\nstats: \n"
+
       let newStats = aggregateStats localPositions initStats
-      print newStats
-      putStrLn "\n Agg positions: \n"
-      print newPositions
+
       return
         ( newLiqInfo
         , nullLiqInfo
@@ -203,6 +209,7 @@ orderbookLoop (liqinfo, posinfo, longinfo, shortinfo, (vAmount, vSide'), bidBook
       orderBookGenerationLiquidation <- orderBookProcess bookProcessInput
       let (sPrice, finalBookAsk, finalBookBid, maxMinLmt, lengchngBid', lengchngAsk', listASK', listBID') =
             orderBookGenerationLiquidation
+ 
       orderBookDetailsLiquidation <-
         additionalBookInfo
           finalBookAsk
@@ -228,19 +235,12 @@ orderbookLoop (liqinfo, posinfo, longinfo, shortinfo, (vAmount, vSide'), bidBook
           posinfo
       let (newLiqInfo, newPositions, localPositions, newPosFutureLong, newPosFutureShort) =
             positionGeneratorLiquidation
-      putStrLn "\n NEW POSITIONS from LIQUIDATION: \n"
-      print localPositions
-      putStrLn "\n\n"
+
       let nullLiqInfo =
             if null newLiqInfo
               then fromList [(0, "", "")]
               else newLiqInfo
       let newStats = aggregateStats localPositions initStats -- //fix pass only the positions that are truly new
-      print "taker :"
-      print $ fst localPositions
-      print "maker :"
-      print $ snd localPositions
-      print newStats
       return
         ( newLiqInfo
         , nullLiqInfo
@@ -288,7 +288,7 @@ orderBookProcess (_, _, _, _, (vAmount, vSide'), bidBook, askBook, gen1, gen2, f
   pricesBID <- printRandomList' lengchngBid'
             -- | the / number is how smaller the insertion will be
   let (listASK', listBID') =
-        calculateListTuples askSetupInsert bidSetupInsert pricesASK pricesBID
+        calculateListTuples askSetupInsert bidSetupInsert pricesASK pricesBID -- TODO rename the calculateListTuples
             -- //TODO, possible microoptimization with the stuff below :
             -- | let insertInAsk = if vSide == Buy then [] else listASK
             --  / let insertInBid = if vSide == Sell then [] else listBID    // --
@@ -315,8 +315,8 @@ orderBookProcess (_, _, _, _, (vAmount, vSide'), bidBook, askBook, gen1, gen2, f
 
 -- | continuing orderbook processing, with additional data
 additionalBookInfo ::
-     OrderBook
-  -> OrderBook
+     SeqOrderBook
+  -> SeqOrderBook
   -> VolumeSide
   -> Int
   -> StartingPoint
@@ -324,8 +324,8 @@ additionalBookInfo ::
   -> Totakefromwall
   -> Int
   -> Int
-  -> [(Double, Int)]
-  -> [(Double, Int)]
+  -> SeqOrderBook
+  -> SeqOrderBook
   -> Double
   -> IO BookStats
 additionalBookInfo finalBookAsk finalBookBid vSide' vAmount sPoint maxMinLmt takeWall lengchngBid' lengchngAsk' listASK' listBID' sPrice
@@ -433,19 +433,7 @@ positionCycle sPrice liqinfo longinfo shortinfo vAmount posinfo = do
             makerSeq2 = maker2
          in (takerSeq1 Seq.>< takerSeq2, makerSeq1 Seq.>< makerSeq2)
       
---     putStrLn "liquidations \n"
-      
---     print longliq
-      --     print shortliq
-  putStrLn "\n liquidation IO \n"
-  print liquidationIO
-  putStrLn "\n\n\ntest  short /future/: \n"
-  print newPosFutureShort
-  putStrLn "test  long /future/: \n"
-  print newPosFutureLong
-  putStrLn "test positions: \n"
-  print newPositions
-  putStrLn "\n\n\n"
+
   return
     ( newLiqInfo
     , updatedPositionAcc

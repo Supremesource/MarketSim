@@ -14,11 +14,13 @@ import           Text.Printf            (printf)
 import           Data.Aeson.Encode.Pretty (encodePretty)
 import qualified Data.ByteString.Lazy as BL
 import Data.Maybe (fromMaybe)
+import Data.Foldable (toList)
 -- | internal libraries
 import           DataTypes
 import           Filepaths
 import           Lib
 import           RunSettings
+
 
 
 generateId :: IO String
@@ -102,8 +104,8 @@ filewrites1 statsList = do
               , maxDecimalLOG = maxDecimal
               , lengthchangeBIDLOG = lengthchangeBID stats
               , lengthchangeASKLOG = lengthchangeASK stats
-              , listASKLOG = listASK stats
-              , listBIDLOG = listBID stats
+              , listASKLOG = toList $ listASK stats
+              , listBIDLOG = toList $ listBID stats
               , vSideLOG = show (vSide stats)
               , volumeAmountLOG = volumeAmount stats
               , spreadLOG = roundTo maxDecimal (spread stats)
