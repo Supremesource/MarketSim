@@ -195,24 +195,26 @@ generator isBidEmpty isAskEmpty orderbook_bid orderbook_ask fileBidBook fileAskB
       then return futureAccLong
       else do
         filterFuture "z" <$> readFuture
-  (_, _, _, _, _, _, _, _) <-
+  _ <-
     generaterunProgram
-      ( initLiquidationAcc
-      , initLiquidationAcc
-      , initPositioningAcc
-      , fromList initAccLongFuture
-      , fromList initAccShortFuture
-      , listofvolumes
-      , bidBook
-      , askBook
-      , gen1
-      , gen2
-      , fullwallsASK
-      , fullwallsBIDS
-      , initstartingPoint
-      , inittotakefromwall
-      , initialBookDetailsList
-      , [initStats])
+     GenerationPass
+      {   initLiquidationAcc1Input = initLiquidationAcc
+        , initLiquidationAcc2Input =initLiquidationAcc
+        , initPositioningAccInput = initPositioningAcc
+        , initAccLongFutureInput = fromList initAccLongFuture
+        , initAccShortFutureInput = fromList initAccShortFuture
+        , listofvolumesInput = listofvolumes
+        , bidBookInput = bidBook
+        , askBookInput = askBook
+        , gen1Input = gen1
+        , gen2Input = gen2
+        , fullwallsASKInput = fullwallsASK
+        , fullwallsBIDSInput =fullwallsBIDS
+        , initstartingPointInput =initstartingPoint
+        , inittotakefromwallInput = inittotakefromwall
+        , initialBookDetailsListInput= initialBookDetailsList
+        , initStatsInput = [initStats] }
+
             -- | formating price document
        --      removeEmptyLines pricePath
   putStrLn $ gray "OUTPUT SUCCESFULLY GENERATED"
