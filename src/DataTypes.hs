@@ -158,7 +158,7 @@ type Volume = (Int, VolumeSide)
 
 
 
-type InitBookStats = (StartingPoint , [[Int]] , Int , Int , Totakefromwall , Int , Int, [(Double,Int)],  [(Double,Int)] , VolumeSide, Int, Double, Double, Double)
+type InitBookStats = (StartingPoint , [[Int]] , Int , Int , Totakefromwall , Int , Int, SeqOrderBook,  SeqOrderBook , VolumeSide, Int, Double, Double, Double)
 
 data BookStats = BookStats {
                      startingPoint :: StartingPoint
@@ -168,15 +168,15 @@ data BookStats = BookStats {
                    , totakefromwall :: Totakefromwall
                    , lengthchangeBID :: Int
                    , lengthchangeASK :: Int
-                   , listASK :: [(Double, Int)]
-                   , listBID :: [(Double, Int)]
+                   , listASK :: SeqOrderBook
+                   , listBID :: SeqOrderBook
                    , vSide :: VolumeSide
                    , volumeAmount :: Int
                    , spread :: Double
                    , startingprice :: Double
                    , bidAskRatio :: Double
                    
-                   }
+                   } deriving (Show)
 
 type NewPositioning   =   (TakerTuple, MakerTuple)
 

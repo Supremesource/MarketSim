@@ -290,7 +290,7 @@ orderBook initstartingPoint gen1 gen2
              -- |zipping so that we have orderwalls in  -> orderbook is built
              -- | zipping prices with $ AMOUNT
   let (orderbook_ask, orderbook_bid) =
-        (fromList $ zipToTuples setupASK fullwallsASK, fromList $ zipToTuples setupBID fullwallsBIDS)
+        ( zipToTuples setupASK fullwallsASK, zipToTuples setupBID fullwallsBIDS)
              
 -- | the orderbook path which should change the bid price
              -- | orderbook logc:

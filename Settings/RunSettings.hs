@@ -25,7 +25,7 @@ plotCharts = False
 -- | starting value
 -- | you can activate this price point by runProgramning `w` - wiping runProgram
 wipingStartingValue :: Int
-wipingStartingValue = 1
+wipingStartingValue = 100
 
 --〇 ID = NUMPOS
 -- | number of positions you want to take place in the simulation runProgram
@@ -90,31 +90,31 @@ runProgramlist = [DWW,DWW,DWW,DWW,DWW,DWW,DWW,DWW,DWW,DWW]
 -- | note that this function only works as a correctness checker for yourslf, exchanges always have a minimum volume allowed by the user, make yours
 -- | not recommended to go below 10 , depends on your maxmakers, maxtakers, there is potential error catching metric implemented, but still set this rather high
 minvolume :: Int
-minvolume = 80000
+minvolume = 100000
 
 --〇 ID = VOL02
 -- | BUY VOUME
 -- | longs NEW
 basecaseValueLongNew :: Int
-basecaseValueLongNew = 80000
+basecaseValueLongNew = 100000
 upperBoundLongNew :: Int
 upperBoundLongNew = 10000000
 -- | shorts CLOSE
 basecaseValueShortClose :: Int
-basecaseValueShortClose = 80000
+basecaseValueShortClose = 100000
 upperBoundShortClose :: Int
 upperBoundShortClose = 10000000
 -- | SELL VOLUME
 -- | shorts NEW
 basecaseValueShortNew :: Int
-basecaseValueShortNew = 80000
+basecaseValueShortNew = 100000
 upperBoundShortNew :: Int
-upperBoundShortNew = 80000
+upperBoundShortNew = 10000000
 -- | longs CLOSE
 basecaseValueLongClose :: Int
-basecaseValueLongClose = 80000
+basecaseValueLongClose = 100000
 upperBoundLongClose :: Int
-upperBoundLongClose = 80000
+upperBoundLongClose = 10000000
 
 -- Statistics :
 -- | Position-Status occurrence:

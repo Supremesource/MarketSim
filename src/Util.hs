@@ -3,7 +3,7 @@
 module Util where
 
 import           Data.Foldable (toList)
-import           Data.Sequence (Seq, empty, fromList, singleton, (><), ViewL (EmptyL, (:<)), viewl)
+import           Data.Sequence (Seq, empty, fromList, singleton, (><), ViewL (EmptyL, (:<)), viewl,index)
 -- | module of utility funcitons
 -- | importing external libraries
 import           System.Random (Random (randomRs))
@@ -26,8 +26,8 @@ initialBookDetails =
     , totakefromwall = 0
     , lengthchangeBID = 0
     , lengthchangeASK = 0
-    , listASK = []
-    , listBID = []
+    , listASK = empty
+    , listBID = empty
     , vSide = Buy
     , volumeAmount = 0
     , spread = 0.0
@@ -60,8 +60,8 @@ setupBookDetails (startingP', maxMinL', asksTot', bidsTot', takewall', lengchngB
     , totakefromwall = takewall'
     , lengthchangeBID = lengchngBid'
     , lengthchangeASK = lengchngAsk'
-    , listASK = listASK'
-    , listBID = listBID'
+    , listASK =  listASK'
+    , listBID =  listBID'
     , vSide = vSide'
     , volumeAmount = volumeA'
     , spread = sprd'
@@ -177,7 +177,7 @@ calculateFinalBooks vSide' askUpdateBook listASK' askBook bidUpdateBook listBID'
 
 lengthChanges :: SeqOrderBook -> SeqOrderBook -> SeqOrderBook -> SeqOrderBook -> (Int, Int)
 lengthChanges bidUpdateBook bidBook askUpdateBook askBook =
-  (bookNumChange bidUpdateBook bidBook, bookNumChange askUpdateBook askBook)
+  (bookNumChange bidUpdateBook bidBook, bookNumChange askUpdateBook askBook)  
 
 startingPrices :: VolumeSide -> SeqOrderBook -> SeqOrderBook -> Double
 startingPrices vSide' bidUpdateBook askUpdateBook =
@@ -201,7 +201,7 @@ calculateListTuples ::
   -> [Double]
   -> [Int]
   -> [Int]
-  -> ([(Double, Int)], [(Double, Int)])
+  -> (SeqOrderBook, SeqOrderBook)
 calculateListTuples askSetupInsert bidSetupInsert pricesASK pricesBID =
   let listASK' =
         zipToTuples
@@ -217,13 +217,13 @@ calculateListTuples askSetupInsert bidSetupInsert pricesASK pricesBID =
              pricesBID)
    in (listASK', listBID')
 
-calculateFirstElements :: OrderBook -> OrderBook -> (Double, Double)
+calculateFirstElements :: SeqOrderBook -> SeqOrderBook -> (Double, Double)
 calculateFirstElements finalBookAsk finalBookBid =
-  let firstelemASK = (fst . head) finalBookAsk
-      firstelemBID = (fst . head) finalBookBid
+  let firstelemASK = fst $ index finalBookAsk 0
+      firstelemBID = fst $ index finalBookBid 0
    in (firstelemASK, firstelemBID)
 
-calculateTotals :: OrderBook -> OrderBook -> (Int, Int)
+calculateTotals :: SeqOrderBook -> SeqOrderBook -> (Int, Int)
 calculateTotals finalBookAsk finalBookBid =
   let asksTot' = sumInts finalBookAsk
       bidsTot' = sumInts finalBookBid
@@ -245,7 +245,7 @@ calculateSetupInserts lengchngAsk' lengchngBid' sPrice gen1 gen2 =
           (tail (infiniteListDownChange sPrice gen2 downMovesInsert))
    in (askSetupInsert, bidSetupInsert)
 
-calculateTotalsCount :: OrderBook -> OrderBook -> (Double, Double)
+calculateTotalsCount :: SeqOrderBook -> SeqOrderBook -> (Double, Double)
 calculateTotalsCount finalBookAsk finalBookBid =
   let asktotal = fromIntegral (length finalBookAsk)
       bidtotal = fromIntegral (length finalBookBid)

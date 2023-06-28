@@ -22,7 +22,7 @@ import           System.Random             (Random (randomR, randomRs),
                                             RandomGen (split), StdGen, mkStdGen,
                                             newStdGen, randomRIO, setStdGen)
 import           Text.Printf               (printf)
-import           Data.Sequence             (Seq, (<|), viewl, ViewL(..))
+import           Data.Sequence             (Seq, (<|), viewl, ViewL(..),fromList,foldlWithIndex)
 
 
 -- | internal libraries
@@ -132,8 +132,8 @@ infiniteListDownConstant start gen moves =
 
 -- | list management for the orderbook 2
 -- | adding insertion grid togerger with prices
-zipToTuples :: [Double] -> [Int] -> [(Double, Int)]
-zipToTuples = zip
+zipToTuples :: [Double] -> [Int] -> SeqOrderBook
+zipToTuples xs ys = fromList $ zip xs ys
 
 
 -- sums the order wall into the normal orderbook
@@ -209,8 +209,8 @@ infiniteListDownChange startPoint gen moves =
 
 
 -- ? SOME POSITION INFORMATION
-sumInts :: [(Double, Int)] -> Int
-sumInts lst = sum (map snd lst)
+sumInts :: SeqOrderBook -> Int
+sumInts = foldlWithIndex (\acc _ (_, y) -> acc + y) 0
 
 spread' :: Double -> Double -> Double
 spread' askHead bidHead = roundedResult

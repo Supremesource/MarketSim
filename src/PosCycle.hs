@@ -182,8 +182,7 @@ normalGenerator takerLst makerLst (toTakeFromLong, toTakeFromShort) liqSide = do
     openingGen :: IO (TakerTuple, MakerTuple)
     openingGen = do
       takerSide' <- randomSide
-      putStrLn "\nTHE LIQUI SIDE IS: \n"
-      putStrLn liqSide
+   
       let finalTakerSide =
             if liqSide /= ""
               then liqSide
@@ -200,8 +199,7 @@ normalGenerator takerLst makerLst (toTakeFromLong, toTakeFromShort) liqSide = do
     normalGen :: IO (TakerTuple, MakerTuple)
     normalGen = do
       takerSide' <- randomSide
-      putStrLn "\nTHE LIQUI SIDE IS: \n"
-      putStrLn liqSide
+   
       let finalTakerSide =
             if liqSide /= ""
               then liqSide
