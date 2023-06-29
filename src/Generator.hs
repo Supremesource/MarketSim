@@ -97,6 +97,7 @@ handleBaseCase genPass@GenerationPass{} = do
   let askBook = askBookInput genPass
   let bookDetails = initialBookDetailsListInput genPass
   let posStats = initStatsInput genPass
+
   filewrites1 $ tail (reverse bookDetails)
   let writeBidBook = Book {book = toList bidBook}
   let writeAskBook = Book {book = toList askBook}
@@ -105,16 +106,17 @@ handleBaseCase genPass@GenerationPass{} = do
     --BL.writeFile posFutureP writePositionFuture'
   BL.writeFile bidBookP (encode writeBidBook)
   BL.writeFile askBookP (encode writeAskBook)
-  return 
-    GenerationOutput 
-    { liqInfoOutput = writeLiqInfo
+  return
+    GenerationOutput
+    {
+        liqInfoOutput = writeLiqInfo
       , posInfoOutput = posinfo
-    , longInfoOutput = longinfo
-    , shortInfoOutput = shortinfo
-    , bidBookOutput = bidBook
-    , askBookOutput = askBook
-    , bookDetailsOutput = bookDetails
-    , posStatsOutput = posStats
+      , longInfoOutput = longinfo
+      , shortInfoOutput = shortinfo
+      , bidBookOutput = bidBook
+      , askBookOutput = askBook
+      , bookDetailsOutput = bookDetails
+      , posStatsOutput = posStats
     }
 
 --    print writeLiqInfo
@@ -141,28 +143,49 @@ handleGeneralCase genPass@GenerationPass{} = do
   let bookDetails = initialBookDetailsListInput genPass
   let posStats = initStatsInput genPass
   orderbookLoop
-    ( liqinfo
-    , posinfo
-    , longinfo
-    , shortinfo
-    , x
-    , bidBook
-    , askBook
-    , gen1
-    , gen2
-    , fullwallsASK
-    , fullwallsBIDS
-    , sPoint
-    , takeWall) >>= \(newliqinfo, newWriteLiqInfo, newPosInfo, newLonginfo, newShortinfo, newBidBook, newAskBook, newBookDetails, additionalVolAcc, newPosStats) -> do
+    ListPass
+    {
+        liqinfoInpt       = liqinfo
+      , posinfoInpt       = posinfo
+      , longinfoInpt      = longinfo
+      , shortinfoInpt     = shortinfo
+      , volumeInpt        = x
+      , bidBookInpt       = bidBook
+      , askBookInpt       = askBook
+      , gen1Inpt          = gen1
+      , gen2Inpt          = gen2
+      , fullwallsASKInpt  = fullwallsASK
+      , fullwallsBIDSInpt = fullwallsBIDS
+      , sPointInpt        = sPoint
+      , takeWallInpt      = takeWall
+    }
+    >>= \ ReturnData
+    {
+        newliqinfoOutpt      = newliqinfo
+      , newWriteLiqInfoOutpt = newWriteLiqInfo
+      , newPosInfoOutpt      = newPosInfo
+      , newLonginfoOutpt     = newLonginfo
+      , newShortinfoOutpt    = newShortinfo
+      , newBidBookOutpt      = newBidBook
+      , newAskBookOutpt      = newAskBook
+      , newBookDetailsOutpt  = newBookDetails
+      , additionalVolAccOutpt= additionalVolAcc
+      , newPosStatsOutpt     = newPosStats
+    }
+    -> do
+
     let (newGen1, newGen2) = (fst (split gen1), fst (split gen2))
     generaterunProgram
-     GenerationPass  
-      { initLiquidationAcc1Input = newliqinfo
+
+     GenerationPass
+     {
+        initLiquidationAcc1Input = newliqinfo
       , initLiquidationAcc2Input =writeLiqInfo >< newWriteLiqInfo
       , initPositioningAccInput =newPosInfo
       , initAccLongFutureInput =newLonginfo
       , initAccShortFutureInput= newShortinfo
-      , listofvolumesInput =additionalVolAcc ++ xs -- `++` should not be a significant performance bottleneck here
+       -- `++` should not be a significant performance bottleneck here
+      , listofvolumesInput = additionalVolAcc ++ xs
       , bidBookInput =newBidBook
       , askBookInput =newAskBook
       , gen1Input= newGen1
@@ -172,29 +195,66 @@ handleGeneralCase genPass@GenerationPass{} = do
       , initstartingPointInput =sPoint
       , inittotakefromwallInput =takeWall
       , initialBookDetailsListInput =newBookDetails : bookDetails
-      , initStatsInput =newPosStats : posStats }
+      , initStatsInput =newPosStats : posStats
+    }
 
 
 
+
+data ListPass = ListPass
+    { liqinfoInpt  :: Seq (Int, String, String)
+    , posinfoInpt  :: (Seq (Int, String), Seq (Int, String))
+    , longinfoInpt :: Seq (Double, Int, String)
+    , shortinfoInpt :: Seq (Double, Int, String)
+    , volumeInpt :: Volume
+    , bidBookInpt :: SeqOrderBook
+    , askBookInpt :: SeqOrderBook
+    , gen1Inpt :: Generator
+    , gen2Inpt :: Generator
+    , fullwallsASKInpt :: FullWall
+    , fullwallsBIDSInpt :: FullWall
+    , sPointInpt :: StartingPoint
+    , takeWallInpt :: Totakefromwall
+    }
+
+data ReturnBook = ReturnData
+    { newliqinfoOutpt :: Seq (Int, String, String)
+    , newWriteLiqInfoOutpt :: Seq (Int, String, String)
+    , newPosInfoOutpt :: (Seq (Int, String), Seq (Int, String))
+    , newLonginfoOutpt :: Seq (Double, Int, String)
+    , newShortinfoOutpt :: Seq (Double, Int, String)
+    , newBidBookOutpt :: SeqOrderBook
+    , newAskBookOutpt :: SeqOrderBook
+    , newBookDetailsOutpt :: BookStats
+    , additionalVolAccOutpt :: VolumeList
+    , newPosStatsOutpt :: Stats
+    }
 
 
 
 
 -- TODO concat the liquidations
-orderbookLoop ::
-     ListPass
-  -> IO ( Seq (Int, String, String)
-        , Seq (Int, String, String)
-        , (Seq (Int, String), Seq (Int, String))
-        , Seq (Double, Int, String)
-        , Seq (Double, Int, String)
-        , SeqOrderBook 
-        , SeqOrderBook 
-        , BookStats
-        , VolumeList
-        , Stats -- additional volume accumulator in case of liquidation
-         )
-orderbookLoop (liqinfo, posinfo, longinfo, shortinfo, (vAmount, vSide'), bidBook, askBook, gen1, gen2, fullwallsASK, fullwallsBIDS, sPoint, takeWall) = do
+orderbookLoop :: ListPass -> IO ReturnBook
+
+-- TODO convert into a record
+orderbookLoop listPass@ListPass{} = do
+  let (liqinfo, posinfo, longinfo, shortinfo, (vAmount, vSide'), bidBook, askBook
+          , gen1, gen2, fullwallsASK, fullwallsBIDS, sPoint, takeWall) =
+        (liqinfoInpt listPass,
+        posinfoInpt listPass,
+        longinfoInpt listPass,
+        shortinfoInpt listPass,
+        volumeInpt listPass,
+        bidBookInpt listPass,
+        askBookInpt listPass,
+        gen1Inpt listPass,
+        gen2Inpt listPass,
+        fullwallsASKInpt
+        listPass,
+        fullwallsBIDSInpt listPass,
+        sPointInpt listPass,
+        takeWallInpt listPass)
+
   let (volumeLIQ, sideLIQ, _) =
         case toList liqinfo of
           [] -> ([], [], [])
@@ -205,232 +265,234 @@ orderbookLoop (liqinfo, posinfo, longinfo, shortinfo, (vAmount, vSide'), bidBook
           then Buy
           else Sell
 
-  -- make into a function null volumeLIQ
-  if null volumeLIQ
-            -- | NO LIQUIDATION PROCESSING
-    then do nullLiq
-    else do notNullLiq
-    
-nullLiq :: IO ( Seq (Int, String, String)
-        , Seq (Int, String, String)
-        , (Seq (Int, String), Seq (Int, String))
-        , Seq (Double, Int, String)
-        , Seq (Double, Int, String)
-        , SeqOrderBook 
-        , SeqOrderBook 
-        , BookStats
-        , VolumeList
-        , Stats -- additional volume accumulator in case of liquidation
-         )
-nullLiq = do
-      orderBookGeneration <-
-        orderBookProcess
-          ( liqinfo
-          , posinfo
-          , longinfo
-          , shortinfo
-          , (vAmount, vSide')
-          , bidBook
-          , askBook
-          , gen1
-          , gen2
-          , fullwallsASK
-          , fullwallsBIDS
-          , sPoint
-          , takeWall)
-      let (sPrice, finalBookAsk, finalBookBid, maxMinLmt, lengchngBid', lengchngAsk', listASK', listBID') =
-            orderBookGeneration
-      orderBookDetails <-
-        additionalBookInfo finalBookAsk finalBookBid  vSide' vAmount  sPoint
-        maxMinLmt takeWall  lengchngBid' lengchngAsk' listASK' listBID' sPrice
-      
-      let newbookDetails = orderBookDetails
-      positionGenerator <-
-        positionCycle sPrice (toList liqinfo) longinfo shortinfo vAmount posinfo
-      let (newLiqInfo, newPositions, localPositions, newPosFutureLong, newPosFutureShort) =
-            positionGenerator
-      let nullLiqInfo =
-            if null newLiqInfo
-              then fromList [(0, "", "")]
-              else newLiqInfo
 
-      let newStats = aggregateStats localPositions initStats
-
-      return
-        ( newLiqInfo
-        , nullLiqInfo
-        , newPositions
-        , newPosFutureLong
-        , newPosFutureShort
-        , finalBookBid
-        , finalBookAsk
-        , newbookDetails
-        , []
-        , newStats)
- 
+  volLiqProcessing listPass (wholeLIQvolume,wholeLIQside)
+   
 
 
 
- -- Make into a function 
-    
+volLiqProcessing :: ListPass -> (Int,VolumeSide) -> IO ReturnBook
+volLiqProcessing listPass@ListPass{} (wholeLIQvolume, wholeLIQside)  = do
+  let (liqinfo, posinfo, longinfo, shortinfo, (vAmount, vSide')
+        , _, _, _, _, _, _, sPoint, takeWall) =
+        (liqinfoInpt listPass,
+        posinfoInpt listPass,
+        longinfoInpt listPass,
+        shortinfoInpt listPass,
+        volumeInpt listPass,
+        bidBookInpt listPass,
+        askBookInpt listPass,
+        gen1Inpt listPass,
+        gen2Inpt listPass,
+        fullwallsASKInpt listPass,
+        fullwallsBIDSInpt listPass,
+        sPointInpt listPass,
+        takeWallInpt listPass)
+
+  let adjustedVolAmount = if wholeLIQvolume == 0 then vAmount else wholeLIQvolume
+  let adjustedVolSide  = if wholeLIQvolume == 0 then vSide' else wholeLIQside
+
+  orderBookGeneration <- orderBookProcess listPass
+
+  let ReturnBookProcess
+        { sPrice = sPriceGenerated
+        , finalBookAsk = finalBookAskGenerated
+        , finalBookBid = finalBookBidGenerated
+        , maxMinLmt    = maxMinLmtGenerated
+        , lengchngBid' = lengchngBidGenerated
+        , lengchngAsk' = lengchngAskGenerated
+        , listASK'     = listASKGenerated
+        , listBID'     = listBIDGenerated } = orderBookGeneration
+
+  orderBookDetails <- additionalBookInfo
+    AdditionData
+    { finalBookAskInput = finalBookAskGenerated
+      ,finalBookBidInput = finalBookBidGenerated
+      ,vSide'Input       = adjustedVolSide
+      ,vAmountInput      = adjustedVolAmount
+      ,sPointInput       = sPoint
+      ,maxMinLmtInput    = maxMinLmtGenerated
+      ,takeWallInput     = takeWall
+      ,lengchngBid'Input = lengchngBidGenerated
+      ,lengchngAsk'Input = lengchngAskGenerated
+      ,listASK'Input     = listASKGenerated
+      ,listBID'Input     = listBIDGenerated
+      ,sPriceInput       = sPriceGenerated }
+
+  let newbookDetails = orderBookDetails
+
+  positionGenerator <- positionCycle
+                PositionCyclePass
+                  { sPriceInputCycle      = sPriceGenerated
+                    , liqinfoInputCycle   = toList liqinfo
+                    , longinfoInputCycle  = longinfo
+                    , shortinfoInputCycle = shortinfo
+                    , vAmountInputCycle   = adjustedVolAmount
+                    , posinfoInputCycle   = posinfo }
+
+  let PositionCycleOutput
+         { newLiqInfo        = newLiqInfoGenerated
+          ,nullLiqInfo       = newPositionsGenerated
+          ,newPositions      = localPositions
+          ,newPosFutureLong  = newPosFutureLongGenerated
+          ,newPosFutureShort = newPosFutureShortGenerated  } = positionGenerator
+
+  let nullLiqInfoGenerated =
+        if null newLiqInfoGenerated
+        then fromList [(0, "", "")]
+        else newLiqInfoGenerated
+
+  let newStats = aggregateStats localPositions initStats
+  let addVolAcc = ([(vAmount, vSide') | wholeLIQvolume /= 0])
+
+  return
+    ReturnData
+    {   newliqinfoOutpt       = newLiqInfoGenerated
+      , newWriteLiqInfoOutpt  = nullLiqInfoGenerated
+      , newPosInfoOutpt       = newPositionsGenerated
+      , newLonginfoOutpt      = newPosFutureLongGenerated
+      , newShortinfoOutpt     = newPosFutureShortGenerated
+      , newBidBookOutpt       = finalBookBidGenerated
+      , newAskBookOutpt       = finalBookAskGenerated
+      , newBookDetailsOutpt   = newbookDetails
+      , additionalVolAccOutpt = addVolAcc
+      , newPosStatsOutpt      = newStats  }
 
 
 
 
 
-      let bookProcessInput =
-            ( liqinfo
-            , posinfo
-            , longinfo
-            , shortinfo
-            , (wholeLIQvolume, wholeLIQside)
-            , bidBook
-            , askBook
-            , gen1
-            , gen2
-            , fullwallsASK
-            , fullwallsBIDS
-            , sPoint
-            , takeWall)
-      orderBookGenerationLiquidation <- orderBookProcess bookProcessInput
-      let (sPrice, finalBookAsk, finalBookBid, maxMinLmt, lengchngBid', lengchngAsk', listASK', listBID') =
-            orderBookGenerationLiquidation
- 
-      orderBookDetailsLiquidation <-
-        additionalBookInfo
-          finalBookAsk
-          finalBookBid
-          wholeLIQside
-          wholeLIQvolume
-          sPoint
-          maxMinLmt
-          takeWall
-          lengchngBid'
-          lengchngAsk'
-          listASK'
-          listBID'
-          sPrice
-      let newbookDetails = orderBookDetailsLiquidation
-      positionGeneratorLiquidation <-
-        positionCycle
-          sPrice
-          (toList liqinfo)
-          longinfo
-          shortinfo
-          wholeLIQvolume
-          posinfo
-      let (newLiqInfo, newPositions, localPositions, newPosFutureLong, newPosFutureShort) =
-            positionGeneratorLiquidation
+data ReturnBookProcess
+  = ReturnBookProcess
+      { sPrice :: Double
+      , finalBookAsk :: SeqOrderBook
+      , finalBookBid :: SeqOrderBook
+      , maxMinLmt :: [[Int]]
+      , lengchngBid' :: Int
+      , lengchngAsk' :: Int
+      , listASK' :: SeqOrderBook
+      , listBID' :: SeqOrderBook
+      }
 
-      let nullLiqInfo =
-            if null newLiqInfo
-              then fromList [(0, "", "")]
-              else newLiqInfo
-      let newStats = aggregateStats localPositions initStats -- //fix pass only the positions that are truly new
-      return
-        ( newLiqInfo
-        , nullLiqInfo
-        , newPositions
-        , newPosFutureLong
-        , newPosFutureShort
-        , finalBookBid
-        , finalBookAsk
-        , newbookDetails
-        , [(vAmount, vSide')]
-        , newStats)
-
-
+-- TODO record friendly implementation
 -- | orderbook main processing
-orderBookProcess ::
-     ListPass
-  -> IO ( Double
-        , SeqOrderBook
-        , SeqOrderBook
-        , [[Int]]
-        , Int
-        , Int
-        , SeqOrderBook
-        , SeqOrderBook)
-
-orderBookProcess (_, _, _, _, (vAmount, vSide'), bidBook, askBook, gen1, gen2, fullwallsASK, fullwallsBIDS, _, _)
-            
+orderBookProcess ::  ListPass -> IO ReturnBookProcess
+orderBookProcess listPass@ListPass{}  = do
+  let (liqinfo, posinfo, longinfo, shortinfo, (vAmount, vSide'), bidBook, askBook, gen1, gen2, fullwallsASK, fullwallsBIDS, sPoint, takeWall)  =
+        (liqinfoInpt listPass,
+        posinfoInpt listPass,
+        longinfoInpt listPass,
+        shortinfoInpt listPass,
+        volumeInpt listPass,
+        bidBookInpt listPass,
+        askBookInpt listPass,
+        gen1Inpt listPass,
+        gen2Inpt listPass,
+        fullwallsASKInpt listPass,
+        fullwallsBIDSInpt listPass,
+        sPointInpt listPass,
+        takeWallInpt listPass)
 
             -- TODO implement sequencing
 -- | local variables
- = do
+
   let (volumeBID, volumeASK) = calculateVolumes vSide' vAmount
- 
+
   let (bidUpdateBook, askUpdateBook) = -- Sequenced
         calculateBooks volumeBID volumeASK bidBook askBook
             -- | how much volume took from certain order books
-  
-  let (lengchngAsk', lengchngBid') =
+
+  let (lengchngAskGenerated, lengchngBidGenerated) =
         lengthChanges bidUpdateBook bidBook askUpdateBook askBook
-  let sPrice = startingPrices vSide' bidUpdateBook askUpdateBook
+  let sPriceGenerated = startingPrices vSide' bidUpdateBook askUpdateBook
   let (askSetupInsert, bidSetupInsert) =
-        calculateSetupInserts lengchngAsk' lengchngBid' sPrice gen1 gen2
-  let maxMinLmt :: [[Int]] = [fullwallsASK, fullwallsBIDS]
-  pricesASK <- printCustomRandomList lengchngAsk'
-  pricesBID <- printRandomList' lengchngBid'
+        calculateSetupInserts lengchngAskGenerated lengchngBidGenerated sPriceGenerated gen1 gen2
+  let maxMinLmtGenerated :: [[Int]] = [fullwallsASK, fullwallsBIDS]
+  pricesASK <- printCustomRandomList lengchngAskGenerated
+  pricesBID <- printRandomList' lengchngBidGenerated
             -- | the / number is how smaller the insertion will be
-  let (listASK', listBID') =
+  let (listASKGenerated, listBIDGenerated) =
         calculateListTuples askSetupInsert bidSetupInsert pricesASK pricesBID -- TODO rename the calculateListTuples
             -- //TODO, possible microoptimization with the stuff below :
             -- | let insertInAsk = if vSide == Buy then [] else listASK
             --  / let insertInBid = if vSide == Sell then [] else listBID    // --
-  let (finalBookAsk, finalBookBid) =
+  let (finalBookAskGenerated, finalBookBidGenerated) =
         calculateFinalBooks
           vSide'
           askUpdateBook
-          listASK'
+          listASKGenerated
           askBook
           bidUpdateBook
-          listBID'
+          listBIDGenerated
           bidBook
   return
-    ( sPrice
-    , finalBookAsk
-    , finalBookBid
-    , maxMinLmt
-    , lengchngBid'
-    , lengchngAsk'
-    , listASK'
-    , listBID')
+    ReturnBookProcess
+    {
+          sPrice       = sPriceGenerated
+        , finalBookAsk = finalBookAskGenerated
+        , finalBookBid = finalBookBidGenerated
+        , maxMinLmt    = maxMinLmtGenerated
+        , lengchngBid' = lengchngBidGenerated
+        , lengchngAsk' = lengchngAskGenerated
+        , listASK'     = listASKGenerated
+        , listBID'     = listBIDGenerated
+    }
 
 --type Price = Double
 
+data AdditionalBook = AdditionData
+      {
+          finalBookAskInput :: SeqOrderBook
+        , finalBookBidInput :: SeqOrderBook
+        , vSide'Input       :: VolumeSide
+        , vAmountInput      :: Int
+        , sPointInput       :: StartingPoint
+        , maxMinLmtInput    :: [[Int]]
+        , takeWallInput     :: Totakefromwall
+        , lengchngBid'Input :: Int
+        , lengchngAsk'Input :: Int
+        , listASK'Input     :: SeqOrderBook
+        , listBID'Input     :: SeqOrderBook
+        , sPriceInput       :: Double
+      }
+
+
+-- TODO convert into a record
 -- | continuing orderbook processing, with additional data
-additionalBookInfo ::
-     SeqOrderBook
-  -> SeqOrderBook
-  -> VolumeSide
-  -> Int
-  -> StartingPoint
-  -> [[Int]]
-  -> Totakefromwall
-  -> Int
-  -> Int
-  -> SeqOrderBook
-  -> SeqOrderBook
-  -> Double
-  -> IO BookStats
-additionalBookInfo finalBookAsk finalBookBid vSide' vAmount sPoint maxMinLmt takeWall lengchngBid' lengchngAsk' listASK' listBID' sPrice
-            
+additionalBookInfo :: AdditionalBook -> IO BookStats
+additionalBookInfo additionalBook@AdditionData{} = do
+  let (finalBookAskGen, finalBookBidGen, vSide', vAmount, sPoint, maxMinLmtGen
+       , takeWall , lengchngBidGen, lengchngAskGen, listASKGen
+       , listBIDGen, sPriceGen) =
+        (finalBookAskInput additionalBook,
+        finalBookBidInput additionalBook,
+        vSide'Input additionalBook,
+        vAmountInput additionalBook,
+        sPointInput additionalBook,
+        maxMinLmtInput additionalBook,
+        takeWallInput additionalBook,
+        lengchngBid'Input additionalBook,
+        lengchngAsk'Input additionalBook,
+        listASK'Input additionalBook,
+        listBID'Input additionalBook,
+        sPriceInput additionalBook)
+
+
 -- TODO make funciton purely for this called additional book info
-            
+
 -- | ask in total in terms of count
             -- | bids in total in terms of count
- = do
-  let (asktotal, bidtotal) = calculateTotalsCount finalBookAsk finalBookBid
+
+  let (asktotal, bidtotal) = calculateTotalsCount finalBookAskGen finalBookBidGen
             -- | Ratio between bids and AKS
   let bidAskR' = abs ((bidtotal - asktotal) / (bidtotal + asktotal)) :: Double
             -- | Ratio is benefiting :
             -- | asks in total -> $$
             -- | bids in total -> $$
-  let (asksTot', bidsTot') = calculateTotals finalBookAsk finalBookBid
+  let (asksTot', bidsTot') = calculateTotals finalBookAskGen finalBookBidGen
             -- | bid ask spread
   let (firstelemASK, firstelemBID) =
-        calculateFirstElements finalBookAsk finalBookBid
+        calculateFirstElements finalBookAskGen finalBookBidGen
   let sprd' = spread' firstelemASK firstelemBID
             -- | checking if the stats above will go through with the orderbook
             -- | local check
@@ -441,18 +503,18 @@ additionalBookInfo finalBookAsk finalBookBid vSide' vAmount sPoint maxMinLmt tak
   let newbookDetails =
         setupBookDetails
           ( sPoint
-          , maxMinLmt
+          , maxMinLmtGen
           , asksTot'
           , bidsTot'
           , takeWall
-          , lengchngBid'
-          , lengchngAsk'
-          , listASK'
-          , listBID'
+          , lengchngBidGen
+          , lengchngAskGen
+          , listASKGen
+          , listBIDGen
           , vSide'
           , vAmount
           , sprd'
-          , sPrice
+          , sPriceGen
           , bidAskR')
   let insertinInfo = formatAndPrintInfo newbookDetails
   insertinInfo -- THIS IS ONLY CONSOLE (pass into the console)
@@ -462,23 +524,36 @@ additionalBookInfo finalBookAsk finalBookBid vSide' vAmount sPoint maxMinLmt tak
 type SeqNewPositioning = Seq NewPositioning
 
 
+data PositionCyclePass = PositionCyclePass
+  {   sPriceInputCycle :: Double
+    , liqinfoInputCycle :: MarginCall
+    , longinfoInputCycle :: Seq (Double, Int, String)
+    , shortinfoInputCycle :: Seq (Double, Int, String)
+    , vAmountInputCycle :: Int
+    , posinfoInputCycle :: (Seq (Int, String), Seq (Int, String))
+  }
+
+data PositionCycleOutput = PositionCycleOutput
+  { newLiqInfo :: Seq (Int, String, String)
+  , nullLiqInfo :: (Seq (Int, String), Seq (Int, String))
+  , newPositions :: NewPositioning
+  , newPosFutureLong :: Seq (Double, Int, String)
+  , newPosFutureShort :: Seq (Double, Int, String)
+  } deriving (Eq )
+
+-- TODO convert into records
 -- | position cycle 
 -- ! does not need to recive liquidation info
-positionCycle ::
-     Double
-  -> MarginCall
-  -> Seq (Double, Int, String)
-  -> Seq (Double, Int, String)
-  -> Int
-  -> (Seq (Int, String), Seq (Int, String))
-  -> IO ( Seq (Int, String, String) -- [(Int, String, String)]
-        , (Seq (Int, String), Seq (Int, String)) -- (Seq (Int, String), Seq (Int, String))
-        , NewPositioning -- NewPositioning
-        , Seq (Double, Int, String)
-        , Seq (Double, Int, String) -- Seq (Double, Int, String), Seq (Double, Int, String))
-         )-- TODO: maybe convert to record?
+positionCycle :: PositionCyclePass -> IO PositionCycleOutput
+positionCycle positionCyclePass@PositionCyclePass{} = do
+  let (sPricegen, liqinfo, longinfo, shortinfo, vAmount, posinfo) =
+        (sPriceInputCycle positionCyclePass,
+        liqinfoInputCycle positionCyclePass,
+        longinfoInputCycle positionCyclePass,
+        shortinfoInputCycle positionCyclePass,
+        vAmountInputCycle positionCyclePass,
+        posinfoInputCycle positionCyclePass)
 
-positionCycle sPrice liqinfo longinfo shortinfo vAmount posinfo = do
   let (_, sideLIQ, _) =
         case liqinfo of
           [] -> ([], [], [])
@@ -487,27 +562,27 @@ positionCycle sPrice liqinfo longinfo shortinfo vAmount posinfo = do
         if null sideLIQ
           then ""
           else head sideLIQ
-      
+
 -- TODO make a funciton purely for this called position info
-      
+
 -- ? POSITION FUTURE
       -- | check if the future file is empty
   numTakers <- randomRIO (1, maxTakers) :: IO Int -- select how many takers
   numMakers <- randomRIO (1, maxMakers) :: IO Int -- select how many makers
   volumeSplitT <- generateVolumes numTakers vAmount -- split the volume
   volumeSplitM <- generateVolumes numMakers vAmount -- split the volume
-  liquidated <- liquidationDuty longinfo shortinfo sPrice
+  liquidated <- liquidationDuty longinfo shortinfo sPricegen
       --   print "infos"
-      
+
 --   print longinfo
   let (liquidationIO, liquidationFuture) = liquidated
   let (longliq, shortliq) = liquidationFuture
-  let newLiqInfo = liquidationIO
+  let newLiqInfogen = liquidationIO
   runProgram <-
     normalrunProgram
       (volumeSplitT, volumeSplitM)
       (longliq, shortliq)
-      sPrice
+      sPricegen
       liquidationString
   let ((newPosFutureShort, newPosFutureLong), newPositions) = runProgram
       -- | (TakerTuple,MakerTuple)
@@ -519,11 +594,13 @@ positionCycle sPrice liqinfo longinfo shortinfo vAmount posinfo = do
             makerSeq1 = Seq.fromList maker1
             makerSeq2 = maker2
          in (takerSeq1 Seq.>< takerSeq2, makerSeq1 Seq.>< makerSeq2)
-      
+
 
   return
-    ( newLiqInfo
-    , updatedPositionAcc
-    , newPositions
-    , newPosFutureLong
-    , newPosFutureShort)
+    PositionCycleOutput
+    {  newLiqInfo      = newLiqInfogen
+    , nullLiqInfo      = updatedPositionAcc
+    , newPositions     = newPositions
+    , newPosFutureLong = newPosFutureLong
+    , newPosFutureShort = newPosFutureShort
+    }
