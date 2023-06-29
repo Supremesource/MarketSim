@@ -137,6 +137,7 @@ mainLoop aggregatedStats remainingrunPrograms accumulatedStats = do
     else do
       noRemainingrunProgram aggregatedStats accumulatedStats
 
+
 noRemainingrunProgram :: Stats -> [(Int, Position)] -> IO [(Int, VolumeSide)]
 noRemainingrunProgram aggregatedStats accumulatedStats = do
   printFinal aggregatedStats
@@ -147,13 +148,16 @@ noRemainingrunProgram aggregatedStats accumulatedStats = do
       (volume, side, acc) <-
         printPositionStats indexPosition positionInfo initialPositionData
       return (volume, side, acc)
-      
+
+{-      
 -- Now write everything to the file at once
   let allPositions = concatMap (\(_, _, acc) -> acc) results
   writePositionsToFile positionInfoP allPositions
-      
+-}       
 -- Return the results, discarding the [PositionData] part
   return [(volume, side) | (volume, side, _) <- results]
+
+
 
 generator ::
      Bool

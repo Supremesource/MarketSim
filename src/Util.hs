@@ -20,7 +20,7 @@ initialBookDetails :: BookStats
 initialBookDetails =
   BookStats
     { startingPoint = 0.0
-    , maxMinLimit = replicate 2 []
+    , maxMinLimit = (0,0)
     , asksTotal = 0
     , bidsTotal = 0
     , totakefromwall = 0
@@ -37,6 +37,9 @@ initialBookDetails =
 
 
 -- ? position acccumulator
+initialPositionData :: [PositionData]
+initialPositionData = []
+
 -- | accumulators for future info
 futureAccLong :: FutureInfo
 futureAccLong = [(0, 0, "")]
@@ -49,6 +52,8 @@ initPositioningAcc = (empty, empty)
 
 initLiquidationAcc :: Seq (Int, String, String)
 initLiquidationAcc = empty
+
+
 
 setupBookDetails :: InitBookStats -> BookStats
 setupBookDetails (startingP', maxMinL', asksTot', bidsTot', takewall', lengchngBid', lengchngAsk', listASK', listBID', vSide', volumeA', sprd', sprice', bidAskR') =
