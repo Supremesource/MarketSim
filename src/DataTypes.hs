@@ -186,10 +186,6 @@ type MarginCall       =   [(Int,String,String)]
 
 type FutureAcc        =   (FutureInfo, FutureInfo)
 
-type ListPass         =   (Seq (Int,String,String), (Seq (Int,String), Seq (Int,String)),  Seq (Double,Int,String), 
-                           Seq (Double,Int,String),
-                           Volume , SeqOrderBook , SeqOrderBook, Generator, Generator,
-                           FullWall, FullWall, StartingPoint, Totakefromwall)
 
 type Position         =   ([(Int, String)], [(Int, String)])
 
