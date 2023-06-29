@@ -8,7 +8,7 @@ module Filepaths where
 -- | orderbook
 askBookP :: FilePath
 askBookP = "data/askbook.json"
--- 2
+
 bidBookP :: FilePath
 bidBookP = "data/bidbook.json"
 

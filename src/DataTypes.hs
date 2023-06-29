@@ -49,15 +49,21 @@ data FileWritesLog = FileWritesLog
   deriving (FromJSON, ToJSON)
   via JSONConfig FileWritesLog
 
-
 data FileWriteBook = FileWriteBook
-  { startingPriceBook :: Double
+  { identifierBook :: String 
+  , startingPriceBook :: Double
   , bidAskRatioBook :: String -- formated with printf
   , bidsTotalBook :: Int
   , asksTotalBook :: Int
+  , maxMinLmtBook :: (Int,Int)
+  , vSideBook :: VolumeSide
+  , volumeAmountBook :: Int
+  , spreadBook :: Double
   } deriving Generic
   deriving (FromJSON, ToJSON)
   via JSONConfig FileWriteBook
+
+
 
 
 data PositionData = PositionData
@@ -82,27 +88,11 @@ data Book = Book {
   book :: [(Double, Int)]
 } deriving (Show, Generic, FromJSON, ToJSON)
 
-
-
-initialPositionData :: [PositionData]
-initialPositionData = []
-
-
-
--- data PositionsOutput = Output
---   { ops :: [Op]
---   , princes :: [Prices]
---   -- ...
---   }
-
-
--- ? Types
-
 -- | defining data typ for volume side
 data VolumeSide
   = Buy
   | Sell
-   deriving (Show, Eq, Ord, Enum, Bounded)
+   deriving (Show, Eq, Ord, Enum, Bounded, Generic, FromJSON, ToJSON)
 
 -- | maker tuple structure
 type MakerTuple = [(Int, String)] 
@@ -157,12 +147,11 @@ type Totakefromwall = Int
 type Volume = (Int, VolumeSide)
 
 
-
-type InitBookStats = (StartingPoint , [[Int]] , Int , Int , Totakefromwall , Int , Int, SeqOrderBook,  SeqOrderBook , VolumeSide, Int, Double, Double, Double)
+type InitBookStats = (StartingPoint , (Int,Int), Int , Int , Totakefromwall , Int , Int, SeqOrderBook,  SeqOrderBook , VolumeSide, Int, Double, Double, Double)
 
 data BookStats = BookStats {
                      startingPoint :: StartingPoint
-                   , maxMinLimit :: [[Int]]
+                   , maxMinLimit :: (Int,Int)
                    , asksTotal :: Int
                    , bidsTotal :: Int
                    , totakefromwall :: Totakefromwall
@@ -177,15 +166,13 @@ data BookStats = BookStats {
                    , bidAskRatio :: Double
                    
                    } deriving (Show)
+type SeqNewPositioning = Seq NewPositioning
 
 type NewPositioning   =   (TakerTuple, MakerTuple)
 
 type MarginCall       =   [(Int,String,String)] 
 
-
-
 type FutureAcc        =   (FutureInfo, FutureInfo)
-
 
 type Position         =   ([(Int, String)], [(Int, String)])
 

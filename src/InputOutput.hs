@@ -1,43 +1,15 @@
 {-# OPTIONS_GHC -Wno-missing-export-lists #-}
 {-# OPTIONS_GHC -Wno-incomplete-patterns #-}
+{-# LANGUAGE DerivingStrategies #-}
+{-# LANGUAGE DerivingVia #-}
+{-# LANGUAGE DeriveGeneric #-}
 
 module InputOutput where
-
--- | module where the IO is taking place
-
--- | external libraries
-import           Colours
-import           Control.Monad
-import           Data.Time.Clock.POSIX  (getPOSIXTime)
-import           System.Random          (Random (randomRs), mkStdGen)
-import           Text.Printf            (printf)
-import           Data.Aeson.Encode.Pretty (encodePretty)
-import qualified Data.ByteString.Lazy as BL
-import Data.Maybe (fromMaybe)
-import Data.Foldable (toList)
--- | internal libraries
-import           DataTypes
-import           Filepaths
-import           Lib
-import           RunSettings
-
-
-
-generateId :: IO String
-generateId = do
-  currentTime <- getPOSIXTime
-  let seed = round $ currentTime * (10 ^ (9 :: Integer)) :: Int
-  let gen = mkStdGen seed
-  let symbols = ['0' .. '9'] ++ ['a' .. 'z'] ++ ['A' .. 'Z'] ++ "?!@#$&*"
-  let randomChars = randomRs (0, length symbols - 1) gen
-  return $ map (symbols !!) $ take 10 randomChars
-
-
-formatAndPrintInfo :: BookStats -> IO ()
+{- 
+  formatAndPrintInfo :: BookStats -> IO ()
 formatAndPrintInfo stats = do
   identifier <- generateId
-  putStrLn "\n" -- take out
-{- 
+  
 
   let formatRow x y z =
         B.pack $ printf (lime "| %-15s | %-15s | %-15s |\n") x y z
@@ -70,16 +42,72 @@ formatAndPrintInfo stats = do
   B.putStr line
 
 -}
+-- | module where the IO is taking place
 
-filewrites1 :: [BookStats] -> IO ()
-filewrites1 statsList = do
-    identifier <- generateId
-    let logStats = map (writeStat identifier) statsList
-    let bookStats = map writeBook statsList
-    BL.appendFile logP (encodePretty logStats)
-    BL.appendFile orderBookDetailsP (encodePretty bookStats)
+-- | external libraries
+import           Colours
+import           Control.Monad
+import           Data.Time.Clock.POSIX  (getPOSIXTime)
+import           System.Random          (Random (randomRs), mkStdGen, randomIO)
+import           Text.Printf            (printf)
+import           Data.Aeson.Encode.Pretty (encodePretty)
+import qualified Data.ByteString.Lazy as BL
+import Data.Maybe (fromMaybe)
+import Data.Foldable (toList)
+-- | internal libraries
+import           DataTypes
+import           Filepaths
+import           Lib
+import           RunSettings
+import Deriving.Aeson
+import GHC.Base (undefined)
+
+
+
+
+generateId :: IO String
+generateId = do
+  currentTime <- getPOSIXTime
+  let seed = round $ currentTime * (10 ^ (9 :: Integer)) :: Int
+  randomSeed <- randomIO :: IO Int
+  let gen = mkStdGen (seed + randomSeed)
+  let symbols = ['0' .. '9'] ++ ['a' .. 'z'] ++ ['A' .. 'Z'] ++ "?!@#$&*"
+  let randomChars = randomRs (0, length symbols - 1) gen
+  return $ map (symbols !!) $ take 10 randomChars
+
+
+writeBook :: [BookStats] -> IO ()
+writeBook statsList = do
+  bookStats <- mapM writeBookStat statsList
+  BL.appendFile orderBookDetailsP (encodePretty bookStats)
+ 
   where
-    writeStat identifier stats = 
+    writeBookStat stats = do
+        identifier <- generateId
+        let bidAskRatioStr = printf "%.4f" $ bidAskRatio stats
+        let fileWriteBook = FileWriteBook
+              { identifierBook = identifier
+              , startingPriceBook = startingprice stats
+              , bidAskRatioBook   = bidAskRatioStr
+              , bidsTotalBook     = bidsTotal stats
+              , asksTotalBook     = asksTotal stats
+              , maxMinLmtBook     = maxMinLimit stats 
+              , vSideBook         = vSide stats
+              , volumeAmountBook  = volumeAmount stats
+              , spreadBook        = roundTo maxDecimal (spread stats)
+              }
+        return fileWriteBook
+
+writePosition = undefined
+
+writeLog :: [BookStats] -> IO ()
+writeLog statsList = do
+  logStats <- mapM writeStat statsList
+  BL.appendFile logP (encodePretty logStats)
+ 
+  where
+    writeStat stats = do
+        identifier <- generateId
         let fileWritesLog = FileWritesLog
               { identifierLOG = identifier
               , startingPointLOG = startingPoint stats
@@ -90,8 +118,8 @@ filewrites1 statsList = do
               , minDownMoveLOG = minDownMove
               , minimum'LOG = minimum'
               , maximum'LOG = maximum'
-              ,  maximumActualLOG = fromMaybe 0 $ maxList (maxMinLimit stats)
-              ,  minimumActualLOG = fromMaybe 0 $ minList (maxMinLimit stats)
+              , maximumActualLOG = fst (maxMinLimit stats)
+              , minimumActualLOG = snd (maxMinLimit stats)
               , takeamountBIDLOG = takeamountBID
               , takeamountASKLOG = takeamountASK
               , asksTotalLOG = asksTotal stats
@@ -111,17 +139,8 @@ filewrites1 statsList = do
               , spreadLOG = roundTo maxDecimal (spread stats)
               , startingPriceLOG = startingprice stats
               } -- append mode
-              in fileWritesLog
+        return fileWritesLog
 
-    writeBook stats =
-      let bidAskRatioStr = printf "%.4f" $ bidAskRatio stats
-          fileWriteBook = FileWriteBook
-              { startingPriceBook = startingprice stats
-              , bidAskRatioBook = bidAskRatioStr
-              , bidsTotalBook = bidsTotal stats
-              , asksTotalBook = asksTotal stats
-              }
-      in fileWriteBook
 
   
 {-

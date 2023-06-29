@@ -31,7 +31,7 @@ wipingStartingValue = 100
 -- | number of positions you want to take place in the simulation runProgram
 -- | number of positions
 numPositions :: Int
-numPositions = 5
+numPositions = 4
 
 --〇 ID = NUMrunProgram
 -- | number of runPrograms, this is a loop how many times will the simulation repeat itself (random generators are updating each time though)
@@ -45,7 +45,7 @@ numberOfrunPrograms = 1
 -- TODO add more complex statistic distribution
 -- | what is the maximum of makers in one transaction , i.e 1000 buy matched with 1000 sell, now the max makers filled in that transaction can be specified below
 maxMakers :: Int
-maxMakers = 4
+maxMakers = 3
 -- | note that max takers is hardcoded to be 95% of maxmakers (done on real market observtions)
 -- ? Not recommended to change this from 0.95
 maxTakers :: Int
@@ -90,29 +90,29 @@ runProgramlist = [DWW,DWW,DWW,DWW,DWW,DWW,DWW,DWW,DWW,DWW]
 -- | note that this function only works as a correctness checker for yourslf, exchanges always have a minimum volume allowed by the user, make yours
 -- | not recommended to go below 10 , depends on your maxmakers, maxtakers, there is potential error catching metric implemented, but still set this rather high
 minvolume :: Int
-minvolume = 100000
+minvolume = 1000000
 
 --〇 ID = VOL02
 -- | BUY VOUME
 -- | longs NEW
 basecaseValueLongNew :: Int
-basecaseValueLongNew = 100000
+basecaseValueLongNew = 1000000
 upperBoundLongNew :: Int
 upperBoundLongNew = 10000000
 -- | shorts CLOSE
 basecaseValueShortClose :: Int
-basecaseValueShortClose = 100000
+basecaseValueShortClose = 1000000
 upperBoundShortClose :: Int
 upperBoundShortClose = 10000000
 -- | SELL VOLUME
 -- | shorts NEW
 basecaseValueShortNew :: Int
-basecaseValueShortNew = 100000
+basecaseValueShortNew = 1000000
 upperBoundShortNew :: Int
 upperBoundShortNew = 10000000
 -- | longs CLOSE
 basecaseValueLongClose :: Int
-basecaseValueLongClose = 100000
+basecaseValueLongClose = 1000000
 upperBoundLongClose :: Int
 upperBoundLongClose = 10000000
 
