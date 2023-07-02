@@ -44,7 +44,12 @@
 
             # Programs you want to make available in the shell.
             # Default programs can be disabled by setting to 'null'
-            tools = hp: { fourmolu = hp.fourmolu; ghcid = null; stack = pkgs.haskellPackages.stack; };
+            tools = hp: {
+              fourmolu = hp.fourmolu;
+              ghcid = null;
+              stack = pkgs.haskellPackages.stack;
+              haskell-debug-adapter = hp.haskell-debug-adapter;
+            };
 
             hlsCheck.enable = true;
           };
