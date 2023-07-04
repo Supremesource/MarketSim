@@ -90,31 +90,31 @@ runProgramlist = [DWW,DWW,DWW,DWW,DWW,DWW,DWW,DWW,DWW,DWW]
 -- | note that this function only works as a correctness checker for yourslf, exchanges always have a minimum volume allowed by the user, make yours
 -- | not recommended to go below 10 , depends on your maxmakers, maxtakers, there is potential error catching metric implemented, but still set this rather high
 minvolume :: Int
-minvolume = 1000000
+minvolume = 10000000
 
 --〇 ID = VOL02
 -- | BUY VOUME
 -- | longs NEW
 basecaseValueLongNew :: Int
-basecaseValueLongNew = 1000000
+basecaseValueLongNew = 30000000
 upperBoundLongNew :: Int
-upperBoundLongNew = 10000000
+upperBoundLongNew = 300000000
 -- | shorts CLOSE
 basecaseValueShortClose :: Int
-basecaseValueShortClose = 1000000
+basecaseValueShortClose = 30000000
 upperBoundShortClose :: Int
-upperBoundShortClose = 10000000
+upperBoundShortClose = 300000000
 -- | SELL VOLUME
 -- | shorts NEW
 basecaseValueShortNew :: Int
-basecaseValueShortNew = 1000000
+basecaseValueShortNew = 10000000
 upperBoundShortNew :: Int
-upperBoundShortNew = 10000000
+upperBoundShortNew = 100000000
 -- | longs CLOSE
 basecaseValueLongClose :: Int
-basecaseValueLongClose = 1000000
+basecaseValueLongClose = 10000000
 upperBoundLongClose :: Int
-upperBoundLongClose = 10000000
+upperBoundLongClose = 100000000
 
 -- Statistics :
 -- | Position-Status occurrence:
@@ -178,10 +178,10 @@ maxDownMove = 0.01
 --〇 ID = TakeBidAsk
 -- | Size of bid orderbook
 takeamountBID :: Int
-takeamountBID = 10000
+takeamountBID = 20000
 -- | Size of ask orderbook
 takeamountASK :: Int
-takeamountASK = 10000
+takeamountASK = 20000
 
 --  'WALL' SETTINGS:
 --〇 ID = wallLikeHood

@@ -63,8 +63,32 @@ data FileWriteBook = FileWriteBook
   deriving (FromJSON, ToJSON)
   via JSONConfig FileWriteBook
 
-
-
+data FileWritePosition = FileWritePosition
+  {identifierPosition :: String
+  ,totalXPosAmount:: Int 
+  ,totalYPosAmount:: Int
+  ,totalZPosAmount:: Int
+  ,totalFPosAmount:: Int
+  ,totalXPosCount :: Int
+  ,totalYPosCount :: Int
+  ,totalZPosCount :: Int
+  ,totalFPosCount :: Int
+  ,takerXPos :: Int
+  ,takerYPos :: Int
+  ,takerZPos :: Int  
+  ,takerFPos :: Int
+  ,makerXPos :: Int
+  ,makerYPos :: Int
+  ,makerZPos :: Int
+  ,makerFPos :: Int
+  ,buyVolumePos :: Int
+  ,sellVolumePos :: Int
+  ,overalVolumePos :: Int
+  ,overalOpenInterestPos :: Int
+  ,liquidationInfoPos :: MarginCall
+  } deriving Generic
+  deriving (FromJSON, ToJSON)
+  via JSONConfig FileWritePosition
 
 data PositionData = PositionData
   {totalXPosition             :: Int
@@ -78,6 +102,8 @@ data PositionData = PositionData
   }deriving Generic
   deriving (FromJSON, ToJSON)
   via JSONConfig PositionData
+
+
 
 data InitPrice where
   InitPrice :: {initPrice :: Double} -> InitPrice

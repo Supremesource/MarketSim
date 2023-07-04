@@ -278,7 +278,7 @@ interestorPlus ((n1, s1):takers) ((n2, s2):makers)
 volumechecker ::
      Int -> Int -> Int -> Int -> Int -> Int -> Int -> Int -> Int -> IO ()
 volumechecker minimumV a b c d e f g h
-  | a < minimumV ||
+  | a < minimumV   ||
       b < minimumV ||
       c < minimumV ||
       d < minimumV ||
