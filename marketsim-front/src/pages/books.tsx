@@ -3,7 +3,7 @@ import axios from "axios";
 // import Head from "next/head";
 // import Link from "next/link";
 
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* -- eslint-disable @typescript-eslint/no-unsafe-assignment */
 export async function getServerSideProps() {
 
   // TODO: reduce request size somehow
