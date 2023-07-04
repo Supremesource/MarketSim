@@ -1,0 +1,8 @@
+version: v3.8
+
+services:
+  front:
+    image: marketsim-front
+    build: ./marketsim-front
+    ports:
+      - "3000:3000"
