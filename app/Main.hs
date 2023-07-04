@@ -193,12 +193,12 @@ generator isBidEmpty isAskEmpty orderbook_bid orderbook_ask fileBidBook fileAskB
     if isFutureEmpt
       then return futureAccLong
       else do
-        filterFuture "f" <$> readFuture
+        filterFuture "no" "f" <$> readFuture
   initAccShortFuture <-
     if isFutureEmpt
       then return futureAccLong
       else do
-        filterFuture "z" <$> readFuture
+        filterFuture "no" "z" <$> readFuture
   _ <-
     generaterunProgram
      GenerationPass

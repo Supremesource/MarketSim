@@ -254,10 +254,10 @@ readFuture = do
     Nothing -> error "Error reading future file"
     Just x  -> return x
 
-filterFuture :: String -> Transaction -> FutureInfo
-filterFuture pos transaction =
-  filter (\(_, _, s) -> s == pos) (future transaction)
-
+filterFuture :: String -> String -> Transaction -> FutureInfo
+filterFuture liq pos transaction =
+  if liq == "no" then filter (\(_, _, s) -> s == pos) (future transaction) else future transaction
+  
 
 -- // end of position future
 filterTuple :: String -> [(Int, String)] -> [(Int, String)]
@@ -403,10 +403,11 @@ normalrunProgram (volumeSplitT, volumeSplitM) (oldLongFuture, oldShortFuture) --
       (oldLongFuture, oldShortFuture)
       liqSide
   posFut <- positionFuture sPrice newPositioning
+  let adjustedLiquidation = if liqSide == "" then "no" else "yes"
   let converToTransaction = Transaction {future = posFut}
   let (filteredLongFuture, filteredShortFuture) =
-        ( filterFuture "f" converToTransaction
-        , filterFuture "z" converToTransaction)
+        ( filterFuture adjustedLiquidation  "f" converToTransaction
+        , filterFuture adjustedLiquidation  "z" converToTransaction)
   let orderedTupleNew = tuplesToSides newPositioning
   let unorderedTupleNew = newPositioning
   

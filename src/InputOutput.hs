@@ -84,9 +84,9 @@ writeBook statsList = do
   where
     writeBookStat stats = do
         identifier <- generateId
-        let bidAskRatioStr = printf "%.4f" $ bidAskRatio stats
-        let fileWriteBook = FileWriteBook
-              { identifierBook = identifier
+        let bidAskRatioStr        = printf "%.4f" $ bidAskRatio stats
+        let fileWriteBook         = FileWriteBook
+              { identifierBook    = identifier
               , startingPriceBook = startingprice stats
               , bidAskRatioBook   = bidAskRatioStr
               , bidsTotalBook     = bidsTotal stats
@@ -98,7 +98,41 @@ writeBook statsList = do
               }
         return fileWriteBook
 
-writePosition = undefined
+writePosition :: [Stats] -> MarginCall -> IO ()
+writePosition statList marginCall = do
+  positionStats <- mapM writePositionStat statList
+  BL.appendFile positionInfoP (encodePretty positionStats)
+  where
+    writePositionStat stats = do
+      identifier <- generateId  
+      let fileWritePosition = FileWritePosition
+            { identifierPosition     = identifier
+            , totalXPosAmount        = offX        stats 
+            , totalYPosAmount        = offY        stats
+            , totalZPosAmount        = offZ        stats
+            , totalFPosAmount        = offF        stats 
+            , totalXPosCount         = takerXc     stats
+            , totalYPosCount         = takerYc     stats
+            , totalZPosCount         = takerZc     stats
+            , totalFPosCount         = takerFc     stats
+            , takerXPos              = takerX      stats
+            , takerYPos              = takerY      stats
+            , takerZPos              = takerZ      stats
+            , takerFPos              = takerF      stats
+            , makerXPos              = makerX      stats
+            , makerYPos              = makerY      stats
+            , makerZPos              = makerZ      stats
+            , makerFPos              = makerF      stats
+            , buyVolumePos           = buyVolume   stats
+            , sellVolumePos          = sellVolume  stats
+            , overalVolumePos        = totalVolume stats 
+            , overalOpenInterestPos  = overallOI   stats
+            , liquidationInfoPos     = marginCall
+            }
+      return fileWritePosition
+
+
+
 
 writeLog :: [BookStats] -> IO ()
 writeLog statsList = do
@@ -109,7 +143,7 @@ writeLog statsList = do
     writeStat stats = do
         identifier <- generateId
         let fileWritesLog = FileWritesLog
-              { identifierLOG = identifier
+              { identifierLOG  = identifier
               , startingPointLOG = startingPoint stats
               , takeamountLOG = takeamount
               , maxUpMoveLOG = maxUpMove

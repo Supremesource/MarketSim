@@ -67,6 +67,22 @@ finish data writing
 Add multiple correctness checker mechanics
 
 
+
+
+Debug:
+
+Z liquidations pushing price lower (probably F higher)
+liquidations are taken out of the future twice
+
+
+5.
+complete passing into filewrites
+test it's output
+debug 
+add complex tests
+write down what is still missing
+make settings read from json
+
 AT THE END DO:
 Fronend
 - ADD TIME FRAME FORMATING
