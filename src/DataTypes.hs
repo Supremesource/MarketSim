@@ -58,7 +58,7 @@ data FileWriteBook = FileWriteBook
   , maxMinLmtBook :: (Int,Int)
   , vSideBook :: VolumeSide
   , volumeAmountBook :: Int
-  , spreadBook :: Double
+  , spreadBook :: String -- fotmate with printf
   } deriving Generic
   deriving (FromJSON, ToJSON)
   via JSONConfig FileWriteBook

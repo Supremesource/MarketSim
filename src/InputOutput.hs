@@ -54,13 +54,13 @@ import           Data.Aeson.Encode.Pretty (encodePretty)
 import qualified Data.ByteString.Lazy as BL
 import Data.Maybe (fromMaybe)
 import Data.Foldable (toList)
+
 -- | internal libraries
 import           DataTypes
 import           Filepaths
 import           Lib
 import           RunSettings
-import Deriving.Aeson
-import GHC.Base (undefined)
+
 
 
 
@@ -75,16 +75,18 @@ generateId = do
   let randomChars = randomRs (0, length symbols - 1) gen
   return $ map (symbols !!) $ take 10 randomChars
 
-
-writeBook :: [BookStats] -> IO ()
-writeBook statsList = do
-  bookStats <- mapM writeBookStat statsList
+idList :: IO [String]
+idList = do
+  replicateM numPositions generateId
+  
+writeBook :: [BookStats] -> [String] -> IO ()
+writeBook statsList idList02 = do
+  bookStats <- zipWithM writeBookStat statsList idList02
   BL.appendFile orderBookDetailsP (encodePretty bookStats)
- 
   where
-    writeBookStat stats = do
-        identifier <- generateId
+    writeBookStat stats identifier = do        
         let bidAskRatioStr        = printf "%.4f" $ bidAskRatio stats
+        let strSpread = printf ("%." ++ show maxDecimal ++ "f") (spread stats) :: String
         let fileWriteBook         = FileWriteBook
               { identifierBook    = identifier
               , startingPriceBook = startingprice stats
@@ -94,17 +96,16 @@ writeBook statsList = do
               , maxMinLmtBook     = maxMinLimit stats 
               , vSideBook         = vSide stats
               , volumeAmountBook  = volumeAmount stats
-              , spreadBook        = roundTo maxDecimal (spread stats)
+              , spreadBook        = strSpread
               }
         return fileWriteBook
 
-writePosition :: [Stats] -> MarginCall -> IO ()
-writePosition statList marginCall = do
-  positionStats <- mapM writePositionStat statList
+writePosition :: [Stats] -> MarginCall -> [String] -> IO ()
+writePosition statList marginCall idList02 = do
+  positionStats <- zipWithM writePositionStat statList idList02
   BL.appendFile positionInfoP (encodePretty positionStats)
   where
-    writePositionStat stats = do
-      identifier <- generateId  
+    writePositionStat stats identifier = do
       let fileWritePosition = FileWritePosition
             { identifierPosition     = identifier
             , totalXPosAmount        = offX        stats 
@@ -131,17 +132,12 @@ writePosition statList marginCall = do
             }
       return fileWritePosition
 
-
-
-
-writeLog :: [BookStats] -> IO ()
-writeLog statsList = do
-  logStats <- mapM writeStat statsList
+writeLog :: [BookStats] ->  [String] -> IO ()
+writeLog statsList idList02 = do
+  logStats <- zipWithM writeStat statsList idList02
   BL.appendFile logP (encodePretty logStats)
- 
   where
-    writeStat stats = do
-        identifier <- generateId
+    writeStat stats identifier = do 
         let fileWritesLog = FileWritesLog
               { identifierLOG  = identifier
               , startingPointLOG = startingPoint stats

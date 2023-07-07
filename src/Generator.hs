@@ -82,11 +82,13 @@ handleBaseCase genPass@GenerationPass{} = do
   let posStats = initStatsInput genPass
   -- / ACTION
   -- ? OUTPUT
-  writeLog  $ tail (reverse bookDetails)
-  writeBook $ tail (reverse bookDetails)
+  ids <- idList
+  let reversedBookDetails = tail (reverse bookDetails)
   let marginCall = toList writeLiqInfo :: MarginCall
   let convertposStats = tail (reverse posStats)
-  writePosition convertposStats marginCall
+  writeLog  reversedBookDetails ids
+  writeBook reversedBookDetails ids
+  writePosition convertposStats marginCall ids
 
   putStrLn "\n accumulated liq info \n"
   print writeLiqInfo
