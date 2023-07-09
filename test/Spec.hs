@@ -1,14 +1,66 @@
+{-
+Supreme Source (c) 2023
+All rights reserved.
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+    * Redistributions of source code must retain the above copyright
+      notice, this list of conditions and the following disclaimer.
+
+    * Redistributions in binary form must reproduce the above
+      copyright notice, this list of conditions and the following
+      disclaimer in the documentation and/or other materials provided
+      with the distribution.
+
+    * Neither the name of Supreme Source nor the names of other
+      contributors may be used to endorse or promote products derived
+      from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-}
+{-
+-- ! DESCRIPTION
+Checking correctnes of the generated data,
+crucial when it comes to backtesting data 
+  ##############################
+& # CONTENTS:                  #
+~ # specific functions:        #
+- # library    tests           #
+- # utility    tests           #
+~ # working functionality      #
+- # poscycle   tests           #
+- # generator  tests           #
+- #main       tests            #
+- # inputOut   tests           #
+~ # statistics                 #
+- # statistics tests           #
+~ # live json checking         #
+- # output & data tests        #
+  ##############################
+-}
+
+-- | External libraries
 import Test.Hspec
-import Test.QuickCheck
+import Test.QuickCheck ()
 import Control.Exception (evaluate)
 import System.Random
 import Data.Maybe
 import Control.Exception (try, ErrorCall)
 import Control.Monad (unless)
-
-
+import Data.Sequence   (fromList, (><))
+-- | Internal libraries
 import Lib
-import runProgramSettings
+import RunSettings
 import Util
 import DataTypes
 
@@ -96,14 +148,14 @@ testsLib = hspec $ do
     it "returns orderbook with changed values" $ do
       let book = [(11.5, 100), (12.5,200),(13.5,400),(14,0),(14.1,0),(15,100000)]
       let volume = 701
-      let processedBook = orderbookChange book volume
-      processedBook `shouldBe` [(15,99999)]
+      let processedBook = orderbookChange (fromList book) volume
+      processedBook `shouldBe` (fromList [(15,99999)])
   
   describe "Lib.bookNumChange" $ do
     it "returns the amount that the orderbook changed" $ do
       let book = [(11.5, 100), (12.5,200),(13.5,400),(14,0),(14.1,0),(15,100000)]
       let bookChange = [(11.5, 100), (12.5,200),(13.5,400),(14,0),(14.1,0)]
-      let changedBook = bookNumChange book bookChange
+      let changedBook = bookNumChange (fromList book) (fromList bookChange)
       changedBook `shouldBe` 1
 
   describe "Lib.infiniteListUpChange" $ do
@@ -123,7 +175,7 @@ testsLib = hspec $ do
   -- POSITION TESTS
   describe "Lib.sumInts"  $ do
     it "returns sum of integers" $ do
-      let list = [(11.2, 100), (12.5,200),(13.5,400),(14,0),(14.1,0),(15,1000)]
+      let list = fromList [(11.2, 100), (12.5,200),(13.5,400),(14,0),(14.1,0),(15,1000)]
       let sum = sumInts list
       sum `shouldBe` 1700
   
@@ -162,7 +214,6 @@ testsLib = hspec $ do
       list3 `shouldBe` 7
 
 -- TEMPLEATE runProgram FUNCTIONS
-
   describe "Lib.toIntegralLenght" $ do
     it "returns length of a list as a double" $ do
       let options = [DWW,DWW,DWW,DWW,DWW,DWW,DWW,DWW,DWW,DWW,DWW,DWW,DWW,DWW]
@@ -261,11 +312,73 @@ testsLib = hspec $ do
 
 -- // all functions from library were tested above
 
-
 testsUtil :: IO ()
 testsUtil = hspec $ do
 
   -- | UTILITY TESTS
+  describe "Util.aggregateStats" $ do
+    it "returns proper stats about a transaction" $ do
+          let (takerSide,makerSide)=([(100,"x"),(10,"z"),(1,"x"),(0,"z")],[(90,"f"),(21,"y")])      
+          let takerSide' = []
+          let makerSide' = []
+          let startingStats = initStats 
+          aggregateStats (takerSide,makerSide) startingStats
+            `shouldBe` Stats
+                        { overallOI   = 11
+                        , totalVolume = 111
+                        , buyVolume   = 111
+                        , sellVolume  = 0
+                        , takerXc     = 2
+                        , takerYc     = 0
+                        , takerZc     = 2
+                        , takerFc     = 0
+                        , makerXc     = 0
+                        , makerYc     = 1
+                        , makerZc     = 0
+                        , makerFc     = 1
+                        , offX        = 101
+                        , offY        = 21
+                        , offF        = 90
+                        , offZ        = 10
+                        , takerX      = 101
+                        , takerY      = 0
+                        , takerZ      = 10
+                        , takerF      = 0
+                        , makerX      = 0
+                        , makerY      = 21
+                        , makerZ      = 0
+                        , makerF      = 90
+                        }
+  
+  describe "Util.calculateVolumes" $ do
+    it "returns the volumes amount in order Sell, Buy" $ do
+      let initVolSide = Buy
+      let initVolAmount = 1000
+      calculateVolumes initVolSide initVolAmount 
+        `shouldBe` (0,1000)
+
+  describe "Util.calculateBooks" $ do
+    it "returns updater orderbooks based on volume" $ do
+     let (bidVol, askVol) = (200,0)
+     let orderBookBid     = fromList [(100.1,200),(0.1,0)]
+     let orderBookAsk     = fromList [(100.1,0),(101,100),(0.1,901)] 
+     calculateBooks bidVol askVol orderBookBid orderBookAsk
+      `shouldBe`((fromList [(0.1,0)]),(fromList [(100.1,0),(101,100),(0.1,901)]))
+
+  describe "Util.calculateFinalBooks" $ do
+    it "returns correctly processed orderBooks" $ do
+      let volS            = Sell
+      let orderBookAskU   = fromList [(0.01 ,0) ,(0.02 ,1) ,(0.021 ,3)] 
+      let listAsk         = fromList [(0.001,0) ,(0.002,1) ,(0.0021,3)] 
+      let orderBookAskN   = fromList [(0.01 ,0) ,(0.02 ,5) ,(0.021 ,0)] 
+      let orderBookBidU   = fromList [(0.05,10) ,(0.02 ,0) ,(0.01  ,3)] 
+      let listBid         = fromList [(0.01,0)  ,(0.001,5) ,(0.0021,1)] 
+      let orderBookBidN   = fromList [(0.01,0)  ,(0.02 ,5) ,(0.021 ,0)] 
+      calculateFinalBooks volS orderBookAskU listAsk 
+                          orderBookAskN orderBookBidU listBid orderBookBidN
+        `shouldBe` ((listAsk >< orderBookAskN), orderBookBidU)
+
+
   describe "Util.sumList" $ do
     it "returns the sum of a list of integers inside a list" $ do
       sumList [1, 2, 3] `shouldBe` ([6] :: [Int])
