@@ -85,7 +85,7 @@ data FileWritePosition = FileWritePosition
   ,sellVolumePos :: Int
   ,overalVolumePos :: Int
   ,overalOpenInterestPos :: Int
-  ,liquidationInfoPos :: MarginCall
+  ,liquidationInfoPos :: (Int,String,String)
   } deriving Generic
   deriving (FromJSON, ToJSON)
   via JSONConfig FileWritePosition

@@ -22,6 +22,7 @@ import           PosCycle
 import           RunSettings
 import           Util
 import Data.Maybe (fromMaybe)
+import Data.Aeson.Encode.Pretty (encodePretty)
 
 
 
@@ -81,6 +82,9 @@ handleBaseCase genPass@GenerationPass{} = do
   let bookDetails = initialBookDetailsListInput genPass
   let posStats = initStatsInput genPass
   -- / ACTION
+  -- ? DATA
+  let posFuture =  Transaction $ toList $ longinfo >< shortinfo 
+  BL.writeFile posFutureP $ encodePretty posFuture
   -- ? OUTPUT
   ids <- idList
   let reversedBookDetails = tail (reverse bookDetails)
@@ -90,6 +94,8 @@ handleBaseCase genPass@GenerationPass{} = do
   writeBook reversedBookDetails ids
   writePosition convertposStats marginCall ids
 
+
+  {-
   putStrLn "\n accumulated liq info \n"
   print writeLiqInfo
   putStrLn "\n accumulated pos info \n"
@@ -100,7 +106,7 @@ handleBaseCase genPass@GenerationPass{} = do
   print shortinfo
   putStrLn "\n accumulated position stats \n"
   print $ tail (reverse posStats)
-
+  -}
   -- ? DATA DO NOT TOUCH
   -- | / rewriting orderbooks
   let writeBidBook = Book {book = toList bidBook}
