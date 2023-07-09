@@ -1,20 +1,37 @@
 {-# OPTIONS_GHC -Wno-missing-export-lists #-}
+{-
+Supreme Source (c) 2023
+All rights reserved.
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
 
-module PosCycle where
+    * Redistributions of source code must retain the above copyright
+      notice, this list of conditions and the following disclaimer.
 
+    * Redistributions in binary form must reproduce the above
+      copyright notice, this list of conditions and the following
+      disclaimer in the documentation and/or other materials provided
+      with the distribution.
 
--- | module of utility funcitons
--- | importing external libraries
-import qualified Data.ByteString.Lazy as BL
-import qualified Data.Sequence        as Seq
+    * Neither the name of Supreme Source nor the names of other
+      contributors may be used to endorse or promote products derived
+      from this software without specific prior written permission.
 
-import           Control.Monad
-import           Data.Aeson           (decode)
-import qualified Data.Bifunctor
-import           System.Random        (randomRIO)
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-}
+module PosCycle 
+{-- ! DESCRIPTION
 
-import           Data.Monoid
-                                                                              {-
 # HOW DOES THE POSITION MANAGEMENT WORK ?
   /function is called recursively until the list of orders is empty
 
@@ -62,24 +79,32 @@ import           Data.Monoid
  And we write from the computer memory into external jsons. Then we
  can move onto the frontend/ do another simulation runProgram with different settings.
 
-                                                                              -}
-import           Data.Sequence        (Seq, ViewL ((:<)), (<|), (><))
+-}
+where
 
+
+-- | importing external libraries
+import qualified Data.ByteString.Lazy as BL
+import qualified Data.Sequence        as Seq
+import           Control.Monad
+import           Data.Aeson           (decode)
+import qualified Data.Bifunctor
+import           System.Random        (randomRIO)
+import           Data.Monoid
+import           Data.Sequence        (Seq, ViewL ((:<)), (<|), (><))
 -- | internal libraries
 import           DataTypes
 import           Filepaths
 import           Lib
 import           RunSettings
 import           Util
+import           Statistics
 
 
--- ! POSITION FUTURE
-
--- ! Most comperhensive SUMMARY of the WHOLE program
 
 -- ? funcitons for the position future
 -- PACKAGE CLOSING CONVERSION X & Y TO F & Z
-closingConversion :: (TakerTuple, MakerTuple) -> (TakerTuple, MakerTuple)
+closingConversion :: (TakerPositions, MakerPositions) -> (TakerPositions, MakerPositions)
 closingConversion (takers, makers)
   | hasBothXY takers = error "Unsupported tuple format in takers"
   | hasBothXY makers = error "Unsupported tuple format in makers"
@@ -99,30 +124,10 @@ closingConversion (takers, makers)
         (f t)
     hasBothXY xs = "x" `elem` map snd xs && "y" `elem` map snd xs
 
-
--- statisctics thing determining leverage
--- TODO move this into the stats and also make it customizable or at least point
--- to it in the settings
-takenLeverage :: IO Int
-takenLeverage = do
-  x <- randomRIO (1, 100) :: IO Int
-  return $
-    case x of
-      _
-        | x >= 1 && x <= 85 -> 1
-        | x >= 86 && x <= 90 -> 2
-        | x >= 91 && x <= 93 -> 5
-        | x >= 94 && x <= 95 -> 10
-        | x == 96 -> 15
-        | x == 97 -> 20
-        | x == 98 -> 25
-        | x == 99 -> 50
-        | x == 100 -> 100
-        | otherwise -> error "something went wrong in takenLeverage"
                                                   
 -- (liq price, liq amount, liq side)
 
-positionFuture :: Double -> (TakerTuple, MakerTuple) -> IO FutureInfo
+positionFuture :: Double -> (TakerPositions, MakerPositions) -> IO FutureInfo
 positionFuture price (taker, maker) = do
   let (takerConver, makerConvert) = closingConversion (taker, maker)
   let concatTakerMaker = takerConver ++ makerConvert
@@ -155,7 +160,7 @@ randomSide = do
       then "x"
       else "y"
 
-initGenerator :: [Int] -> [Int] -> IO (TakerTuple, MakerTuple)
+initGenerator :: [Int] -> [Int] -> IO (TakerPositions, MakerPositions)
 initGenerator takerLst makerLst = do
   takerSide' <- randomSide
   let makerside = oppositeSide takerSide'
@@ -166,7 +171,7 @@ initGenerator takerLst makerLst = do
 type SeqFutureInfo = (Seq (Double, Int, String), Seq (Double, Int, String))
 
 normalGenerator ::
-     [Int] -> [Int] -> SeqFutureInfo -> String -> IO (TakerTuple, MakerTuple)
+     [Int] -> [Int] -> SeqFutureInfo -> String -> IO (TakerPositions, MakerPositions)
 normalGenerator takerLst makerLst (toTakeFromLong, toTakeFromShort) liqSide = do
   unless (closingProb >= 1 && closingProb <= 10) $
     error "closingProb must be between 1 and 10"
@@ -179,7 +184,7 @@ normalGenerator takerLst makerLst (toTakeFromLong, toTakeFromShort) liqSide = do
           else normalGen
   genType
   where
-    openingGen :: IO (TakerTuple, MakerTuple)
+    openingGen :: IO (TakerPositions, MakerPositions)
     openingGen = do
       takerSide' <- randomSide
    
@@ -196,7 +201,7 @@ normalGenerator takerLst makerLst (toTakeFromLong, toTakeFromShort) liqSide = do
             zip editedTakerLst $ replicate (length takerLst) finalTakerSide
       let makerT = zip makerLst $ replicate (length makerLst) makerside
       return (takerT, makerT)
-    normalGen :: IO (TakerTuple, MakerTuple)
+    normalGen :: IO (TakerPositions, MakerPositions)
     normalGen = do
       takerSide' <- randomSide
    
@@ -296,7 +301,7 @@ isTakerBuying :: String -> Bool
 isTakerBuying side = side == "x" || side == "z"
 
 -- | this is a helper funtion for deciding the bias of the normal runProgram
-tuplesToSides :: (TakerTuple, MakerTuple) -> Position -- long tuple, short tuple
+tuplesToSides :: (TakerPositions, MakerPositions) -> Position -- long tuple, short tuple
 tuplesToSides ([], makerT) = (makerT, [])
 tuplesToSides ((n, s):takerT, makerT) =
   if isTakerBuying s
@@ -346,7 +351,6 @@ liquidationDuty futureInfoL futureInfoS price = do
 
 
 -- ! fine
-
 -- ? Postion  Generatorts
 -- | cycle management
 -- ? PUTTING IT ALL TOGETHER

@@ -1,6 +1,41 @@
 {-# OPTIONS_GHC -Wno-missing-export-lists #-}
+{-
+Supreme Source (c) 2023
+All rights reserved.
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
 
-module Main where
+    * Redistributions of source code must retain the above copyright
+      notice, this list of conditions and the following disclaimer.
+
+    * Redistributions in binary form must reproduce the above
+      copyright notice, this list of conditions and the following
+      disclaimer in the documentation and/or other materials provided
+      with the distribution.
+
+    * Neither the name of Supreme Source nor the names of other
+      contributors may be used to endorse or promote products derived
+      from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-}
+module Main 
+{-
+-- ! DESCRIPTION  
+calls all functions in modules together to execute 
+-}
+where
+
   -- TODO
     -- | display in charts using elm/ javascript/ https/ css
     -- | make frontend more efficient the way the python script is called now is just terrible+
@@ -15,7 +50,6 @@ import           Control.Monad
 import           Control.Parallel.Strategies (parList, rseq, using)
 import           System.IO                   (BufferMode (LineBuffering),
                                               hSetBuffering, stdout)
-
 --import           System.Process              (callCommand)
 import           Data.Sequence               (fromList, Seq)
 import           System.Random               (Random (randomRs))
@@ -77,7 +111,7 @@ initRun = do
            then error (red "stopping program")
            else runProgram
 
---  Entry points of program
+ --  Entry points of program
 runProgram :: IO ()
 runProgram = do
   isBidEmpty <- isFileEmpty bidBookP
@@ -93,16 +127,16 @@ runProgram = do
   when (not isBidEmpty && (null fileBidBook || null fileAskBook)) $ error "book acc []"
   let seqFileBidBook = fromList fileBidBook
   let seqFileAskBook = fromList fileAskBook
-             --  CHECKING SETTINGS
+  --  CHECKING SETTINGS
   localCheck
-            --  RANDOM GENERATORS:
+  --  RANDOM GENERATORS:
   gen1 <- randomGen
   gen2 <- randomGen
-             -- ORDERBOOK GENERATION
+  -- ORDERBOOK GENERATION
   oBooks <- orderBook initstartingPoint gen1 gen2
   let (orderbook_ask, orderbook_bid, fullwallsASK, fullwallsBIDS, inittotakefromwall) =
         oBooks
-             -- runProgramNING THE PROGRAM
+  -- runProgramNING THE PROGRAM
   generator
     isBidEmpty
     isAskEmpty
@@ -148,19 +182,15 @@ noRemainingrunProgram :: Stats -> [(Int, Position)] -> IO [(Int, VolumeSide)]
 noRemainingrunProgram aggregatedStats accumulatedStats = do
   printFinal aggregatedStats
 
--- Accumulate all the results first
+  -- Accumulate all the results first
   results <-
     forM accumulatedStats $ \(indexPosition, positionInfo) -> do
       (volume, side, acc) <-
         printPositionStats indexPosition positionInfo initialPositionData
       return (volume, side, acc)
 
-{-      
--- Now write everything to the file at once
-  let allPositions = concatMap (\(_, _, acc) -> acc) results
-  writePositionsToFile positionInfoP allPositions
--}
--- Return the results, discarding the [PositionData] part
+
+  -- Return the results, discarding the [PositionData] part
   return [(volume, side) | (volume, side, _) <- results]
 
 
@@ -194,18 +224,18 @@ generator isBidEmpty isAskEmpty orderbook_bid orderbook_ask fileBidBook fileAskB
   let initialBookDetailsList = [initialBookDetails]
   let listofvolumes = volumesAndSides
   isFutureEmpt <- isFutureEmpty
-           --  print isFutureEmpt
+  --  print isFutureEmpt
   initAccLongFuture <-
     if isFutureEmpt
       then return futureAccLong
       else do
-        -- filterfuture no liquidation for exit long
+  -- filterfuture no liquidation for exit long
         filterFuture "no"  "f" <$> readFuture
   initAccShortFuture <-
     if isFutureEmpt
       then return futureAccLong
       else do
-        -- filterfuture no liquidation for exit short
+  -- filterfuture no liquidation for exit short
         filterFuture "no" "z" <$> readFuture
   _ <-
     generaterunProgram
@@ -314,6 +344,9 @@ orderBook initstartingPoint gen1 gen2
     , fullwallsASK
     , fullwallsBIDS
     , inittotakefromwall)
+
+
+
 {-
             -- | calling python script (graph)
             --  TODO make this way more effective, calling the script below

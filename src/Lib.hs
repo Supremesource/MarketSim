@@ -1,6 +1,41 @@
 {-# OPTIONS_GHC -Wno-missing-export-lists #-}
+{-
+Supreme Source (c) 2023
+All rights reserved.
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
 
-module Lib where
+    * Redistributions of source code must retain the above copyright
+      notice, this list of conditions and the following disclaimer.
+
+    * Redistributions in binary form must reproduce the above
+      copyright notice, this list of conditions and the following
+      disclaimer in the documentation and/or other materials provided
+      with the distribution.
+
+    * Neither the name of Supreme Source nor the names of other
+      contributors may be used to endorse or promote products derived
+      from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-}
+module Lib 
+{-
+-- ! DESCRIPTION 
+aggregation of general functions
+-}
+
+where
 
 import           Control.Exception.Base
 -- | moudle aggregating all the functions
@@ -28,7 +63,6 @@ import           Data.Sequence             (Seq, (<|), viewl, ViewL(..),fromList
 -- | internal libraries
 import           Colours
 import           DataTypes
-import           GHC.Float.RealFracMethods (roundDoubleInt)
 import           RunSettings
 import           Statistics
 
@@ -226,10 +260,10 @@ sideProbability trueProbability
     randomValue <- randomRIO (0, 1)
     return (randomValue < trueProbability)
 
-countElements :: String -> MakerTuple -> Int
+countElements :: String -> MakerPositions -> Int
 countElements x = length . filter ((== x) . snd)
 
-elementSize :: String -> MakerTuple -> Int
+elementSize :: String -> MakerPositions -> Int
 elementSize x = sum . map fst . filter ((== x) . snd)
 
 
@@ -238,7 +272,7 @@ elementSize x = sum . map fst . filter ((== x) . snd)
 --volumecounter (n,a) = if a == "x" || a == "z" then (n,"buy") else (n,"sell")
 
 -- ? OPEN INTEREST FUNCTIONS
-interestorMinus :: TakerTuple -> MakerTuple -> Int
+interestorMinus :: TakerPositions -> MakerPositions -> Int
 interestorMinus [] _ = 0
 interestorMinus _ [] = 0
 interestorMinus ((n1, s1):takers) ((n2, s2):makers)
@@ -255,7 +289,7 @@ interestorMinus ((n1, s1):takers) ((n2, s2):makers)
       then n2 + interestorMinus ((n1 - n2, s1) : takers) makers
       else interestorMinus ((n1 - n2, s1) : takers) makers
 
-interestorPlus :: TakerTuple -> MakerTuple -> Int
+interestorPlus :: TakerPositions -> MakerPositions -> Int
 interestorPlus [] _ = 0
 interestorPlus _ [] = 0
 interestorPlus ((n1, s1):takers) ((n2, s2):makers)
@@ -341,20 +375,28 @@ optionProcessor a i =
 templeaterunProgramBUY :: Int -> Options -> Int
 templeaterunProgramBUY a op =
   case op of
-    UP  -> a * 2 -- increasing b vol by 200%
-    UPP -> a * 4 -- increasing b vol by 400%
-    DW  -> a -- doing nothing to downtrend
-    DWW -> a -- extreme downtrend doing nothing
+    -- increasing b vol by 200% (Amplifier)
+    UP  -> a * 2 
+    -- increasing b vol by 400% (Amplifier)
+    UPP -> a * 4 
+    -- doing nothing to downtrend (Amplifier)
+    DW  -> a 
+    -- extreme downtrend doing nothing (Amplifier)
+    DWW -> a 
     CN  -> a
     _   -> error $ red "your templeate pattern matching did not go through"
 
 templeaterunProgramSELL :: Int -> Options -> Int
 templeaterunProgramSELL a op =
   case op of
-    UP  -> a -- nothing
-    UPP -> a -- nothing
-    DW  -> a * 2 -- increasing s vol by 200%
-    DWW -> a * 4 -- increasing s vol by 400%
+    -- nothing (Amplifier)
+    UP  -> a 
+    -- nothing (Amplifier)
+    UPP -> a 
+     -- increasing s vol by 200% (Amplifier)
+    DW  -> a * 2
+    -- increasing s vol by 400% (Amplifier)
+    DWW -> a * 4 
     CN  -> a
     _   -> error $ red "your templeate pattern matching did not go through"
 
@@ -423,7 +465,7 @@ readBook fileName =
        contents <- BL.hGetContents handle'
        case eitherDecode contents of
          Left err -> do
-           putStrLn $ "Error parsing JSON: " ++ err -- # error because of running righ righ after wiping run 
+           putStrLn $ "Error parsing JSON: " ++ err 
            return []
          Right bookData -> return $ book bookData)
 

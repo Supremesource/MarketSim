@@ -1,18 +1,59 @@
 {-# OPTIONS_GHC -Wno-missing-export-lists #-}
+{-
+Supreme Source (c) 2023
+All rights reserved.
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
 
-module Generator where
+    * Redistributions of source code must retain the above copyright
+      notice, this list of conditions and the following disclaimer.
 
-import           Data.Aeson           (encode)
+    * Redistributions in binary form must reproduce the above
+      copyright notice, this list of conditions and the following
+      disclaimer in the documentation and/or other materials provided
+      with the distribution.
 
--- | module of utility funcitons
+    * Neither the name of Supreme Source nor the names of other
+      contributors may be used to endorse or promote products derived
+      from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-}
+module Generator 
+{- 
+-- ! DESCRIPTION 
+Heart of the whole backend:
+
+################################
+# managing funciton delegation #
+################################
+
+Establishing generating of orderbook
+Managing position functions 
+Managing liquidations
+
+-}
+where
+
+
 -- | importing external libraries
 import qualified Data.ByteString.Lazy as BL
 import           Data.Foldable        (toList)
 import qualified Data.Sequence        as Seq
 import           System.Random        (RandomGen (split), randomRIO)
-
 import           Data.Sequence        (Seq, fromList, (><))
-
+import Data.Maybe (fromMaybe)
+import Data.Aeson.Encode.Pretty (encodePretty)
 -- | internal libraries
 import           DataTypes
 import           Filepaths
@@ -21,8 +62,6 @@ import           Lib
 import           PosCycle
 import           RunSettings
 import           Util
-import Data.Maybe (fromMaybe)
-import Data.Aeson.Encode.Pretty (encodePretty)
 
 
 
@@ -67,8 +106,12 @@ generaterunProgram ::
      GenerationPass
   -> IO  GenerationOutput
 generaterunProgram genPass
-  | null (listofvolumesInput genPass) = handleBaseCase genPass
-  | otherwise = handleGeneralCase genPass
+  |  null (listofvolumesInput genPass) 
+  && null (initLiquidationAcc1Input genPass >< initLiquidationAcc2Input genPass) 
+  =  handleBaseCase genPass
+  |  otherwise 
+  = handleGeneralCase genPass
+
 
 -- base case do block
 handleBaseCase :: GenerationPass -> IO GenerationOutput
@@ -93,20 +136,6 @@ handleBaseCase genPass@GenerationPass{} = do
   writeLog  reversedBookDetails ids
   writeBook reversedBookDetails ids
   writePosition convertposStats marginCall ids
-
-
-  {-
-  putStrLn "\n accumulated liq info \n"
-  print writeLiqInfo
-  putStrLn "\n accumulated pos info \n"
-  print posinfo
-  putStrLn "\n accumulated long info \n"
-  print longinfo
-  putStrLn "\n accumulated short info \n"
-  print shortinfo
-  putStrLn "\n accumulated position stats \n"
-  print $ tail (reverse posStats)
-  -}
   -- ? DATA DO NOT TOUCH
   -- | / rewriting orderbooks
   let writeBidBook = Book {book = toList bidBook}
@@ -114,22 +143,20 @@ handleBaseCase genPass@GenerationPass{} = do
   --let writePositionFuture = Transaction { future = longinfo ++ shortinfo }
   --let writePositionFuture' = encode writePositionFuture
   --BL.writeFile posFutureP writePositionFuture'
-  BL.writeFile bidBookP (encode writeBidBook)
-  BL.writeFile askBookP (encode writeAskBook)
-
-
+  BL.writeFile bidBookP (encodePretty writeBidBook)
+  BL.writeFile askBookP (encodePretty writeAskBook)
 
   return
     GenerationOutput
-    {
-        liqInfoOutput = writeLiqInfo
-      , posInfoOutput = posinfo
-      , longInfoOutput = longinfo
-      , shortInfoOutput = shortinfo
-      , bidBookOutput = bidBook
-      , askBookOutput = askBook
+    { 
+        liqInfoOutput     = writeLiqInfo
+      , posInfoOutput     = posinfo
+      , longInfoOutput    = longinfo
+      , shortInfoOutput   = shortinfo
+      , bidBookOutput     = bidBook
+      , askBookOutput     = askBook
       , bookDetailsOutput = bookDetails
-      , posStatsOutput = posStats
+      , posStatsOutput    = posStats
     }
 
 handleGeneralCase :: GenerationPass -> IO GenerationOutput
@@ -182,22 +209,22 @@ handleGeneralCase genPass@GenerationPass{} = do
 
      GenerationPass
      {  initLiquidationAcc1Input = newliqinfo
-      , initLiquidationAcc2Input =writeLiqInfo >< newWriteLiqInfo
-      , initPositioningAccInput =newPosInfo
-      , initAccLongFutureInput =newLonginfo
-      , initAccShortFutureInput= newShortinfo
+      , initLiquidationAcc2Input = writeLiqInfo >< newWriteLiqInfo
+      , initPositioningAccInput  = newPosInfo
+      , initAccLongFutureInput   = newLonginfo
+      , initAccShortFutureInput  = newShortinfo
        -- ? `++` should not be a significant performance bottleneck here
       , listofvolumesInput = additionalVolAcc ++ xs
-      , bidBookInput =newBidBook
-      , askBookInput =newAskBook
-      , gen1Input= newGen1
-      , gen2Input =newGen2
-      , fullwallsASKInput =fullwallsASK
-      , fullwallsBIDSInput =fullwallsBIDS
-      , initstartingPointInput =sPoint
-      , inittotakefromwallInput =takeWall
-      , initialBookDetailsListInput =newBookDetails : bookDetails
-      , initStatsInput =newPosStats : posStats }
+      , bidBookInput = newBidBook
+      , askBookInput = newAskBook
+      , gen1Input    = newGen1
+      , gen2Input    = newGen2
+      , fullwallsASKInput  = fullwallsASK
+      , fullwallsBIDSInput = fullwallsBIDS
+      , initstartingPointInput  = sPoint
+      , inittotakefromwallInput = takeWall
+      , initialBookDetailsListInput = newBookDetails : bookDetails
+      , initStatsInput = newPosStats : posStats }
 
 data ListPass = ListPass
     { liqinfoInpt       :: Seq (Int, String, String)
@@ -260,7 +287,7 @@ volLiqProcessing listPass@ListPass{} (wholeLIQvolume, wholeLIQside)  = do
   orderBookGeneration <- orderBookProcess adjListPass
 
   let ReturnBookProcess
-        { sPrice = sPriceGenerated
+        { sPrice       = sPriceGenerated
         , finalBookAsk = finalBookAskGenerated
         , finalBookBid = finalBookBidGenerated
         , maxMinLmt    = maxMinLmtGenerated
@@ -300,26 +327,13 @@ volLiqProcessing listPass@ListPass{} (wholeLIQvolume, wholeLIQside)  = do
           ,newPositions      = localPositions
           ,newPosFutureLong  = newPosFutureLongGenerated
           ,newPosFutureShort = newPosFutureShortGenerated  } = positionGenerator
-  let nullLiqInfoGenerated =
+  let nullLiqInfoGenerated   =
         if null newLiqInfoGenerated
         then fromList [(0, "", "")]
         else newLiqInfoGenerated
-  let newStats = aggregateStats localPositions initStats
-  let addVolAcc = ([(vAmount, vSide') | wholeLIQvolume /= 0])
+  let newStats       = aggregateStats localPositions initStats
+  let addVolAcc      = ([(vAmount, vSide') | wholeLIQvolume /= 0])
   let newbookDetails = orderBookDetails
-
-  print "\nTEST\n"
-  putStrLn "\n Starting price \n"
-  print sPriceGenerated
-  print "new liq info"
-  print newLiqInfoGenerated
-  print "new pos info"
-  print newPositionsGenerated
-  print "new long info"
-  print newPosFutureLongGenerated
-  print "new short info"
-  print newPosFutureShortGenerated
-
 
   return
                ReturnData
@@ -531,7 +545,7 @@ positionCycle positionCyclePass@PositionCyclePass{} = do
       liquidationString
   let ((newPosFutureShortGen, newPosFutureLongGen), newPositionsGen) =
           runProgram
-      -- | (TakerTuple,MakerTuple)
+      -- | (TakerPositions,MakerPositions)
       -- TODO convert into seq and keep it until base case
   let updatedPositionAcc =
         let ((taker1, maker1), (taker2, maker2)) = (newPositionsGen, posinfo)
