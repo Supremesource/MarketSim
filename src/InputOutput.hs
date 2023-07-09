@@ -1,8 +1,7 @@
 {-# OPTIONS_GHC -Wno-missing-export-lists #-}
 {-# OPTIONS_GHC -Wno-incomplete-patterns #-}
-{-# LANGUAGE DerivingStrategies #-}
 {-# LANGUAGE DerivingVia #-}
-{-# LANGUAGE DeriveGeneric #-}
+
 {-
 Supreme Source (c) 2023
 All rights reserved.
@@ -33,7 +32,7 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -}
-module InputOutput 
+module InputOutput
 {-
 -- ! DESCRIPTION
 defines the majority of output operations, including filewritig 
@@ -45,12 +44,12 @@ where
 -- | external libraries
 import           Colours
 import           Control.Monad
-import           Data.Time.Clock.POSIX  (getPOSIXTime)
-import           System.Random          (Random (randomRs), mkStdGen, randomIO)
-import           Text.Printf            (printf)
+import           Data.Time.Clock.POSIX    (getPOSIXTime)
+import           System.Random            (Random (randomRs), mkStdGen, randomIO)
+import           Text.Printf              (printf)
 import           Data.Aeson.Encode.Pretty (encodePretty)
 import qualified Data.ByteString.Lazy as BL
-import Data.Foldable (toList)
+import           Data.Foldable            (toList)
 
 -- | internal libraries
 import           DataTypes
@@ -72,7 +71,7 @@ generateId = do
 idList :: IO [String]
 idList = do
   replicateM numPositions generateId
-  
+
 writeBook :: [BookStats] -> [String] -> IO ()
 writeBook statsList idList02 = do
   -- | deleting the old json contents, before writing the updated accumulator
@@ -80,7 +79,7 @@ writeBook statsList idList02 = do
   bookStats <- zipWithM writeBookStat statsList idList02
   BL.appendFile orderBookDetailsP (encodePretty bookStats)
   where
-    writeBookStat stats identifier = do        
+    writeBookStat stats identifier = do
         let bidAskRatioStr        = printf "%.4f" $ bidAskRatio stats
         let strSpread = printf ("%." ++ show maxDecimal ++ "f") (spread stats) :: String
         let fileWriteBook         = FileWriteBook
@@ -89,7 +88,7 @@ writeBook statsList idList02 = do
               , bidAskRatioBook   = bidAskRatioStr
               , bidsTotalBook     = bidsTotal stats
               , asksTotalBook     = asksTotal stats
-              , maxMinLmtBook     = maxMinLimit stats 
+              , maxMinLmtBook     = maxMinLimit stats
               , vSideBook         = vSide stats
               , volumeAmountBook  = volumeAmount stats
               , spreadBook        = strSpread
@@ -106,10 +105,10 @@ writePosition statList marginCall' idList02 = do
     writePositionStat :: Stats -> String -> (Int, String, String) -> FileWritePosition
     writePositionStat stats identifier marginCall = FileWritePosition
       { identifierPosition     = identifier
-      , totalXPosAmount        = offX        stats 
+      , totalXPosAmount        = offX        stats
       , totalYPosAmount        = offY        stats
       , totalZPosAmount        = offZ        stats
-      , totalFPosAmount        = offF        stats 
+      , totalFPosAmount        = offF        stats
       , totalXPosCount         = takerXc     stats
       , totalYPosCount         = takerYc     stats
       , totalZPosCount         = takerZc     stats
@@ -124,7 +123,7 @@ writePosition statList marginCall' idList02 = do
       , makerFPos              = makerF      stats
       , buyVolumePos           = buyVolume   stats
       , sellVolumePos          = sellVolume  stats
-      , overalVolumePos        = totalVolume stats 
+      , overalVolumePos        = totalVolume stats
       , overalOpenInterestPos  = overallOI   stats
       , liquidationInfoPos     = marginCall
       }
@@ -135,7 +134,7 @@ writeLog statsList idList02 = do
   logStats <- zipWithM writeStat statsList idList02
   BL.appendFile logP (encodePretty logStats)
   where
-    writeStat stats identifier = do 
+    writeStat stats identifier = do
         let fileWritesLog = FileWritesLog
               { identifierLOG  = identifier
               , startingPointLOG = startingPoint stats
@@ -196,11 +195,11 @@ printPositionStats i (taker, makers) acc = do
         | snd (head taker) == "SELL" || snd (head taker) == "SELL" = Sell
         | otherwise                                          = error $ red
           "generating volume failed"
-  
+
 -- ! turn back on once implementation back
   let overalOpenInterest =
         interestorPlus taker makers - interestorMinus taker makers
-  
+
   let buyVOLUME =
         if sideVol == Buy
           then volumeSume
@@ -234,7 +233,7 @@ printPositionStats i (taker, makers) acc = do
 --writePositionsToFile newLongsPath' positionDataList = do
 --    let jsonData = encodePretty positionDataList
 --    BL.writeFile newLongsPath' jsonData
-  
+
 
 
 {-
@@ -258,7 +257,7 @@ printPositionStats i (taker, makers) acc = do
   B.hPutStrLn handleInterest $ BC.pack (show overalOpenInterest)
   
  
--} 
+-}
 
 
 -- | final overview

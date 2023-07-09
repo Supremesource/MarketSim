@@ -37,10 +37,11 @@ calls all functions in modules together to execute
 where
 
   -- TODO
-    -- | display in charts using elm/ javascript/ https/ css
+    -- | display in charts using javascript/ html / css
     -- | make frontend more efficient the way the python script is called now is just terrible+
     -- | better UI with timeframes
     -- | fix negative orderbook levels on bids by stopping ask generation at that point as well, (probable stop ask gen at that point)
+    -- | make reusable output 
   -- TODO
 
 
@@ -79,7 +80,7 @@ initRun = do
   hSetBuffering stdout LineBuffering
   -- | Asking user to proceed
   putStrLn $
-    cyan $
+    cyan   $
     "Proceed (_ / n)" ++ gray "\n\n { for runProgram-restore press - (w) }"
   proceed <- getLine
   -- | WIPING runProgram == TRUE
@@ -150,7 +151,7 @@ runProgram = do
     fullwallsBIDS
     initstartingPoint
     inittotakefromwall
-             -- WARININGS of what might be affest the quality of the settings
+  -- WARININGS of what might be affest the quality of the settings
   warnings
 
 runProgramProgramHelp :: Stats -> Int -> IO [(Int, VolumeSide)]
@@ -257,8 +258,8 @@ generator isBidEmpty isAskEmpty orderbook_bid orderbook_ask fileBidBook fileAskB
         , initialBookDetailsListInput= initialBookDetailsList
         , initStatsInput = [initStats] }
 
-            -- | formating price document
-       --      removeEmptyLines pricePath
+  -- | formating price document
+  --   removeEmptyLines pricePath
   putStrLn $ gray "OUTPUT SUCCESFULLY GENERATED"
 
 
@@ -280,7 +281,7 @@ localCheck = do
 
 warnings :: IO ()
 warnings
-       -- | optional warnings
+ -- | optional warnings
  = do
   addsupto100 buyTakerProb sellTakerProb
 
@@ -290,54 +291,54 @@ orderBook ::
   -> StdGen
   -> IO (Seq (Double, Int), Seq (Double, Int), [Int], [Int], Int)
 orderBook initstartingPoint gen1 gen2
-             -- ! - ORDERBOOK - ! --
-             -- | the price simulation is starting at
-             -- | orderbook
-             -- | making ask move upside
+-- ! - ORDERBOOK - ! --
+-- | the price simulation is starting at
+-- | orderbook
+-- | making ask move upside
  = do
   let upMoves = take takeamountASK $ randomRs (minUpMove, maxUpMove) gen1
-             -- | making bid move downside
+  -- | making bid move downside
   let downMoves = take takeamountBID $ randomRs (minDownMove, maxDownMove) gen2
-             -- | liquidity  for ask, the limit setup gradient
-             -- | grid of the orderbook
+  -- | liquidity  for ask, the limit setup gradient
+  -- | grid of the orderbook
   let setupASK =
         take
           takeamountASK
           (tail (infiniteListUpConstant initstartingPoint gen1 upMoves)) `using`
         parList rseq
-             -- | liquidity for ask, the limit setup gradient
+        -- | liquidity for ask, the limit setup gradient
   let setupBID =
         take
           takeamountBID
           (tail (infiniteListDownConstant initstartingPoint gen2 downMoves)) `using`
         parList rseq
-            -- | generating prices for ASKS $$ amount
+        -- | generating prices for ASKS $$ amount
   usdamountASK <- printCustomRandomList takeamountASK
-             -- | generating prices for BIDS $$ amount
+  -- | generating prices for BIDS $$ amount
   usdamountBID <- printRandomList' takeamountBID
-             -- | Price walls (limit)
-             -- | generate limit walls (in terms of their occurrence)
+  -- | Price walls (limit)
+  -- | generate limit walls (in terms of their occurrence)
   let inittotakefromwall = taketowalls $ 2 * takeamount
-             -- | generating walls, this is an infinite list
+  -- | generating walls, this is an infinite list
   pricewalls <- randomListwalls
   let pricewalllist = take inittotakefromwall pricewalls
-             -- | first part of the list above going to bids
+  -- | first part of the list above going to bids
   let pricesBids1 = firstPartList pricewalllist
-             -- | second part going to asks
+  -- | second part going to asks
   let pricesAsk1 = secondPartList pricewalllist
-             -- | full wall build, the list is 2* as long tho functions below will make it usable for bids and asks
+  -- | full wall build, the list is 2* as long tho functions below will make it usable for bids and asks
   fullwallsASK <- randomlyInsert pricesAsk1 (take takeamountASK usdamountASK)
-             -- | full wall build, the list is 2* as long tho functions below will make it usable for bids and asks
+  -- | full wall build, the list is 2* as long tho functions below will make it usable for bids and asks
   fullwallsBIDS <- randomlyInsert pricesBids1 (take takeamountBID usdamountBID)
-             -- ? ADDING DATA TOGETHER
-             -- | adding orderbook together & generating additional data
-             -- |zipping so that we have orderwalls in  -> orderbook is built
-             -- | zipping prices with $ AMOUNT
+  -- ? ADDING DATA TOGETHER
+  -- | adding orderbook together & generating additional data
+  -- |zipping so that we have orderwalls in  -> orderbook is built
+  -- | zipping prices with $ AMOUNT
   let (orderbook_ask, orderbook_bid) =
         ( zipToTuples setupASK fullwallsASK, zipToTuples setupBID fullwallsBIDS)
 
--- | the orderbook path which should change the bid price
-             -- | orderbook logc:
+  -- | the orderbook path which should change the bid price
+  -- | orderbook logc:
   return
     ( orderbook_ask
     , orderbook_bid

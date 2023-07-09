@@ -67,7 +67,7 @@ initialBookDetails =
     , bidAskRatio = 0.0
     }
 
--- ? position acccumulator
+-- | position acccumulator
 initialPositionData :: [PositionData]
 initialPositionData = []
 
@@ -87,8 +87,6 @@ initLiquidationAcc = empty
 -- | helper funciton for the funciton below (where everything is starting at)
 initStats :: Stats
 initStats = Stats 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-
-
 
 setupBookDetails :: InitBookStats -> BookStats
 setupBookDetails (startingP', maxMinL', asksTot', bidsTot', takewall', lengchngBid', lengchngAsk', listASK', listBID', vSide', volumeA', sprd', sprice', bidAskR') =
@@ -110,7 +108,7 @@ setupBookDetails (startingP', maxMinL', asksTot', bidsTot', takewall', lengchngB
     }
 
 
--- | aggregating  stats together
+-- | aggregating stats together
 aggregateStats :: (TakerPositions, MakerPositions) -> Stats -> Stats
 aggregateStats (taker, makers) stats =
   Stats
@@ -144,20 +142,21 @@ aggregateStats (taker, makers) stats =
     , makerYc = makerYc stats + countElements "y" makers
     , makerZc = makerZc stats + countElements "z" makers
     , makerFc = makerFc stats + countElements "f" makers
-    , offX = offX stats + elementSize "x" taker + elementSize "x" makers
-    , offY = offY stats + elementSize "y" taker + elementSize "y" makers
-    , offZ = offZ stats + elementSize "z" taker + elementSize "z" makers
-    , offF = offF stats + elementSize "f" taker + elementSize "f" makers
-    , takerX = takerX stats + elementSize "x" taker
-    , takerY = takerY stats + elementSize "y" taker
-    , takerZ = takerZ stats + elementSize "z" taker
-    , takerF = takerF stats + elementSize "f" taker
-    , makerX = makerX stats + elementSize "x" makers
-    , makerY = makerY stats + elementSize "y" makers
-    , makerZ = makerZ stats + elementSize "z" makers
-    , makerF = makerF stats + elementSize "f" makers
+    , offX = offX stats + elementSize         "x" taker + elementSize "x" makers
+    , offY = offY stats + elementSize         "y" taker + elementSize "y" makers
+    , offZ = offZ stats + elementSize         "z" taker + elementSize "z" makers
+    , offF = offF stats + elementSize         "f" taker + elementSize "f" makers
+    , takerX = takerX stats + elementSize     "x" taker
+    , takerY = takerY stats + elementSize     "y" taker
+    , takerZ = takerZ stats + elementSize     "z" taker
+    , takerF = takerF stats + elementSize     "f" taker
+    , makerX = makerX stats + elementSize     "x" makers
+    , makerY = makerY stats + elementSize     "y" makers
+    , makerZ = makerZ stats + elementSize     "z" makers
+    , makerF = makerF stats + elementSize     "f" makers
     }
 
+-- FUNCTIONS
 settingcheck :: VolumeSide -> Int -> Int -> Int -> IO ()
 settingcheck vSide' volumeA' asksTot' bidsTot' = do
   let check :: String
@@ -170,6 +169,7 @@ settingcheck vSide' volumeA' asksTot' bidsTot' = do
         | otherwise = ""
   putStrLn check
 
+-- retrurns volumes in order Sell, Buy
 calculateVolumes :: VolumeSide -> Int -> (Int, Int)
 calculateVolumes vSide' volumeA' =
   ( if vSide' == Sell
@@ -200,8 +200,7 @@ calculateFinalBooks vSide' askUpdateBook listASK' askBook bidUpdateBook listBID'
   let currentbookASK =
         if vSide' == Buy
           then askUpdateBook
-          else listASK' >< askBook
-     
+          else listASK' >< askBook  
       currentbookBID =
         if vSide' == Sell
           then bidUpdateBook
