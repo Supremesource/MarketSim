@@ -377,7 +377,7 @@ orderBookProcess listPass@ListPass{}  = do
             -- | how much volume took from certain order books
   let (lengchngAskGenerated, lengchngBidGenerated) =
         lengthChanges bidUpdateBook bidBook askUpdateBook askBook
-  let sPriceGenerated = startingPrices vSide' bidUpdateBook askUpdateBook
+  let sPriceGenerated = price vSide' bidUpdateBook askUpdateBook
   let (askSetupInsert, bidSetupInsert) =
         calculateSetupInserts
         lengchngAskGenerated
@@ -392,7 +392,7 @@ orderBookProcess listPass@ListPass{}  = do
   pricesBID <- printRandomList' lengchngBidGenerated
             -- | the / number is how smaller the insertion will be
   let (listASKGenerated, listBIDGenerated) =
-        calculateListTuples askSetupInsert bidSetupInsert pricesASK pricesBID -- TODO rename the calculateListTuples
+        calculateBookLists askSetupInsert bidSetupInsert pricesASK pricesBID -- TODO rename the calculateBookLists
             -- //TODO, possible microoptimization with the stuff below :
             -- | let insertInAsk = if vSide == Buy then [] else listASK
             --  / let insertInBid = if vSide == Sell then [] else listBID    // --
