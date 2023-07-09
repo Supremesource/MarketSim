@@ -33,7 +33,6 @@ module RunSettings
 {-
 defines settings
 -}
-
 where
 import           DataTypes (Options (..))
 -- ? NOTE:

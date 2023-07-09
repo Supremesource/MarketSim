@@ -378,11 +378,51 @@ testsUtil = hspec $ do
                           orderBookAskN orderBookBidU listBid orderBookBidN
         `shouldBe` ((listAsk >< orderBookAskN), orderBookBidU)
 
+  describe "Util.lengthChanges" $ do
+    it "returns by how much orderbook size changed" $ do
+      let orderBookBid     = fromList [(100.1,200),(0.1,0)]
+      let orderBookAsk     = fromList [(100.1,0),(101,100),(0.1,901)] 
+      let changedBookBid   = fromList []
+      let changedBookAsk   = fromList []
+      lengthChanges orderBookBid changedBookBid orderBookAsk changedBookAsk
+       `shouldBe` (2,3)
+
+  describe "Util.price"  $ do
+    it "returns price based on volume and orderbook" $ do 
+      let volS = Sell
+      let orderBookBid     = fromList [(100.1,200),(0.1,0)]
+      let orderBookAsk     = fromList [(100.1,0),(101,100),(0.1,901)] 
+      price volS orderBookBid orderBookAsk 
+       `shouldBe` 100.1
+
+  describe "Util.calculateBookLists" $ do
+    it "returns non negative & correctly setup ask and bid list" $ do
+      let askSetupGrid   = [0,0.0001,119]
+      let bidSetupGrid   = [100,0000.9,0]
+      let askSetupAmount = [100,0,400]
+      let bidSetupAmount = [0,200,300,100] 
+      let finalSetupAsk  = fromList [(0,      round $ 100 / divisionValue)
+                                   , (0.0001, round $ 0   / divisionValue )
+                                   , (119,    round $ 400 / divisionValue )]
+      
+      let finalSetupBid  = fromList [(100 , round $ 0        / divisionValue)
+                                  ,(0000.9, round $ 200      / divisionValue)
+                                  ,(0     , round $ 300      / divisionValue)]  
+    
+      calculateBookLists askSetupGrid bidSetupGrid askSetupAmount bidSetupAmount
+        `shouldBe` (finalSetupAsk,finalSetupBid)
+
+  describe "Util.calculateFirstElements" $ do
+    it "returns first elements of orderbooks" $ do
+      let orderBookBid     = fromList [(100.1,200),(0.1,0)]
+      let orderBookAsk     = fromList [(100.1111,0),(101,100),(0.1,901)] 
+      calculateFirstElements orderBookBid orderBookAsk
+        `shouldBe` (100.1,100.1111)
 
   describe "Util.sumList" $ do
     it "returns the sum of a list of integers inside a list" $ do
       sumList [1, 2, 3] `shouldBe` ([6] :: [Int])
-  
+
 
 
 

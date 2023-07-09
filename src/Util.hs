@@ -211,42 +211,42 @@ lengthChanges :: SeqOrderBook -> SeqOrderBook -> SeqOrderBook -> SeqOrderBook ->
 lengthChanges bidUpdateBook bidBook askUpdateBook askBook =
   (bookNumChange bidUpdateBook bidBook, bookNumChange askUpdateBook askBook)  
 
-startingPrices :: VolumeSide -> SeqOrderBook -> SeqOrderBook -> Double
-startingPrices vSide' bidUpdateBook askUpdateBook =
+price :: VolumeSide -> SeqOrderBook -> SeqOrderBook -> Double
+price vSide' bidUpdateBook askUpdateBook =
   max
     (if vSide' == Sell
        then case viewl bidUpdateBook of
-              (price, _) :< _ -> price
+              (price', _) :< _ -> price'
               EmptyL          -> 0
        else 0)
     (if vSide' == Buy
        then case viewl askUpdateBook of
-              (price, _) :< _ -> price
+              (price', _) :< _ -> price'
               EmptyL          -> 0
        else 0)
 
 divisionValue :: Double
 divisionValue = 1.10
 
-calculateListTuples ::
+calculateBookLists ::
      [Double]
   -> [Double]
   -> [Int]
   -> [Int]
   -> (SeqOrderBook, SeqOrderBook)
-calculateListTuples askSetupInsert bidSetupInsert pricesASK pricesBID =
+calculateBookLists askSetupGrid bidSetupGrid askSetupAmount bidSetupAmount =
   let listASK' =
         zipToTuples
-          askSetupInsert
+          askSetupGrid
           (map
              (round . ((/ divisionValue) :: Double -> Double) . fromIntegral)
-             pricesASK)
+             askSetupAmount)
       listBID' =
         zipToTuples
-          bidSetupInsert
+          bidSetupGrid
           (map
              (round . ((/ divisionValue) :: Double -> Double) . fromIntegral)
-             pricesBID)
+             bidSetupAmount)
    in (listASK', listBID')
 
 calculateFirstElements :: SeqOrderBook -> SeqOrderBook -> (Double, Double)
