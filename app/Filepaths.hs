@@ -21,7 +21,6 @@ posFutureP = "data/posFuture.json"
 
 
 
-
 -- ? output
 logP :: FilePath
 logP = "output/logInfo.json"

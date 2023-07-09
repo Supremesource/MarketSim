@@ -418,14 +418,14 @@ readBook fileName =
   bracket
     (openFile fileName ReadMode)
     hClose
+   
     (\handle' -> do
        contents <- BL.hGetContents handle'
        case eitherDecode contents of
          Left err -> do
-           putStrLn $ "Error parsing JSON: " ++ err
+           putStrLn $ "Error parsing JSON: " ++ err -- # error because of running righ righ after wiping run 
            return []
          Right bookData -> return $ book bookData)
-
 
 -- | when wiping runProgram then -> wipe the orderbook + write starting price
 newrunProgramSettings ::
@@ -441,12 +441,12 @@ newrunProgramSettings ::
 newrunProgramSettings askBookF bidBookF logF bookDetailF positionInfoF initPriceF posFutureF newValue = do
   let wipe = ""
   let price = InitPrice (fromIntegral newValue)
-  writeFile askBookF wipe
-  writeFile bidBookF wipe
-  writeFile logF wipe
-  writeFile bookDetailF wipe
+  writeFile askBookF      wipe
+  writeFile bidBookF      wipe
+  writeFile logF          wipe
+  writeFile bookDetailF   wipe
   writeFile positionInfoF wipe
-  writeFile posFutureF wipe
+  writeFile posFutureF    wipe
   BL.writeFile initPriceF (encodePretty price)
 
 -- | cleaning price history file

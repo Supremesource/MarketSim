@@ -81,6 +81,8 @@ idList = do
   
 writeBook :: [BookStats] -> [String] -> IO ()
 writeBook statsList idList02 = do
+  -- | deleting the old json contents, before writing the updated accumulator
+  writeFile orderBookDetailsP ""
   bookStats <- zipWithM writeBookStat statsList idList02
   BL.appendFile orderBookDetailsP (encodePretty bookStats)
   where
@@ -101,36 +103,38 @@ writeBook statsList idList02 = do
         return fileWriteBook
 
 writePosition :: [Stats] -> MarginCall -> [String] -> IO ()
-writePosition statList marginCall idList02 = do
-  positionStats <- zipWithM writePositionStat statList idList02
+writePosition statList marginCall' idList02 = do
+  -- | deleting the old json contents, before writing the updated accumulator
+  writeFile positionInfoP ""
+  let positionStats = zipWith3 writePositionStat statList idList02 marginCall'
   BL.appendFile positionInfoP (encodePretty positionStats)
   where
-    writePositionStat stats identifier = do
-      let fileWritePosition = FileWritePosition
-            { identifierPosition     = identifier
-            , totalXPosAmount        = offX        stats 
-            , totalYPosAmount        = offY        stats
-            , totalZPosAmount        = offZ        stats
-            , totalFPosAmount        = offF        stats 
-            , totalXPosCount         = takerXc     stats
-            , totalYPosCount         = takerYc     stats
-            , totalZPosCount         = takerZc     stats
-            , totalFPosCount         = takerFc     stats
-            , takerXPos              = takerX      stats
-            , takerYPos              = takerY      stats
-            , takerZPos              = takerZ      stats
-            , takerFPos              = takerF      stats
-            , makerXPos              = makerX      stats
-            , makerYPos              = makerY      stats
-            , makerZPos              = makerZ      stats
-            , makerFPos              = makerF      stats
-            , buyVolumePos           = buyVolume   stats
-            , sellVolumePos          = sellVolume  stats
-            , overalVolumePos        = totalVolume stats 
-            , overalOpenInterestPos  = overallOI   stats
-            , liquidationInfoPos     = marginCall
-            }
-      return fileWritePosition
+    writePositionStat :: Stats -> String -> (Int, String, String) -> FileWritePosition
+    writePositionStat stats identifier marginCall = FileWritePosition
+      { identifierPosition     = identifier
+      , totalXPosAmount        = offX        stats 
+      , totalYPosAmount        = offY        stats
+      , totalZPosAmount        = offZ        stats
+      , totalFPosAmount        = offF        stats 
+      , totalXPosCount         = takerXc     stats
+      , totalYPosCount         = takerYc     stats
+      , totalZPosCount         = takerZc     stats
+      , totalFPosCount         = takerFc     stats
+      , takerXPos              = takerX      stats
+      , takerYPos              = takerY      stats
+      , takerZPos              = takerZ      stats
+      , takerFPos              = takerF      stats
+      , makerXPos              = makerX      stats
+      , makerYPos              = makerY      stats
+      , makerZPos              = makerZ      stats
+      , makerFPos              = makerF      stats
+      , buyVolumePos           = buyVolume   stats
+      , sellVolumePos          = sellVolume  stats
+      , overalVolumePos        = totalVolume stats 
+      , overalOpenInterestPos  = overallOI   stats
+      , liquidationInfoPos     = marginCall
+      }
+
 
 writeLog :: [BookStats] ->  [String] -> IO ()
 writeLog statsList idList02 = do

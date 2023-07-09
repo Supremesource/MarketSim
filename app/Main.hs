@@ -83,9 +83,15 @@ runProgram = do
   isBidEmpty <- isFileEmpty bidBookP
   isAskEmpty <- isFileEmpty askBookP
   initstartingPoint <- startingPointFromFile initPriceP
-  fileBidBook <- readBook bidBookP
-  fileAskBook <- readBook askBookP
-  let seqFileBidBook = fromList fileBidBook 
+  fileBidBook <- if isBidEmpty 
+                 then return [] 
+                 else readBook bidBookP
+  fileAskBook <- if isAskEmpty
+                 then return []
+                 else readBook askBookP
+  -- ? preventing from passing a wrong orderbook due to invalid json read
+  when (not isBidEmpty && (null fileBidBook || null fileAskBook)) $ error "book acc []"
+  let seqFileBidBook = fromList fileBidBook
   let seqFileAskBook = fromList fileAskBook
              --  CHECKING SETTINGS
   localCheck
@@ -141,7 +147,7 @@ mainLoop aggregatedStats remainingrunPrograms accumulatedStats = do
 noRemainingrunProgram :: Stats -> [(Int, Position)] -> IO [(Int, VolumeSide)]
 noRemainingrunProgram aggregatedStats accumulatedStats = do
   printFinal aggregatedStats
-      
+
 -- Accumulate all the results first
   results <-
     forM accumulatedStats $ \(indexPosition, positionInfo) -> do
@@ -153,7 +159,7 @@ noRemainingrunProgram aggregatedStats accumulatedStats = do
 -- Now write everything to the file at once
   let allPositions = concatMap (\(_, _, acc) -> acc) results
   writePositionsToFile positionInfoP allPositions
--}       
+-}
 -- Return the results, discarding the [PositionData] part
   return [(volume, side) | (volume, side, _) <- results]
 
@@ -193,11 +199,13 @@ generator isBidEmpty isAskEmpty orderbook_bid orderbook_ask fileBidBook fileAskB
     if isFutureEmpt
       then return futureAccLong
       else do
-        filterFuture "no" "f" <$> readFuture
+        -- filterfuture no liquidation for exit long
+        filterFuture "no"  "f" <$> readFuture
   initAccShortFuture <-
     if isFutureEmpt
       then return futureAccLong
       else do
+        -- filterfuture no liquidation for exit short
         filterFuture "no" "z" <$> readFuture
   _ <-
     generaterunProgram
@@ -296,8 +304,8 @@ orderBook initstartingPoint gen1 gen2
              -- |zipping so that we have orderwalls in  -> orderbook is built
              -- | zipping prices with $ AMOUNT
   let (orderbook_ask, orderbook_bid) =
-        ( zipToTuples setupASK fullwallsASK, zipToTuples setupBID fullwallsBIDS)
-             
+        ( zipToTuples setupASK fullwallsASK, zipToTuples setupBID fullwallsBIDS)
+
 -- | the orderbook path which should change the bid price
              -- | orderbook logc:
   return
