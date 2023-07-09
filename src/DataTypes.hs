@@ -1,91 +1,133 @@
-
 {-# OPTIONS_GHC -Wno-missing-export-lists #-}
 {-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
 {-# HLINT ignore "Use newtype instead of data" #-}
 {-# LANGUAGE GADTs #-}
 {-# LANGUAGE DeriveGeneric, DeriveAnyClass, DerivingVia, DataKinds #-}
+{-
+Supreme Source (c) 2023
+All rights reserved.
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
 
-module DataTypes where
+    * Redistributions of source code must retain the above copyright
+      notice, this list of conditions and the following disclaimer.
+
+    * Redistributions in binary form must reproduce the above
+      copyright notice, this list of conditions and the following
+      disclaimer in the documentation and/or other materials provided
+      with the distribution.
+
+    * Neither the name of Supreme Source nor the names of other
+      contributors may be used to endorse or promote products derived
+      from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-}
+module DataTypes 
+{- 
+-- ! DESCRIPTION
+Data types that are `usually` used in more than one module are defined here
+-}
+where
+
 -- | external libraries
 import System.Random ( StdGen )
 import Deriving.Aeson
 import Data.Sequence (Seq)
 
+-- / DATA
 -- ? JSON Serialization
-type JSONConfig a = CustomJSON '[OmitNothingFields, FieldLabelModifier '[StripPrefix "DATA", CamelToSnake]] a
+type JSONConfig a = 
+ CustomJSON '[OmitNothingFields, FieldLabelModifier 
+ '[StripPrefix "DATA", CamelToSnake]] a
 
+data Transaction = Transaction {
+    future :: FutureInfo
+  } deriving (Show, Generic, FromJSON, ToJSON)
 
 data FileWritesLog = FileWritesLog
-   {  identifierLOG    :: String
-    , startingPointLOG :: Double -- this is pretty much an Double, data type StartingPoint
-    , takeamountLOG  :: Int
-    , maxUpMoveLOG :: Double
-    , minUpMoveLOG :: Double
-    , maxDownMoveLOG :: Double
-    , minDownMoveLOG :: Double
-    , minimum'LOG :: Int
-    , minimumActualLOG :: Int
-    , maximum'LOG :: Int
-    , maximumActualLOG :: Int
-    , takeamountBIDLOG :: Int
-    , takeamountASKLOG :: Int
-    , asksTotalLOG :: Int
-    , bidsTotalLOG :: Int
-    , orderwalllikelyhoodLOG :: Int
-    , totakefromwallLOG :: Int -- this is pretty much an INT, data type TakeFromWall
-    , wallminimum'LOG :: Int
-    , wallmaximum'LOG :: Int
-    , wallAmplifierLOG :: Int
-    , maxDecimalLOG :: Int
-    , lengthchangeBIDLOG :: Int
-    , lengthchangeASKLOG :: Int
-    , listASKLOG :: [(Double, Int)]
-    , listBIDLOG :: [(Double, Int)]
-    , vSideLOG :: String -- this is pretty much string, data type VolumeSid
-    , volumeAmountLOG :: Int
-    , spreadLOG :: Double
-    , startingPriceLOG :: Double
+   {  identifierLOG           :: String
+    , startingPointLOG        :: Double 
+    , takeamountLOG           :: Int
+    , maxUpMoveLOG            :: Double
+    , minUpMoveLOG            :: Double
+    , maxDownMoveLOG          :: Double
+    , minDownMoveLOG          :: Double
+    , minimum'LOG             :: Int
+    , minimumActualLOG        :: Int
+    , maximum'LOG             :: Int
+    , maximumActualLOG        :: Int
+    , takeamountBIDLOG        :: Int
+    , takeamountASKLOG        :: Int
+    , asksTotalLOG            :: Int
+    , bidsTotalLOG            :: Int
+    , orderwalllikelyhoodLOG  :: Int
+    , totakefromwallLOG       :: Int 
+    , wallminimum'LOG         :: Int
+    , wallmaximum'LOG         :: Int
+    , wallAmplifierLOG        :: Int
+    , maxDecimalLOG           :: Int
+    , lengthchangeBIDLOG      :: Int
+    , lengthchangeASKLOG      :: Int
+    , listASKLOG              :: [(Double, Int)]
+    , listBIDLOG              :: [(Double, Int)]
+    , vSideLOG                :: String 
+    , volumeAmountLOG         :: Int
+    , spreadLOG               :: Double
+    , startingPriceLOG        :: Double
     } deriving Generic
   deriving (FromJSON, ToJSON)
   via JSONConfig FileWritesLog
 
 data FileWriteBook = FileWriteBook
-  { identifierBook :: String 
+  { identifierBook    :: String 
   , startingPriceBook :: Double
-  , bidAskRatioBook :: String -- formated with printf
-  , bidsTotalBook :: Int
-  , asksTotalBook :: Int
-  , maxMinLmtBook :: (Int,Int)
-  , vSideBook :: VolumeSide
-  , volumeAmountBook :: Int
-  , spreadBook :: String -- fotmate with printf
+  -- formated with printf
+  , bidAskRatioBook   :: String 
+  , bidsTotalBook     :: Int
+  , asksTotalBook     :: Int
+  , maxMinLmtBook     :: (Int,Int)
+  , vSideBook         :: VolumeSide
+  , volumeAmountBook  :: Int
+  -- fotmate with printf
+  , spreadBook        :: String 
   } deriving Generic
   deriving (FromJSON, ToJSON)
   via JSONConfig FileWriteBook
 
-data FileWritePosition = FileWritePosition
-  {identifierPosition :: String
-  ,totalXPosAmount:: Int 
-  ,totalYPosAmount:: Int
-  ,totalZPosAmount:: Int
-  ,totalFPosAmount:: Int
-  ,totalXPosCount :: Int
-  ,totalYPosCount :: Int
-  ,totalZPosCount :: Int
-  ,totalFPosCount :: Int
-  ,takerXPos :: Int
-  ,takerYPos :: Int
-  ,takerZPos :: Int  
-  ,takerFPos :: Int
-  ,makerXPos :: Int
-  ,makerYPos :: Int
-  ,makerZPos :: Int
-  ,makerFPos :: Int
-  ,buyVolumePos :: Int
-  ,sellVolumePos :: Int
-  ,overalVolumePos :: Int
-  ,overalOpenInterestPos :: Int
-  ,liquidationInfoPos :: (Int,String,String)
+data FileWritePosition    = FileWritePosition
+  {identifierPosition     :: String
+  ,totalXPosAmount        :: Int 
+  ,totalYPosAmount        :: Int
+  ,totalZPosAmount        :: Int
+  ,totalFPosAmount        :: Int
+  ,totalXPosCount         :: Int
+  ,totalYPosCount         :: Int
+  ,totalZPosCount         :: Int
+  ,totalFPosCount         :: Int
+  ,takerXPos              :: Int
+  ,takerYPos              :: Int
+  ,takerZPos              :: Int  
+  ,takerFPos              :: Int
+  ,makerXPos              :: Int
+  ,makerYPos              :: Int
+  ,makerZPos              :: Int
+  ,makerFPos              :: Int
+  ,buyVolumePos           :: Int
+  ,sellVolumePos          :: Int
+  ,overalVolumePos        :: Int
+  ,overalOpenInterestPos  :: Int
+  ,liquidationInfoPos     :: (Int,String,String)
   } deriving Generic
   deriving (FromJSON, ToJSON)
   via JSONConfig FileWritePosition
@@ -102,29 +144,6 @@ data PositionData = PositionData
   }deriving Generic
   deriving (FromJSON, ToJSON)
   via JSONConfig PositionData
-
-
-
-data InitPrice where
-  InitPrice :: {initPrice :: Double} -> InitPrice
-  deriving Generic
-  deriving (FromJSON, ToJSON) via JSONConfig InitPrice
-
-data Book = Book {
-  book :: [(Double, Int)]
-} deriving (Show, Generic, FromJSON, ToJSON)
-
--- | defining data typ for volume side
-data VolumeSide
-  = Buy
-  | Sell
-   deriving (Show, Eq, Ord, Enum, Bounded, Generic, FromJSON, ToJSON)
-
--- | maker tuple structure
-type MakerTuple = [(Int, String)] 
-
--- | taker tuple structure
-type TakerTuple = [(Int, String)]
 
 -- | stats that can be extracted
 data Stats = Stats
@@ -163,18 +182,6 @@ data Options =
               RANDOM
               deriving  (Eq, Show, Enum, Bounded)
 
-type SeqOrderBook = Seq (Double, Int)
-type OrderBook = [(Double, Int)]
-type VolumeList = [(Int, VolumeSide)]
-type Generator = StdGen
-type FullWall = [Int]
-type StartingPoint = Double
-type Totakefromwall = Int
-type Volume = (Int, VolumeSide)
-
-
-type InitBookStats = (StartingPoint , (Int,Int), Int , Int , Totakefromwall , Int , Int, SeqOrderBook,  SeqOrderBook , VolumeSide, Int, Double, Double, Double)
-
 data BookStats = BookStats {
                      startingPoint :: StartingPoint
                    , maxMinLimit :: (Int,Int)
@@ -189,21 +196,57 @@ data BookStats = BookStats {
                    , volumeAmount :: Int
                    , spread :: Double
                    , startingprice :: Double
-                   , bidAskRatio :: Double
-                   
+                   , bidAskRatio :: Double                   
                    } deriving (Show)
-type SeqNewPositioning = Seq NewPositioning
 
-type NewPositioning   =   (TakerTuple, MakerTuple)
 
+data InitPrice where
+  InitPrice :: {initPrice :: Double} -> InitPrice
+  deriving Generic
+  deriving (FromJSON, ToJSON) via JSONConfig InitPrice
+
+data Book = Book {
+  book :: [(Double, Int)]
+} deriving (Show, Generic, FromJSON, ToJSON)
+
+-- | defining data typ for volume side
+data VolumeSide
+  = Buy
+  | Sell
+   deriving (Show, Eq, Ord, Enum, Bounded, Generic, FromJSON, ToJSON)
+
+-- / TYPES
+-- | positining structure
+type MakerPositions = [(Int, String)] 
+type TakerPositions = [(Int, String)]
 type MarginCall       =   [(Int,String,String)] 
-
 type FutureAcc        =   (FutureInfo, FutureInfo)
-
 type Position         =   ([(Int, String)], [(Int, String)])
-
 type FutureInfo       =   [(Double, Int, String)]
+type NewPositioning   =   (TakerPositions, MakerPositions)
+type SeqNewPositioning = Seq NewPositioning
+-- | order-book
+type SeqOrderBook = Seq (Double, Int)
+type OrderBook = [(Double, Int)]
+type InitBookStats = (StartingPoint,(Int,Int),Int,Int,Totakefromwall,Int,Int,
+                SeqOrderBook,SeqOrderBook,VolumeSide,Int,Double,Double,Double)
+type FullWall = [Int]
+type StartingPoint = Double
+type Totakefromwall = Int
+-- | volumes
+type VolumeList = [(Int, VolumeSide)]
+type Volume = (Int, VolumeSide)
+-- | additional
+type Generator = StdGen
 
-data Transaction = Transaction {
-    future :: FutureInfo
-  } deriving (Show, Generic, FromJSON, ToJSON)
+
+
+
+
+
+
+
+
+
+
+

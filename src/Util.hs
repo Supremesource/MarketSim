@@ -1,13 +1,45 @@
 {-# OPTIONS_GHC -Wno-missing-export-lists #-}
+{-
+Supreme Source (c) 2023
+All rights reserved.
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
 
-module Util where
+    * Redistributions of source code must retain the above copyright
+      notice, this list of conditions and the following disclaimer.
 
+    * Redistributions in binary form must reproduce the above
+      copyright notice, this list of conditions and the following
+      disclaimer in the documentation and/or other materials provided
+      with the distribution.
+
+    * Neither the name of Supreme Source nor the names of other
+      contributors may be used to endorse or promote products derived
+      from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-}
+module Util
+{-
+-- ! DESCRIPTION 
+idefining the majority of task specific functions / accumulators (similart to lib)
+-}
+ where
+
+-- | importing external libraries
 import           Data.Foldable (toList)
 import           Data.Sequence (Seq, empty, fromList, singleton, (><), ViewL (EmptyL, (:<)), viewl,index)
--- | module of utility funcitons
--- | importing external libraries
 import           System.Random (Random (randomRs))
-
 -- | internal libraries
 import           Colours
 import           DataTypes
@@ -15,7 +47,7 @@ import           Lib
 import           RunSettings
 
 
--- | Store the volume result , THIS IS ACCUMULATOR
+--  ACCUMULATORS
 initialBookDetails :: BookStats
 initialBookDetails =
   BookStats
@@ -35,7 +67,6 @@ initialBookDetails =
     , bidAskRatio = 0.0
     }
 
-
 -- ? position acccumulator
 initialPositionData :: [PositionData]
 initialPositionData = []
@@ -52,6 +83,10 @@ initPositioningAcc = (empty, empty)
 
 initLiquidationAcc :: Seq (Int, String, String)
 initLiquidationAcc = empty
+
+-- | helper funciton for the funciton below (where everything is starting at)
+initStats :: Stats
+initStats = Stats 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
 
 
 
@@ -75,13 +110,8 @@ setupBookDetails (startingP', maxMinL', asksTot', bidsTot', takewall', lengchngB
     }
 
 
--- | helper funciton for the funciton below (where everything is starting at)
-initStats :: Stats
-initStats = Stats 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-
-
 -- | aggregating  stats together
-aggregateStats :: (TakerTuple, MakerTuple) -> Stats -> Stats
+aggregateStats :: (TakerPositions, MakerPositions) -> Stats -> Stats
 aggregateStats (taker, makers) stats =
   Stats
     { overallOI =
@@ -154,8 +184,6 @@ calculateBooks volumeBID volumeASK bidBook askBook =
   let bidUpdateBook = orderbookChange bidBook volumeBID
       askUpdateBook = orderbookChange askBook volumeASK
    in (bidUpdateBook, askUpdateBook)
-
-
 
 
 -- TODO implement sequencing
@@ -255,7 +283,6 @@ calculateTotalsCount finalBookAsk finalBookBid =
   let asktotal = fromIntegral (length finalBookAsk)
       bidtotal = fromIntegral (length finalBookBid)
    in (asktotal, bidtotal)
-
 
 -- Conversion functions
 futureInfoToSeq :: FutureInfo -> Seq (Double, Int, String)

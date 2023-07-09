@@ -1,5 +1,34 @@
 {-# OPTIONS_GHC -Wno-missing-export-lists #-}
+{-
+Supreme Source (c) 2023
+All rights reserved.
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
 
+    * Redistributions of source code must retain the above copyright
+      notice, this list of conditions and the following disclaimer.
+
+    * Redistributions in binary form must reproduce the above
+      copyright notice, this list of conditions and the following
+      disclaimer in the documentation and/or other materials provided
+      with the distribution.
+
+    * Neither the name of Supreme Source nor the names of other
+      contributors may be used to endorse or promote products derived
+      from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-}
 module Statistics where
 
 -- | module where majoritiy of statistical functions are defined
@@ -75,6 +104,27 @@ customRandomR (low, high) gen = (num, gen3)
       | p <= 0.98 = low + round (fromIntegral (high - low) * 0.85 * r1)
       | otherwise = low + round (fromIntegral (high - low) * r1)
     (r1, _) = randomR (0, 1 :: Double) gen2
+
+
+-- statisctics thing determining leverage
+-- TODO move this into the stats and also make it customizable or at least point
+-- to it in the settings
+takenLeverage :: IO Int
+takenLeverage = do
+  x <- randomRIO (1, 100) :: IO Int
+  return $
+    case x of
+      _
+        | x >= 1 && x <= 85 -> 1
+        | x >= 86 && x <= 90 -> 2
+        | x >= 91 && x <= 93 -> 5
+        | x >= 94 && x <= 95 -> 10
+        | x == 96 -> 15
+        | x == 97 -> 20
+        | x == 98 -> 25
+        | x == 99 -> 50
+        | x == 100 -> 100
+        | otherwise -> error "something went wrong in takenLeverage"
 
 -- | Random generator helper funcitions
 customRandomRs :: (Int, Int) -> StdGen -> [Int]
