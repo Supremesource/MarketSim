@@ -283,6 +283,9 @@ calculateTotalsCount finalBookAsk finalBookBid =
       bidtotal = fromIntegral (length finalBookBid)
    in (asktotal, bidtotal)
 
+sumList :: Num a => [a] -> [a]
+sumList xs = [sum xs]
+
 -- Conversion functions
 futureInfoToSeq :: FutureInfo -> Seq (Double, Int, String)
 futureInfoToSeq = fromList
@@ -290,5 +293,4 @@ futureInfoToSeq = fromList
 seqToFutureInfo :: Seq (Double, Int, String) -> FutureInfo
 seqToFutureInfo = toList
 
-sumList :: Num a => [a] -> [a]
-sumList xs = [sum xs]
+
