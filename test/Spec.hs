@@ -419,6 +419,31 @@ testsUtil = hspec $ do
       calculateFirstElements orderBookBid orderBookAsk
         `shouldBe` (100.1,100.1111)
 
+  describe "Util.calculateTotals" $ do
+   it "returns total volume in the orderbook" $ do
+     let orderBookBid     = fromList [(100.1,200),(0.1,0)]
+     let orderBookAsk     = fromList [(100.1111,0),(101,100),(0.1,901)] 
+     calculateTotals orderBookBid orderBookAsk
+      `shouldBe` (200,1001)
+
+  describe "Util.calculateSetupInserts" $ do
+   it "returns non-negative setupGrid (limit grid) of orderbook ask & bid" $ do
+    let lChangeAsk = 0
+    let lChangeBid = 9999
+    let startingPrice = 100.01
+    gen1 <- randomGen
+    gen2 <- randomGen
+    let (grid1,grid2) = calculateSetupInserts lChangeAsk lChangeBid startingPrice gen1 gen2
+    let axiom = all (>= 0) grid1 && all (>= 0) grid2
+    axiom `shouldBe` True
+
+  describe "Util.calculateTotalsCount" $ do
+    it "returns correct length of orderbooks" $ do
+      let orderBookBid     = fromList []
+      let orderBookAsk     = fromList [(100.1111,0),(101,100),(0.1,901)] 
+      calculateTotalsCount orderBookBid orderBookAsk
+        `shouldBe` (0,3)
+
   describe "Util.sumList" $ do
     it "returns the sum of a list of integers inside a list" $ do
       sumList [1, 2, 3] `shouldBe` ([6] :: [Int])
