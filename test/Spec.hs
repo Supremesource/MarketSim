@@ -40,7 +40,7 @@ crucial when it comes to backtesting data
 ~ # working functionality      #
 - # poscycle   tests           #
 - # generator  tests           #
-- #main       tests            #
+- # main       tests            #
 - # inputOut   tests           #
 ~ # statistics                 #
 - # statistics tests           #
@@ -56,13 +56,138 @@ import Control.Exception (evaluate)
 import System.Random
 import Data.Maybe
 import Control.Exception (try, ErrorCall)
-import Control.Monad (unless)
+import Control.Monad
 import Data.Sequence   (fromList, (><))
+import Data.Monoid
+
 -- | Internal libraries
 import Lib
 import RunSettings
 import Util
 import DataTypes
+import PosCycle
+import Statistics
+import Generator
+import Filepaths
+
+
+
+-- $ HELPER FUNCITONS FOR TESTS
+-- ? testsPosCycle functions 
+  -- ##################################################
+  -- # non-random positionFuture (leverage terms)     #
+  -- ##################################################
+takenLeverageNonRandom :: IO Int
+takenLeverageNonRandom = do
+  x <- randomRIO (1, 10) :: IO Int
+  return $
+    case x of
+      _
+        | x >= 1 && x <= 10 -> 5
+        | otherwise -> error "something went wrong in non-random takenLeverage"
+
+-- TODO better leverage statistics
+positionFutureNonRandom :: Double -> (TakerPositions, MakerPositions) -> IO FutureInfo
+positionFutureNonRandom price' (taker, maker) = do
+  let (takerConver, makerConvert) = closingConversion (taker, maker)
+  let concatTakerMaker = takerConver ++ makerConvert
+  mapM calcPosition concatTakerMaker
+  where
+    calcPosition (amt, side) = do
+      leverage <- takenLeverageNonRandom
+      let liquidationPrice
+            | leverage /= 1 && side == "z" =
+              (price' / fromIntegral leverage) + price'
+            | leverage /= 1 && side == "f" =
+              price' - (price' / fromIntegral leverage)
+            | leverage == 1 && side == "z" = 2 * price'
+            | otherwise                    = 0
+      return (liquidationPrice, amt, side)
+
+-- ? init generator with predetermined result
+nonRandominitGenerator :: [Int] -> [Int] -> IO (TakerPositions, MakerPositions)
+nonRandominitGenerator takerLst makerLst = do
+  let takerSide' = "x"
+  let makerside = oppositeSide takerSide'
+  let takerT = zip takerLst $ replicate (length takerLst) takerSide'
+  let makerT = zip makerLst $ replicate (length makerLst) makerside
+  return (takerT, makerT)
+
+nonRandomNormalGenerator ::
+     [Int] -> [Int] -> SeqFutureInfo -> String -> IO (TakerPositions, MakerPositions)
+nonRandomNormalGenerator takerLst makerLst (toTakeFromLong, toTakeFromShort) liqSide = do
+  unless (closingProb >= 1 && closingProb <= 10) $
+    error "closingProb must be between 1 and 10"
+  let genType =
+        if sum takerLst + sum makerLst >=
+           getSum (foldMap (\(_, n, _) -> Sum n) toTakeFromLong) &&
+           sum takerLst + sum makerLst >=
+           getSum (foldMap (\(_, n, _) -> Sum n) toTakeFromShort)
+          then openingGen
+          else normalGen
+  genType
+  where
+    openingGen :: IO (TakerPositions, MakerPositions)
+    openingGen = do
+      let takerSide' = "y"
+      let finalTakerSide =
+            if liqSide /= ""
+              then liqSide
+              else takerSide'
+      let editedTakerLst =
+            if liqSide /= ""
+              then sumList takerLst
+              else takerLst
+      let makerside = oppositeSide finalTakerSide
+      let takerT =
+            zip editedTakerLst $ replicate (length takerLst) finalTakerSide
+      let makerT = zip makerLst $ replicate (length makerLst) makerside
+      return (takerT, makerT)
+    normalGen :: IO (TakerPositions, MakerPositions)
+    normalGen = do
+      let takerSide' = "y"   
+      let finalTakerSide =
+            if liqSide /= ""
+              then liqSide
+              else takerSide'
+      let editedTakerLst =
+            if liqSide /= ""
+              then sumList takerLst
+              else takerLst
+      let makerside = oppositeSide finalTakerSide
+      let closingSideT
+            | finalTakerSide == "x" && liqSide == "" = "z"
+            | finalTakerSide == "y" && liqSide == "" = "f"
+            | otherwise                              = finalTakerSide
+      let closingSideM =
+            if makerside == "x"
+              then "z"
+              else "f"
+      takerT <-
+        mapM
+          (\val -> do
+             randVal <- randomRIO (1, 10) :: IO Int
+             let sideT =
+                   if randVal < closingProb
+                     then closingSideT
+                     else finalTakerSide
+             return (val, sideT))
+          editedTakerLst
+      makerT <-
+        mapM
+          (\val -> do
+             randVal <- randomRIO (1, 10) :: IO Int
+             let sideM =
+                   if randVal < closingProb
+                     then closingSideM
+                     else makerside
+             return (val, sideM))
+          makerLst
+      return (takerT, makerT)
+
+
+
+
 
 main :: IO ()
 main = tests
@@ -71,6 +196,7 @@ tests :: IO ()
 tests = do
   testsLib
   testsUtil
+  testsPosCycle
 
 testsLib :: IO ()
 testsLib = hspec $ do
@@ -449,12 +575,158 @@ testsUtil = hspec $ do
       sumList [1, 2, 3] `shouldBe` ([6] :: [Int])
 
 
+testsPosCycle :: IO ()
+testsPosCycle = hspec $ do
+  
+  describe "PosCycle.closingConversion" $ do
+    it "returns opened positioning into closed positioning" $ do
+      let takerSide  = [(0,"x"), (0,"z"),(-1,"x"),(99999,"x")]
+      let makerSide  = []
+      let takerSide' = []
+      let makerSide' = [(100,"f"),(-1,"y")]
+      let result01   = closingConversion (takerSide  , makerSide)
+      let result02   = closingConversion (takerSide' , makerSide')      
+      result01 `shouldBe` ([(0,"f"),(-1,"f"),(99999,"f")], [])
+      result02 `shouldBe` ([], [(-1,"z")])
+  
+
+  describe "PosCycle.positionFuture" $ do
+    it "returns correctly setup position future" $ do
+      let price'    = 1
+      let takerSide = [(0,"x"),(-10,"z"),(10,"z"),(-15,"x")]  
+      let makerSide = [(0,"y"),(-10,"f"),(10,"f"),(-15,"y")]  
+      result <- positionFutureNonRandom price' (takerSide,makerSide) 
+      result `shouldBe` [(0.8,0,"f"),(0.8,-15,"f"),(1.2,0,"z"),(1.2,-15,"z")]
+
+  describe "PosCycle.oppositeSide" $ do
+    it "returns opposite side" $ do
+      let side = "z"
+      let expected = oppositeSide side
+      expected `shouldBe` "y"
+
+  describe "PosCycle.initGenerator" $ do
+    it "returns initial taker and maker side from volume" $ do
+      let takerVolList  = [0,10,-9]  
+      let makerVolList  = [1,0,-7]
+      result <- nonRandominitGenerator takerVolList makerVolList 
+      result `shouldBe` ([(0,"x"),(10,"x"),(-9,"x")],[(1,"y"),(0,"y"),(-7,"y")]) 
+
+  describe "PosCylcle.normalGenerator" $ do
+    it "returns normally (with closing positioning) generated future info" $ do
+      let takerVolList  = [0,10,-9]  
+      let makerVolList  = [1,0,-7]
+      let oldPosFuture1  = fromList [(0,0,"f"),(0,0,"f"),(0,0,"f"),(0,0,"f")]
+      let oldPosFuture2  = fromList [(0,0,"z"),(0,0,"z"),(0,0,"z"),(0,0,"z")]
+      let oldPosinfo = (oldPosFuture1,oldPosFuture2)
+      let oldPosFuture1'  = fromList [(1,900,"f"),(100,0,"f"),(0,0,"f"),(0,0,"f")]
+      let oldPosFuture2'  = fromList [(0.9,900,"z"),(2.2,0,"z"),(0,0,"z"),(0,0,"z")]
+      let oldPosinfo' = (oldPosFuture1',oldPosFuture2')
+      let liqside1 = "z"
+      let liqside2 = "f"
+      result1  <- nonRandomNormalGenerator takerVolList makerVolList oldPosinfo  liqside1 
+      result2  <- nonRandomNormalGenerator takerVolList makerVolList oldPosinfo'  liqside2
+
+-- todo fix output     
+      result1 `shouldBe` ([],[])
+      result2 `shouldBe` ([],[])
+  
+  describe "PosCycle.filterFuture" $ do
+
+  describe "PosCycle.filterTuple" $ do
+
+  describe "PosCycle.filterFutureAmount" $ do
+
+  describe "PosCycle.filterFutureClose" $ do
+
+  describe "PosCycle.tuplesToSides" $ do
+
+  describe "PosCycle.randomLiquidationEvent" $ do
+
+  describe "PosCycle.liquidationDuty" $ do
+
+  describe "PosCycle.normalrunProgram" $ do
+  
+  {-
+-- | cycle management
+-- ? testing potenital bugs
+-- TODO remove this whole function !
+-- ! comment this funciton if you don't want to perform any tests
+posFutureTestEnviromentHighlyDanngerous :: IO ()
+posFutureTestEnviromentHighlyDanngerous = do
+  -- // position management block
+
+             
+-- DEFINE DATA
+             let startingPric = 1000.0
+
+                                
+--  TRY TO SWITHCH THE ORDER AND SEE IF BUGS OCCOURS
+             let testingList = (
+                                [(100,"f"),(200,"f"),(300,"y"),(150,"f")]    -- | TAKER | - buy taker
+                                ,[(100,"x"),(200,"x"),(300,"x"),(150,"z")]   -- | MAKER | - sell taker -- ! that is the bug
+                                )
+
+             let futureInfo2 = [(900,100000,"f"),(1200,70000,"f"),(14000,100000,"f"),(100,70000,"f")] :: FutureInfo -- FUTURE INFO LONG
+             let futureInfo1 = [(900,100000,"z"),(1200,70000,"z"),(14000,100000,"z"),(100,70000,"z")] :: FutureInfo -- FUTURE INFO SHORT
+
+             
+-- already split volumes
+             let volumeList1= [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000]
+             let volumeList2 = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000]
+
+             
+-- prefiltered tuples
+             let positioningTupleLong = [(10000,"f"),(90000,"f"), (50000,"f")]
+             let positioningTupleShort = [(10000,"z"),(90000,"z"), (50000,"z")]
 
 
 
+             liquidated <- liquidationDuty futureInfo2 futureInfo1 startingPric
 
+             let liquidationInfo1 = fst liquidated
+             let liquidationsInfo = snd liquidated
+             let longliq  =  fst liquidationsInfo
+             let shortliq = snd liquidationsInfo
+             establishrunProgramNormal <- normalrunProgram (volumeList1, volumeList2 ) (longliq, shortliq) testingList startingPric ""
 
+             
+-- IO
+             putStrLn "DEFINED DATA: \n"
+             putStrLn "\nTESTING LIST: "
+             print testingList
+             putStrLn "\nFUTURE INFO LONG: "
+             print futureInfo2
+             putStrLn "\nFUTURE INFO SHORT: "
+             print futureInfo1
+             putStrLn "\nVOLUME LIST 1: "
+             print volumeList1
+             putStrLn "\nVOLUME LIST 2: "
+             print volumeList2
+             putStrLn "\nSTARTING PRICE: "
+             print startingPric
 
+             putStrLn "\n\nLIQUIDATION FREE FUTURE: \n"
+             print liquidationsInfo
+             putStrLn "\n\nAdditional liquidation info: \n"
+             print liquidationInfo1
+
+             putStrLn "\n\nrunProgram: \n"
+             let ((newPosFutureShort, newPosFutureLong), (newPositionsLong, newPositionsShort)) = establishrunProgramNormal
+             putStrLn "\nnewPosFutureLong:\n"
+             print newPosFutureLong
+             putStrLn "\nnewPosFutureShort:\n"
+             print newPosFutureShort
+             putStrLn "\nnewPositions:\n"
+             print newPositionsLong
+             print newPositionsShort
+
+ 
+-- ! add to tests
+-}
+
+  
+  
+  
   
   {-  
 describe "Util.bookNumChange" $ do

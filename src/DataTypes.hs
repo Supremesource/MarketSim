@@ -217,27 +217,27 @@ data VolumeSide
 
 -- / TYPES
 -- | positining structure
-type MakerPositions = [(Int, String)] 
-type TakerPositions = [(Int, String)]
+type MakerPositions     =   [(Int, String)] 
+type TakerPositions     =   [(Int, String)]
 type MarginCall         =   [(Int,String,String)] 
 type FutureAcc          =   (FutureInfo, FutureInfo)
 type Position           =   ([(Int, String)], [(Int, String)])
 type FutureInfo         =   [(Double, Int, String)]
 type NewPositioning     =   (TakerPositions, MakerPositions)
-type SeqNewPositioning  = Seq NewPositioning
+type SeqNewPositioning  =   Seq NewPositioning
 -- | order-book
-type SeqOrderBook       = Seq (Double, Int)
-type OrderBook          = [(Double, Int)]
-type InitBookStats      = (StartingPoint,(Int,Int),Int,Int,Totakefromwall,Int,Int,
-                SeqOrderBook,SeqOrderBook,VolumeSide,Int,Double,Double,Double)
-type FullWall = [Int]
-type StartingPoint = Double
-type Totakefromwall = Int
+type SeqOrderBook       =   Seq (Double, Int)
+type OrderBook          =   [(Double, Int)]
+type InitBookStats      =   (StartingPoint,(Int,Int),Int,Int,Totakefromwall,Int,Int,
+                  SeqOrderBook,SeqOrderBook,VolumeSide,Int,Double,Double,Double)
+type FullWall           = [Int]
+type StartingPoint      = Double
+type Totakefromwall     = Int
 -- | volumes
-type VolumeList = [(Int, VolumeSide)]
-type Volume = (Int, VolumeSide)
+type VolumeList         = [(Int, VolumeSide)]
+type Volume             = (Int, VolumeSide)
 -- | additional
-type Generator = StdGen
+type Generator          = StdGen
 
 
 
