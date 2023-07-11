@@ -125,10 +125,9 @@ closingConversion (takers, makers)
     hasBothXY xs = "x" `elem` map snd xs && "y" `elem` map snd xs
 
                                                   
--- (liq price, liq amount, liq side)
-
+-- TODO better leverage statistics
 positionFuture :: Double -> (TakerPositions, MakerPositions) -> IO FutureInfo
-positionFuture price (taker, maker) = do
+positionFuture price' (taker, maker) = do
   let (takerConver, makerConvert) = closingConversion (taker, maker)
   let concatTakerMaker = takerConver ++ makerConvert
   mapM calcPosition concatTakerMaker
@@ -137,10 +136,10 @@ positionFuture price (taker, maker) = do
       leverage <- takenLeverage
       let liquidationPrice
             | leverage /= 1 && side == "z" =
-              (price / fromIntegral leverage) + price
+              (price' / fromIntegral leverage) + price'
             | leverage /= 1 && side == "f" =
-              price - (price / fromIntegral leverage)
-            | leverage == 1 && side == "z" = 2 * price
+              price' - (price' / fromIntegral leverage)
+            | leverage == 1 && side == "z" = 2 * price'
             | otherwise                    = 0
       return (liquidationPrice, amt, side)
 
@@ -442,80 +441,3 @@ normalrunProgram (volumeSplitT, volumeSplitM) (oldLongFuture, oldShortFuture) --
     ( updatedFutureAcc -- # already concat to new accumulator
     , unorderedTupleNew -- # returning in a raw form to positionCycle
      )
-{-
--- | cycle management
--- ? testing potenital bugs
--- TODO remove this whole function !
--- ! comment this funciton if you don't want to perform any tests
-posFutureTestEnviromentHighlyDanngerous :: IO ()
-posFutureTestEnviromentHighlyDanngerous = do
-  -- // position management block
-
-             
--- DEFINE DATA
-             let startingPric = 1000.0
-
-                                
---  TRY TO SWITHCH THE ORDER AND SEE IF BUGS OCCOURS
-             let testingList = (
-                                [(100,"f"),(200,"f"),(300,"y"),(150,"f")]    -- | TAKER | - buy taker
-                                ,[(100,"x"),(200,"x"),(300,"x"),(150,"z")]   -- | MAKER | - sell taker -- ! that is the bug
-                                )
-
-             let futureInfo2 = [(900,100000,"f"),(1200,70000,"f"),(14000,100000,"f"),(100,70000,"f")] :: FutureInfo -- FUTURE INFO LONG
-             let futureInfo1 = [(900,100000,"z"),(1200,70000,"z"),(14000,100000,"z"),(100,70000,"z")] :: FutureInfo -- FUTURE INFO SHORT
-
-             
--- already split volumes
-             let volumeList1= [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000]
-             let volumeList2 = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000]
-
-             
--- prefiltered tuples
-             let positioningTupleLong = [(10000,"f"),(90000,"f"), (50000,"f")]
-             let positioningTupleShort = [(10000,"z"),(90000,"z"), (50000,"z")]
-
-
-
-             liquidated <- liquidationDuty futureInfo2 futureInfo1 startingPric
-
-             let liquidationInfo1 = fst liquidated
-             let liquidationsInfo = snd liquidated
-             let longliq  =  fst liquidationsInfo
-             let shortliq = snd liquidationsInfo
-             establishrunProgramNormal <- normalrunProgram (volumeList1, volumeList2 ) (longliq, shortliq) testingList startingPric ""
-
-             
--- IO
-             putStrLn "DEFINED DATA: \n"
-             putStrLn "\nTESTING LIST: "
-             print testingList
-             putStrLn "\nFUTURE INFO LONG: "
-             print futureInfo2
-             putStrLn "\nFUTURE INFO SHORT: "
-             print futureInfo1
-             putStrLn "\nVOLUME LIST 1: "
-             print volumeList1
-             putStrLn "\nVOLUME LIST 2: "
-             print volumeList2
-             putStrLn "\nSTARTING PRICE: "
-             print startingPric
-
-             putStrLn "\n\nLIQUIDATION FREE FUTURE: \n"
-             print liquidationsInfo
-             putStrLn "\n\nAdditional liquidation info: \n"
-             print liquidationInfo1
-
-             putStrLn "\n\nrunProgram: \n"
-             let ((newPosFutureShort, newPosFutureLong), (newPositionsLong, newPositionsShort)) = establishrunProgramNormal
-             putStrLn "\nnewPosFutureLong:\n"
-             print newPosFutureLong
-             putStrLn "\nnewPosFutureShort:\n"
-             print newPosFutureShort
-             putStrLn "\nnewPositions:\n"
-             print newPositionsLong
-             print newPositionsShort
-
- 
--- ! add to tests
--}
