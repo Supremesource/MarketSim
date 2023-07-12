@@ -29,7 +29,7 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -}
-module PosCycle 
+module PosCycle
 {-- ! DESCRIPTION
 
 # HOW DOES THE POSITION MANAGEMENT WORK ?
@@ -90,6 +90,7 @@ import           Control.Monad
 import           Data.Aeson           (decode)
 import qualified Data.Bifunctor
 import           System.Random        (randomRIO)
+import           Data.Foldable        (toList)
 import           Data.Monoid
 import           Data.Sequence        (Seq, ViewL ((:<)), (<|), (><))
 -- | internal libraries
@@ -99,6 +100,7 @@ import           Lib
 import           RunSettings
 import           Util
 import           Statistics
+import Prelude hiding (seq)
 
 
 
@@ -124,7 +126,7 @@ closingConversion (takers, makers)
         (f t)
     hasBothXY xs = "x" `elem` map snd xs && "y" `elem` map snd xs
 
-                                                  
+
 -- TODO better leverage statistics
 positionFuture :: Double -> (TakerPositions, MakerPositions) -> IO FutureInfo
 positionFuture price' (taker, maker) = do
@@ -186,7 +188,7 @@ normalGenerator takerLst makerLst (toTakeFromLong, toTakeFromShort) liqSide = do
     openingGen :: IO (TakerPositions, MakerPositions)
     openingGen = do
       takerSide' <- randomSide
-   
+
       let finalTakerSide =
             if liqSide /= ""
               then liqSide
@@ -203,7 +205,7 @@ normalGenerator takerLst makerLst (toTakeFromLong, toTakeFromShort) liqSide = do
     normalGen :: IO (TakerPositions, MakerPositions)
     normalGen = do
       takerSide' <- randomSide
-   
+
       let finalTakerSide =
             if liqSide /= ""
               then liqSide
@@ -261,7 +263,7 @@ readFuture = do
 filterFuture :: String -> String -> Transaction -> FutureInfo
 filterFuture liq pos transaction =
   if liq == "no" then filter (\(_, _, s) -> s == pos) (future transaction) else future transaction
-  
+
 
 -- // end of position future
 filterTuple :: String -> [(Int, String)] -> [(Int, String)]
@@ -269,6 +271,27 @@ filterTuple pos = filter (\(_, s) -> s == pos)
 
 type SeqFuture = Seq (Double, Int, String)
 
+-- | Function to get third element from 3-tuple
+thrd :: (a, b, c) -> c
+thrd (_, _, x) = x
+
+-- | helper funciton for filter future amount checking if the pass is correct
+-- | meaning the future is filtered to the same element
+allThirdEqual :: Seq (a, b, String) -> Bool
+allThirdEqual seq = 
+  case Seq.viewl seq of
+    Seq.EmptyL -> True
+    ((_, _, x) Seq.:< xs)
+      | x == "" -> allThirdEqual xs
+      | otherwise -> allOtherThirdEqual xs x
+-- | helper to allThirdEqual 
+allOtherThirdEqual :: Seq (a, b, String) -> String -> Bool
+allOtherThirdEqual seq c = 
+  case Seq.viewl seq of
+    Seq.EmptyL -> True
+    ((_, _, x) Seq.:< xs)
+      | x == "" || x == c -> allOtherThirdEqual xs c
+      | otherwise -> False
 
 -- TODO : make this funciton more realistic with shuffeling emelemnts
 -- | and equal "taking out"  more than just deleting one by one
@@ -278,13 +301,21 @@ filterFutureAmount ::
   -> SeqFuture -- returns a new futureInfo
 filterFutureAmount _ Seq.Empty = Seq.Empty
 filterFutureAmount [] futureInfo = futureInfo
-filterFutureAmount ((n, s):ns) futureInfo =
-  case Seq.viewl futureInfo of
-    Seq.EmptyL -> Seq.Empty
+filterFutureAmount tx@((n, s):ns) futureInfo
+  | not (allEqual (map snd tx)) = error "not all strings in transactions are the same"
+  | otherwise =
+    case Seq.viewl futureInfo of
+    Seq.EmptyL -> error "empty futureinfo"
     ((liq, amt, sid) :< rest) ->
-      if n < amt
-        then filterFutureAmount ns ((liq, amt - n, sid) <| rest)
-        else filterFutureAmount ((n - amt, s) : ns) rest
+      if not (allThirdEqual futureInfo)
+        then error "not all strings in futureInfo are the same" 
+        else if n < amt
+          then filterFutureAmount ns ((liq, amt - n, sid) <| rest)
+          else filterFutureAmount ((n - amt, s) : ns) rest
+
+-- Helper function to check if all elements of a list are equal
+allEqual :: Eq a => [a] -> Bool
+allEqual xs = all (== head xs) (tail xs)
 
 filterFutureClose ::
      Position -> (SeqFuture, SeqFuture) -> IO (SeqFuture, SeqFuture)
@@ -326,23 +357,23 @@ liquidationDuty ::
   -> IO ( Seq (Int, String, String) -- info about the liquidation
         , (SeqFuture, SeqFuture) -- updated futures
          )
-liquidationDuty futureInfoL futureInfoS price = do
+liquidationDuty futureInfoL futureInfoS price' = do
   let liquidationFunction =
         mapM
           (\(p, n, s) ->
-             (if (price <= p && s == "f") || (price >= p && s == "z")
+             (if (price' <= p && s == "f") || (price' >= p && s == "z")
                 then randomLiquidationEvent >>= \event -> return (n, s, event)
                 else return (0, "", "")))
   liquidationEventsL <- liquidationFunction futureInfoL
   liquidationEventsS <- liquidationFunction futureInfoS
   let liquidationListL = Seq.filter (\(n, _, _) -> n /= 0) liquidationEventsL
   let liquidationListS = Seq.filter (\(n, _, _) -> n /= 0) liquidationEventsS
-  let updatedFutureInfoL = Seq.filter (\(p, _, _) -> price <= p) futureInfoL
-  let updatedFutureInfoS = Seq.filter (\(p, _, _) -> price >= p) futureInfoS
-    
+  let updatedFutureInfoL = Seq.filter (\(p, _, _) -> price' <= p) futureInfoL
+  let updatedFutureInfoS = Seq.filter (\(p, _, _) -> price' >= p) futureInfoS
+
 -- filter the updatedFutureInfoL from futureInfoL
   let newFutureInfoL = Seq.filter (`notElem` updatedFutureInfoL) futureInfoL
-    
+
 -- filter the updatedFutureInfoS from futureInfoS
   let newFutureInfoS = Seq.filter (`notElem` updatedFutureInfoS) futureInfoS
   return
@@ -405,6 +436,8 @@ normalrunProgram (volumeSplitT, volumeSplitM) (oldLongFuture, oldShortFuture) --
       volumeSplitM
       (oldLongFuture, oldShortFuture)
       liqSide
+  putStrLn "new positioning"
+  print newPositioning
   posFut <- positionFuture sPrice newPositioning
   let adjustedLiquidation = if liqSide == "" then "no" else "yes"
   let converToTransaction = Transaction {future = posFut}
@@ -413,17 +446,25 @@ normalrunProgram (volumeSplitT, volumeSplitM) (oldLongFuture, oldShortFuture) --
         , filterFuture adjustedLiquidation  "z" converToTransaction)
   let orderedTupleNew = tuplesToSides newPositioning
   let unorderedTupleNew = newPositioning
-  
+
 --let orderedTupleOld = tuplesToSides oldPositions
   -- let unorderedTupleOld = oldPositions
   let (longTuple, shortTuple) =
         Data.Bifunctor.bimap (filterTuple "z") (filterTuple "f") orderedTupleNew
   let (filteredShortTuple, filteredLongTuple) = (longTuple, shortTuple)
+  putStrLn "-----\n\nfilteredLongTuple : "
+  print filteredLongTuple
+  putStrLn "oldLongFuture : "
+  print oldLongFuture
+  putStrLn "filteredShortTuple : "
+  print filteredShortTuple
+  putStrLn "oldShortFuture : "
+  print oldShortFuture
   let (newShortsAcc, newLongsAcc) -- ! changed order
        =
         ( filterFutureAmount filteredLongTuple oldLongFuture
         , filterFutureAmount filteredShortTuple oldShortFuture)
-  
+
 -- TODO get rid of unnecessary to list transitions
   let futureToSeq =
         let ((firstOld, secondOld), (firstNew, secondNew), newPos) =

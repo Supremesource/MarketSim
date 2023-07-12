@@ -57,6 +57,8 @@ library
     , bytestring
     , containers
     , deriving-aeson
+    , ghci-dap
+    , haskell-dap
     , hspec
     , parallel
     , process
@@ -82,6 +84,8 @@ executable marketsim-exe
     , bytestring
     , containers
     , deriving-aeson
+    , ghci-dap
+    , haskell-dap
     , hspec
     , marketsim
     , parallel
@@ -107,6 +111,8 @@ executable marketsim-server-exe
     , bytestring
     , containers
     , deriving-aeson
+    , ghci-dap
+    , haskell-dap
     , hspec
     , marketsim
     , parallel
@@ -121,6 +127,7 @@ test-suite marketsim-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
+      NRandomFunc
       Paths_marketsim
   hs-source-dirs:
       test
@@ -133,6 +140,8 @@ test-suite marketsim-test
     , bytestring
     , containers
     , deriving-aeson
+    , ghci-dap
+    , haskell-dap
     , hspec
     , marketsim
     , parallel

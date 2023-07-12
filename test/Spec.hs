@@ -69,122 +69,7 @@ import PosCycle
 import Statistics
 import Generator
 import Filepaths
-
-
-
--- $ HELPER FUNCITONS FOR TESTS
--- ? testsPosCycle functions 
-  -- ##################################################
-  -- # non-random positionFuture (leverage terms)     #
-  -- ##################################################
-takenLeverageNonRandom :: IO Int
-takenLeverageNonRandom = do
-  x <- randomRIO (1, 10) :: IO Int
-  return $
-    case x of
-      _
-        | x >= 1 && x <= 10 -> 5
-        | otherwise -> error "something went wrong in non-random takenLeverage"
-
--- TODO better leverage statistics
-positionFutureNonRandom :: Double -> (TakerPositions, MakerPositions) -> IO FutureInfo
-positionFutureNonRandom price' (taker, maker) = do
-  let (takerConver, makerConvert) = closingConversion (taker, maker)
-  let concatTakerMaker = takerConver ++ makerConvert
-  mapM calcPosition concatTakerMaker
-  where
-    calcPosition (amt, side) = do
-      leverage <- takenLeverageNonRandom
-      let liquidationPrice
-            | leverage /= 1 && side == "z" =
-              (price' / fromIntegral leverage) + price'
-            | leverage /= 1 && side == "f" =
-              price' - (price' / fromIntegral leverage)
-            | leverage == 1 && side == "z" = 2 * price'
-            | otherwise                    = 0
-      return (liquidationPrice, amt, side)
-
--- ? init generator with predetermined result
-nonRandominitGenerator :: [Int] -> [Int] -> IO (TakerPositions, MakerPositions)
-nonRandominitGenerator takerLst makerLst = do
-  let takerSide' = "x"
-  let makerside = oppositeSide takerSide'
-  let takerT = zip takerLst $ replicate (length takerLst) takerSide'
-  let makerT = zip makerLst $ replicate (length makerLst) makerside
-  return (takerT, makerT)
-
-nonRandomNormalGenerator ::
-     [Int] -> [Int] -> SeqFutureInfo -> String -> IO (TakerPositions, MakerPositions)
-nonRandomNormalGenerator takerLst makerLst (toTakeFromLong, toTakeFromShort) liqSide = do
-  unless (closingProb >= 1 && closingProb <= 10) $
-    error "closingProb must be between 1 and 10"
-  let genType =
-        if sum takerLst + sum makerLst >=
-           getSum (foldMap (\(_, n, _) -> Sum n) toTakeFromLong) &&
-           sum takerLst + sum makerLst >=
-           getSum (foldMap (\(_, n, _) -> Sum n) toTakeFromShort)
-          then openingGen
-          else normalGen
-  genType
-  where
-    openingGen :: IO (TakerPositions, MakerPositions)
-    openingGen = do
-      let takerSide' = "y"
-      let finalTakerSide =
-            if liqSide /= ""
-              then liqSide
-              else takerSide'
-      let editedTakerLst =
-            if liqSide /= ""
-              then sumList takerLst
-              else takerLst
-      let makerside = oppositeSide finalTakerSide
-      let takerT =
-            zip editedTakerLst $ replicate (length takerLst) finalTakerSide
-      let makerT = zip makerLst $ replicate (length makerLst) makerside
-      return (takerT, makerT)
-    normalGen :: IO (TakerPositions, MakerPositions)
-    normalGen = do
-      let takerSide' = "y"   
-      let finalTakerSide =
-            if liqSide /= ""
-              then liqSide
-              else takerSide'
-      let editedTakerLst =
-            if liqSide /= ""
-              then sumList takerLst
-              else takerLst
-      let makerside = oppositeSide finalTakerSide
-      let closingSideT
-            | finalTakerSide == "x" && liqSide == "" = "z"
-            | finalTakerSide == "y" && liqSide == "" = "f"
-            | otherwise                              = finalTakerSide
-      let closingSideM =
-            if makerside == "x"
-              then "z"
-              else "f"
-      takerT <-
-        mapM
-          (\val -> do
-             randVal <- randomRIO (1, 10) :: IO Int
-             let sideT =
-                   if randVal < closingProb
-                     then closingSideT
-                     else finalTakerSide
-             return (val, sideT))
-          editedTakerLst
-      makerT <-
-        mapM
-          (\val -> do
-             randVal <- randomRIO (1, 10) :: IO Int
-             let sideM =
-                   if randVal < closingProb
-                     then closingSideM
-                     else makerside
-             return (val, sideM))
-          makerLst
-      return (takerT, makerT)
-
+import NRandomFunc
 
 
 
@@ -613,28 +498,54 @@ testsPosCycle = hspec $ do
 
   describe "PosCylcle.normalGenerator" $ do
     it "returns normally (with closing positioning) generated future info" $ do
-      let takerVolList  = [0,10,-9]  
-      let makerVolList  = [1,0,-7]
+      let takerVolList  = [0,10,9]  
+      let makerVolList  = [1,12,7]
       let oldPosFuture1  = fromList [(0,0,"f"),(0,0,"f"),(0,0,"f"),(0,0,"f")]
       let oldPosFuture2  = fromList [(0,0,"z"),(0,0,"z"),(0,0,"z"),(0,0,"z")]
       let oldPosinfo = (oldPosFuture1,oldPosFuture2)
       let oldPosFuture1'  = fromList [(1,900,"f"),(100,0,"f"),(0,0,"f"),(0,0,"f")]
       let oldPosFuture2'  = fromList [(0.9,900,"z"),(2.2,0,"z"),(0,0,"z"),(0,0,"z")]
       let oldPosinfo' = (oldPosFuture1',oldPosFuture2')
-      let liqside1 = "z"
-      let liqside2 = "f"
+      let liqside1 = ""
+      let liqside2 = "z"
       result1  <- nonRandomNormalGenerator takerVolList makerVolList oldPosinfo  liqside1 
-      result2  <- nonRandomNormalGenerator takerVolList makerVolList oldPosinfo'  liqside2
+      result2  <- nonRandomNormalGenerator takerVolList makerVolList oldPosinfo' liqside2
+      -- without liquidaiton (future does not allow for closing)
+      result1 `shouldBe` ([(0,"y"),(10,"y"),(9,"y")],[(1,"x"),(12,"x"),(7,"x")])
+      -- with liquidation (counterparty is set to opening)
+      result2 `shouldBe` ([(19,"z")],[(1,"y"),(12,"y"),(7,"y")]) 
 
--- todo fix output     
-      result1 `shouldBe` ([],[])
-      result2 `shouldBe` ([],[])
-  
-  describe "PosCycle.filterFuture" $ do
 
-  describe "PosCycle.filterTuple" $ do
+  -- describe "PosCycle.filterFuture"
+
+    --describe "PosCycle.filterTuple" $ do
+
+  describe "PosCylcle.allThirdEqual" $ do
+    it "return -> True if all elements of future are equal and -> False if not" $ do
+      let future1 =  fromList [(0.0,0,""),(0,0,"f"),(0,0,"f"),(0,0,"f"),(0,0,"f")]
+      let future2 =  fromList [(0,0,"z"),(0,0,"f"),(0,0,"f"),(0,0,"f")]
+      let future3 =  fromList [(0,0,"z")]
+      let (result1, result2, result3) 
+                               = (allThirdEqual future1, allThirdEqual future2, allThirdEqual future3)
+      result1 `shouldBe` True
+      result2 `shouldBe` False
+      result3 `shouldBe` True
 
   describe "PosCycle.filterFutureAmount" $ do
+    it "returns filtered future based on a transaction" $ do
+      let transactionlong    = [(1362290,"f")]
+      let oldPosFuturelong   = fromList [(0.0,0,""),(0.0,8019300,"f"),(0.0,51732996,"f"),(0.0,23747529,"f"),(0.0,44156108,"f"),(0.0,75789467,"f")]
+      let transactionshort   = [(1362290,"z")]
+      let oldPosFutureshort  = fromList [(185.4988,58390006,"z"),(222.4652,8833436,"z"),(222.4652,49384180,"z"),(222.4652,85475488,"z")]
+      let result1            = filterFutureAmount transactionlong oldPosFuturelong
+      let result2            = filterFutureAmount transactionshort oldPosFutureshort
+      result1                  `shouldBe` ( fromList [(0.0,6657010,"f"),(0.0,51732996,"f"),(0.0,23747529,"f"),(0.0,44156108,"f"),(0.0,75789467,"f")])
+      result2                  `shouldBe` ( fromList [(185.4988,57027716,"z"),(222.4652,8833436,"z"),(222.4652,49384180,"z"),(222.4652,85475488,"z")])
+
+              
+
+{-
+  describe "PosCycle.allEqual"
 
   describe "PosCycle.filterFutureClose" $ do
 
@@ -645,7 +556,8 @@ testsPosCycle = hspec $ do
   describe "PosCycle.liquidationDuty" $ do
 
   describe "PosCycle.normalrunProgram" $ do
-  
+  -}
+
   {-
 -- | cycle management
 -- ? testing potenital bugs

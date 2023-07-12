@@ -107,7 +107,7 @@ generaterunProgram ::
   -> IO  GenerationOutput
 generaterunProgram genPass
   |  null (listofvolumesInput genPass) 
-  && null (initLiquidationAcc1Input genPass >< initLiquidationAcc2Input genPass) 
+ -- && null (initLiquidationAcc1Input genPass >< initLiquidationAcc2Input genPass) 
   =  handleBaseCase genPass
   |  otherwise 
   = handleGeneralCase genPass
@@ -166,7 +166,9 @@ handleGeneralCase genPass@GenerationPass{} = do
   let posinfo = initPositioningAccInput genPass
   let longinfo = initAccLongFutureInput genPass
   let shortinfo = initAccShortFutureInput genPass
-  let x:xs = listofvolumesInput genPass -- TODO fix the non-exhaustive pattern
+  let (x, xs) = case  listofvolumesInput genPass of
+        [] -> error "listofvolumesInput was empty!"
+        (y:ys) -> (y, ys) 
   let bidBook = bidBookInput genPass
   let askBook = askBookInput genPass
   let gen1 = gen1Input genPass
