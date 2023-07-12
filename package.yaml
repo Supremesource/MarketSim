@@ -6,6 +6,7 @@ author:              "Supreme Source"
 maintainer:          "zimulajan0@gmail.com"
 copyright:           "2023 Supreme Source"
 
+
 extra-source-files:
 - README.md
 - CHANGELOG.md
@@ -27,6 +28,8 @@ dependencies:
 - aeson-pretty
 - QuickCheck
 - hspec
+- ghci-dap
+- haskell-dap
  
 ghc-options:
 - -Wall
@@ -86,6 +89,8 @@ executables:
     - aeson-pretty
     - QuickCheck
     - hspec
+    - ghci-dap
+    - haskell-dap
 
    
   marketsim-server-exe:
