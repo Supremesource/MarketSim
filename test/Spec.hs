@@ -516,9 +516,29 @@ testsPosCycle = hspec $ do
       result2 `shouldBe` ([(19,"z")],[(1,"y"),(12,"y"),(7,"y")]) 
 
 
-  -- describe "PosCycle.filterFuture"
+  describe "PosCycle.filterFuture" $ do
+    it "retruns future filtered to a specific element" $ do 
+      let element      = "f"
+      let element2     = "z"
+      let liquidation  = "no"
+      let liquidation2 = "z"
+      let transaction  = Transaction [(0.0,0,"z"),(100,1,"f"),(1.11,20,""),(10.1,9,"f")]
+      let transaction2 = Transaction [(0,0,"f")] 
+      let result       = filterFuture liquidation element transaction
+      let result2      = filterFuture liquidation2 element2 transaction2
+      result `shouldBe` [(100,1,"f"),(10.1,9,"f")]
+      result2 `shouldBe` [(0,0,"f")] 
 
-    --describe "PosCycle.filterTuple" $ do
+  describe "PosCycle.filterTuple" $ do
+    it "retruns list of tuples (positioning) filtered to a specific element" $ do
+      let element       = "f"
+      let element2      = "z"
+      let positioining  = [(100,"z"),(1,"f"),(0,"f"),(10,"")]
+      let positioining2 = [(0,"f")]
+      let result        = filterTuple element positioining
+      let result2       = filterTuple element2 positioining2
+      result  `shouldBe` [(1,"f"),(0,"f")]
+      result2 `shouldBe` []
 
   describe "PosCylcle.allThirdEqual" $ do
     it "return -> True if all elements of future are equal and -> False if not" $ do
@@ -543,18 +563,45 @@ testsPosCycle = hspec $ do
       result2                  `shouldBe` ( fromList [(185.4988,57027716,"z"),(222.4652,8833436,"z"),(222.4652,49384180,"z"),(222.4652,85475488,"z")])
 
               
-
-{-
-  describe "PosCycle.allEqual"
+  describe "PosCycle.allEqual" $ do
+    it "returns True if all elements in the list are equal, False if not" $ do
+      let list1 = [(100,"x"),(0,"y")]
+      let list2 = [(100,"x"),(100,"x")]
+      let result1 = allEqual list1
+      let result2 = allEqual list2
+      result1 `shouldBe` False
+      result2 `shouldBe` True
 
   describe "PosCycle.filterFutureClose" $ do
+    it "returns filtered future in order (futureLong,futureShort)" $ do
+      let positioning1 = [(100,"x"),(0,"z"),(300,"z")]
+      let positioning2 = [(100,"y"),(0,"f"),(300,"f")]
+      let positioning  = (positioning1, positioning2)
+      let futureL =  fromList [(0,0,"z"),(0,300,"z"),(0,200,"z"),(0,0,"z")]
+      let futureS =  fromList [(0.0,200,"f"),(0,0,"f"),(0,110,"f"),(0,0,"f"),(0,0,"f")]
+      let (oldfuturelong,oldfutureshort) = (futureL,futureS)
+      result <- filterFutureClose positioning (futureL, futureS)
+      result `shouldBe` (fromList [(0,200,"z"),(0,0,"z")], fromList [(0,10,"f"),(0,0,"f"),(0,0,"f")])
+
 
   describe "PosCycle.tuplesToSides" $ do
+    it "returns positioning in order (long,short)" $ do
+      let takerPos = [(100,"x"),(200,"z"),(0,"x")]
+      let makerPos = [(0,"y"),(0,"f")]
+      let pos = (makerPos,takerPos)
+      let result = tuplesToSides pos 
+      result `shouldBe` (takerPos,makerPos)
 
   describe "PosCycle.randomLiquidationEvent" $ do
+     it "returns liquidation event (stop in this case, hardcoded to test)" $ do
+      result <- nonRandomLiquidationEvent
+      result `shouldBe` "stp"
 
-  describe "PosCycle.liquidationDuty" $ do
 
+
+
+ -- describe "PosCycle.liquidationDuty" $ do
+{-
   describe "PosCycle.normalrunProgram" $ do
   -}
 

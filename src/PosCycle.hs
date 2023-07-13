@@ -355,7 +355,7 @@ liquidationDuty ::
   -> SeqFuture
   -> Double
   -> IO ( Seq (Int, String, String) -- info about the liquidation
-        , (SeqFuture, SeqFuture) -- updated futures
+        , (SeqFuture, SeqFuture)    -- updated futures
          )
 liquidationDuty futureInfoL futureInfoS price' = do
   let liquidationFunction =
