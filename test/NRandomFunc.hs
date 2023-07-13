@@ -165,3 +165,13 @@ nonRandomNormalGenerator takerLst makerLst (toTakeFromLong, toTakeFromShort) liq
              return (val, sideM))
           makerLst
       return (takerT, makerT)    
+
+nonRandomLiquidationEvent :: IO String
+nonRandomLiquidationEvent = do
+  randVal <- randomRIO (1, 7) :: IO Int
+  unless (stopProb >= 1 && stopProb <= 10) $
+    error ("maxStop is 10 you have: " ++ show stopProb)
+  return $
+    if randVal < 8
+      then "stp"
+      else "liq"
