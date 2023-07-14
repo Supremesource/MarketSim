@@ -126,7 +126,7 @@ handleBaseCase genPass@GenerationPass{} = do
   let posStats = initStatsInput genPass
   -- / ACTION
   -- ? DATA
-  let posFuture =  Transaction $ toList $ longinfo >< shortinfo 
+  let posFuture =  TransactionFut $ toList $ longinfo >< shortinfo 
   BL.writeFile posFutureP $ encodePretty posFuture
   -- ? OUTPUT
   ids <- idList
@@ -140,7 +140,7 @@ handleBaseCase genPass@GenerationPass{} = do
   -- | / rewriting orderbooks
   let writeBidBook = Book {book = toList bidBook}
   let writeAskBook = Book {book = toList askBook}
-  --let writePositionFuture = Transaction { future = longinfo ++ shortinfo }
+  --let writePositionFuture = TransactionFut { future = longinfo ++ shortinfo }
   --let writePositionFuture' = encode writePositionFuture
   --BL.writeFile posFutureP writePositionFuture'
   BL.writeFile bidBookP (encodePretty writeBidBook)
