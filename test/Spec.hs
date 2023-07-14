@@ -516,18 +516,29 @@ testsPosCycle = hspec $ do
       result2 `shouldBe` ([(19,"z")],[(1,"y"),(12,"y"),(7,"y")]) 
 
 
+
+
   describe "PosCycle.filterFuture" $ do
     it "retruns future filtered to a specific element" $ do 
       let element      = "f"
       let element2     = "z"
+      let element3     = "f" -- ~ this is the liquidation 
+{-
       let liquidation  = "no"
-      let liquidation2 = "z"
-      let transaction  = Transaction [(0.0,0,"z"),(100,1,"f"),(1.11,20,""),(10.1,9,"f")]
-      let transaction2 = Transaction [(0,0,"f")] 
-      let result       = filterFuture liquidation element transaction
-      let result2      = filterFuture liquidation2 element2 transaction2
-      result `shouldBe` [(100,1,"f"),(10.1,9,"f")]
-      result2 `shouldBe` [(0,0,"f")] 
+      let liquidation2 = "yes"
+      let liquidation3 = "yes" -- ~ f
+-}
+      let transaction  = TransactionFut [(0.0,0,""),(100,1,"f"),(1.11,20,""),(10.1,9,"f")]
+      let transaction2 = TransactionFut [(0,0,"f")] 
+      let transaction3 = TransactionFut 
+
+      let result       = filterFuture {-liquidation-} element transaction
+      let result2      = filterFuture {-liquidation2-} element2 transaction2
+      
+      result  `shouldBe` [(100,1,"f"),(10.1,9,"f")]
+      result2 `shouldBe` [] 
+
+
 
   describe "PosCycle.filterTuple" $ do
     it "retruns list of tuples (positioning) filtered to a specific element" $ do
@@ -596,101 +607,62 @@ testsPosCycle = hspec $ do
      it "returns liquidation event (stop in this case, hardcoded to test)" $ do
       result <- nonRandomLiquidationEvent
       result `shouldBe` "stp"
-
-
-
-
- -- describe "PosCycle.liquidationDuty" $ do
-{-
-  describe "PosCycle.normalrunProgram" $ do
-  -}
-
-  {-
--- | cycle management
--- ? testing potenital bugs
--- TODO remove this whole function !
--- ! comment this funciton if you don't want to perform any tests
-posFutureTestEnviromentHighlyDanngerous :: IO ()
-posFutureTestEnviromentHighlyDanngerous = do
-  -- // position management block
-
-             
--- DEFINE DATA
-             let startingPric = 1000.0
-
-                                
---  TRY TO SWITHCH THE ORDER AND SEE IF BUGS OCCOURS
-             let testingList = (
-                                [(100,"f"),(200,"f"),(300,"y"),(150,"f")]    -- | TAKER | - buy taker
-                                ,[(100,"x"),(200,"x"),(300,"x"),(150,"z")]   -- | MAKER | - sell taker -- ! that is the bug
-                                )
-
-             let futureInfo2 = [(900,100000,"f"),(1200,70000,"f"),(14000,100000,"f"),(100,70000,"f")] :: FutureInfo -- FUTURE INFO LONG
-             let futureInfo1 = [(900,100000,"z"),(1200,70000,"z"),(14000,100000,"z"),(100,70000,"z")] :: FutureInfo -- FUTURE INFO SHORT
-
-             
--- already split volumes
-             let volumeList1= [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000]
-             let volumeList2 = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000]
-
-             
--- prefiltered tuples
-             let positioningTupleLong = [(10000,"f"),(90000,"f"), (50000,"f")]
-             let positioningTupleShort = [(10000,"z"),(90000,"z"), (50000,"z")]
-
-
-
-             liquidated <- liquidationDuty futureInfo2 futureInfo1 startingPric
-
-             let liquidationInfo1 = fst liquidated
-             let liquidationsInfo = snd liquidated
-             let longliq  =  fst liquidationsInfo
-             let shortliq = snd liquidationsInfo
-             establishrunProgramNormal <- normalrunProgram (volumeList1, volumeList2 ) (longliq, shortliq) testingList startingPric ""
-
-             
--- IO
-             putStrLn "DEFINED DATA: \n"
-             putStrLn "\nTESTING LIST: "
-             print testingList
-             putStrLn "\nFUTURE INFO LONG: "
-             print futureInfo2
-             putStrLn "\nFUTURE INFO SHORT: "
-             print futureInfo1
-             putStrLn "\nVOLUME LIST 1: "
-             print volumeList1
-             putStrLn "\nVOLUME LIST 2: "
-             print volumeList2
-             putStrLn "\nSTARTING PRICE: "
-             print startingPric
-
-             putStrLn "\n\nLIQUIDATION FREE FUTURE: \n"
-             print liquidationsInfo
-             putStrLn "\n\nAdditional liquidation info: \n"
-             print liquidationInfo1
-
-             putStrLn "\n\nrunProgram: \n"
-             let ((newPosFutureShort, newPosFutureLong), (newPositionsLong, newPositionsShort)) = establishrunProgramNormal
-             putStrLn "\nnewPosFutureLong:\n"
-             print newPosFutureLong
-             putStrLn "\nnewPosFutureShort:\n"
-             print newPosFutureShort
-             putStrLn "\nnewPositions:\n"
-             print newPositionsLong
-             print newPositionsShort
-
+  
+  describe "PosCycle.liquidationDuty" $ do
+      it "returns future info with liquidations taken out" $ do
+        let futureInfoL     = fromList [(0,100,"f"),(0.5,200,"f"),(0.45,300,"f"),(150,150,"f")]
+        let futureInfoS     = fromList [(400,100,"z"),(1,200,"z"),(1,300,"z"),(0.51,150,"z")]
+        let price           = 0.5
+        result <- nonRandomLiquidationDuty futureInfoL futureInfoS price
+        let liquidationInfo' = fromList [(200,"f","stp"), (150,"f","stp")]
+        let expectedFutureL' = fromList [(0,100,"f"),(0.45,300,"f")]
+        let expectedFutureS' = fromList [(400,100,"z"),(1,200,"z"),(1,300,"z"),(0.51,150,"z")]
+        result `shouldBe` (liquidationInfo', (expectedFutureL', expectedFutureS'))
  
--- ! add to tests
--}
+ 
+  describe "PosCycle.normalrunProgram" $ do
+    it "returns correctly managed position management" $ do
+      -- $ first
+      let volList      = ( [100,200],  -- taker
+                           [50 ,250])  -- maker
+      let futureInfo1  = Data.Sequence.fromList [(900,100000,"f")] -- FUTURE INFO LONG
+      let futureInfo2  = Data.Sequence.fromList [(900,100000,"z")] -- FUTURE INFO SHORT
+      let startingPric = 1000.0  
+      let liqside      = ""
+      -- $ second
+      let volList'     = ([300],       -- | TAKER | - buy taker
+                          [40,260])    -- | MAKER | - sell taker                 
+      let futureInfo1'  = Data.Sequence.fromList [(14000,100000,"f")] -- FUTURE INFO LONG
+      let futureInfo2'  = Data.Sequence.fromList [(1200,70000,"z")  ] -- FUTURE INFO SHORT
+      let startingPric' = 1000.0  
+      let liqside'      = "f"
+      -- $ third
+      let volList''     = ([300,0,400,500],       -- | TAKER | - buy taker
+                          [0,1200])    -- | MAKER | - sell taker                 
+      let futureInfo1''  = Data.Sequence.fromList [(0.0,100,"f"), (10,700,"f") ] -- FUTURE INFO LONG
+      let futureInfo2''  = Data.Sequence.fromList [(0.0,70000,"z") , (9999,0,"z") ] -- FUTURE INFO SHORT
+      let startingPric'' = 999.99  
+      let liqside''      = "z"
 
-  
-  
-  
-  
-  {-  
+      result  <- nonRandomNormalrunProgram volList  (futureInfo1,futureInfo2)    startingPric  liqside
+      result2 <- nonRandomNormalrunProgram volList' (futureInfo1', futureInfo2') startingPric' liqside'   
+      result3 <- nonRandomNormalrunProgram volList'' (futureInfo1'', futureInfo2'') startingPric'' liqside''   
+      
+      -- ? positioning on taker is set to be y (without liquidation)
+      result  `shouldBe` ((Data.Sequence.fromList [(900,100000,"z"), (1200,100,"z"), (1200,200,"z")], Data.Sequence.fromList [(900,100000,"f"),(800,50,"f"),(800,250,"f")]),([(100,"y"),(200,"y")],[(50,"x"),(250,"x")]))
+      result2 `shouldBe` ((Data.Sequence.fromList [(1200,70000,"z")],Data.Sequence.fromList [(14000,99700,"f"),(800.0,40,"f"),(800.0,260,"f")]),([(300,"f")],[(40,"x"),(260,"x")]))
+      result3 `shouldBe`  ((Data.Sequence.fromList [(0.0,68800,"z") , (9999,0,"z"),(1199.988, 0, "z"), (1199.988, 1200, "z")],Data.Sequence.fromList [(0.0,100,"f"), (10,700,"f") ]),([(1200,"z")],[(0,"y"),(1200,"y")]))
+
+     -- // position cycle works as intended       
+    
+
+
+
+
+
+{-  
 describe "Util.bookNumChange" $ do
   it "returns the amount that the orderbook changed"
-
 -}
 
 {-

@@ -51,7 +51,7 @@ type JSONConfig a =
  CustomJSON '[OmitNothingFields, FieldLabelModifier 
  '[StripPrefix "DATA", CamelToSnake]] a
 
-data Transaction = Transaction {
+data TransactionFut = TransactionFut {
     future :: FutureInfo
   } deriving (Show, Generic, FromJSON, ToJSON)
 

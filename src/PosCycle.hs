@@ -91,6 +91,7 @@ import           Data.Aeson           (decode)
 import qualified Data.Bifunctor
 import           System.Random        (randomRIO)
 import           Data.Foldable        (toList)
+import Prelude hiding (seq)
 import           Data.Monoid
 import           Data.Sequence        (Seq, ViewL ((:<)), (<|), (><))
 -- | internal libraries
@@ -100,7 +101,7 @@ import           Lib
 import           RunSettings
 import           Util
 import           Statistics
-import Prelude hiding (seq)
+
 
 
 
@@ -252,17 +253,17 @@ normalGenerator takerLst makerLst (toTakeFromLong, toTakeFromShort) liqSide = do
 isFutureEmpty :: IO Bool
 isFutureEmpty = isFileEmpty posFutureP
 
-readFuture :: IO Transaction
+readFuture :: IO TransactionFut
 readFuture = do
   futurePos <- BL.readFile posFutureP
-  let future' = decode futurePos :: Maybe Transaction
+  let future' = decode futurePos :: Maybe TransactionFut
   case future' of
     Nothing -> error "Error reading future file"
     Just x  -> return x
 
-filterFuture :: String -> String -> Transaction -> FutureInfo
-filterFuture liq pos transaction =
-  if liq == "no" then filter (\(_, _, s) -> s == pos) (future transaction) else future transaction
+filterFuture :: {-String ->-} String -> TransactionFut -> FutureInfo
+filterFuture {-liq-} pos transaction =
+ {- if liq == "no" then -}filter (\(_, _, s) -> s == pos) (future transaction) --else future transaction
 
 
 -- // end of position future
@@ -380,18 +381,7 @@ liquidationDuty futureInfoL futureInfoS price' = do
     (liquidationListL >< liquidationListS, (newFutureInfoL, newFutureInfoS))
 
 
--- ! fine
--- ? Postion  Generatorts
--- | cycle management
--- ? PUTTING IT ALL TOGETHER
-normalrunProgram ::
-     ([Int], [Int])
-  -> SeqFutureInfo
-  -> Double
-  -> String
-  -> IO ( SeqFutureInfo -- # updated accumulator long # updated accumulator short
-        , NewPositioning -- # updated accumulator positions
-         ){-
+{-
 # FUNCTION EXPLINATION
 
 input: `([Int],[Int]) -> (FutureInfo, FutureInfo) -> NewPositioning -> Double`
@@ -427,7 +417,15 @@ where: `split of volume for taker and maker -> old future (acc) -> old Positions
 
 output: ` updated accumulators for FUTURE
        -> New position accumulators      `
-                                                                              -}
+-}
+-- ? PUTTING ALL FUNCTIONS ABOVE TOGETHER
+normalrunProgram ::
+     ([Int], [Int])
+  -> SeqFutureInfo
+  -> Double
+  -> String
+  -> IO ( SeqFutureInfo    -- # updated accumulator short # updated accumulator long
+        , NewPositioning ) -- # updated accumulator positions
 normalrunProgram (volumeSplitT, volumeSplitM) (oldLongFuture, oldShortFuture) -- TODO TAKE OUT oldPositions
                                                sPrice liqSide = do
   newPositioning <-
@@ -436,41 +434,27 @@ normalrunProgram (volumeSplitT, volumeSplitM) (oldLongFuture, oldShortFuture) --
       volumeSplitM
       (oldLongFuture, oldShortFuture)
       liqSide
-  putStrLn "new positioning"
-  print newPositioning
   posFut <- positionFuture sPrice newPositioning
   let adjustedLiquidation = if liqSide == "" then "no" else "yes"
-  let converToTransaction = Transaction {future = posFut}
+  let converToTransaction = TransactionFut {future = posFut}
   let (filteredLongFuture, filteredShortFuture) =
-        ( filterFuture adjustedLiquidation  "f" converToTransaction
-        , filterFuture adjustedLiquidation  "z" converToTransaction)
+        ( filterFuture {-adjustedLiquidation-}  "f" converToTransaction
+        , filterFuture {-adjustedLiquidation-}  "z" converToTransaction)
   let orderedTupleNew = tuplesToSides newPositioning
-  let unorderedTupleNew = newPositioning
-
---let orderedTupleOld = tuplesToSides oldPositions
-  -- let unorderedTupleOld = oldPositions
+  let unorderedPosNew = newPositioning
   let (longTuple, shortTuple) =
         Data.Bifunctor.bimap (filterTuple "z") (filterTuple "f") orderedTupleNew
   let (filteredShortTuple, filteredLongTuple) = (longTuple, shortTuple)
-  putStrLn "-----\n\nfilteredLongTuple : "
-  print filteredLongTuple
-  putStrLn "oldLongFuture : "
-  print oldLongFuture
-  putStrLn "filteredShortTuple : "
-  print filteredShortTuple
-  putStrLn "oldShortFuture : "
-  print oldShortFuture
-  let (newShortsAcc, newLongsAcc) -- ! changed order
+  let (newShortsAcc, newLongsAcc) 
        =
         ( filterFutureAmount filteredLongTuple oldLongFuture
         , filterFutureAmount filteredShortTuple oldShortFuture)
 
--- TODO get rid of unnecessary to list transitions
   let futureToSeq =
         let ((firstOld, secondOld), (firstNew, secondNew), newPos) =
               ( (newLongsAcc, newShortsAcc)
               , (filteredLongFuture, filteredShortFuture)
-              , newPositioning) -- ! (filteredLongFuture,filteredShortFuture)
+              , newPositioning) 
          in ( (firstOld, secondOld)
             , (futureInfoToSeq firstNew, futureInfoToSeq secondNew)
             , newPos)
@@ -480,5 +464,5 @@ normalrunProgram (volumeSplitT, volumeSplitM) (oldLongFuture, oldShortFuture) --
           futureToSeq
   return
     ( updatedFutureAcc -- # already concat to new accumulator
-    , unorderedTupleNew -- # returning in a raw form to positionCycle
+    , unorderedPosNew -- # returning in a raw form to positionCycle
      )

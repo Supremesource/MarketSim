@@ -28,7 +28,12 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -}
-module NRandomFunc where
+module NRandomFunc 
+{- 
+--! Description
+--# modules converts random functions into exact ones (for testing purpouses)
+  -}
+where
 
 -- | External libraries
 import Test.Hspec
@@ -40,7 +45,10 @@ import Control.Exception (try, ErrorCall)
 import Control.Monad
 import Data.Sequence   (fromList, (><))
 import Data.Monoid
-
+import Prelude hiding (seq)
+import qualified Data.Sequence        as Seq
+import Data.Sequence        (Seq, ViewL ((:<)), (<|), (><))
+import qualified Data.Bifunctor
 -- | Internal libraries
 import Lib
 import RunSettings
@@ -175,3 +183,90 @@ nonRandomLiquidationEvent = do
     if randVal < 8
       then "stp"
       else "liq"
+
+nonRandomLiquidationDuty ::
+     SeqFuture
+  -> SeqFuture
+  -> Double
+  -> IO ( 
+      Seq (Int, String, String)     -- info about the liquidation
+        , (SeqFuture, SeqFuture)    -- updated futures
+         )
+nonRandomLiquidationDuty futureInfoL futureInfoS price' = do
+  let liquidationFunction =
+        mapM
+          (\(p, n, s) ->
+             (if (price' <= p && s == "f") || (price' >= p && s == "z")
+                then nonRandomLiquidationEvent >>= \event -> return (n, s, event)
+                else return (0, "", "")))
+  liquidationEventsL <- liquidationFunction futureInfoL
+  liquidationEventsS <- liquidationFunction futureInfoS
+  let liquidationListL = Seq.filter (\(n, _, _) -> n /= 0) liquidationEventsL
+  let liquidationListS = Seq.filter (\(n, _, _) -> n /= 0) liquidationEventsS
+  let updatedFutureInfoL = Seq.filter (\(p, _, _) -> price' <= p) futureInfoL
+  let updatedFutureInfoS = Seq.filter (\(p, _, _) -> price' >= p) futureInfoS
+  -- filter the updatedFutureInfoL from futureInfoL
+  let newFutureInfoL = Seq.filter (`notElem` updatedFutureInfoL) futureInfoL
+
+  -- filter the updatedFutureInfoS from futureInfoS
+  let newFutureInfoS = Seq.filter (`notElem` updatedFutureInfoS) futureInfoS
+  return
+    (liquidationListL >< liquidationListS, (newFutureInfoL, newFutureInfoS))
+
+nonRandomNormalrunProgram ::
+     ([Int], [Int])
+  -> SeqFutureInfo
+  -> Double
+  -> String
+  -> IO ( SeqFutureInfo    -- # updated accumulator short # updated accumulator long
+        , NewPositioning ) -- # updated accumulator positions
+         
+nonRandomNormalrunProgram (volumeSplitT, volumeSplitM) (oldLongFuture, oldShortFuture) -- TODO TAKE OUT oldPositions
+                                               sPrice liqSide = do
+  newPositioning <-
+    nonRandomNormalGenerator
+            volumeSplitT
+            volumeSplitM
+            (oldLongFuture, oldShortFuture)
+            liqSide
+
+  posFut <- positionFutureNonRandom sPrice newPositioning -- ~
+  let adjustedLiquidation = if liqSide == "" then "no" else "yes" -- ~
+  
+  let converToTransaction = TransactionFut {future = posFut}
+  let (filteredLongFuture, filteredShortFuture) =
+        ( filterFuture {-adjustedLiquidation-}  "f" converToTransaction
+        , filterFuture {-adjustedLiquidation-}  "z" converToTransaction)
+
+  let orderedTupleNew   = tuplesToSides newPositioning
+  let unorderedPosNew   = newPositioning
+  let (longTuple, shortTuple) =
+        Data.Bifunctor.bimap (filterTuple "z") (filterTuple "f") orderedTupleNew
+  let (filteredShortTuple, filteredLongTuple) = (longTuple, shortTuple)
+ 
+  let (newShortsAcc, newLongsAcc) 
+       =
+        ( filterFutureAmount filteredLongTuple oldLongFuture
+        , filterFutureAmount filteredShortTuple oldShortFuture)
+ 
+ 
+  let futureToSeq =
+        let ((firstOld, secondOld), (firstNew, secondNew), newPos) =
+              ( (newLongsAcc, newShortsAcc)
+              , (filteredLongFuture, filteredShortFuture)
+              , newPositioning)
+         in ( (firstOld, secondOld)
+            , (futureInfoToSeq firstNew, futureInfoToSeq secondNew)
+            , newPos)
+  
+  -- | FutureInfo
+  let updatedFutureAcc =
+        (\((frst, fst'), (snd', scnd), _) -> (frst <> scnd, fst' <> snd'))
+          futureToSeq
+  
+  
+  
+  return
+    ( updatedFutureAcc  -- # already concat to new accumulator
+    , unorderedPosNew   -- # returning in a raw form to positionCycle
+     )

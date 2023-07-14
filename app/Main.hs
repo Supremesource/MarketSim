@@ -231,13 +231,15 @@ generator isBidEmpty isAskEmpty orderbook_bid orderbook_ask fileBidBook fileAskB
       then return futureAccLong
       else do
   -- filterfuture no liquidation for exit long
-        filterFuture "no"  "f" <$> readFuture
+        filterFuture --"no"
+                          "f" <$> readFuture
   initAccShortFuture <-
     if isFutureEmpt
       then return futureAccLong
       else do
   -- filterfuture no liquidation for exit short
-        filterFuture "no" "z" <$> readFuture
+        filterFuture -- "no" 
+                        "z" <$> readFuture
   _ <-
     generaterunProgram
      GenerationPass
