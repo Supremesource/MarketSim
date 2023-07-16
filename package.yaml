@@ -30,7 +30,8 @@ dependencies:
 - hspec
 - ghci-dap
 - haskell-dap
- 
+- random-shuffle
+
 ghc-options:
 - -Wall
 - -Wcompat
@@ -91,6 +92,7 @@ executables:
     - hspec
     - ghci-dap
     - haskell-dap
+    - random-shuffle
 
    
   marketsim-server-exe:

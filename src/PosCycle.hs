@@ -295,7 +295,7 @@ allOtherThirdEqual seq c =
       | otherwise -> False
 
 -- TODO : make this funciton more realistic with shuffeling emelemnts
--- | and equal "taking out"  more than just deleting one by one
+-- | and random "taking out"  more than just deleting one by one
 filterFutureAmount ::
      [(Int, String)] -- Tuple of positions to take out
   -> SeqFuture -- old futureInfo
@@ -313,6 +313,10 @@ filterFutureAmount tx@((n, s):ns) futureInfo
         else if n < amt
           then filterFutureAmount ns ((liq, amt - n, sid) <| rest)
           else filterFutureAmount ((n - amt, s) : ns) rest
+
+
+
+
 
 -- Helper function to check if all elements of a list are equal
 allEqual :: Eq a => [a] -> Bool

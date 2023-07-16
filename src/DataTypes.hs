@@ -214,7 +214,7 @@ data VolumeSide
   = Buy
   | Sell
    deriving (Show, Eq, Ord, Enum, Bounded, Generic, FromJSON, ToJSON)
-
+   
 -- / TYPES
 -- | positining structure
 type MakerPositions     =   [(Int, String)] 

@@ -47,8 +47,10 @@ import Data.Sequence   (fromList, (><))
 import Data.Monoid
 import Prelude hiding (seq)
 import qualified Data.Sequence        as Seq
-import Data.Sequence        (Seq, ViewL ((:<)), (<|), (><))
+import Data.Sequence        (Seq, ViewL ((:<)), (<|), (><), (|>))
 import qualified Data.Bifunctor
+import System.Random.Shuffle (shuffleM)
+
 -- | Internal libraries
 import Lib
 import RunSettings
@@ -102,6 +104,68 @@ nonRandominitGenerator takerLst makerLst = do
   let makerT = zip makerLst $ replicate (length makerLst) makerside
   return (takerT, makerT)
 
+-- move to pos cycle
+splitAmountToRandomList :: Int -> IO [Int]
+splitAmountToRandomList 0 = return [0]
+splitAmountToRandomList 1 = return [1]
+splitAmountToRandomList n = do
+    let chunkCount = 10  -- Change this to adjust the number of chunks
+    if n < chunkCount
+      then return [n]
+      else do
+          let (q, r) = n `divMod` chunkCount
+          chunks <- replicateM (chunkCount - 1) (randomRIO (q `div` 2, q * 3 `div` 2))
+          let lastChunk = n - sum chunks
+          shuffledChunks <- shuffleM (lastChunk : chunks) -- only random part
+          return $ filter (/= 0) shuffledChunks
+
+noRandomSplitAmountToRandomList :: Int -> IO [Int]
+noRandomSplitAmountToRandomList 0 = return [0]
+noRandomSplitAmountToRandomList 1 = return [1]
+noRandomSplitAmountToRandomList n = do
+    let chunkCount = 10  -- Change this to adjust the number of chunks
+    -- | random chunk c. larger transaction, more people are likely to get taken out of the future 
+    --   meaning if there is a large split to take out of the future
+    --   future is beinng "shuffeled" then when a large transaction took place
+    --   probably more people exited the market 
+    -- & rchunkCount <- if n < 1000 then return 5 else randomRIO (5, 15) -- user can adjust the stat
+    if n < chunkCount
+      then return [n]
+      else do
+          let (q, r) = n `divMod` chunkCount
+         -- chunks <- replicateM (chunkCount - 1) (randomRIO (q `div` 2, q * 3 `div` 2))
+          nrChunks <- replicateM (chunkCount - 1) (return (q `div` 2))
+          let lastChunk = n - sum nrChunks
+          let shuffledChunks = (lastChunk : nrChunks) 
+          return $ filter (/= 0) shuffledChunks
+
+nonRandomFilterFutureAmount ::
+     [(Int, String)]     -- Tuple of positions to take out
+  -> SeqFuture           -- old futureInfo
+  -> IO SeqFuture        -- returns a new futureInfo
+nonRandomFilterFutureAmount [] futureInfo = return futureInfo
+nonRandomFilterFutureAmount ((n, s):ns) futureInfo = do
+    listN <- noRandomSplitAmountToRandomList n 
+    filterFutureN listN futureInfo ns
+    where
+        filterFutureN [] futureInfo _ = return futureInfo
+        filterFutureN _ Seq.Empty _ = return Seq.Empty
+        
+        filterFutureN (x:xs) futureInfo ns = do
+            let ((liq, amt, sid) :< rest) = Seq.viewl futureInfo
+            if x < amt
+                then do
+                    let updatedFutureInfo = rest |> (liq, amt - x, sid)
+                    nonRandomFilterFutureAmount ns updatedFutureInfo
+                    filterFutureN xs updatedFutureInfo ns
+               
+                else do
+                    let updatedFutureInfo = rest -- |> (liq, x - amt, sid)
+                    let newX = x - amt
+                    nonRandomFilterFutureAmount ((x - amt, s) : ns) rest
+                                                --((x - amt, s) : ns) updatedFutureInfo
+                    filterFutureN (newX:xs) updatedFutureInfo ns
+                      
 nonRandomNormalGenerator ::
      [Int] -> [Int] -> SeqFutureInfo -> String -> IO (TakerPositions, MakerPositions)
 nonRandomNormalGenerator takerLst makerLst (toTakeFromLong, toTakeFromShort) liqSide = do
