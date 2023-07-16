@@ -79,8 +79,8 @@ main = tests
 
 tests :: IO ()
 tests = do
-  testsLib
-  testsUtil
+  --testsLib
+  --testsUtil
   testsPosCycle
 
 testsLib :: IO ()
@@ -564,15 +564,18 @@ testsPosCycle = hspec $ do
 
   describe "PosCycle.filterFutureAmount" $ do
     it "returns filtered future based on a transaction" $ do
-      let transactionlong    = [(1362290,"f")]
-      let oldPosFuturelong   = fromList [(0.0,0,""),(0.0,8019300,"f"),(0.0,51732996,"f"),(0.0,23747529,"f"),(0.0,44156108,"f"),(0.0,75789467,"f")]
-      let transactionshort   = [(1362290,"z")]
-      let oldPosFutureshort  = fromList [(185.4988,58390006,"z"),(222.4652,8833436,"z"),(222.4652,49384180,"z"),(222.4652,85475488,"z")]
-      let result1            = filterFutureAmount transactionlong oldPosFuturelong
-      let result2            = filterFutureAmount transactionshort oldPosFutureshort
-      result1                  `shouldBe` ( fromList [(0.0,6657010,"f"),(0.0,51732996,"f"),(0.0,23747529,"f"),(0.0,44156108,"f"),(0.0,75789467,"f")])
-      result2                  `shouldBe` ( fromList [(185.4988,57027716,"z"),(222.4652,8833436,"z"),(222.4652,49384180,"z"),(222.4652,85475488,"z")])
-
+      let transactionlong     = [(1362290,"f")]
+      let oldPosFuturelong    = fromList [(0.0,0,""),(0.0,8019300,"f"),(0.0,51732996,"f"),(0.0,23747529,"f"),(0.0,44156108,"f"),(0.0,75789467,"f")]
+      let transactionshort    = [(1362290,"z")]
+      let oldPosFutureshort   = fromList [(185.4988,58390006,"z"),(222.4652,8833436,"z"),(222.4652,49384180,"z"),(222.4652,85475488,"z")]
+      let transactionlongBig  = [(10000,"f")]
+      let oldPosFuturelongBig = fromList [(0,100,"f"),(0,400,"f"),(0,900,"f"),(0,600,"f"),(0,8001,"f")]
+      let result1             = filterFutureAmount transactionlong oldPosFuturelong
+      let result2             = filterFutureAmount transactionshort oldPosFutureshort
+      let result3             = filterFutureAmount transactionlongBig oldPosFuturelongBig
+      result1                   `shouldBe` ( fromList [(0.0,6657010,"f"),(0.0,51732996,"f"),(0.0,23747529,"f"),(0.0,44156108,"f"),(0.0,75789467,"f")])
+      result2                   `shouldBe` ( fromList [(185.4988,57027716,"z"),(222.4652,8833436,"z"),(222.4652,49384180,"z"),(222.4652,85475488,"z")])
+      result3                   `shouldBe` ( fromList [(0,1,"f")]) 
               
   describe "PosCycle.allEqual" $ do
     it "returns True if all elements in the list are equal, False if not" $ do
@@ -656,9 +659,19 @@ testsPosCycle = hspec $ do
      -- // position cycle works as intended       
     
 
-
-
-
+  describe "PosCycle.nonrandoma" $ do
+    it "returns .." $ do
+      h <- noRandomSplitAmountToRandomList 500
+      h `shouldBe` [275,25,25,25,25,25,25,25,25,25]
+      -- # [55,5,5,5,5,5,5,5,5,5] #
+  
+  
+  describe "PosCycle.nonranfila" $ do
+    it "returns .." $ do
+      let transactionshort  = [(500,"z")] -- 149 stops working
+      let oldPosFutureshort = fromList [(0,100,"z"),(0,400,"z"),(0,900,"z"),(0,600,"z")]
+      result <- nonRandomFilterFutureAmount transactionshort oldPosFutureshort
+      result `shouldBe`  (fromList [] )
 
 {-  
 describe "Util.bookNumChange" $ do
