@@ -72,10 +72,10 @@ initialPositionData :: [PositionData]
 initialPositionData = []
 
 -- | accumulators for future info
-futureAccLong :: FutureInfo
-futureAccLong = [(0, 0, "")]
+closeAccLong :: ClosePositionData
+closeAccLong = [(0, 0, "")]
 
-futureAccShort :: FutureInfo
+futureAccShort :: ClosePositionData
 futureAccShort = [(0, 0, "")]
 
 initPositioningAcc :: (Seq (Int, String), Seq (Int, String))
@@ -287,10 +287,10 @@ sumList :: Num a => [a] -> [a]
 sumList xs = [sum xs]
 
 -- Conversion functions
-futureInfoToSeq :: FutureInfo -> Seq (Double, Int, String)
+futureInfoToSeq :: ClosePositionData -> Seq (Double, Int, String)
 futureInfoToSeq = fromList
 
-seqToFutureInfo :: Seq (Double, Int, String) -> FutureInfo
+seqToFutureInfo :: Seq (Double, Int, String) -> ClosePositionData
 seqToFutureInfo = toList
 
 

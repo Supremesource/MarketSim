@@ -46,8 +46,8 @@ bidBookP = "data/bidbook.json"
 -- | price
 initPriceP :: FilePath
 initPriceP = "data/initPrice.json"
-posFutureP :: FilePath
-posFutureP = "data/posFuture.json"
+posCloseDatP :: FilePath
+posCloseDatP = "data/posFuture.json"
 -- ? output
 logP :: FilePath
 logP = "output/logInfo.json"

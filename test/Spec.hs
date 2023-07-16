@@ -59,7 +59,7 @@ import Control.Exception (try, ErrorCall)
 import Control.Monad
 import Data.Sequence   (fromList, (><))
 import Data.Monoid
-
+import           Data.Foldable        (toList)
 -- | Internal libraries
 import Lib
 import RunSettings
@@ -508,17 +508,14 @@ testsPosCycle = hspec $ do
       let oldPosinfo' = (oldPosFuture1',oldPosFuture2')
       let liqside1 = ""
       let liqside2 = "z"
-      result1  <- nonRandomNormalGenerator takerVolList makerVolList oldPosinfo  liqside1 
-      result2  <- nonRandomNormalGenerator takerVolList makerVolList oldPosinfo' liqside2
+      result1  <- nonRandomNormalGenerator takerVolList makerVolList oldPosinfo  liqside1 "y"
+      result2  <- nonRandomNormalGenerator takerVolList makerVolList oldPosinfo' liqside2 "y"
       -- without liquidaiton (future does not allow for closing)
       result1 `shouldBe` ([(0,"y"),(10,"y"),(9,"y")],[(1,"x"),(12,"x"),(7,"x")])
       -- with liquidation (counterparty is set to opening)
       result2 `shouldBe` ([(19,"z")],[(1,"y"),(12,"y"),(7,"y")]) 
 
-
-
-
-  describe "PosCycle.filterFuture" $ do
+  describe "PosCycle.filterClosePos" $ do
     it "retruns future filtered to a specific element" $ do 
       let element      = "f"
       let element2     = "z"
@@ -532,13 +529,11 @@ testsPosCycle = hspec $ do
       let transaction2 = TransactionFut [(0,0,"f")] 
       let transaction3 = TransactionFut 
 
-      let result       = filterFuture {-liquidation-} element transaction
-      let result2      = filterFuture {-liquidation2-} element2 transaction2
+      let result       = filterClosePos {-liquidation-} element transaction
+      let result2      = filterClosePos {-liquidation2-} element2 transaction2
       
       result  `shouldBe` [(100,1,"f"),(10.1,9,"f")]
       result2 `shouldBe` [] 
-
-
 
   describe "PosCycle.filterTuple" $ do
     it "retruns list of tuples (positioning) filtered to a specific element" $ do
@@ -562,21 +557,7 @@ testsPosCycle = hspec $ do
       result2 `shouldBe` False
       result3 `shouldBe` True
 
-  describe "PosCycle.filterFutureAmount" $ do
-    it "returns filtered future based on a transaction" $ do
-      let transactionlong     = [(1362290,"f")]
-      let oldPosFuturelong    = fromList [(0.0,0,""),(0.0,8019300,"f"),(0.0,51732996,"f"),(0.0,23747529,"f"),(0.0,44156108,"f"),(0.0,75789467,"f")]
-      let transactionshort    = [(1362290,"z")]
-      let oldPosFutureshort   = fromList [(185.4988,58390006,"z"),(222.4652,8833436,"z"),(222.4652,49384180,"z"),(222.4652,85475488,"z")]
-      let transactionlongBig  = [(10000,"f")]
-      let oldPosFuturelongBig = fromList [(0,100,"f"),(0,400,"f"),(0,900,"f"),(0,600,"f"),(0,8001,"f")]
-      let result1             = filterFutureAmount transactionlong oldPosFuturelong
-      let result2             = filterFutureAmount transactionshort oldPosFutureshort
-      let result3             = filterFutureAmount transactionlongBig oldPosFuturelongBig
-      result1                   `shouldBe` ( fromList [(0.0,6657010,"f"),(0.0,51732996,"f"),(0.0,23747529,"f"),(0.0,44156108,"f"),(0.0,75789467,"f")])
-      result2                   `shouldBe` ( fromList [(185.4988,57027716,"z"),(222.4652,8833436,"z"),(222.4652,49384180,"z"),(222.4652,85475488,"z")])
-      result3                   `shouldBe` ( fromList [(0,1,"f")]) 
-              
+    
   describe "PosCycle.allEqual" $ do
     it "returns True if all elements in the list are equal, False if not" $ do
       let list1 = [(100,"x"),(0,"y")]
@@ -587,16 +568,15 @@ testsPosCycle = hspec $ do
       result2 `shouldBe` True
 
   describe "PosCycle.filterFutureClose" $ do
-    it "returns filtered future in order (futureLong,futureShort)" $ do
+    it "returns (non-randomized (test)) filtered future in order (futureLong,futureShort)" $ do
       let positioning1 = [(100,"x"),(0,"z"),(300,"z")]
       let positioning2 = [(100,"y"),(0,"f"),(300,"f")]
       let positioning  = (positioning1, positioning2)
       let futureL =  fromList [(0,0,"z"),(0,300,"z"),(0,200,"z"),(0,0,"z")]
       let futureS =  fromList [(0.0,200,"f"),(0,0,"f"),(0,110,"f"),(0,0,"f"),(0,0,"f")]
       let (oldfuturelong,oldfutureshort) = (futureL,futureS)
-      result <- filterFutureClose positioning (futureL, futureS)
-      result `shouldBe` (fromList [(0,200,"z"),(0,0,"z")], fromList [(0,10,"f"),(0,0,"f"),(0,0,"f")])
-
+      result <- nonRandomizedfilterFutureClose positioning (futureL, futureS)
+      result `shouldBe` (fromList [(0.0, 200, "z")], fromList [(0.0, 10, "f")])
 
   describe "PosCycle.tuplesToSides" $ do
     it "returns positioning in order (long,short)" $ do
@@ -633,45 +613,119 @@ testsPosCycle = hspec $ do
       let startingPric = 1000.0  
       let liqside      = ""
       -- $ second
-      let volList'     = ([300],       -- | TAKER | - buy taker
+      let volListB     = ([300],       -- | TAKER | - buy taker
                           [40,260])    -- | MAKER | - sell taker                 
-      let futureInfo1'  = Data.Sequence.fromList [(14000,100000,"f")] -- FUTURE INFO LONG
-      let futureInfo2'  = Data.Sequence.fromList [(1200,70000,"z")  ] -- FUTURE INFO SHORT
-      let startingPric' = 1000.0  
-      let liqside'      = "f"
+      let futureInfo1B  = Data.Sequence.fromList [(14000,100000,"f")] -- FUTURE INFO LONG
+      let futureInfo2B  = Data.Sequence.fromList [(1200,70000,"z")  ] -- FUTURE INFO SHORT
+      let startingPricB = 1000.0  
+      let liqsideB      = "f"
       -- $ third
-      let volList''     = ([300,0,400,500],       -- | TAKER | - buy taker
-                          [0,1200])    -- | MAKER | - sell taker                 
-      let futureInfo1''  = Data.Sequence.fromList [(0.0,100,"f"), (10,700,"f") ] -- FUTURE INFO LONG
-      let futureInfo2''  = Data.Sequence.fromList [(0.0,70000,"z") , (9999,0,"z") ] -- FUTURE INFO SHORT
-      let startingPric'' = 999.99  
-      let liqside''      = "z"
+      let volListC     = ([300,0,400,500],      -- | TAKER | - buy taker
+                          [0,1200])             -- | MAKER | - sell taker                 
+      let futureInfo1C  = Data.Sequence.fromList [(0.0,100,"f"), (10,700,"f") ]    -- FUTURE INFO LONG
+      let futureInfo2C  = Data.Sequence.fromList [(0.0,70000,"z") , (9999,0,"z") ] -- FUTURE INFO SHORT
+      let startingPricC = 999.99  
+      let liqsideC      = "z"
+      -- $ fourth
+      let volListD        = ([200,300,400,100], [300,700]) --  adds up to 1000
+      let futureInfo1D    = Data.Sequence.fromList [(10,500,"f"), (50,900,"f"),(100,1000,"f")]
+      let futureInfo2D    = Data.Sequence.fromList [(30,400,"z"), (14,500,"z"),(10,3000,"z")]
+      let startingPricD   = 1000
+      let liqsideD        = ""
 
-      result  <- nonRandomNormalrunProgram volList  (futureInfo1,futureInfo2)    startingPric  liqside
-      result2 <- nonRandomNormalrunProgram volList' (futureInfo1', futureInfo2') startingPric' liqside'   
-      result3 <- nonRandomNormalrunProgram volList'' (futureInfo1'', futureInfo2'') startingPric'' liqside''   
-      
+      result  <- nonRandomNormalrunProgram volList   (futureInfo1,futureInfo2)      startingPric  liqside  "y"
+      result2 <- nonRandomNormalrunProgram volListB  (futureInfo1B, futureInfo2B)   startingPricB liqsideB "y"  
+      result3 <- nonRandomNormalrunProgram volListC  (futureInfo1C, futureInfo2C)   startingPricC liqsideC "y"
+      result4 <- nonRandomNormalrunProgram volListD  (futureInfo1D, futureInfo2D)   startingPricD liqsideD "f"
       -- ? positioning on taker is set to be y (without liquidation)
-      result  `shouldBe` ((Data.Sequence.fromList [(900,100000,"z"), (1200,100,"z"), (1200,200,"z")], Data.Sequence.fromList [(900,100000,"f"),(800,50,"f"),(800,250,"f")]),([(100,"y"),(200,"y")],[(50,"x"),(250,"x")]))
-      result2 `shouldBe` ((Data.Sequence.fromList [(1200,70000,"z")],Data.Sequence.fromList [(14000,99700,"f"),(800.0,40,"f"),(800.0,260,"f")]),([(300,"f")],[(40,"x"),(260,"x")]))
-      result3 `shouldBe`  ((Data.Sequence.fromList [(0.0,68800,"z") , (9999,0,"z"),(1199.988, 0, "z"), (1199.988, 1200, "z")],Data.Sequence.fromList [(0.0,100,"f"), (10,700,"f") ]),([(1200,"z")],[(0,"y"),(1200,"y")]))
+      result  `shouldBe`  ((Data.Sequence.fromList [(900,100000,"z"), (1200,100,"z"), (1200,200,"z")], Data.Sequence.fromList [(900,100000,"f"),(800,50,"f"),(800,250,"f")]),([(100,"y"),(200,"y")],[(50,"x"),(250,"x")]))
+      result2 `shouldBe`  ((Data.Sequence.fromList [(1200,70000,"z")],Data.Sequence.fromList [(14000,99700,"f"),(800.0,40,"f"),(800.0,260,"f")]),([(300,"f")],[(40,"x"),(260,"x")]))
+      result3 `shouldBe`  ((Data.Sequence.fromList [(0.0,68800,"z") ,(1199.988, 0, "z"), (1199.988, 1200, "z")],Data.Sequence.fromList [(0.0,100,"f"), (10,700,"f") ]),([(1200,"z")],[(0,"y"),(1200,"y")]))
+      result4 `shouldBe`  ((Data.Sequence.fromList [(30.0,400,"z"),(14.0,500,"z"),(10.0,3000,"z")],Data.Sequence.fromList [(50.0,585,"f"),(100.0,630,"f"),(10.0,185,"f"),(800.0,300,"f"),(800.0,700,"f")]),([(200,"f"),(300,"f"),(400,"f"),(100,"f")],[(300,"x"),(700,"x")]))
 
-     -- // position cycle works as intended       
     
+  describe "PosCycle.splitAmountToRandomList" $ do
+    it "returns (non-randomized (test) + randomized) volume split into smaller parts" $ do
+      result'h <- noRandomSplitAmountToRandomList 500
+      result'd <- noRandomSplitAmountToRandomList 100
+      result'c <- noRandomSplitAmountToRandomList 200
+      result'j <- noRandomSplitAmountToRandomList 600
+      resultRandom <- splitAmountToRandomList 100
 
-  describe "PosCycle.nonrandoma" $ do
-    it "returns .." $ do
-      h <- noRandomSplitAmountToRandomList 500
-      h `shouldBe` [275,25,25,25,25,25,25,25,25,25]
-      -- # [55,5,5,5,5,5,5,5,5,5] #
+      result'h `shouldBe` [275,25,25,25,25,25,25,25,25,25]
+      result'd `shouldBe` [55,5,5,5,5,5,5,5,5,5]
+      result'c `shouldBe` [110,10,10,10,10,10,10,10,10,10]
+      result'j `shouldBe` [330,30,30,30,30,30,30,30,30,30]
+      sum resultRandom `shouldBe` 100 
   
-  
-  describe "PosCycle.nonranfila" $ do
-    it "returns .." $ do
-      let transactionshort  = [(500,"z")] -- 149 stops working
-      let oldPosFutureshort = fromList [(0,100,"z"),(0,400,"z"),(0,900,"z"),(0,600,"z")]
-      result <- nonRandomFilterFutureAmount transactionshort oldPosFutureshort
-      result `shouldBe`  (fromList [] )
+
+
+  describe "PosCycle.filterCloseAmount" $ do
+    it "returns (non-randomized (test) + randomized) filtered future/close out of closing elements  " $ do
+      let transactionShort  = [(500,"z"), (100,"z"),(200,"z")] 
+      let oldPosCloseShort  = fromList [(0,100,"z"),(0,400,"z"),(0,900,"z"),(0,600,"z")]
+     
+      let transactionLong   = [(600,"f")]                        
+      let oldPosCloseLong   = fromList [(0,400,"f"), (0,300,"f"),(0,200,"f")] 
+
+      result1 <- nonRandomFilterCloseAmount transactionShort oldPosCloseShort
+      -- ? result 2 goes:
+      -- --------------------------------
+      -- 1 | 70-300-200   -> 300-200-70 |
+      -- 2 | 270-200-70   -> 200-70-270 |
+      -- 3 | 170-70-270   -> 70-270-170 |
+      -- 4 | 40-270-170   -> 270-170-40 |
+      -- 5 | 240-170-40   -> 170-40-240 |
+      -- 6 | 140-40-240   -> 40-240-140 |
+      -- 7 | 10-240-140   -> 240-140-10 |
+      -- 8 | 210-140-10   -> 140-10-210 |
+      -- 9 | 110-10-210   -> 10-210-110 |
+      -- ~  note how this result adds up to 300
+      -- 10| 110 - 190                  | -- ? it reverts twice (last element)
+      -- --------------------------------
+      result2       <- nonRandomFilterCloseAmount transactionLong  oldPosCloseLong
+      
+     -- TODO:
+     -- result3Random <- filterCloseAmount transactionLong oldPosCloseLong
+   
+   
+      result1 `shouldBe`  (fromList [(0.0,105,"z"),(0.0,725,"z"),(0.0,370,"z")] )
+      result2 `shouldBe`  (fromList [(0.0, 110, "f"), (0.0, 190, "f")])
+      -- TODO, fix:
+      -- (\[_,amt,_] -> sum amt) (toList result3Random) result2 `shouldBe` 300
+
+
+
+-- TODO
+-- decide whever to dele or keep cause of function above -- ~ mby take inspir.
+{-
+
+  describe "PosCycle.filterFutureAmount" $ do
+    it "returns filtered future based on a transaction" $ do
+      let transactionlong     = [(1362290,"f")]
+      let oldPosFuturelong    = fromList [(0.0,0,""),(0.0,8019300,"f"),(0.0,51732996,"f"),(0.0,23747529,"f"),(0.0,44156108,"f"),(0.0,75789467,"f")]
+      let transactionshort    = [(1362290,"z")]
+      let oldPosFutureshort   = fromList [(185.4988,58390006,"z"),(222.4652,8833436,"z"),(222.4652,49384180,"z"),(222.4652,85475488,"z")]
+      let transactionlongBig  = [(10000,"f")]
+      let oldPosFuturelongBig = fromList [(0,100,"f"),(0,400,"f"),(0,900,"f"),(0,600,"f"),(0,8001,"f")]
+      let result1             = filterFutureAmount transactionlong oldPosFuturelong
+      let result2             = filterFutureAmount transactionshort oldPosFutureshort
+      let result3             = filterFutureAmount transactionlongBig oldPosFuturelongBig
+      result1                   `shouldBe` ( fromList [(0.0,6657010,"f"),(0.0,51732996,"f"),(0.0,23747529,"f"),(0.0,44156108,"f"),(0.0,75789467,"f")])
+      result2                   `shouldBe` ( fromList [(185.4988,57027716,"z"),(222.4652,8833436,"z"),(222.4652,49384180,"z"),(222.4652,85475488,"z")])
+      result3                   `shouldBe` ( fromList [(0,1,"f")]) 
+
+-} 
+
+
+
+
+
+
+
+
+
+
 
 {-  
 describe "Util.bookNumChange" $ do

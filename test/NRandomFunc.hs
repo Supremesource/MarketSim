@@ -49,7 +49,7 @@ import Prelude hiding (seq)
 import qualified Data.Sequence        as Seq
 import Data.Sequence        (Seq, ViewL ((:<)), (<|), (><), (|>))
 import qualified Data.Bifunctor
-import System.Random.Shuffle (shuffleM)
+
 
 -- | Internal libraries
 import Lib
@@ -78,7 +78,7 @@ takenLeverageNonRandom = do
         | otherwise -> error "something went wrong in non-random takenLeverage"
 
 -- TODO better leverage statistics
-positionFutureNonRandom :: Double -> (TakerPositions, MakerPositions) -> IO FutureInfo
+positionFutureNonRandom :: Double -> (TakerPositions, MakerPositions) -> IO ClosePositionData
 positionFutureNonRandom price' (taker, maker) = do
   let (takerConver, makerConvert) = closingConversion (taker, maker)
   let concatTakerMaker = takerConver ++ makerConvert
@@ -104,20 +104,6 @@ nonRandominitGenerator takerLst makerLst = do
   let makerT = zip makerLst $ replicate (length makerLst) makerside
   return (takerT, makerT)
 
--- move to pos cycle
-splitAmountToRandomList :: Int -> IO [Int]
-splitAmountToRandomList 0 = return [0]
-splitAmountToRandomList 1 = return [1]
-splitAmountToRandomList n = do
-    let chunkCount = 10  -- Change this to adjust the number of chunks
-    if n < chunkCount
-      then return [n]
-      else do
-          let (q, r) = n `divMod` chunkCount
-          chunks <- replicateM (chunkCount - 1) (randomRIO (q `div` 2, q * 3 `div` 2))
-          let lastChunk = n - sum chunks
-          shuffledChunks <- shuffleM (lastChunk : chunks) -- only random part
-          return $ filter (/= 0) shuffledChunks
 
 noRandomSplitAmountToRandomList :: Int -> IO [Int]
 noRandomSplitAmountToRandomList 0 = return [0]
@@ -139,36 +125,52 @@ noRandomSplitAmountToRandomList n = do
           let shuffledChunks = (lastChunk : nrChunks) 
           return $ filter (/= 0) shuffledChunks
 
-nonRandomFilterFutureAmount ::
+
+nonRandomizedfilterFutureClose ::
+     Position -> (SeqFuture, SeqFuture) -> IO (SeqFuture, SeqFuture)
+nonRandomizedfilterFutureClose (closingLong, closingShort) (oldLong, oldShort) {-output (newLong,newShort-}
+  = do
+  let formatedTupleLong   = filterTuple "z" closingLong
+  let formatedTupleShort  = filterTuple "f" closingShort
+  filteredFutureLong      <- nonRandomFilterCloseAmount formatedTupleLong oldLong
+  filteredFutureShort     <- nonRandomFilterCloseAmount formatedTupleShort oldShort
+  return (filteredFutureLong, filteredFutureShort)
+
+nonRandomFilterCloseAmount ::
      [(Int, String)]     -- Tuple of positions to take out
-  -> SeqFuture           -- old futureInfo
-  -> IO SeqFuture        -- returns a new futureInfo
-nonRandomFilterFutureAmount [] futureInfo = return futureInfo
-nonRandomFilterFutureAmount ((n, s):ns) futureInfo = do
-    listN <- noRandomSplitAmountToRandomList n 
-    filterFutureN listN futureInfo ns
-    where
-        filterFutureN [] futureInfo _ = return futureInfo
-        filterFutureN _ Seq.Empty _ = return Seq.Empty
-        
-        filterFutureN (x:xs) futureInfo ns = do
-            let ((liq, amt, sid) :< rest) = Seq.viewl futureInfo
-            if x < amt
-                then do
-                    let updatedFutureInfo = rest |> (liq, amt - x, sid)
-                    nonRandomFilterFutureAmount ns updatedFutureInfo
-                    filterFutureN xs updatedFutureInfo ns
-               
-                else do
-                    let updatedFutureInfo = rest -- |> (liq, x - amt, sid)
-                    let newX = x - amt
-                    nonRandomFilterFutureAmount ((x - amt, s) : ns) rest
-                                                --((x - amt, s) : ns) updatedFutureInfo
-                    filterFutureN (newX:xs) updatedFutureInfo ns
-                      
+  -> SeqFuture           -- old closePosData
+  -> IO SeqFuture        -- returns a new closePosData
+nonRandomFilterCloseAmount [] closePosData          = return closePosData
+nonRandomFilterCloseAmount ((num, str):ns) closePosData = do    
+    -- | splitting transaction volume into smaller parts such that exiting 
+    -- positions are handeled better
+    transactionVolSplit    <- noRandomSplitAmountToRandomList num 
+    adjustedFutureToVolume <- filterFutureVol transactionVolSplit closePosData ns    
+    nonRandomFilterCloseAmount ns adjustedFutureToVolume
+    where        
+      filterFutureVol [] closePosData _      = return closePosData
+      filterFutureVol _ Seq.Empty     _      = return Seq.Empty        
+      filterFutureVol (x:xs) closePosData ns = do           
+          let ((liq, amt, sid) :< rest)  = Seq.viewl closePosData
+          case () of _
+                        | x < amt
+                            -> do
+                                let updatedFutureInfo = rest |> (liq, amt - x, sid)
+                                nonRandomFilterCloseAmount ns updatedFutureInfo
+                                filterFutureVol xs updatedFutureInfo ns               
+                        | otherwise
+                            -> do
+                                -- |> (liq, x - amt, sid)
+                                let updatedFutureInfo = rest 
+                                let newX = x - amt
+                                --((x - amt, s) : ns) updatedFutureInfo
+                                nonRandomFilterCloseAmount ((newX, str) : ns) updatedFutureInfo -- rest                                                           
+                                filterFutureVol (newX:xs) updatedFutureInfo ns
+
+
 nonRandomNormalGenerator ::
-     [Int] -> [Int] -> SeqFutureInfo -> String -> IO (TakerPositions, MakerPositions)
-nonRandomNormalGenerator takerLst makerLst (toTakeFromLong, toTakeFromShort) liqSide = do
+     [Int] -> [Int] -> SeqClosePositionData -> String -> String -> IO (TakerPositions, MakerPositions)
+nonRandomNormalGenerator takerLst makerLst (toTakeFromLong, toTakeFromShort) liqSide nonRandomSide = do
   unless (closingProb >= 1 && closingProb <= 10) $
     error "closingProb must be between 1 and 10"
   let genType =
@@ -176,13 +178,13 @@ nonRandomNormalGenerator takerLst makerLst (toTakeFromLong, toTakeFromShort) liq
            getSum (foldMap (\(_, n, _) -> Sum n) toTakeFromLong) &&
            sum takerLst + sum makerLst >=
            getSum (foldMap (\(_, n, _) -> Sum n) toTakeFromShort)
-          then openingGen
-          else normalGen
+          then openingGen nonRandomSide
+          else normalGen nonRandomSide
   genType
   where
-    openingGen :: IO (TakerPositions, MakerPositions)
-    openingGen = do
-      let takerSide' = "y"
+    openingGen :: String -> IO (TakerPositions, MakerPositions)
+    openingGen nonRandomSide = do
+      let takerSide' = nonRandomSide
       let finalTakerSide =
             if liqSide /= ""
               then liqSide
@@ -196,9 +198,10 @@ nonRandomNormalGenerator takerLst makerLst (toTakeFromLong, toTakeFromShort) liq
             zip editedTakerLst $ replicate (length takerLst) finalTakerSide
       let makerT = zip makerLst $ replicate (length makerLst) makerside
       return (takerT, makerT)
-    normalGen :: IO (TakerPositions, MakerPositions)
-    normalGen = do
-      let takerSide' = "y"   
+  
+    normalGen :: String -> IO (TakerPositions, MakerPositions)
+    normalGen nonRandomSide = do
+      let takerSide' = nonRandomSide   
       let finalTakerSide =
             if liqSide /= ""
               then liqSide
@@ -271,7 +274,6 @@ nonRandomLiquidationDuty futureInfoL futureInfoS price' = do
   let updatedFutureInfoS = Seq.filter (\(p, _, _) -> price' >= p) futureInfoS
   -- filter the updatedFutureInfoL from futureInfoL
   let newFutureInfoL = Seq.filter (`notElem` updatedFutureInfoL) futureInfoL
-
   -- filter the updatedFutureInfoS from futureInfoS
   let newFutureInfoS = Seq.filter (`notElem` updatedFutureInfoS) futureInfoS
   return
@@ -279,28 +281,29 @@ nonRandomLiquidationDuty futureInfoL futureInfoS price' = do
 
 nonRandomNormalrunProgram ::
      ([Int], [Int])
-  -> SeqFutureInfo
+  -> SeqClosePositionData
   -> Double
   -> String
-  -> IO ( SeqFutureInfo    -- # updated accumulator short # updated accumulator long
-        , NewPositioning ) -- # updated accumulator positions
+  -> String 
+  -> IO ( SeqClosePositionData    -- # updated accumulator short # updated accumulator long
+        , NewPositioning )        -- # updated accumulator positions
          
 nonRandomNormalrunProgram (volumeSplitT, volumeSplitM) (oldLongFuture, oldShortFuture) -- TODO TAKE OUT oldPositions
-                                               sPrice liqSide = do
+                                               sPrice liqSide nonRandomSide = do
   newPositioning <-
     nonRandomNormalGenerator
             volumeSplitT
             volumeSplitM
             (oldLongFuture, oldShortFuture)
             liqSide
+            nonRandomSide
 
-  posFut <- positionFutureNonRandom sPrice newPositioning -- ~
-  let adjustedLiquidation = if liqSide == "" then "no" else "yes" -- ~
+  posFut <- positionFutureNonRandom sPrice newPositioning 
   
   let converToTransaction = TransactionFut {future = posFut}
   let (filteredLongFuture, filteredShortFuture) =
-        ( filterFuture {-adjustedLiquidation-}  "f" converToTransaction
-        , filterFuture {-adjustedLiquidation-}  "z" converToTransaction)
+        ( filterClosePos {-adjustedLiquidation-}  "f" converToTransaction
+        , filterClosePos {-adjustedLiquidation-}  "z" converToTransaction)
 
   let orderedTupleNew   = tuplesToSides newPositioning
   let unorderedPosNew   = newPositioning
@@ -308,28 +311,23 @@ nonRandomNormalrunProgram (volumeSplitT, volumeSplitM) (oldLongFuture, oldShortF
         Data.Bifunctor.bimap (filterTuple "z") (filterTuple "f") orderedTupleNew
   let (filteredShortTuple, filteredLongTuple) = (longTuple, shortTuple)
  
-  let (newShortsAcc, newLongsAcc) 
-       =
-        ( filterFutureAmount filteredLongTuple oldLongFuture
-        , filterFutureAmount filteredShortTuple oldShortFuture)
- 
- 
+  newLongsAcc  <- nonRandomFilterCloseAmount filteredLongTuple oldLongFuture
+  newShortsAcc <- nonRandomFilterCloseAmount filteredShortTuple oldShortFuture
+  
   let futureToSeq =
         let ((firstOld, secondOld), (firstNew, secondNew), newPos) =
-              ( (newLongsAcc, newShortsAcc)
+              ( (newShortsAcc, newLongsAcc)
               , (filteredLongFuture, filteredShortFuture)
               , newPositioning)
          in ( (firstOld, secondOld)
             , (futureInfoToSeq firstNew, futureInfoToSeq secondNew)
             , newPos)
   
-  -- | FutureInfo
+  -- | ClosePositionData
   let updatedFutureAcc =
         (\((frst, fst'), (snd', scnd), _) -> (frst <> scnd, fst' <> snd'))
-          futureToSeq
-  
-  
-  
+          futureToSeq  
+    
   return
     ( updatedFutureAcc  -- # already concat to new accumulator
     , unorderedPosNew   -- # returning in a raw form to positionCycle

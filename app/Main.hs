@@ -106,7 +106,7 @@ initRun = do
         orderBookDetailsP
         positionInfoP
         initPriceP
-        posFutureP
+        posCloseDatP
         wipingStartingValue
     else if proceed == "n" || proceed == "N"
            then error (red "stopping program")
@@ -224,28 +224,28 @@ generator isBidEmpty isAskEmpty orderbook_bid orderbook_ask fileBidBook fileAskB
   volumesAndSides <- runProgramProgramHelp initStats numberOfrunPrograms
   let initialBookDetailsList = [initialBookDetails]
   let listofvolumes = volumesAndSides
-  isFutureEmpt <- isFutureEmpty
-  --  print isFutureEmpt
-  initAccLongFuture <-
-    if isFutureEmpt
-      then return futureAccLong
+  isCloseEmpty <- isCloseDataEmpty
+  --  print isCloseEmpty
+  initAccLongClose <-
+    if isCloseEmpty
+      then return closeAccLong
       else do
   -- filterfuture no liquidation for exit long
-        filterFuture "f" <$> readFuture
-  initAccShortFuture <-
-    if isFutureEmpt
-      then return futureAccLong
+        filterClosePos "f" <$> readClosePos
+  initAccShortClose <-
+    if isCloseEmpty
+      then return closeAccLong
       else do
   -- filterfuture no liquidation for exit short
-        filterFuture  "z" <$> readFuture
+        filterClosePos  "z" <$> readClosePos
   _ <-
     generaterunProgram
      GenerationPass
       {   initLiquidationAcc1Input = initLiquidationAcc
         , initLiquidationAcc2Input =initLiquidationAcc
         , initPositioningAccInput = initPositioningAcc
-        , initAccLongFutureInput = fromList initAccLongFuture
-        , initAccShortFutureInput = fromList initAccShortFuture
+        , initAccLongCloseInput = fromList initAccLongClose
+        , initAccShortCloseInput = fromList initAccShortClose
         , listofvolumesInput = listofvolumes
         , bidBookInput = bidBook
         , askBookInput = askBook
