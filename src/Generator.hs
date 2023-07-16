@@ -86,8 +86,8 @@ data GenerationPass = GenerationPass
   { initLiquidationAcc1Input        :: Seq (Int, String, String)
   , initLiquidationAcc2Input        :: Seq (Int, String, String)
   , initPositioningAccInput         :: (Seq (Int, String), Seq (Int, String))
-  , initAccLongFutureInput          :: Seq (Double, Int, String)
-  , initAccShortFutureInput         :: Seq (Double, Int, String)
+  , initAccLongCloseInput          :: Seq (Double, Int, String)
+  , initAccShortCloseInput         :: Seq (Double, Int, String)
   , listofvolumesInput              :: VolumeList
   , bidBookInput                    :: SeqOrderBook
   , askBookInput                    :: SeqOrderBook
@@ -118,8 +118,8 @@ handleBaseCase :: GenerationPass -> IO GenerationOutput
 handleBaseCase genPass@GenerationPass{} = do
   let writeLiqInfo = initLiquidationAcc2Input genPass
   let posinfo = initPositioningAccInput genPass
-  let longinfo = initAccLongFutureInput genPass
-  let shortinfo = initAccShortFutureInput genPass
+  let longinfo = initAccLongCloseInput genPass
+  let shortinfo = initAccShortCloseInput genPass
   let bidBook = bidBookInput genPass
   let askBook = askBookInput genPass
   let bookDetails = initialBookDetailsListInput genPass
@@ -127,7 +127,7 @@ handleBaseCase genPass@GenerationPass{} = do
   -- / ACTION
   -- ? DATA
   let posFuture =  TransactionFut $ toList $ longinfo >< shortinfo 
-  BL.writeFile posFutureP $ encodePretty posFuture
+  BL.writeFile posCloseDatP $ encodePretty posFuture
   -- ? OUTPUT
   ids <- idList
   let reversedBookDetails = tail (reverse bookDetails)
@@ -142,7 +142,7 @@ handleBaseCase genPass@GenerationPass{} = do
   let writeAskBook = Book {book = toList askBook}
   --let writePositionFuture = TransactionFut { future = longinfo ++ shortinfo }
   --let writePositionFuture' = encode writePositionFuture
-  --BL.writeFile posFutureP writePositionFuture'
+  --BL.writeFile posCloseDatP writePositionFuture'
   BL.writeFile bidBookP (encodePretty writeBidBook)
   BL.writeFile askBookP (encodePretty writeAskBook)
 
@@ -164,8 +164,8 @@ handleGeneralCase genPass@GenerationPass{} = do
   let liqinfo = initLiquidationAcc1Input genPass
   let writeLiqInfo = initLiquidationAcc2Input genPass
   let posinfo = initPositioningAccInput genPass
-  let longinfo = initAccLongFutureInput genPass
-  let shortinfo = initAccShortFutureInput genPass
+  let longinfo = initAccLongCloseInput genPass
+  let shortinfo = initAccShortCloseInput genPass
   let (x, xs) = case  listofvolumesInput genPass of
         [] -> error "listofvolumesInput was empty!"
         (y:ys) -> (y, ys) 
@@ -213,8 +213,8 @@ handleGeneralCase genPass@GenerationPass{} = do
      {  initLiquidationAcc1Input = newliqinfo
       , initLiquidationAcc2Input = writeLiqInfo >< newWriteLiqInfo
       , initPositioningAccInput  = newPosInfo
-      , initAccLongFutureInput   = newLonginfo
-      , initAccShortFutureInput  = newShortinfo
+      , initAccLongCloseInput   = newLonginfo
+      , initAccShortCloseInput  = newShortinfo
        -- ? `++` should not be a significant performance bottleneck here
       , listofvolumesInput = additionalVolAcc ++ xs
       , bidBookInput = newBidBook

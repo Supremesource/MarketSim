@@ -90,10 +90,10 @@ import           Control.Monad
 import           Data.Aeson           (decode)
 import qualified Data.Bifunctor
 import           System.Random        (randomRIO)
-import           Data.Foldable        (toList)
-import Prelude hiding (seq)
+import           Prelude hiding (seq)
 import           Data.Monoid
-import           Data.Sequence        (Seq, ViewL ((:<)), (<|), (><))
+import           Data.Sequence        (Seq, ViewL ((:<)), (<|), (|>), (><))
+import           System.Random.Shuffle (shuffleM)
 -- | internal libraries
 import           DataTypes
 import           Filepaths
@@ -101,8 +101,6 @@ import           Lib
 import           RunSettings
 import           Util
 import           Statistics
-
-
 
 
 -- ? funcitons for the position future
@@ -129,7 +127,7 @@ closingConversion (takers, makers)
 
 
 -- TODO better leverage statistics
-positionFuture :: Double -> (TakerPositions, MakerPositions) -> IO FutureInfo
+positionFuture :: Double -> (TakerPositions, MakerPositions) -> IO ClosePositionData
 positionFuture price' (taker, maker) = do
   let (takerConver, makerConvert) = closingConversion (taker, maker)
   let concatTakerMaker = takerConver ++ makerConvert
@@ -170,10 +168,10 @@ initGenerator takerLst makerLst = do
   let makerT = zip makerLst $ replicate (length makerLst) makerside
   return (takerT, makerT)
 
-type SeqFutureInfo = (Seq (Double, Int, String), Seq (Double, Int, String))
+type SeqClosePositionData = (Seq (Double, Int, String), Seq (Double, Int, String))
 
 normalGenerator ::
-     [Int] -> [Int] -> SeqFutureInfo -> String -> IO (TakerPositions, MakerPositions)
+     [Int] -> [Int] -> SeqClosePositionData -> String -> IO (TakerPositions, MakerPositions)
 normalGenerator takerLst makerLst (toTakeFromLong, toTakeFromShort) liqSide = do
   unless (closingProb >= 1 && closingProb <= 10) $
     error "closingProb must be between 1 and 10"
@@ -250,19 +248,19 @@ normalGenerator takerLst makerLst (toTakeFromLong, toTakeFromShort) liqSide = do
 -- ? helper funcitons for position management
 
 -- | check if the future file is empty
-isFutureEmpty :: IO Bool
-isFutureEmpty = isFileEmpty posFutureP
+isCloseDataEmpty :: IO Bool
+isCloseDataEmpty = isFileEmpty posCloseDatP
 
-readFuture :: IO TransactionFut
-readFuture = do
-  futurePos <- BL.readFile posFutureP
+readClosePos :: IO TransactionFut
+readClosePos = do
+  futurePos <- BL.readFile posCloseDatP
   let future' = decode futurePos :: Maybe TransactionFut
   case future' of
     Nothing -> error "Error reading future file"
     Just x  -> return x
 
-filterFuture :: {-String ->-} String -> TransactionFut -> FutureInfo
-filterFuture {-liq-} pos transaction =
+filterClosePos :: {-String ->-} String -> TransactionFut -> ClosePositionData
+filterClosePos {-liq-} pos transaction =
  {- if liq == "no" then -}filter (\(_, _, s) -> s == pos) (future transaction) --else future transaction
 
 
@@ -294,29 +292,58 @@ allOtherThirdEqual seq c =
       | x == "" || x == c -> allOtherThirdEqual xs c
       | otherwise -> False
 
--- TODO : make this funciton more realistic with shuffeling emelemnts
--- | and random "taking out"  more than just deleting one by one
-filterFutureAmount ::
-     [(Int, String)] -- Tuple of positions to take out
-  -> SeqFuture -- old futureInfo
-  -> SeqFuture -- returns a new futureInfo
-filterFutureAmount _ Seq.Empty = Seq.Empty
-filterFutureAmount [] futureInfo = futureInfo
-filterFutureAmount tx@((n, s):ns) futureInfo
-  | not (allEqual (map snd tx)) = error "not all strings in transactions are the same"
-  | otherwise =
-    case Seq.viewl futureInfo of
-    Seq.EmptyL -> error "empty futureinfo"
-    ((liq, amt, sid) :< rest) ->
-      if not (allThirdEqual futureInfo)
-        then error "not all strings in futureInfo are the same" 
-        else if n < amt
-          then filterFutureAmount ns ((liq, amt - n, sid) <| rest)
-          else filterFutureAmount ((n - amt, s) : ns) rest
+splitAmountToRandomList :: Int -> IO [Int]
+splitAmountToRandomList 0 = return [0]
+splitAmountToRandomList 1 = return [1]
+splitAmountToRandomList n = do
+     -- Change this to adjust the number of chunks
+    chunkCount <- case () of  _
+                                | n < 1000                -> return 5
+                                | n < 5000                -> return 10
+                                -- & random part
+                                | n > 10000 && n < 20000  -> randomRIO (10,20)                                   
+                                | otherwise               -> randomRIO (20, 30)
+    case () of _ 
+                    | n < chunkCount -> return [n]
+                    | otherwise -> do
+                      let (q, r) = n `divMod` chunkCount
+                      -- & random part
+                      chunks <- replicateM (chunkCount - 1) (randomRIO (q `div` 2, q * 3 `div` 2))
+                      let lastChunk = n - sum chunks
+                      -- & random part
+                      shuffledChunks <- shuffleM (lastChunk : chunks) 
+                      -- | shuffle happens only when returning (performance saver)
+                      return $ filter (/= 0) shuffledChunks
 
-
-
-
+filterCloseAmount ::
+     [(Int, String)]     -- Tuple of positions to take out
+  -> SeqFuture           -- old closePosData
+  -> IO SeqFuture        -- returns a new closePosData
+filterCloseAmount [] closePosData              = return closePosData
+filterCloseAmount ((num, str):ns) closePosData = do    
+    -- | splitting transaction volume into smaller parts such that exiting 
+    --   positions are handeled better
+    -- & random part
+    transactionVolSplit    <- splitAmountToRandomList num 
+    adjustedFutureToVolume <- filterFutureVol transactionVolSplit closePosData ns    
+    filterCloseAmount ns adjustedFutureToVolume
+    where        
+      filterFutureVol [] closePosData' _        = return closePosData'
+      filterFutureVol _ Seq.Empty     _         = return Seq.Empty        
+      filterFutureVol (x:xs) closePosData' ns'  = do           
+          let ((liq, amt, sid) :< rest)         = Seq.viewl closePosData'
+          case () of _
+                        | x < amt
+                            -> do
+                                let updatedFutureInfo = rest |> (liq, amt - x, sid)
+                                _ <- filterCloseAmount ns' updatedFutureInfo
+                                filterFutureVol xs updatedFutureInfo ns'               
+                        | otherwise
+                            -> do                         
+                                let updatedFutureInfo = rest 
+                                let newX = x - amt                              
+                                _ <- filterCloseAmount ((newX, str) : ns') updatedFutureInfo -- rest                                                           
+                                filterFutureVol (newX:xs) updatedFutureInfo ns'
 
 -- Helper function to check if all elements of a list are equal
 allEqual :: Eq a => [a] -> Bool
@@ -328,8 +355,8 @@ filterFutureClose (closingLong, closingShort) (oldLong, oldShort) {-output (newL
  = do
   let formatedTupleLong = filterTuple "z" closingLong
   let formatedTupleShort = filterTuple "f" closingShort
-  let filteredFutureLong = filterFutureAmount formatedTupleLong oldLong
-  let filteredFutureShort = filterFutureAmount formatedTupleShort oldShort
+  filteredFutureLong  <- filterCloseAmount formatedTupleLong oldLong
+  filteredFutureShort <- filterCloseAmount formatedTupleShort oldShort
   return (filteredFutureLong, filteredFutureShort)
 
 isTakerBuying :: String -> Bool
@@ -388,7 +415,7 @@ liquidationDuty futureInfoL futureInfoS price' = do
 {-
 # FUNCTION EXPLINATION
 
-input: `([Int],[Int]) -> (FutureInfo, FutureInfo) -> NewPositioning -> Double`
+input: `([Int],[Int]) -> (ClosePositionData, ClosePositionData) -> NewPositioning -> Double`
 where: `split of volume for taker and maker -> old future (acc) -> old Positions (acc)
           current price
 
@@ -425,10 +452,10 @@ output: ` updated accumulators for FUTURE
 -- ? PUTTING ALL FUNCTIONS ABOVE TOGETHER
 normalrunProgram ::
      ([Int], [Int])
-  -> SeqFutureInfo
+  -> SeqClosePositionData
   -> Double
   -> String
-  -> IO ( SeqFutureInfo    -- # updated accumulator short # updated accumulator long
+  -> IO ( SeqClosePositionData    -- # updated accumulator short # updated accumulator long
         , NewPositioning ) -- # updated accumulator positions
 normalrunProgram (volumeSplitT, volumeSplitM) (oldLongFuture, oldShortFuture) -- TODO TAKE OUT oldPositions
                                                sPrice liqSide = do
@@ -439,30 +466,28 @@ normalrunProgram (volumeSplitT, volumeSplitM) (oldLongFuture, oldShortFuture) --
       (oldLongFuture, oldShortFuture)
       liqSide
   posFut <- positionFuture sPrice newPositioning
-  let adjustedLiquidation = if liqSide == "" then "no" else "yes"
+ -- let adjustedLiquidation = if liqSide == "" then "no" else "yes"
   let converToTransaction = TransactionFut {future = posFut}
   let (filteredLongFuture, filteredShortFuture) =
-        ( filterFuture {-adjustedLiquidation-}  "f" converToTransaction
-        , filterFuture {-adjustedLiquidation-}  "z" converToTransaction)
+        ( filterClosePos {-adjustedLiquidation-}  "f" converToTransaction
+        , filterClosePos {-adjustedLiquidation-}  "z" converToTransaction)
   let orderedTupleNew = tuplesToSides newPositioning
   let unorderedPosNew = newPositioning
   let (longTuple, shortTuple) =
         Data.Bifunctor.bimap (filterTuple "z") (filterTuple "f") orderedTupleNew
   let (filteredShortTuple, filteredLongTuple) = (longTuple, shortTuple)
-  let (newShortsAcc, newLongsAcc) 
-       =
-        ( filterFutureAmount filteredLongTuple oldLongFuture
-        , filterFutureAmount filteredShortTuple oldShortFuture)
-
+  
+  newLongsAcc <- filterCloseAmount filteredLongTuple oldLongFuture
+  newShortsAcc  <- filterCloseAmount filteredShortTuple oldShortFuture   
   let futureToSeq =
         let ((firstOld, secondOld), (firstNew, secondNew), newPos) =
-              ( (newLongsAcc, newShortsAcc)
+              ( (newShortsAcc, newLongsAcc)
               , (filteredLongFuture, filteredShortFuture)
               , newPositioning) 
          in ( (firstOld, secondOld)
             , (futureInfoToSeq firstNew, futureInfoToSeq secondNew)
             , newPos)
-  -- | FutureInfo
+  -- | ClosePositionData
   let updatedFutureAcc =
         (\((frst, fst'), (snd', scnd), _) -> (frst <> scnd, fst' <> snd'))
           futureToSeq

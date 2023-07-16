@@ -52,7 +52,7 @@ type JSONConfig a =
  '[StripPrefix "DATA", CamelToSnake]] a
 
 data TransactionFut = TransactionFut {
-    future :: FutureInfo
+    future :: ClosePositionData
   } deriving (Show, Generic, FromJSON, ToJSON)
 
 data FileWritesLog = FileWritesLog
@@ -220,9 +220,9 @@ data VolumeSide
 type MakerPositions     =   [(Int, String)] 
 type TakerPositions     =   [(Int, String)]
 type MarginCall         =   [(Int,String,String)] 
-type FutureAcc          =   (FutureInfo, FutureInfo)
+type FutureAcc          =   (ClosePositionData, ClosePositionData)
 type Position           =   ([(Int, String)], [(Int, String)])
-type FutureInfo         =   [(Double, Int, String)]
+type ClosePositionData         =   [(Double, Int, String)]
 type NewPositioning     =   (TakerPositions, MakerPositions)
 type SeqNewPositioning  =   Seq NewPositioning
 -- | order-book
