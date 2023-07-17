@@ -72,15 +72,14 @@ import Filepaths
 import NRandomFunc
 
 
-
-
 main :: IO ()
 main = tests
 
-tests :: IO ()
+-- ? comment tests in this function if you want to skip some
+tests ::  IO ()
 tests = do
-  --testsLib
-  --testsUtil
+  testsLib
+  testsUtil
   testsPosCycle
 
 testsLib :: IO ()
@@ -663,8 +662,7 @@ testsPosCycle = hspec $ do
   describe "PosCycle.filterCloseAmount" $ do
     it "returns (non-randomized (test) + randomized) filtered future/close out of closing elements  " $ do
       let transactionShort  = [(500,"z"), (100,"z"),(200,"z")] 
-      let oldPosCloseShort  = fromList [(0,100,"z"),(0,400,"z"),(0,900,"z"),(0,600,"z")]
-     
+      let oldPosCloseShort  = fromList [(0,100,"z"),(0,400,"z"),(0,900,"z"),(0,600,"z")]     
       let transactionLong   = [(600,"f")]                        
       let oldPosCloseLong   = fromList [(0,400,"f"), (0,300,"f"),(0,200,"f")] 
 
@@ -684,58 +682,10 @@ testsPosCycle = hspec $ do
       -- 10| 110 - 190                  | -- ? it reverts twice (last element)
       -- --------------------------------
       result2       <- nonRandomFilterCloseAmount transactionLong  oldPosCloseLong
-      
-     -- TODO:
-     -- result3Random <- filterCloseAmount transactionLong oldPosCloseLong
-   
-   
+      -- random implmentation      
+      result3Random <- filterCloseAmount transactionLong oldPosCloseLong
       result1 `shouldBe`  (fromList [(0.0,105,"z"),(0.0,725,"z"),(0.0,370,"z")] )
       result2 `shouldBe`  (fromList [(0.0, 110, "f"), (0.0, 190, "f")])
-      -- TODO, fix:
-      -- (\[_,amt,_] -> sum amt) (toList result3Random) result2 `shouldBe` 300
+      -- random implementation adds up to desired amount
+      (sum $ fmap (\(_,amt,_) -> amt) (toList result3Random)) `shouldBe` 300
 
-
-
--- TODO
--- decide whever to dele or keep cause of function above -- ~ mby take inspir.
-{-
-
-  describe "PosCycle.filterFutureAmount" $ do
-    it "returns filtered future based on a transaction" $ do
-      let transactionlong     = [(1362290,"f")]
-      let oldPosFuturelong    = fromList [(0.0,0,""),(0.0,8019300,"f"),(0.0,51732996,"f"),(0.0,23747529,"f"),(0.0,44156108,"f"),(0.0,75789467,"f")]
-      let transactionshort    = [(1362290,"z")]
-      let oldPosFutureshort   = fromList [(185.4988,58390006,"z"),(222.4652,8833436,"z"),(222.4652,49384180,"z"),(222.4652,85475488,"z")]
-      let transactionlongBig  = [(10000,"f")]
-      let oldPosFuturelongBig = fromList [(0,100,"f"),(0,400,"f"),(0,900,"f"),(0,600,"f"),(0,8001,"f")]
-      let result1             = filterFutureAmount transactionlong oldPosFuturelong
-      let result2             = filterFutureAmount transactionshort oldPosFutureshort
-      let result3             = filterFutureAmount transactionlongBig oldPosFuturelongBig
-      result1                   `shouldBe` ( fromList [(0.0,6657010,"f"),(0.0,51732996,"f"),(0.0,23747529,"f"),(0.0,44156108,"f"),(0.0,75789467,"f")])
-      result2                   `shouldBe` ( fromList [(185.4988,57027716,"z"),(222.4652,8833436,"z"),(222.4652,49384180,"z"),(222.4652,85475488,"z")])
-      result3                   `shouldBe` ( fromList [(0,1,"f")]) 
-
--} 
-
-
-
-
-
-
-
-
-
-
-
-{-  
-describe "Util.bookNumChange" $ do
-  it "returns the amount that the orderbook changed"
--}
-
-{-
-  it "returns the first element of an *arbitrary* list" $
-    property $ \x xs -> head (x:xs) == (x :: Int)
-
-  it "throws an exception if used with an empty list" $ do
-    evaluate (head []) `shouldThrow` anyException
--}
