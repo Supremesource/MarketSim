@@ -62,6 +62,7 @@ generateId :: IO String
 generateId = do
   currentTime <- getPOSIXTime
   let seed = round $ currentTime * (10 ^ (9 :: Integer)) :: Int
+  -- > RANDOMNESS <
   randomSeed <- randomIO :: IO Int
   let gen = mkStdGen (seed + randomSeed)
   let symbols = ['0' .. '9'] ++ ['a' .. 'z'] ++ ['A' .. 'Z'] ++ "?!@#$&*"

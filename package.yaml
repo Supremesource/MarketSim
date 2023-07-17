@@ -31,6 +31,7 @@ dependencies:
 - ghci-dap
 - haskell-dap
 - random-shuffle
+- hspec-expectations
 
 ghc-options:
 - -Wall
@@ -93,7 +94,7 @@ executables:
     - ghci-dap
     - haskell-dap
     - random-shuffle
-
+    - hspec-expectations
    
   marketsim-server-exe:
     main:  Main.hs

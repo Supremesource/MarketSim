@@ -1,1 +1,41 @@
-{"TODO" : 1}
+{
+    "GENERAL_SETTINGS": {
+      "plotCharts": false,
+      "wipingStartingValue": 100,
+      "numPositions": 4,
+      "numberOfrunPrograms": 1,
+      "maxMakers": 3,
+      "maxTakers": 2,
+      "maxDecimal": 4
+    },
+    "POSITIONING_SETTINGS": {
+      "runProgramlist": ["DWW","DWW","DWW","DWW","DWW","DWW","DWW","DWW","DWW","DWW"],
+      "minvolume": 10000000,
+      "basecaseValueLongNew": 30000000,
+      "upperBoundLongNew": 300000000,
+      "basecaseValueShortClose": 30000000,
+      "upperBoundShortClose": 300000000,
+      "basecaseValueShortNew": 10000000,
+      "upperBoundShortNew": 100000000,
+      "basecaseValueLongClose": 10000000,
+      "upperBoundLongClose": 100000000,
+      "buyTakerProb": 50,
+      "sellTakerProb": 50,
+      "stopProb": 7,
+      "takerxProb": 7,
+      "closingProb": 7
+    },
+    "ORDERBOOK_SETTINGS": {
+      "minimum": 100,
+      "maximum": 400000,
+      "minUpMove": 0.009,
+      "maxUpMove": 0.01,
+      "minDownMove": 0.009,
+      "maxDownMove": 0.01,
+      "takeamountBID": 20000,
+      "takeamountASK": 20000,
+      "orderwalllikelyhood": 200,
+      "wallAmplifier": 5
+    }
+  }
+  

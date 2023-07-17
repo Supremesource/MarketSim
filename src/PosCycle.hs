@@ -152,6 +152,7 @@ oppositeSide side =
 
 randomSide :: IO String
 randomSide = do
+  -- > RANDOMNESS <
   randVal <- randomRIO (1, 10) :: IO Int
   unless (takerxProb >= 1 && takerxProb <= 10) $
     error "takerxProb must be between 1 and 10"
@@ -162,6 +163,7 @@ randomSide = do
 
 initGenerator :: [Int] -> [Int] -> IO (TakerPositions, MakerPositions)
 initGenerator takerLst makerLst = do
+  
   takerSide' <- randomSide
   let makerside = oppositeSide takerSide'
   let takerT = zip takerLst $ replicate (length takerLst) takerSide'
@@ -225,6 +227,7 @@ normalGenerator takerLst makerLst (toTakeFromLong, toTakeFromShort) liqSide = do
       takerT <-
         mapM
           (\val -> do
+             -- > RANDOMNESS <
              randVal <- randomRIO (1, 10) :: IO Int
              let sideT =
                    if randVal < closingProb
@@ -235,6 +238,7 @@ normalGenerator takerLst makerLst (toTakeFromLong, toTakeFromShort) liqSide = do
       makerT <-
         mapM
           (\val -> do
+             -- > RANDOMNESS <
              randVal <- randomRIO (1, 10) :: IO Int
              let sideM =
                    if randVal < closingProb
@@ -300,17 +304,18 @@ splitAmountToRandomList n = do
     chunkCount <- case () of  _
                                 | n < 1000                -> return 5
                                 | n < 5000                -> return 10
-                                -- & random part
+                                
+                                -- > RANDOMNESS <
                                 | n > 10000 && n < 20000  -> randomRIO (10,20)                                   
                                 | otherwise               -> randomRIO (20, 30)
     case () of _ 
                     | n < chunkCount -> return [n]
                     | otherwise -> do
                       let (q, r) = n `divMod` chunkCount
-                      -- & random part
+                      -- > RANDOMNESS <
                       chunks <- replicateM (chunkCount - 1) (randomRIO (q `div` 2, q * 3 `div` 2))
                       let lastChunk = n - sum chunks
-                      -- & random part
+                      -- > RANDOMNESS <
                       shuffledChunks <- shuffleM (lastChunk : chunks) 
                       -- | shuffle happens only when returning (performance saver)
                       return $ filter (/= 0) shuffledChunks
@@ -330,20 +335,22 @@ filterCloseAmount ((num, str):ns) closePosData = do
     where        
       filterFutureVol [] closePosData' _        = return closePosData'
       filterFutureVol _ Seq.Empty     _         = return Seq.Empty        
-      filterFutureVol (x:xs) closePosData' ns'  = do           
-          let ((liq, amt, sid) :< rest)         = Seq.viewl closePosData'
-          case () of _
-                        | x < amt
-                            -> do
-                                let updatedFutureInfo = rest |> (liq, amt - x, sid)
-                                _ <- filterCloseAmount ns' updatedFutureInfo
-                                filterFutureVol xs updatedFutureInfo ns'               
-                        | otherwise
-                            -> do                         
-                                let updatedFutureInfo = rest 
-                                let newX = x - amt                              
-                                _ <- filterCloseAmount ((newX, str) : ns') updatedFutureInfo -- rest                                                           
-                                filterFutureVol (newX:xs) updatedFutureInfo ns'
+      filterFutureVol (x:xs) closePosData' ns'  = do 
+        case Seq.viewl closePosData' of
+          Seq.EmptyL -> return Seq.Empty
+          (liq, amt, sid) :< rest -> 
+              case () of _
+                          | x < amt
+                              -> do
+                                  let updatedFutureInfo = rest |> (liq, amt - x, sid)
+                                  _ <- filterCloseAmount ns' updatedFutureInfo
+                                  filterFutureVol xs updatedFutureInfo ns'               
+                          | otherwise
+                              -> do                         
+                                  let updatedFutureInfo = rest 
+                                  let newX = x - amt                              
+                                  _ <- filterCloseAmount ((newX, str) : ns') updatedFutureInfo -- rest                                                           
+                                  filterFutureVol (newX:xs) updatedFutureInfo ns'
 
 -- Helper function to check if all elements of a list are equal
 allEqual :: Eq a => [a] -> Bool
@@ -370,17 +377,6 @@ tuplesToSides ((n, s):takerT, makerT) =
     then ((n, s) : takerT, makerT)
     else (makerT, (n, s) : takerT)
 
--- ! FINE
--- ? liquidations
-randomLiquidationEvent :: IO String
-randomLiquidationEvent = do
-  randVal <- randomRIO (1, 10) :: IO Int
-  unless (stopProb >= 1 && stopProb <= 10) $
-    error ("maxStop is 10 you have: " ++ show stopProb)
-  return $
-    if randVal < stopProb
-      then "stp"
-      else "liq"
 
 liquidationDuty ::
      SeqFuture

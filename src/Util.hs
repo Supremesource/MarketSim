@@ -261,6 +261,7 @@ calculateTotals finalBookAsk finalBookBid =
       bidsTot' = sumInts finalBookBid
    in (asksTot', bidsTot')
 
+-- > RANDOMNESS <
 calculateSetupInserts ::
      Int -> Int -> Double -> Generator -> Generator -> ([Double], [Double])
 calculateSetupInserts lengchngAsk' lengchngBid' sPrice gen1 gen2 =

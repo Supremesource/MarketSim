@@ -33,7 +33,7 @@ module Statistics where
 
 -- | module where majoritiy of statistical functions are defined
 -- | External libraries
-import           Control.Monad (replicateM)
+import           Control.Monad (replicateM, unless)
 import           Data.List     (unfoldr)
 import           System.Random (Random (randomR), RandomGen (split), StdGen,
                                 randomRIO)
@@ -41,52 +41,65 @@ import           System.Random (Random (randomR), RandomGen (split), StdGen,
 import           Colours
 import           RunSettings
 
+-- whole module has tag = -- > RANDOMNESS <
 
--- important:
--- you might want to change the distribution these functions, to your statistical needs
--- | Modyfiy this function to change the distribution of the volume
+-- ~ /stat1 
+------------------------------------------------------------------------------
+-- ? run volume distribution                                               
+-- ! important:                                                             
+-- | Modyfiy this function to change the distribution of the volume                                                       
+------------------------------------------------------------------------------
+
+-- | the low and high being passed are:
+-- low  - base case either for long or short
+-- high - upper limit for the volume
+-- the low and heigh are specified by the user in settings
 distribution :: (Int, Int) -> IO Int
 distribution (low, high) = do
-  x <- randomRIO (1, 100) :: IO Int
+  bVolLong <- randomRIO (1, 100) :: IO Int
   case () of
     _
       | high <= 0 -> randomRIO (0, 0)
-      | x == 1 -> randomRIO (low, low)
-      | x > 1 && x <= 5 ->
+      | bVolLong == 1 -> randomRIO (low, low)
+      | bVolLong > 1 && bVolLong <= 5 ->
         randomRIO (low, low + round (fromIntegral high * (0.05 :: Double)))
-      | x > 5 && x <= 10 ->
+      | bVolLong > 5 && bVolLong <= 10 ->
         randomRIO (low, low + round (fromIntegral high * (0.8 :: Double)))
-      | x > 10 && x <= 15 ->
+      | bVolLong > 10 && bVolLong <= 15 ->
         randomRIO (low, low + round (fromIntegral high * (0.10 :: Double)))
-      | x > 15 && x <= 20 ->
+      | bVolLong > 15 && bVolLong <= 20 ->
         randomRIO (low, low + round (fromIntegral high * (0.12 :: Double)))
-      | x > 20 && x <= 30 ->
+      | bVolLong > 20 && bVolLong <= 30 ->
         randomRIO (low, low + round (fromIntegral high * (0.18 :: Double)))
-      | x > 30 && x <= 40 ->
+      | bVolLong > 30 && bVolLong <= 40 ->
         randomRIO (low, low + round (fromIntegral high * (0.22 :: Double)))
-      | x > 40 && x <= 50 ->
+      | bVolLong > 40 && bVolLong <= 50 ->
         randomRIO (low, low + round (fromIntegral high * (0.27 :: Double)))
-      | x > 50 && x <= 60 ->
+      | bVolLong > 50 && bVolLong <= 60 ->
         randomRIO (low, low + round (fromIntegral high * (0.32 :: Double)))
-      | x > 60 && x <= 70 ->
+      | bVolLong > 60 && bVolLong <= 70 ->
         randomRIO (low, low + round (fromIntegral high * (0.37 :: Double)))
-      | x > 70 && x <= 75 ->
+      | bVolLong > 70 && bVolLong <= 75 ->
         randomRIO (low, low + round (fromIntegral high * (0.42 :: Double)))
-      | x > 75 && x <= 80 ->
+      | bVolLong > 75 && bVolLong <= 80 ->
         randomRIO (low, low + round (fromIntegral high * (0.55 :: Double)))
-      | x > 80 && x <= 85 ->
+      | bVolLong > 80 && bVolLong <= 85 ->
         randomRIO (low, low + round (fromIntegral high * (0.65 :: Double)))
-      | x > 85 && x <= 91 ->
+      | bVolLong > 85 && bVolLong <= 91 ->
         randomRIO (low, low + round (fromIntegral high * (0.75 :: Double)))
-      | x > 91 && x <= 94 ->
+      | bVolLong > 91 && bVolLong <= 94 ->
         randomRIO (low, low + round (fromIntegral high * (0.90 :: Double)))
-      | x > 94 && x <= 96 -> randomRIO (low, high)
-      | x > 96 && x <= 98 -> randomRIO (low, 2 * high)
-      | x > 98 -> randomRIO (low, 4 * high)
+      | bVolLong > 94 && bVolLong <= 96 -> randomRIO (low, high)
+      | bVolLong > 96 && bVolLong <= 98 -> randomRIO (low, 2 * high)
+      | bVolLong > 98 -> randomRIO (low, 4 * high)
       | otherwise ->
-        error $ red "Unexpected value for x in distribution function"
+        error $ red "Unexpected value for bVolLong in distribution function"
 
--- | Orderbook volume probability distribution
+------------------------------------------------------------------------------
+-- ? Orderbook volume  distribution  
+-- ~ /stat4                                       
+------------------------------------------------------------------------------
+
 customRandomR :: (RandomGen g) => (Int, Int) -> g -> (Int, g)
 customRandomR (low, high) gen = (num, gen3)
   where
@@ -105,34 +118,92 @@ customRandomR (low, high) gen = (num, gen3)
       | otherwise = low + round (fromIntegral (high - low) * r1)
     (r1, _) = randomR (0, 1 :: Double) gen2
 
+-- ~  /stat3
+------------------------------------------------------------------------------
+-- leverage distribution
+-- the code implementation below focuses only on the leverage amount e.g 1x, 2x
+-- ? new parameter will be passed, called minimum and maximum leverage side
+-- | this new parameter will say what the minimum and maximum leverage is for long and short positions
+-- pretty much similar to volume distribution
+-- and then a distribution is created based on that
+------------------------------------------------------------------------------
 
--- statisctics thing determining leverage
--- TODO move this into the stats and also make it customizable or at least point
--- to it in the settings
 takenLeverage :: IO Int
 takenLeverage = do
-  x <- randomRIO (1, 100) :: IO Int
+  l <- randomRIO (1, 100) :: IO Int
   return $
-    case x of
+    case l of
       _
-        | x >= 1 && x <= 85 -> 1
-        | x >= 86 && x <= 90 -> 2
-        | x >= 91 && x <= 93 -> 5
-        | x >= 94 && x <= 95 -> 10
-        | x == 96 -> 15
-        | x == 97 -> 20
-        | x == 98 -> 25
-        | x == 99 -> 50
-        | x == 100 -> 100
+        | l >= 1 &&  l <= 85 -> 1
+        | l >= 86 && l <= 90 -> 2
+        | l >= 91 && l <= 93 -> 5
+        | l >= 94 && l <= 95 -> 10
+        | l == 96 -> 15
+        | l == 97 -> 20
+        | l == 98 -> 25
+        | l == 99 -> 50
+        | l == 100 -> 100
         | otherwise -> error "something went wrong in takenLeverage"
+
+
+
+
+-- ~  /stat6
+------------------------------------------------------------------------------
+-- liquidation even distribution
+-- stop or liquidation
+-- user passes probability of stop, that is then used as a base case
+-- and then a distribution is created based on that
+------------------------------------------------------------------------------
+randomLiquidationEvent :: IO String
+randomLiquidationEvent = do
+  -- > RANDOMNESS <
+  randVal <- randomRIO (1, 10) :: IO Int
+  unless (stopProb >= 1 && stopProb <= 10) $
+    error ("maxStop is 10 you have: " ++ show stopProb)
+  return $
+    if randVal < stopProb
+      then "stp"
+      else "liq"
+
+
+-- ~ /stat5
+------------------------------------------------------------------------------ 
+-- make a custom distribution of tick sizes (in order book)
+-- in settings there is a minimum and maximum up move
+-- also min and max down move for bids
+-- make a custom distribution for this
+------------------------------------------------------------------------------ 
+
+
+-- ~ /stat2
+------------------------------------------------------------------------------
+-- basically no work with stat 2 is needed
+-- user passes probability of closing long (rest that adds up to 100% is for closing shorts)
+-- ! no custom distribution needed, random generator is used intstead
+------------------------------------------------------------------------------
+
+-- ~ /stat7
+------------------------------------------------------------------------------
+-- orderbook walls distribution amount
+-- orderbook maximum order amount is used as a base case
+-- then from that base case custom distribution is used, e.g 20% of times 120 % of the base case etc.
+------------------------------------------------------------------------------
+
+-- ~ /stat8
+------------------------------------------------------------------------------
+-- orderbook wall likelyhood distribution
+-- user specifies aproximate number where orderbook wall should take place
+-- e.g every 10 ticks there is a wall, then base case is created and custom distribution is used
+------------------------------------------------------------------------------
+
+
 
 -- | Random generator helper funcitions
 customRandomRs :: (Int, Int) -> StdGen -> [Int]
 customRandomRs bounds gen = nums
   where
     nums = unfoldr (Just . customRandomR bounds) gen
-
-
 
 
 weightedRandom :: [(Int, a)] -> IO a
@@ -142,33 +213,28 @@ weightedRandom xs = do
   return $
     snd $
     head $
-    dropWhile ((< rnd) . fst) $ scanl1 (\(w1, _) (w2, x) -> (w1 + w2, x)) xs
-
+    dropWhile ((< rnd) . fst) $ scanl1 (\(w1, _) (w2, bVolLong) -> (w1 + w2, bVolLong)) xs
 
 generateRandomPosition :: [Int] -> IO ([(Int, String)], [(Int, String)])
-generateRandomPosition [xProb, yProb]
+generateRandomPosition [buyProbLong, sellProbShort]
   -- | for longs 1 - 2
  = do
-  x <- distribution (basecaseValueLongNew, upperBoundLongNew) -- BUY VOL
+  bVolLong <- distribution (basecaseValueLongNew, upperBoundLongNew) -- BUY VOL
 --  f <- distribution (basecaseValueLongClose, upperBoundLongClose) -- closing longs 2
   -- | for shorts 3 - 4
-  y <- distribution (basecaseValueShortNew, upperBoundShortNew) -- SELL VOL
+  sVolShort <- distribution (basecaseValueShortNew, upperBoundShortNew) -- SELL VOL
 --  z <- distribution (basecaseValueShortClose, upperBoundShortClose) -- closing shorts 4
   let takeROptions =
-        [ (xProb, (x, "BUY"))
-        , (yProb, (y, "SELL"))
---        , (zProb, (z, "z"))
---        , (fProb, (f, "f"))
-        ]
+        [ (buyProbLong, (bVolLong, "BUY"))
+        , (sellProbShort, (sVolShort, "SELL")) ]
 
   taker' <- weightedRandom takeROptions
---  let maker' = if snd taker' == "BUY" then (fst taker', "SELL") else (fst taker', "BUY")
 
   let takerProbab
         | snd taker' == "BUY" =
-          [(xProb, (fst taker', "BUY"))]
+          [(buyProbLong, (fst taker', "BUY"))]
         | snd taker' == "SELL" =
-          [(yProb, (fst taker', "SELL"))]
+          [(sellProbShort, (fst taker', "SELL"))]
         | otherwise = error $ red "taker' is not valid"
   
   let oppositeAction "BUY" = "SELL"
@@ -186,16 +252,16 @@ generateRandomPosition [xProb, yProb]
   let takerVolumes = [fst taker']
   takerInfos <- replicateM transactionElements (weightedRandom takerProbab)
   let selectedTakers = zip takerVolumes (map snd takerInfos)
-  let takerTuple = selectedTakers
+  let takerLST = selectedTakers
 
   let totalMakerVolume = fst taker'
   let makerVolumes = [totalMakerVolume]
   let makerInfos = replicate transactionElements makerAction
   let selectedMakers = zip makerVolumes makerInfos
-  let makerTuple = selectedMakers
+  let makerLST = selectedMakers
 
   
-  return (takerTuple, makerTuple)
+  return (takerLST, makerLST)
 -- | options of takers
 -- | Taker and maker probabilitis
 -- | local variables

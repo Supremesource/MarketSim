@@ -131,6 +131,7 @@ runProgram = do
   --  CHECKING SETTINGS
   localCheck
   --  RANDOM GENERATORS:
+  -- > RANDOMNESS <
   gen1 <- randomGen
   gen2 <- randomGen
   -- ORDERBOOK GENERATION
@@ -172,7 +173,7 @@ mainLoop aggregatedStats remainingrunPrograms accumulatedStats = do
       let newAggregatedStats =
             foldl (flip aggregateStats) aggregatedStats positions
       let newAccumulatedStats
-        -- TODO check if conncat is safe here
+       
            = accumulatedStats ++ zip [1 ..] positions
       mainLoop newAggregatedStats (remainingrunPrograms - 1) newAccumulatedStats
     else do
@@ -221,7 +222,9 @@ generator isBidEmpty isAskEmpty orderbook_bid orderbook_ask fileBidBook fileAskB
           else fileAskBook
              -- ? ADDING STATS FROM 'MAINLOOP' TOGETHER
              -- | price change
+             -- ? volume ist everything is being generated out of
   volumesAndSides <- runProgramProgramHelp initStats numberOfrunPrograms
+  
   let initialBookDetailsList = [initialBookDetails]
   let listofvolumes = volumesAndSides
   isCloseEmpty <- isCloseDataEmpty
@@ -261,7 +264,6 @@ generator isBidEmpty isAskEmpty orderbook_bid orderbook_ask fileBidBook fileAskB
   -- | formating price document
   --   removeEmptyLines pricePath
   putStrLn $ gray "OUTPUT SUCCESFULLY GENERATED"
-
 
 
 -- checking settings, so bugs are caught before the program is runProgramning

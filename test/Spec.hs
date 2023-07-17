@@ -52,6 +52,7 @@ crucial when it comes to backtesting data
 -- | External libraries
 import Test.Hspec
 import Test.QuickCheck ()
+import Test.Hspec.Expectations
 import Control.Exception (evaluate)
 import System.Random
 import Data.Maybe
@@ -60,6 +61,8 @@ import Control.Monad
 import Data.Sequence   (fromList, (><))
 import Data.Monoid
 import           Data.Foldable        (toList)
+
+
 -- | Internal libraries
 import Lib
 import RunSettings
@@ -73,14 +76,20 @@ import NRandomFunc
 
 
 main :: IO ()
-main = tests
+main = do
+    --tests
+    hspec testsExpected
 
 -- ? comment tests in this function if you want to skip some
-tests ::  IO ()
+tests :: IO ()
 tests = do
   testsLib
   testsUtil
   testsPosCycle
+
+testsExpected :: SpecWith ()
+testsExpected = do
+ testsoutput
 
 testsLib :: IO ()
 testsLib = hspec $ do
@@ -689,3 +698,81 @@ testsPosCycle = hspec $ do
       -- random implementation adds up to desired amount
       (sum $ fmap (\(_,amt,_) -> amt) (toList result3Random)) `shouldBe` 300
 
+testsoutput :: SpecWith ()
+testsoutput = do
+
+  describe "output/positions.json" $ do
+      it "returns realistic output" $ do
+        positions <- readPositions positionInfoP
+        case positions of 
+          Left _ -> expectationFailure "Failed to parse positions."
+          Right pos -> recursiveOutputCheck pos `shouldBe` True
+
+
+{-
+data FileWritePosition    = FileWritePosition
+  {identifierPosition     :: String
+  ,totalXPosAmount        :: Int 
+  ,totalYPosAmount        :: Int
+  ,totalZPosAmount        :: Int
+  ,totalFPosAmount        :: Int
+  ,totalXPosCount         :: Int
+  ,totalYPosCount         :: Int
+  ,totalZPosCount         :: Int
+  ,totalFPosCount         :: Int
+  ,takerXPos              :: Int
+  ,takerYPos              :: Int
+  ,takerZPos              :: Int  
+  ,takerFPos              :: Int
+  ,makerXPos              :: Int
+  ,makerYPos              :: Int
+  ,makerZPos              :: Int
+  ,makerFPos              :: Int
+  ,buyVolumePos           :: Int
+  ,sellVolumePos          :: Int
+  ,overalVolumePos        :: Int
+  ,overalOpenInterestPos  :: Int
+  ,liquidationInfoPos     :: (Int,String,String)
+  } deriving Generic
+  deriving (FromJSON, ToJSON)
+  via JSONConfig FileWritePosition
+-}
+
+recursiveOutputCheck :: [FileWritePosition] -> Bool
+recursiveOutputCheck [] = True
+recursiveOutputCheck (x:xs) = 
+  let identPos = identifierPosition x
+      xPosAmount = totalXPosAmount x
+      yPosAmount = totalYPosAmount x
+      zPosAmount = totalZPosAmount x
+      fPosAmount = totalFPosAmount x
+      xPosCount = totalXPosCount x
+      yPosCount = totalYPosCount x
+      zPosCount = totalZPosCount x
+      fPosCount = totalFPosCount x
+      takerX = takerXPos x
+      takerY = takerYPos x
+      takerZ = takerZPos x
+      takerF = takerFPos x
+      makerX = makerXPos x
+      makerY = makerYPos x
+      makerZ = makerZPos x
+      makerF = makerFPos x
+      buyVol = buyVolumePos x
+      sellVol = sellVolumePos x
+      totalVol = overalVolumePos x
+      openInterest = overalOpenInterestPos x
+      liquidInfo = liquidationInfoPos x
+  in 
+     takerX + takerZ == buyVol &&
+     takerY + takerF == sellVol &&
+     makerX + makerZ == sellVol &&
+     makerY + makerF == buyVol &&
+     xPosAmount > 0 || yPosAmount > 0 &&
+     zPosAmount > 0 || fPosAmount > 0 &&
+     buyVol + sellVol == totalVol && 
+     buyVol + sellVol == xPosAmount + zPosAmount &&
+     openInterest == (xPosAmount + yPosAmount) - (zPosAmount + fPosAmount ) &&
+     recursiveOutputCheck xs
+
+             

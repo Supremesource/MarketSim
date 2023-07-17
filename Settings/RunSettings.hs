@@ -136,6 +136,7 @@ basecaseValueShortClose :: Int
 basecaseValueShortClose = 30000000
 upperBoundShortClose :: Int
 upperBoundShortClose = 300000000
+
 -- | SELL VOLUME
 -- | shorts NEW
 basecaseValueShortNew :: Int
@@ -171,13 +172,13 @@ sellTakerProb = 50
 stopProb :: Int
 stopProb = 7
 
--- TODO move into settings
 takerxProb :: Int
 takerxProb = 7
 
 closingProb :: Int
 closingProb = 7
 
+-- TODO add closing probability x
 -- ! ORDERBOOK SETINGS
 --  + liquidity settings
 --  + wall settings
