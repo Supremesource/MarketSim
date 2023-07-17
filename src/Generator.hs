@@ -361,6 +361,7 @@ data ReturnBookProcess
       , listASK'     :: SeqOrderBook
       , listBID'     :: SeqOrderBook
       }
+
 -- | orderbook main processing
 orderBookProcess ::  ListPass -> IO ReturnBookProcess
 orderBookProcess listPass@ListPass{}  = do
@@ -418,6 +419,7 @@ orderBookProcess listPass@ListPass{}  = do
         , lengchngAsk' = lengchngAskGenerated
         , listASK'     = listASKGenerated
         , listBID'     = listBIDGenerated  }
+
 
 data AdditionalBook    = AdditionData
       {
@@ -529,8 +531,10 @@ positionCycle positionCyclePass@PositionCyclePass{} = do
 
 -- ? POSITION FUTURE
       -- | check if the future file is empty
+  -- > RANDOMNESS <
   numTakers <- randomRIO (1, maxTakers) :: IO Int   -- select how many takers
   numMakers <- randomRIO (1, maxMakers) :: IO Int   -- select how many makers
+  
   volumeSplitT <- generateVolumes numTakers vAmount -- split the volume
   volumeSplitM <- generateVolumes numMakers vAmount -- split the volume
   liquidated <- liquidationDuty longinfo shortinfo sPricegen

@@ -72,6 +72,7 @@ randomListwalls :: IO [Int]
 randomListwalls = do
   randomRs (wallminimum', wallmaximum') <$> newStdGen
 
+-- > RANDOMESS <
 takeCustomRandom :: StdGen -> Int -> [Int]
 takeCustomRandom gen n = take n (customRandomRs (minimum', maximum') gen) -- 100 000
 
@@ -81,7 +82,6 @@ printCustomRandomList n = do
   let randomList = takeCustomRandom gen n
   return randomList
 
-
 -- another version with different random generator
 printRandomList' :: Int -> IO [Int]
 printRandomList' n = do
@@ -89,7 +89,7 @@ printRandomList' n = do
   let randomList = takeCustomRandom gen n
   return randomList
 
-
+-- > RANDOMNESS <
 -- | price list implemented only for bids
 newStdGen' :: IO StdGen
 newStdGen' = do
@@ -182,6 +182,8 @@ sumAt idx val lst =
 
 -- |randomly inserting walls
 -- randomly choosing where that sum should be inserted
+
+-- > RANDOMNESS <
 randomlyInsert :: [Int] -> [Int] -> IO [Int]
 randomlyInsert [] target = return target
 randomlyInsert (x:xs) target = do
@@ -252,6 +254,7 @@ spread' askHead bidHead = roundedResult
     result        = abs (askHead - bidHead)
     roundedResult = read $ printf "%.5f" result
 
+-- > RANDOMNESS <
 sideProbability :: Double -> IO Bool
 sideProbability trueProbability
   | trueProbability < 0 || trueProbability > 1 =
@@ -423,6 +426,8 @@ processTempleaterunProgram i o = do
   [templeatedprobability, templeatedprobabilityY]
 
 -- | local variables
+
+-- > RANDOMNESS <
 randomOptionGen :: IO Options
 randomOptionGen = do
   let options = [UP, UPP, CN, DWW, DW]
@@ -532,6 +537,9 @@ generateVolumes numPos totalVolume' = do
   Control.Monad.when (totalVolume' < numPos) $
     error $ red "Total volume cannot be less than number of transactions"
   let maxVol = totalVolume' `div` round ((fromIntegral numPos :: Double) / 1.2)
+  
+  -- > RANDOMNESS <
   volumes <- replicateM (numPos - 1) (randomRIO (1, maxVol))
+ 
   let lastVolume = totalVolume' - sum volumes
   return (volumes ++ [lastVolume])

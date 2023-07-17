@@ -31,7 +31,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 module NRandomFunc 
 {- 
 --! Description
---# modules converts random functions into exact ones (for testing purpouses)
+--# module converts random functions into strict (non-random) ones (for testing purpouses)
   -}
 where
 
@@ -48,6 +48,9 @@ import Data.Monoid
 import Prelude hiding (seq)
 import qualified Data.Sequence        as Seq
 import Data.Sequence        (Seq, ViewL ((:<)), (<|), (><), (|>))
+import Data.Aeson (FromJSON, ToJSON, eitherDecode)
+import GHC.Generics (Generic)
+import qualified Data.ByteString.Lazy as B
 import qualified Data.Bifunctor
 
 
@@ -332,3 +335,9 @@ nonRandomNormalrunProgram (volumeSplitT, volumeSplitM) (oldLongFuture, oldShortF
     ( updatedFutureAcc  -- # already concat to new accumulator
     , unorderedPosNew   -- # returning in a raw form to positionCycle
      )
+
+
+readPositions :: FilePath -> IO (Either String [FileWritePosition])
+readPositions filePath = do
+  jsonData <- B.readFile filePath
+  return $ eitherDecode jsonData

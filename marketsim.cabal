@@ -60,6 +60,7 @@ library
     , ghci-dap
     , haskell-dap
     , hspec
+    , hspec-expectations
     , parallel
     , process
     , random
@@ -88,6 +89,7 @@ executable marketsim-exe
     , ghci-dap
     , haskell-dap
     , hspec
+    , hspec-expectations
     , marketsim
     , parallel
     , process
@@ -116,6 +118,7 @@ executable marketsim-server-exe
     , ghci-dap
     , haskell-dap
     , hspec
+    , hspec-expectations
     , marketsim
     , parallel
     , process
@@ -146,6 +149,7 @@ test-suite marketsim-test
     , ghci-dap
     , haskell-dap
     , hspec
+    , hspec-expectations
     , marketsim
     , parallel
     , process
