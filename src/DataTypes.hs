@@ -222,7 +222,7 @@ type TakerPositions     =   [(Int, String)]
 type MarginCall         =   [(Int,String,String)] 
 type FutureAcc          =   (ClosePositionData, ClosePositionData)
 type Position           =   ([(Int, String)], [(Int, String)])
-type ClosePositionData         =   [(Double, Int, String)]
+type ClosePositionData       =   [(Double, Int, String)]
 type NewPositioning     =   (TakerPositions, MakerPositions)
 type SeqNewPositioning  =   Seq NewPositioning
 -- | order-book
