@@ -86,8 +86,8 @@ data GenerationPass = GenerationPass
   { initLiquidationAcc1Input        :: Seq (Int, String, String)
   , initLiquidationAcc2Input        :: Seq (Int, String, String)
   , initPositioningAccInput         :: (Seq (Int, String), Seq (Int, String))
-  , initAccLongCloseInput          :: Seq (Double, Int, String)
-  , initAccShortCloseInput         :: Seq (Double, Int, String)
+  , initAccLongCloseInput           :: Seq (Double, Int, String)
+  , initAccShortCloseInput          :: Seq (Double, Int, String)
   , listofvolumesInput              :: VolumeList
   , bidBookInput                    :: SeqOrderBook
   , askBookInput                    :: SeqOrderBook
@@ -115,7 +115,8 @@ generaterunProgram genPass
 
 -- base case do block
 handleBaseCase :: GenerationPass -> IO GenerationOutput
-handleBaseCase genPass@GenerationPass{} = do
+handleBaseCase genPass = do
+
   let writeLiqInfo = initLiquidationAcc2Input genPass
   let posinfo = initPositioningAccInput genPass
   let longinfo = initAccLongCloseInput genPass

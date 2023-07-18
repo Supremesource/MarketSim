@@ -762,17 +762,31 @@ recursiveOutputCheck (x:xs) =
       sellVol = sellVolumePos x
       totalVol = overalVolumePos x
       openInterest = overalOpenInterestPos x
-      liquidInfo = liquidationInfoPos x
+      liquidInfo = liquidationInfoPos x -- todo on liquidation info
   in 
-     takerX + takerZ == buyVol &&
-     takerY + takerF == sellVol &&
-     makerX + makerZ == sellVol &&
-     makerY + makerF == buyVol &&
-     xPosAmount > 0 || yPosAmount > 0 &&
-     zPosAmount > 0 || fPosAmount > 0 &&
-     buyVol + sellVol == totalVol && 
-     buyVol + sellVol == xPosAmount + zPosAmount &&
-     openInterest == (xPosAmount + yPosAmount) - (zPosAmount + fPosAmount ) &&
+     takerX + makerX == xPosAmount                                             &&     
+     takerY + makerY == yPosAmount                                             &&       
+     takerZ + makerZ == zPosAmount                                             &&         
+     takerF + makerF == fPosAmount                                             &&
+     takerX + takerZ == buyVol                                                 &&           
+     takerY + takerF == sellVol                                                &&
+     makerX + makerZ == sellVol                                                &&
+     makerY + makerF == buyVol                                                 &&
+    --  (xPosAmount > 0 || zPosAmount > 0)                                        &&
+    --  (yPosAmount > 0 || fPosAmount > 0)                                        &&
+    --  (xPosCount  > 0 || zPosCount  > 0 )                                       &&
+    --  (yPosCount  > 0 || fPosCount  > 0 )                                       &&     
+     buyVol + sellVol == totalVol                                            && 
+     buyVol + sellVol == xPosAmount + zPosAmount                             &&
+     buyVol + sellVol == yPosAmount + fPosAmount                             &&
+     openInterest == (xPosAmount + yPosAmount) - (zPosAmount + fPosAmount )  &&
+    -- xPosAmount + yPosAmount == openInterest `div` totalVol + totalVol                  &&
+
      recursiveOutputCheck xs
 
-             
+example = 
+  all id [
+    2 + 2 == 4,
+    3 * 7 == 21,
+    -- xPosAmount > 0 || zPosAmount > 0,
+  ]
