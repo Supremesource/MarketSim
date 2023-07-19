@@ -77,8 +77,8 @@ import NRandomFunc
 
 main :: IO ()
 main = do
-    tests
-    --hspec testsExpected
+    --tests
+    hspec testsExpected
 
 -- ? comment tests in this function if you want to skip some
 tests :: IO ()

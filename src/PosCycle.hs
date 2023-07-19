@@ -310,79 +310,62 @@ splitAmountToRandomList 0 = return [0]
 splitAmountToRandomList 1 = return [1]
 splitAmountToRandomList n = do
      -- Change this to adjust the number of chunks
-    let chunkCount = 3
+    let chunkCount =       
+          case () of _
+                      | n < 1000  -> 2
+                      | n < 5000  -> 4
+                      | n < 10000 -> 6
+                      | n < 20000 -> 8
+                      | otherwise -> 10 
+              
+
     case () of _
-                    | n < chunkCount -> return [n]
-                    | otherwise -> do
-                      let (q, _) = n `divMod` chunkCount
-                      -- > RANDOMNESS <
-                      chunks <- replicateM (chunkCount - 1) (randomRIO (q `div` 2, q * 3 `div` 2))
-                      let lastChunk = n - sum chunks
-                      -- | shuffle happens only when returning (performance saver)
-                      return $ filter (/= 0) (lastChunk : chunks)
+                | n < chunkCount -> return [n]
+                | otherwise -> do
+                  let (q, _) = n `divMod` chunkCount
+                  -- > RANDOMNESS <
+                  chunks <- replicateM (chunkCount - 1) (randomRIO (q `div` 2, q * 3 `div` 2))
+                  let lastChunk = n - sum chunks
+                  -- | shuffle happens only when returning (performance saver)
+                  return $ filter (/= 0) (lastChunk : chunks)
 
--- Tuple of positions to take out
--- old closePosData
--- returns a new closePosData
-{-
-filterCloseAmount :: [(Int, String)] -> SeqFuture -> IO SeqFuture
-filterCloseAmount _ Seq.Empty = return Seq.Empty
-filterCloseAmount [] futureInfo = return futureInfo
-filterCloseAmount ((n, s):ns) futureInfo = do
-    volume <- splitAmountToRandomList n
-    processVolume volume futureInfo
-    where
-        processVolume :: [Int] -> SeqFuture -> IO SeqFuture
-        processVolume [] futureInfo' = return futureInfo'
-        processVolume _ Empty  = return Empty
-        processVolume (x:xs) futureInfo' = do
-            shouldReversen <- randomRIO (0,9) :: IO Int
-            let shouldReverse = shouldReversen > 7
-            case Seq.viewl futureInfo' of
-              EmptyL -> return Empty
-              ((liq, amt, sid) :< rest) ->
-                if x < amt && not shouldReverse
-                  then do
-                    newFuture <- filterCloseAmount ns ((liq, amt - x, sid) <| rest)
-                    processVolume xs newFuture
-                  else if x < amt && shouldReverse
-                    then do
-                      newFuture <- filterCloseAmount ns (rest |> (liq, amt - x, sid))
-                      processVolume xs newFuture
-                  else filterCloseAmount ((n - amt, s) : ns) rest
 
--}
-
+-- TODO make even more random and move into tests
 filterCloseAmount ::
      [(Int, String)]     -- Tuple of positions to take out
   -> SeqFuture           -- old closePosData
   -> IO SeqFuture        -- returns a new closePosData
 filterCloseAmount [] closePosData          = return closePosData
-filterCloseAmount ((num, _):ns) closePosData = do    
+filterCloseAmount ((num, _):ns) closePosData = do
     -- | splitting transaction volume into smaller parts such that exiting 
     -- positions are handeled better
-    transactionVolSplit    <- splitAmountToRandomList num 
-    adjustedFutureToVolume <- filterFutureVol transactionVolSplit closePosData ns    
-    
+    transactionVolSplit    <- splitAmountToRandomList num
+    adjustedFutureToVolume <- filterFutureVol transactionVolSplit closePosData ns
     filterCloseAmount ns adjustedFutureToVolume
-    where        
-      filterFutureVol [] closePosData' _      = return closePosData'
-      filterFutureVol _ Seq.Empty     _       = return Seq.Empty        
-      filterFutureVol (x:xs) closePosData' ns' = do           
-          let ((liq, amt, sid) :< rest)  = Seq.viewl closePosData'
-          case () of _
-                        | x < amt
-                            -> do
-                                let updatedFutureInfo = rest |> (liq, amt - x, sid)
-                                --nonRandomFilterCloseAmount ns updatedFutureInfo
-                                filterFutureVol xs updatedFutureInfo ns'               
-                        | otherwise
-                            -> do
-                                -- |> (liq, x - amt, sid)
-                                let updatedFutureInfo = rest 
+    where
+      filterFutureVol [] closePosData' _       = return closePosData'
+      filterFutureVol _ Seq.Empty     _        = return Seq.Empty
+      filterFutureVol (x:xs) closePosData' ns' =
+        case Seq.viewl closePosData' of
+            Seq.EmptyL -> return Seq.Empty
+            ((liq, amt, sid) :< rest) -> do          
+                -- > RANDOMNESS <
+                -- this is a bit of a bottleneck but i belive it to be worth it
+                -- as it makes the simulation more realistic
+                shouldReverseNumberical <- randomRIO (0, 9) :: IO Int -- 
+                let shouldReverseBool = shouldReverseNumberical < 6
+                case () of _
+                            | x < amt -> do                                                              
+                                  let reversedFutureInfo = rest |> (liq, amt - x, sid)
+                                  let nonReversedFutureInfo = (liq, amt - x, sid) <| rest 
+                                  let updatedFutureInfo =
+                                        if shouldReverseBool
+                                          then reversedFutureInfo
+                                          else nonReversedFutureInfo                               
+                                  filterFutureVol xs updatedFutureInfo ns'                       
+                            | otherwise -> do
+                                let updatedFutureInfo = rest
                                 let newX = x - amt
-                                --((x - amt, s) : ns) updatedFutureInfo
-                                --nonRandomFilterCloseAmount ((newX, str) : ns) updatedFutureInfo -- rest                                                           
                                 filterFutureVol (newX:xs) updatedFutureInfo ns'
 
 

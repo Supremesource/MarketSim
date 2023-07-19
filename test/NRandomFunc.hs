@@ -126,39 +126,36 @@ nonRandomSplitAmountToRandomList n = do
                       -- | shuffle happens only when returning (performance saver)
                       return $ filter (/= 0) (lastChunk : chunks)
 
--- Tuple of positions to take out
--- old closePosData
--- returns a new closePosData
+
 nonRandomFilterCloseAmount ::
      [(Int, String)]     -- Tuple of positions to take out
   -> SeqFuture           -- old closePosData
   -> IO SeqFuture        -- returns a new closePosData
 nonRandomFilterCloseAmount [] closePosData          = return closePosData
-nonRandomFilterCloseAmount ((num, str):ns) closePosData = do    
+nonRandomFilterCloseAmount ((num, _):ns) closePosData = do    
     -- | splitting transaction volume into smaller parts such that exiting 
     -- positions are handeled better
     transactionVolSplit    <- nonRandomSplitAmountToRandomList num 
     adjustedFutureToVolume <- filterFutureVol transactionVolSplit closePosData ns    
+    
     nonRandomFilterCloseAmount ns adjustedFutureToVolume
     where        
-      filterFutureVol [] closePosData _      = return closePosData
-      filterFutureVol _ Seq.Empty     _      = return Seq.Empty        
-      filterFutureVol (x:xs) closePosData ns = do           
-          let ((liq, amt, sid) :< rest)  = Seq.viewl closePosData
-          case () of _
-                        | x < amt
-                            -> do
+      filterFutureVol [] closePosData' _      = return closePosData'
+      filterFutureVol _ Seq.Empty     _        = return Seq.Empty        
+      filterFutureVol (x:xs) closePosData' ns' =
+        case Seq.viewl closePosData' of
+            Seq.EmptyL -> return Seq.Empty
+            ((liq, amt, sid) :< rest) -> do          
+                case () of _
+                            | x < amt -> do
                                 let updatedFutureInfo = rest |> (liq, amt - x, sid)
-                                --nonRandomFilterCloseAmount ns updatedFutureInfo
-                                filterFutureVol xs updatedFutureInfo ns               
-                        | otherwise
-                            -> do
-                                -- |> (liq, x - amt, sid)
+                                filterFutureVol xs updatedFutureInfo ns'               
+                            | otherwise -> do
                                 let updatedFutureInfo = rest 
                                 let newX = x - amt
-                                --((x - amt, s) : ns) updatedFutureInfo
-                                --nonRandomFilterCloseAmount ((newX, str) : ns) updatedFutureInfo -- rest                                                           
-                                filterFutureVol (newX:xs) updatedFutureInfo ns
+                                filterFutureVol (newX:xs) updatedFutureInfo ns'
+
+
 
 
 
