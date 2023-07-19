@@ -46,6 +46,9 @@ import           DataTypes (Options (..))
 -- | !ORDERBOOK SETTINGS / liquidity  / order walls / orderbook structure
 -- FILL IN THE SETTINGS BELOW !     :
 
+-- every run new == True
+autoRestore :: Bool
+autoRestore = True
 
 -- ! GENERAL SETTINGS:
 --〇 ID = PLTCHRT
@@ -63,7 +66,7 @@ wipingStartingValue = 100
 -- | number of positions you want to take place in the simulation runProgram
 -- | number of positions
 numPositions :: Int
-numPositions = 4
+numPositions = 50000
 
 --〇 ID = NUMrunProgram
 -- | number of runPrograms, this is a loop how many times will the simulation repeat itself (random generators are updating each time though)
@@ -77,7 +80,7 @@ numberOfrunPrograms = 1
 -- TODO add more complex statistic distribution
 -- | what is the maximum of makers in one transaction , i.e 1000 buy matched with 1000 sell, now the max makers filled in that transaction can be specified below
 maxMakers :: Int
-maxMakers = 3
+maxMakers = 100
 -- | note that max takers is hardcoded to be 95% of maxmakers (done on real market observtions)
 -- ? Not recommended to change this from 0.95
 maxTakers :: Int
@@ -122,32 +125,32 @@ runProgramlist = [DWW,DWW,DWW,DWW,DWW,DWW,DWW,DWW,DWW,DWW]
 -- | note that this function only works as a correctness checker for yourslf, exchanges always have a minimum volume allowed by the user, make yours
 -- | not recommended to go below 10 , depends on your maxmakers, maxtakers, there is potential error catching metric implemented, but still set this rather high
 minvolume :: Int
-minvolume = 10000000
+minvolume = 1000
 
 --〇 ID = VOL02
 -- | BUY VOUME
 -- | longs NEW
 basecaseValueLongNew :: Int
-basecaseValueLongNew = 30000000
+basecaseValueLongNew = 3000
 upperBoundLongNew :: Int
-upperBoundLongNew = 300000000
+upperBoundLongNew = 3000
 -- | shorts CLOSE
 basecaseValueShortClose :: Int
-basecaseValueShortClose = 30000000
+basecaseValueShortClose = 3000
 upperBoundShortClose :: Int
-upperBoundShortClose = 300000000
+upperBoundShortClose = 3000
 
 -- | SELL VOLUME
 -- | shorts NEW
 basecaseValueShortNew :: Int
-basecaseValueShortNew = 10000000
+basecaseValueShortNew = 2500
 upperBoundShortNew :: Int
-upperBoundShortNew = 100000000
+upperBoundShortNew = 2500
 -- | longs CLOSE
 basecaseValueLongClose :: Int
-basecaseValueLongClose = 10000000
+basecaseValueLongClose = 2500
 upperBoundLongClose :: Int
-upperBoundLongClose = 100000000
+upperBoundLongClose = 2500
 
 -- Statistics :
 -- | Position-Status occurrence:
@@ -211,10 +214,10 @@ maxDownMove = 0.01
 --〇 ID = TakeBidAsk
 -- | Size of bid orderbook
 takeamountBID :: Int
-takeamountBID = 20000
+takeamountBID = 10000
 -- | Size of ask orderbook
 takeamountASK :: Int
-takeamountASK = 20000
+takeamountASK = 10000
 
 --  'WALL' SETTINGS:
 --〇 ID = wallLikeHood

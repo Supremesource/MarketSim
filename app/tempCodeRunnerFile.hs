@@ -47,8 +47,9 @@ mainLoop aggregatedStats remainingrunPrograms = do
 
 printFinal :: Stats -> IO ()
 printFinal aggregatedStats = do
-  putStrLn "\n\n\n\n\n\n-------------\n\n\n you have reached the end of the generator \n\n\n📊📊AGGREGATED STATS📊📊: "
-  printStats aggregatedStats
+  undefined
+  --putStrLn "\n\n\n\n\n\n-------------\n\n\n you have reached the end of the generator \n\n\n📊📊AGGREGATED STATS📊📊: "
+  --printStats aggregatedStats
 
 main :: IO ()
 main = do

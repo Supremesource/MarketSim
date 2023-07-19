@@ -29,7 +29,7 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -}
-module Main 
+module Main
 {-
 -- ! DESCRIPTION  
 calls all functions in modules together to execute 
@@ -68,6 +68,8 @@ import           RunSettings
 import           Statistics
 import           System.Random.Stateful      (StdGen)
 import           Util
+import System.CPUTime
+import Text.Printf
 
 main :: IO ()
 main = initRun
@@ -77,20 +79,22 @@ initRun = do
   -- | clening log file before every runProgram
   writeFile logP ""
   -- | optimizing the IO to be formated in lines
-  hSetBuffering stdout LineBuffering
+ -- hSetBuffering stdout LineBuffering
   -- | Asking user to proceed
-  putStrLn $
-    cyan   $
-    "Proceed (_ / n)" ++ gray "\n\n { for runProgram-restore press - (w) }"
-  proceed <- getLine
+  --putStrLn $
+   -- cyan   $
+  --  "Proceed (_ / n)" ++ gray "\n\n { for runProgram-restore press - (w) }"
+ -- proceed <- getLine
   -- | WIPING runProgram == TRUE
   -- | When wiping runProgram is runProgramning the whole code is not evaluated
   -- | Wiping all of the text files, and changing the starting point
-  if proceed == "W" || proceed == "w"
+  --if proceed == "W" || proceed == "w"
     -- | user wants to proceed with the simulation generation
     -- | checking settings, catching potential bugs in the setting specified by user
     -- | if the settings are not correct, the program will not runProgram
     -- | CHECKING IF FILES ARE EMPTY
+   
+   {- 
     then do
       let sayStart = show wipingStartingValue
       putStrLn $ purple "YOU DELETED OUTPUT & DATA FILES"
@@ -110,16 +114,30 @@ initRun = do
         wipingStartingValue
     else if proceed == "n" || proceed == "N"
            then error (red "stopping program")
-           else runProgram
+           else -}
+  runProgram
 
  --  Entry points of program
 runProgram :: IO ()
 runProgram = do
+  start  <- getCPUTime
+
+  when autoRestore 
+    (newrunProgramSettings
+      askBookP
+      bidBookP
+      logP
+      orderBookDetailsP
+      positionInfoP
+      initPriceP
+      posCloseDatP
+      wipingStartingValue)
+
   isBidEmpty <- isFileEmpty bidBookP
   isAskEmpty <- isFileEmpty askBookP
   initstartingPoint <- startingPointFromFile initPriceP
-  fileBidBook <- if isBidEmpty 
-                 then return [] 
+  fileBidBook <- if isBidEmpty
+                 then return []
                  else readBook bidBookP
   fileAskBook <- if isAskEmpty
                  then return []
@@ -155,6 +173,11 @@ runProgram = do
   -- WARININGS of what might be affest the quality of the settings
   warnings
 
+  end <- getCPUTime
+  let diff = fromIntegral (end - start) / (10^(12 :: Integer))
+
+  printf "Overall time: %.6f seconds\n" (diff :: Double)
+
 runProgramProgramHelp :: Stats -> Int -> IO [(Int, VolumeSide)]
 runProgramProgramHelp aggregatedStats remainingrunPrograms = do
   mainLoop aggregatedStats remainingrunPrograms []
@@ -173,7 +196,7 @@ mainLoop aggregatedStats remainingrunPrograms accumulatedStats = do
       let newAggregatedStats =
             foldl (flip aggregateStats) aggregatedStats positions
       let newAccumulatedStats
-       
+
            = accumulatedStats ++ zip [1 ..] positions
       mainLoop newAggregatedStats (remainingrunPrograms - 1) newAccumulatedStats
     else do
@@ -182,7 +205,7 @@ mainLoop aggregatedStats remainingrunPrograms accumulatedStats = do
 
 noRemainingrunProgram :: Stats -> [(Int, Position)] -> IO [(Int, VolumeSide)]
 noRemainingrunProgram aggregatedStats accumulatedStats = do
-  printFinal aggregatedStats
+  -- printFinal aggregatedStats
 
   -- Accumulate all the results first
   results <-
@@ -224,7 +247,7 @@ generator isBidEmpty isAskEmpty orderbook_bid orderbook_ask fileBidBook fileAskB
              -- | price change
              -- ? volume ist everything is being generated out of
   volumesAndSides <- runProgramProgramHelp initStats numberOfrunPrograms
-  
+
   let initialBookDetailsList = [initialBookDetails]
   let listofvolumes = volumesAndSides
   isCloseEmpty <- isCloseDataEmpty
