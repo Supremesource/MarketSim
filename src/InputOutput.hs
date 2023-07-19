@@ -339,7 +339,7 @@ nonNegative :: TakerPositions -> Bool
 nonNegative []          = True
 nonNegative ((x, _):xs) = (x >= 0) && nonNegative xs
 
-
+{-
 -- | overal aggregated data associated with positioning
 printStats :: Stats -> IO ()
 printStats stats = do
@@ -374,13 +374,13 @@ printStats stats = do
   let roundedLongShortRatioL = roundToTwoDecimals longShortRatioLONGS :: Double
   let roundedLongShortRatioS = roundToTwoDecimals longShortRatioSHORTS :: Double
   let checkResult = checkers stats
-  putStrLn $ red "----------------------------"
-  putStrLn $ red "| Check        | Result    |"
-  putStrLn $ red "----------------------------"
-  mapM_
-    (\(name, result) -> putStrLn $ "| " ++ name ++ " | " ++ result ++ " |")
-    checkResult
-  putStrLn "----------------------------"
+ -- putStrLn $ red "----------------------------"
+ -- putStrLn $ red "| Check        | Result    |"
+ -- putStrLn $ red "----------------------------"
+ -- mapM_
+  --  (\(name, result) -> putStrLn $ "| " ++ name ++ " | " ++ result ++ " |")
+  --  checkResult
+  --putStrLn "----------------------------"
  -- | how many takers and makers are there
 -- //  let lsprediction = [ (if (takerXc stats + takerZc stats) > (makerXc stats + makerZc stats) then "C up" else "C down", if buyVolume stats > sellVolume stats then "V up" else "V down", if offX stats > offY stats then "A up" else "A down")]
 -- | some scope definitions
@@ -390,11 +390,11 @@ printStats stats = do
 -- | printing the results formated as a table
 -- | final IO ()
 -- | this function is called by the main loop if we reached the runPrograms
-printFinal :: Stats -> IO ()
-printFinal aggregatedStats = do
-   print "\n" -- get rid of
+--printFinal :: Stats -> IO ()
+--printFinal aggregatedStats = do
+--   print "\n" -- get rid of
 
-
+-}
 {- 
   formatAndPrintInfo :: BookStats -> IO ()
 formatAndPrintInfo stats = do

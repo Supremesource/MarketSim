@@ -217,7 +217,7 @@ data VolumeSide
    
 -- / TYPES
 -- | positining structure
-type MakerPositions     =   [(Int, String)] 
+type MakerPositions     =   [(Int, String)]
 type TakerPositions     =   [(Int, String)]
 type MarginCall         =   [(Int,String,String)] 
 type FutureAcc          =   (ClosePositionData, ClosePositionData)

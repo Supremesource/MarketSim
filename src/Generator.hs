@@ -1,4 +1,5 @@
 {-# OPTIONS_GHC -Wno-missing-export-lists #-}
+{-# LANGUAGE OverloadedStrings #-}
 {-
 Supreme Source (c) 2023
 All rights reserved.
@@ -29,7 +30,7 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -}
-module Generator 
+module Generator
 {- 
 -- ! DESCRIPTION 
 Heart of the whole backend:
@@ -106,10 +107,10 @@ generaterunProgram ::
      GenerationPass
   -> IO  GenerationOutput
 generaterunProgram genPass
-  |  null (listofvolumesInput genPass) 
+  |  null (listofvolumesInput genPass)
  -- && null (initLiquidationAcc1Input genPass >< initLiquidationAcc2Input genPass) 
   =  handleBaseCase genPass
-  |  otherwise 
+  |  otherwise
   = handleGeneralCase genPass
 
 
@@ -127,7 +128,7 @@ handleBaseCase genPass = do
   let posStats = initStatsInput genPass
   -- / ACTION
   -- ? DATA
-  let posFuture =  TransactionFut $ toList $ longinfo >< shortinfo 
+  let posFuture =  TransactionFut $ toList $ longinfo >< shortinfo
   BL.writeFile posCloseDatP $ encodePretty posFuture
   -- ? OUTPUT
   ids <- idList
@@ -149,7 +150,7 @@ handleBaseCase genPass = do
 
   return
     GenerationOutput
-    { 
+    {
         liqInfoOutput     = writeLiqInfo
       , posInfoOutput     = posinfo
       , longInfoOutput    = longinfo
@@ -169,7 +170,7 @@ handleGeneralCase genPass@GenerationPass{} = do
   let shortinfo = initAccShortCloseInput genPass
   let (x, xs) = case  listofvolumesInput genPass of
         [] -> error "listofvolumesInput was empty!"
-        (y:ys) -> (y, ys) 
+        (y:ys) -> (y, ys)
   let bidBook = bidBookInput genPass
   let askBook = askBookInput genPass
   let gen1 = gen1Input genPass
@@ -535,7 +536,7 @@ positionCycle positionCyclePass@PositionCyclePass{} = do
   -- > RANDOMNESS <
   numTakers <- randomRIO (1, maxTakers) :: IO Int   -- select how many takers
   numMakers <- randomRIO (1, maxMakers) :: IO Int   -- select how many makers
-  
+
   volumeSplitT <- generateVolumes numTakers vAmount -- split the volume
   volumeSplitM <- generateVolumes numMakers vAmount -- split the volume
   liquidated <- liquidationDuty longinfo shortinfo sPricegen

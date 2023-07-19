@@ -29,7 +29,7 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -}
-module Lib 
+module Lib
 {-
 -- ! DESCRIPTION 
 aggregation of general functions
@@ -263,10 +263,11 @@ sideProbability trueProbability
     randomValue <- randomRIO (0, 1)
     return (randomValue < trueProbability)
 
-countElements :: String -> MakerPositions -> Int
+countElements :: String -> [(Int,String)] -> Int
 countElements x = length . filter ((== x) . snd)
 
-elementSize :: String -> MakerPositions -> Int
+
+elementSize :: String -> [(Int,String)] -> Int
 elementSize x = sum . map fst . filter ((== x) . snd)
 
 
@@ -379,13 +380,13 @@ templeaterunProgramBUY :: Int -> Options -> Int
 templeaterunProgramBUY a op =
   case op of
     -- increasing b vol by 200% (Amplifier)
-    UP  -> a * 2 
+    UP  -> a * 2
     -- increasing b vol by 400% (Amplifier)
-    UPP -> a * 4 
+    UPP -> a * 4
     -- doing nothing to downtrend (Amplifier)
-    DW  -> a 
+    DW  -> a
     -- extreme downtrend doing nothing (Amplifier)
-    DWW -> a 
+    DWW -> a
     CN  -> a
     _   -> error $ red "your templeate pattern matching did not go through"
 
@@ -393,13 +394,13 @@ templeaterunProgramSELL :: Int -> Options -> Int
 templeaterunProgramSELL a op =
   case op of
     -- nothing (Amplifier)
-    UP  -> a 
+    UP  -> a
     -- nothing (Amplifier)
-    UPP -> a 
+    UPP -> a
      -- increasing s vol by 200% (Amplifier)
     DW  -> a * 2
     -- increasing s vol by 400% (Amplifier)
-    DWW -> a * 4 
+    DWW -> a * 4
     CN  -> a
     _   -> error $ red "your templeate pattern matching did not go through"
 
@@ -465,12 +466,12 @@ readBook fileName =
   bracket
     (openFile fileName ReadMode)
     hClose
-   
+
     (\handle' -> do
        contents <- BL.hGetContents handle'
        case eitherDecode contents of
          Left err -> do
-           putStrLn $ "Error parsing JSON: " ++ err 
+           putStrLn $ "Error parsing JSON: " ++ err
            return []
          Right bookData -> return $ book bookData)
 
@@ -537,9 +538,9 @@ generateVolumes numPos totalVolume' = do
   Control.Monad.when (totalVolume' < numPos) $
     error $ red "Total volume cannot be less than number of transactions"
   let maxVol = totalVolume' `div` round ((fromIntegral numPos :: Double) / 1.2)
-  
+
   -- > RANDOMNESS <
   volumes <- replicateM (numPos - 1) (randomRIO (1, maxVol))
- 
+
   let lastVolume = totalVolume' - sum volumes
   return (volumes ++ [lastVolume])

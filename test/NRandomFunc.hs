@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -w #-}    
 {-
 Supreme Source (c) 2023
 All rights reserved.
@@ -47,7 +48,7 @@ import Data.Sequence   (fromList, (><))
 import Data.Monoid
 import Prelude hiding (seq)
 import qualified Data.Sequence        as Seq
-import Data.Sequence        (Seq, ViewL ((:<)), (<|), (><), (|>))
+import           Data.Sequence        (Seq (Empty), ViewL ((:<), EmptyL), (<|), (|>), (><))
 import Data.Aeson (FromJSON, ToJSON, eitherDecode)
 import GHC.Generics (Generic)
 import qualified Data.ByteString.Lazy as B
@@ -108,37 +109,26 @@ nonRandominitGenerator takerLst makerLst = do
   return (takerT, makerT)
 
 
-noRandomSplitAmountToRandomList :: Int -> IO [Int]
-noRandomSplitAmountToRandomList 0 = return [0]
-noRandomSplitAmountToRandomList 1 = return [1]
-noRandomSplitAmountToRandomList n = do
-    let chunkCount = 10  -- Change this to adjust the number of chunks
-    -- | random chunk c. larger transaction, more people are likely to get taken out of the future 
-    --   meaning if there is a large split to take out of the future
-    --   future is beinng "shuffeled" then when a large transaction took place
-    --   probably more people exited the market 
-    -- & rchunkCount <- if n < 1000 then return 5 else randomRIO (5, 15) -- user can adjust the stat
-    if n < chunkCount
-      then return [n]
-      else do
-          let (q, r) = n `divMod` chunkCount
-         -- chunks <- replicateM (chunkCount - 1) (randomRIO (q `div` 2, q * 3 `div` 2))
-          nrChunks <- replicateM (chunkCount - 1) (return (q `div` 2))
-          let lastChunk = n - sum nrChunks
-          let shuffledChunks = (lastChunk : nrChunks) 
-          return $ filter (/= 0) shuffledChunks
+nonRandomSplitAmountToRandomList :: Int -> IO [Int]
+nonRandomSplitAmountToRandomList 0 = return [0]
+nonRandomSplitAmountToRandomList 1 = return [1]
+nonRandomSplitAmountToRandomList n = do
+     -- Change this to adjust the number of chunks
+    let chunkCount = 10
+    case () of _
+                    | n < chunkCount -> return [n]
+                    | otherwise -> do
+                      let (q, _) = n `divMod` chunkCount
+                      -- > RANDOMNESS <
+                      -- pre `set`
+                      chunks <- replicateM (chunkCount - 1) (return (q `div` 2))
+                      let lastChunk = n - sum chunks
+                      -- | shuffle happens only when returning (performance saver)
+                      return $ filter (/= 0) (lastChunk : chunks)
 
-
-nonRandomizedfilterFutureClose ::
-     Position -> (SeqFuture, SeqFuture) -> IO (SeqFuture, SeqFuture)
-nonRandomizedfilterFutureClose (closingLong, closingShort) (oldLong, oldShort) {-output (newLong,newShort-}
-  = do
-  let formatedTupleLong   = filterTuple "z" closingLong
-  let formatedTupleShort  = filterTuple "f" closingShort
-  filteredFutureLong      <- nonRandomFilterCloseAmount formatedTupleLong oldLong
-  filteredFutureShort     <- nonRandomFilterCloseAmount formatedTupleShort oldShort
-  return (filteredFutureLong, filteredFutureShort)
-
+-- Tuple of positions to take out
+-- old closePosData
+-- returns a new closePosData
 nonRandomFilterCloseAmount ::
      [(Int, String)]     -- Tuple of positions to take out
   -> SeqFuture           -- old closePosData
@@ -147,7 +137,7 @@ nonRandomFilterCloseAmount [] closePosData          = return closePosData
 nonRandomFilterCloseAmount ((num, str):ns) closePosData = do    
     -- | splitting transaction volume into smaller parts such that exiting 
     -- positions are handeled better
-    transactionVolSplit    <- noRandomSplitAmountToRandomList num 
+    transactionVolSplit    <- nonRandomSplitAmountToRandomList num 
     adjustedFutureToVolume <- filterFutureVol transactionVolSplit closePosData ns    
     nonRandomFilterCloseAmount ns adjustedFutureToVolume
     where        
@@ -159,7 +149,7 @@ nonRandomFilterCloseAmount ((num, str):ns) closePosData = do
                         | x < amt
                             -> do
                                 let updatedFutureInfo = rest |> (liq, amt - x, sid)
-                                nonRandomFilterCloseAmount ns updatedFutureInfo
+                                --nonRandomFilterCloseAmount ns updatedFutureInfo
                                 filterFutureVol xs updatedFutureInfo ns               
                         | otherwise
                             -> do
@@ -167,8 +157,20 @@ nonRandomFilterCloseAmount ((num, str):ns) closePosData = do
                                 let updatedFutureInfo = rest 
                                 let newX = x - amt
                                 --((x - amt, s) : ns) updatedFutureInfo
-                                nonRandomFilterCloseAmount ((newX, str) : ns) updatedFutureInfo -- rest                                                           
+                                --nonRandomFilterCloseAmount ((newX, str) : ns) updatedFutureInfo -- rest                                                           
                                 filterFutureVol (newX:xs) updatedFutureInfo ns
+
+
+
+nonRandomizedfilterFutureClose ::
+     Position -> (SeqFuture, SeqFuture) -> IO (SeqFuture, SeqFuture)
+nonRandomizedfilterFutureClose (closingLong, closingShort) (oldLong, oldShort) {-output (newLong,newShort-}
+  = do
+  let formatedTupleLong   = filterTuple "z" closingLong
+  let formatedTupleShort  = filterTuple "f" closingShort
+  filteredFutureLong      <- nonRandomFilterCloseAmount formatedTupleLong oldLong
+  filteredFutureShort     <- nonRandomFilterCloseAmount formatedTupleShort oldShort
+  return (filteredFutureLong, filteredFutureShort)
 
 
 nonRandomNormalGenerator ::

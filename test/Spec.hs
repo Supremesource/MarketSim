@@ -77,14 +77,14 @@ import NRandomFunc
 
 main :: IO ()
 main = do
-    --tests
-    hspec testsExpected
+    tests
+    --hspec testsExpected
 
 -- ? comment tests in this function if you want to skip some
 tests :: IO ()
 tests = do
-  testsLib
-  testsUtil
+ -- testsLib
+ -- testsUtil
   testsPosCycle
 
 testsExpected :: SpecWith ()
@@ -654,10 +654,10 @@ testsPosCycle = hspec $ do
     
   describe "PosCycle.splitAmountToRandomList" $ do
     it "returns (non-randomized (test) + randomized) volume split into smaller parts" $ do
-      result'h <- noRandomSplitAmountToRandomList 500
-      result'd <- noRandomSplitAmountToRandomList 100
-      result'c <- noRandomSplitAmountToRandomList 200
-      result'j <- noRandomSplitAmountToRandomList 600
+      result'h <- nonRandomSplitAmountToRandomList 500
+      result'd <- nonRandomSplitAmountToRandomList 100
+      result'c <- nonRandomSplitAmountToRandomList 200
+      result'j <- nonRandomSplitAmountToRandomList 600
       resultRandom <- splitAmountToRandomList 100
 
       result'h `shouldBe` [275,25,25,25,25,25,25,25,25,25]
@@ -763,30 +763,76 @@ recursiveOutputCheck (x:xs) =
       totalVol = overalVolumePos x
       openInterest = overalOpenInterestPos x
       liquidInfo = liquidationInfoPos x -- todo on liquidation info
-  in 
-     takerX + makerX == xPosAmount                                             &&     
-     takerY + makerY == yPosAmount                                             &&       
-     takerZ + makerZ == zPosAmount                                             &&         
-     takerF + makerF == fPosAmount                                             &&
-     takerX + takerZ == buyVol                                                 &&           
-     takerY + takerF == sellVol                                                &&
-     makerX + makerZ == sellVol                                                &&
-     makerY + makerF == buyVol                                                 &&
-    --  (xPosAmount > 0 || zPosAmount > 0)                                        &&
-    --  (yPosAmount > 0 || fPosAmount > 0)                                        &&
-    --  (xPosCount  > 0 || zPosCount  > 0 )                                       &&
-    --  (yPosCount  > 0 || fPosCount  > 0 )                                       &&     
-     buyVol + sellVol == totalVol                                            && 
-     buyVol + sellVol == xPosAmount + zPosAmount                             &&
-     buyVol + sellVol == yPosAmount + fPosAmount                             &&
-     openInterest == (xPosAmount + yPosAmount) - (zPosAmount + fPosAmount )  &&
-    -- xPosAmount + yPosAmount == openInterest `div` totalVol + totalVol                  &&
+      checkTakerXY = if buyVol > 0 && openInterest > 0 then Just (takerX > makerX) else Nothing
+      checks = 
+    
+                    [
+                          takerX + makerX == xPosAmount                                                
+                        , takerY + makerY == yPosAmount                                                  
+                        , takerZ + makerZ == zPosAmount                                                     
+                        , takerF + makerF == fPosAmount                                            
+                        , takerX + takerZ == buyVol                                                      
+                        , takerY + takerF == sellVol                                               
+                        , makerX + makerZ == sellVol                                               
+                        , makerY + makerF == buyVol                                                 
+                        , (xPosAmount > 0 || zPosAmount > 0)                                       
+                        , (yPosAmount > 0 || fPosAmount > 0)                                       
+                        , (xPosCount  > 0 || zPosCount  > 0)                                     
+                        , (yPosCount  > 0 || fPosCount  > 0)                                        
+                        , buyVol + sellVol == totalVol                                           
+                        , buyVol + sellVol == xPosAmount + zPosAmount                            
+                        , buyVol + sellVol == yPosAmount + fPosAmount                            
+                        , 0 == ((openInterest * 2) - ((xPosAmount + yPosAmount) - (zPosAmount + fPosAmount )) ) 
+                        , xPosAmount + yPosAmount == totalVol + openInterest  
+                        , zPosAmount + fPosAmount == totalVol - openInterest
+                        , xPosAmount + zPosAmount == totalVol
+                        , yPosAmount + fPosAmount == totalVol
+                        , xPosAmount == totalVol - zPosAmount
+                        , yPosAmount == totalVol - fPosAmount   
+                        , fromMaybe True checkTakerXY
 
-     recursiveOutputCheck xs
+                    ]
+                    in all id checks && recursiveOutputCheck xs
 
-example = 
-  all id [
-    2 + 2 == 4,
-    3 * 7 == 21,
-    -- xPosAmount > 0 || zPosAmount > 0,
-  ]
+{-
+recursiveOutputCheck :: [FileWritePosition] -> Bool
+recursiveOutputCheck [] = True
+recursiveOutputCheck (x:xs) = 
+  let identPos = identifierPosition x
+      xPosAmount = totalXPosAmount x
+      yPosAmount = totalYPosAmount x
+      zPosAmount = totalZPosAmount x
+      fPosAmount = totalFPosAmount x
+      xPosCount = totalXPosCount x
+      yPosCount = totalYPosCount x
+      zPosCount = totalZPosCount x
+      fPosCount = totalFPosCount x
+      takerX = takerXPos x
+      takerY = takerYPos x
+      takerZ = takerZPos x
+      takerF = takerFPos x
+      makerX = makerXPos x
+      makerY = makerYPos x
+      makerZ = makerZPos x
+      makerF = makerFPos x
+      buyVol = buyVolumePos x
+      sellVol = sellVolumePos x
+      totalVol = overalVolumePos x
+      openInterest = overalOpenInterestPos x
+      liquidInfo = liquidationInfoPos x -- todo on liquidation info
+      checks = [ takerX + makerX == xPosAmount                                                
+               , takerY + makerY == yPosAmount                                                  
+               , takerZ + makerZ == zPosAmount                                                     
+               , takerF + makerF == fPosAmount                                            
+               , takerX + takerZ == buyVol                                                      
+               , takerY + takerF == sellVol                                               
+               , makerX + makerZ == sellVol                                               
+               , makerY + makerF == buyVol                                                 
+               , buyVol + sellVol == totalVol                                           
+               , buyVol + sellVol == xPosAmount + zPosAmount                            
+               , buyVol + sellVol == yPosAmount + fPosAmount                            
+               , openInterest == (xPosAmount + yPosAmount) - (zPosAmount + fPosAmount )
+               -- more conditions can be added here
+               ]
+  in all id checks && recursiveOutputCheck xs
+-}

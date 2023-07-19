@@ -32,6 +32,7 @@ dependencies:
 - haskell-dap
 - random-shuffle
 - hspec-expectations
+- criterion
 
 ghc-options:
 - -Wall
@@ -43,6 +44,7 @@ ghc-options:
 - -Wmissing-home-modules
 - -Wpartial-fields
 - -Wredundant-constraints
+
 
 library:
   source-dirs: 
@@ -95,6 +97,8 @@ executables:
     - haskell-dap
     - random-shuffle
     - hspec-expectations
+    - criterion
+ 
    
   marketsim-server-exe:
     main:  Main.hs
