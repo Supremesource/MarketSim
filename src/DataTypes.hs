@@ -55,6 +55,12 @@ data TransactionFut = TransactionFut {
     future :: ClosePositionData
   } deriving (Show, Generic, FromJSON, ToJSON)
 
+data VolumeStage =
+                Undefined |
+                   LowVol |
+                MediumVol |
+                HighVol deriving (Show, Eq)
+
 data FileWritesLog = FileWritesLog
    {  identifierLOG           :: String
     , startingPointLOG        :: Double 
@@ -141,7 +147,8 @@ data PositionData = PositionData
   ,sellVolumePosition         :: Int
   ,overalVOLUMEPosition       :: Int
   ,overalOpenInterestPosition :: Int
-  }deriving Generic
+  }deriving (Show, Eq) 
+  deriving Generic
   deriving (FromJSON, ToJSON)
   via JSONConfig PositionData
 

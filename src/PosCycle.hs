@@ -159,6 +159,7 @@ oppositeSide side =
     then "y"
     else "x"
 
+{-
 randomSide :: IO String
 randomSide = do
   -- > RANDOMNESS <
@@ -169,21 +170,13 @@ randomSide = do
     if randVal < takerxProb
       then "x"
       else "y"
-
-initGenerator :: [Int] -> [Int] -> IO (TakerPositions, MakerPositions)
-initGenerator takerLst makerLst = do
-
-  takerSide' <- randomSide
-  let makerside = oppositeSide takerSide'
-  let takerT = zip takerLst $ replicate (length takerLst) takerSide'
-  let makerT = zip makerLst $ replicate (length makerLst) makerside
-  return (takerT, makerT)
+-}
 
 type SeqClosePositionData = (Seq (Double, Int, String), Seq (Double, Int, String))
 
 normalGenerator ::
-     [Int] -> [Int] -> SeqClosePositionData -> String -> IO (TakerPositions, MakerPositions)
-normalGenerator takerLst makerLst (toTakeFromLong, toTakeFromShort) liqSide = do
+     VolumeSide -> [Int] -> [Int] -> SeqClosePositionData -> String -> IO (TakerPositions, MakerPositions)
+normalGenerator tVolumeSide takerLst makerLst (toTakeFromLong, toTakeFromShort) liqSide = do
   unless (closingProb >= 1 && closingProb <= 10) $
     error "closingProb must be between 1 and 10"
   let genType =
@@ -197,7 +190,8 @@ normalGenerator takerLst makerLst (toTakeFromLong, toTakeFromShort) liqSide = do
   where
     openingGen :: IO (TakerPositions, MakerPositions)
     openingGen = do
-      takerSide' <- randomSide
+      let toTakerSide = if tVolumeSide == Buy then "x" else "y"
+      let takerSide' = toTakerSide
 
       let finalTakerSide =
             if liqSide /= ""
@@ -214,8 +208,8 @@ normalGenerator takerLst makerLst (toTakeFromLong, toTakeFromShort) liqSide = do
       return (takerT, makerT)
     normalGen :: IO (TakerPositions, MakerPositions)
     normalGen = do
-      takerSide' <- randomSide
-
+      let toTakerSide = if tVolumeSide == Buy then "x" else "y"
+      let takerSide' = toTakerSide
       let finalTakerSide =
             if liqSide /= ""
               then liqSide
@@ -469,16 +463,18 @@ output: ` updated accumulators for FUTURE
 -}
 -- ? PUTTING ALL FUNCTIONS ABOVE TOGETHER
 normalrunProgram ::
-     ([Int], [Int])
+        VolumeSide
+  ->   ([Int], [Int])
   -> SeqClosePositionData
   -> Double
   -> String
   -> IO ( SeqClosePositionData    -- # updated accumulator short # updated accumulator long
         , NewPositioning ) -- # updated accumulator positions
-normalrunProgram (volumeSplitT, volumeSplitM) (oldLongFuture, oldShortFuture) -- TODO TAKE OUT oldPositions
+normalrunProgram volSide (volumeSplitT, volumeSplitM) (oldLongFuture, oldShortFuture) -- TODO TAKE OUT oldPositions
                                                sPrice liqSide = do
   newPositioning <-
     normalGenerator
+      volSide
       volumeSplitT
       volumeSplitM
       (oldLongFuture, oldShortFuture)

@@ -161,6 +161,7 @@ handleBaseCase genPass = do
       , posStatsOutput    = posStats
     }
 
+
 handleGeneralCase :: GenerationPass -> IO GenerationOutput
 handleGeneralCase genPass@GenerationPass{} = do
   let liqinfo = initLiquidationAcc1Input genPass
@@ -323,7 +324,8 @@ volLiqProcessing listPass@ListPass{} (wholeLIQvolume, wholeLIQside)  = do
                               , longinfoInputCycle  = longinfo
                               , shortinfoInputCycle = shortinfo
                               , vAmountInputCycle   = adjVolAmount
-                              , posinfoInputCycle   = posinfo }
+                              , posinfoInputCycle   = posinfo 
+                              , vSideInputCycle     = adjVolSide}
 
   let PositionCycleOutput
          { newLiqInfo        = newLiqInfoGenerated
@@ -500,6 +502,7 @@ data PositionCyclePass = PositionCyclePass
     , shortinfoInputCycle :: Seq (Double, Int, String)
     , vAmountInputCycle   :: Int
     , posinfoInputCycle   :: (Seq (Int, String), Seq (Int, String))
+    , vSideInputCycle     :: VolumeSide
   }
 
 data PositionCycleOutput = PositionCycleOutput
@@ -515,13 +518,14 @@ data PositionCycleOutput = PositionCycleOutput
 -- ! does not need to recive liquidation info
 positionCycle :: PositionCyclePass -> IO PositionCycleOutput
 positionCycle positionCyclePass@PositionCyclePass{} = do
-  let (sPricegen, liqinfo, longinfo, shortinfo, vAmount, posinfo) =
+  let (sPricegen, liqinfo, longinfo, shortinfo, vAmount, posinfo, vSide) =
         (sPriceInputCycle   positionCyclePass,
         liqinfoInputCycle   positionCyclePass,
         longinfoInputCycle  positionCyclePass,
         shortinfoInputCycle positionCyclePass,
         vAmountInputCycle   positionCyclePass,
-        posinfoInputCycle   positionCyclePass)
+        posinfoInputCycle   positionCyclePass,
+        vSideInputCycle   positionCyclePass)
   let (_, sideLIQ, _) =
         case liqinfo of
           [] -> ([], [], [])
@@ -547,6 +551,7 @@ positionCycle positionCyclePass@PositionCyclePass{} = do
   let newLiqInfogen = liquidationIO
   runProgram <-
     normalrunProgram
+      vSide
       (volumeSplitT, volumeSplitM)
       (longliq, shortliq)
       sPricegen

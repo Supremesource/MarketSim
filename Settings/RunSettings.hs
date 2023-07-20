@@ -66,12 +66,12 @@ wipingStartingValue = 100
 -- | number of positions you want to take place in the simulation runProgram
 -- | number of positions
 numPositions :: Int
-numPositions = 10
+numPositions = 50000
 
 --〇 ID = NUMrunProgram
 -- | number of runPrograms, this is a loop how many times will the simulation repeat itself (random generators are updating each time though)
-numberOfrunPrograms :: Int
-numberOfrunPrograms = 1
+--numberOfrunPrograms :: Int
+--numberOfrunPrograms = 1
 
 
 -- ! activate later
@@ -80,7 +80,7 @@ numberOfrunPrograms = 1
 -- TODO add more complex statistic distribution
 -- | what is the maximum of makers in one transaction , i.e 1000 buy matched with 1000 sell, now the max makers filled in that transaction can be specified below
 maxMakers :: Int
-maxMakers = 20
+maxMakers = 25
 -- | note that max takers is hardcoded to be 95% of maxmakers (done on real market observtions)
 -- ? Not recommended to change this from 0.95
 maxTakers :: Int
@@ -125,42 +125,21 @@ runProgramlist = [DWW,DWW,DWW,DWW,DWW,DWW,DWW,DWW,DWW,DWW]
 -- | note that this function only works as a correctness checker for yourslf, exchanges always have a minimum volume allowed by the user, make yours
 -- | not recommended to go below 10 , depends on your maxmakers, maxtakers, there is potential error catching metric implemented, but still set this rather high
 minvolume :: Int
-minvolume = 1000
-
+minvolume = 100
 --〇 ID = VOL02
 -- | BUY VOUME
--- | longs NEW
-basecaseValueLongNew :: Int
-basecaseValueLongNew = 3000
-upperBoundLongNew :: Int
-upperBoundLongNew = 3000
--- | shorts CLOSE
-basecaseValueShortClose :: Int
-basecaseValueShortClose = 3000
-upperBoundShortClose :: Int
-upperBoundShortClose = 3000
-
+minBuyVol :: Int
+minBuyVol = 100
+maxBuyVol :: Int
+maxBuyVol = 50000
 -- | SELL VOLUME
--- | shorts NEW
-basecaseValueShortNew :: Int
-basecaseValueShortNew = 2500
-upperBoundShortNew :: Int
-upperBoundShortNew = 2500
--- | longs CLOSE
-basecaseValueLongClose :: Int
-basecaseValueLongClose = 2500
-upperBoundLongClose :: Int
-upperBoundLongClose = 2500
+minSellVol :: Int
+minSellVol = 100
+maxSellVol :: Int
+maxSellVol = 50000
 
--- Statistics :
--- | Position-Status occurrence:
--- | in %
--- | note that setting 'should' add up to 100 %, it's a good practice at least, for keeping track :)
-
--- 〇 ID = STAT
-
+-- previous stat amount now it's probability 
 --  VOLUME Probability
-
 -- | BUY VOLUME
 buyTakerProb :: Int
 buyTakerProb = 50

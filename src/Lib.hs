@@ -58,7 +58,7 @@ import           System.Random             (Random (randomR, randomRs),
                                             newStdGen, randomRIO, setStdGen)
 import           Text.Printf               (printf)
 import           Data.Sequence             (Seq, (<|), viewl, ViewL(..),fromList,foldlWithIndex)
-
+import             Debug.Trace
 
 -- | internal libraries
 import           Colours
@@ -314,13 +314,13 @@ interestorPlus ((n1, s1):takers) ((n2, s2):makers)
 -- ? CHECKERS
 -- | checking volume
 volumechecker ::
-     Int -> Int -> Int -> Int -> Int -> Int -> Int -> Int -> Int -> IO ()
-volumechecker minimumV a b c d e f g h
+     Int -> Int -> Int -> Int -> Int -> IO ()
+volumechecker minimumV a b c d 
   | a < minimumV   ||
       b < minimumV ||
       c < minimumV ||
-      d < minimumV ||
-      e < minimumV || f < minimumV || g < minimumV || h < minimumV =
+      d < minimumV =
+     
     error
       (red
          "\n\nVolume must be greater than minimum volume specified in settings")
@@ -406,7 +406,7 @@ templeaterunProgramSELL a op =
 
 
 -- | i == position index
-processTempleaterunProgram :: Int -> Options -> [Int]
+processTempleaterunProgram :: Int -> Options -> (Int,Int)
 processTempleaterunProgram i o = do
   let process =
         runProgramPercentage numPositions (toIntegralLenght runProgramlist)
@@ -424,7 +424,8 @@ processTempleaterunProgram i o = do
         if ifprocess
           then sellTakerProb
           else optionProcessor currentO sellTakerProb
-  [templeatedprobability, templeatedprobabilityY]
+  (templeatedprobability, templeatedprobabilityY)
+
 
 -- | local variables
 

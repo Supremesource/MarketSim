@@ -175,60 +175,28 @@ writeLog statsList idList02 = do
 -- | rewriting bid TO ask RATIO
 -- | printing stats associated with positioning
 printPositionStats ::
-    Int -> (TakerPositions, MakerPositions) -> [PositionData] -> IO (Int, VolumeSide, [PositionData])
-printPositionStats i (taker, makers) acc = do
+     (TakerPositions, MakerPositions) -> IO (Int, VolumeSide)
+printPositionStats  (taker, makers)  = do
 
  -- | checking if maker & taker tuple is negative
   let tupleNegativecheck =
         Control.Monad.when (not (nonNegative taker) && not (nonNegative makers)) $
         error $
         red
-          "makers transaction is negative, (something possibly wrong with checker \
-          \ letting you come to this error),                                \
-          \ check /settings and input different values, \n                  \
-          \     congratulations on getting the rarest error <(|O|_|O|)> "
+          "makers transaction is negative, (something possibly wrong with checker "
+    
   tupleNegativecheck
   -- | scope bindings
   -- | volumesum
-  let volumeSume = foldl (\acc (x, _) -> acc + x) 0 taker
+  let volumeSume = foldl (\acc' (x, _) -> acc' + x) 0 taker
   let sideVol
         | snd (head taker) == "BUY" || snd (head taker) == "BUY" = Buy
         | snd (head taker) == "SELL" || snd (head taker) == "SELL" = Sell
         | otherwise                                          = error $ red
           "generating volume failed"
 
--- ! turn back on once implementation back
-  let overalOpenInterest =
-        interestorPlus taker makers - interestorMinus taker makers
-
-  let buyVOLUME =
-        if sideVol == Buy
-          then volumeSume
-          else 0
-  let sellVOLUME =
-        if sideVol == Sell
-          then volumeSume
-          else 0
-  let overalVOLUME                  = volumeSume
-  let fileWritesPosition            = PositionData
-        {totalXPosition             = totalX
-        ,totalYPosition             = totalY
-        ,totalZPosition             = totalZ
-        ,totalFPosition             = totalF
-        ,buyVolumePosition          = buyVOLUME
-        ,sellVolumePosition         = sellVOLUME
-        ,overalVOLUMEPosition       = overalVOLUME
-        ,overalOpenInterestPosition = overalOpenInterest
-        }
-  let newAcc = acc ++ [fileWritesPosition]
-
   -- | goes into console  
-  return (volumeSume, sideVol, newAcc)
-  where
-    totalX                    = elementSize "x" taker + elementSize "x" makers
-    totalY                    = elementSize "y" taker + elementSize "y" makers
-    totalZ                    = elementSize "z" taker + elementSize "z" makers
-    totalF                    = elementSize "f" taker + elementSize "f" makers
+  return (volumeSume, sideVol)
 
 --writePositionsToFile :: FilePath -> [PositionData] -> IO ()
 --writePositionsToFile newLongsPath' positionDataList = do
@@ -318,21 +286,14 @@ checkers stats =
 
 -- | setting checker
   , ( "Checker 10"
-    , if basecaseValueLongNew >= upperBoundLongNew
+    , if minBuyVol >= maxBuyVol
         then error $ red "10 fail"
         else "check 10 pass")
-  , ( "Checker 11"
-    , if basecaseValueLongClose >= upperBoundLongClose
-        then error $ red "11 fail"
-        else "check 11 pass")
   , ( "Checker 12"
-    , if basecaseValueShortNew >= upperBoundShortNew
+    , if minSellVol >= maxSellVol
         then error $ red "12 fail"
         else "check 12 pass")
-  , ( "Checker 13"
-    , if basecaseValueShortClose >= upperBoundShortClose
-        then error $ red "13 fail"
-        else "check 13 pass")
+ 
   ]
 
 nonNegative :: TakerPositions -> Bool

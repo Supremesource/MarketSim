@@ -110,50 +110,35 @@ setupBookDetails (startingP', maxMinL', asksTot', bidsTot', takewall', lengchngB
 
 -- | aggregating stats together
 aggregateStats :: (TakerPositions, MakerPositions) -> Stats -> Stats
-aggregateStats (taker, makers) stats =
+aggregateStats (taker, maker) stats =
   Stats
     { overallOI =
-        overallOI stats + interestorPlus taker makers -
-        interestorMinus taker makers
-    , totalVolume = totalVolume stats + foldl (\acc (x, _) -> acc + x) 0 taker
-    , buyVolume =
-        buyVolume stats +
-        foldl
-          (\acc (x, y) ->
-             if y == "x" || y == "z"
-               then acc + x
-               else acc)
-          0
-          taker
-    , sellVolume =
-        sellVolume stats +
-        foldl
-          (\acc (x, y) ->
-             if y == "y" || y == "f"
-               then acc + x
-               else acc)
-          0
-          taker
+        overallOI stats + interestorPlus taker maker -
+        interestorMinus taker maker
+    , totalVolume = totalVolume stats + elementSize "x" taker + 
+          elementSize "y" taker + elementSize "z" taker + elementSize "f" taker
+    , buyVolume  =  buyVolume stats + elementSize "x" taker + elementSize "z" taker
+    , sellVolume = sellVolume stats + elementSize "y" taker + elementSize "f" taker      
     , takerXc = takerXc stats + countElements "x" taker
     , takerYc = takerYc stats + countElements "y" taker
     , takerZc = takerZc stats + countElements "z" taker
     , takerFc = takerFc stats + countElements "f" taker
-    , makerXc = makerXc stats + countElements "x" makers
-    , makerYc = makerYc stats + countElements "y" makers
-    , makerZc = makerZc stats + countElements "z" makers
-    , makerFc = makerFc stats + countElements "f" makers
-    , offX = offX stats + elementSize         "x" taker + elementSize "x" makers
-    , offY = offY stats + elementSize         "y" taker + elementSize "y" makers
-    , offZ = offZ stats + elementSize         "z" taker + elementSize "z" makers
-    , offF = offF stats + elementSize         "f" taker + elementSize "f" makers
+    , makerXc = makerXc stats + countElements "x" maker
+    , makerYc = makerYc stats + countElements "y" maker
+    , makerZc = makerZc stats + countElements "z" maker
+    , makerFc = makerFc stats + countElements "f" maker
+    , offX = offX stats + elementSize         "x" taker + elementSize "x" maker
+    , offY = offY stats + elementSize         "y" taker + elementSize "y" maker
+    , offZ = offZ stats + elementSize         "z" taker + elementSize "z" maker
+    , offF = offF stats + elementSize         "f" taker + elementSize "f" maker
     , takerX = takerX stats + elementSize     "x" taker
     , takerY = takerY stats + elementSize     "y" taker
     , takerZ = takerZ stats + elementSize     "z" taker
     , takerF = takerF stats + elementSize     "f" taker
-    , makerX = makerX stats + elementSize     "x" makers
-    , makerY = makerY stats + elementSize     "y" makers
-    , makerZ = makerZ stats + elementSize     "z" makers
-    , makerF = makerF stats + elementSize     "f" makers
+    , makerX = makerX stats + elementSize     "x" maker
+    , makerY = makerY stats + elementSize     "y" maker
+    , makerZ = makerZ stats + elementSize     "z" maker
+    , makerF = makerF stats + elementSize     "f" maker
     }
 
 -- FUNCTIONS
