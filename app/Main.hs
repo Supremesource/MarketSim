@@ -54,7 +54,7 @@ import           System.IO                   (BufferMode (LineBuffering),
 --import           System.Process              (callCommand)
 import           Data.Sequence               (fromList, Seq)
 import           System.Random               (Random (randomRs))
-
+import           Debug.Trace
 
 -- | internal libraries
 import           Colours
@@ -72,49 +72,8 @@ import System.CPUTime
 import Text.Printf
 
 main :: IO ()
-main = initRun
-
-initRun :: IO ()
-initRun = do
-  -- | clening log file before every runProgram
+main = do 
   writeFile logP ""
-  -- | optimizing the IO to be formated in lines
- -- hSetBuffering stdout LineBuffering
-  -- | Asking user to proceed
-  --putStrLn $
-   -- cyan   $
-  --  "Proceed (_ / n)" ++ gray "\n\n { for runProgram-restore press - (w) }"
- -- proceed <- getLine
-  -- | WIPING runProgram == TRUE
-  -- | When wiping runProgram is runProgramning the whole code is not evaluated
-  -- | Wiping all of the text files, and changing the starting point
-  --if proceed == "W" || proceed == "w"
-    -- | user wants to proceed with the simulation generation
-    -- | checking settings, catching potential bugs in the setting specified by user
-    -- | if the settings are not correct, the program will not runProgram
-    -- | CHECKING IF FILES ARE EMPTY
-   
-   {- 
-    then do
-      let sayStart = show wipingStartingValue
-      putStrLn $ purple "YOU DELETED OUTPUT & DATA FILES"
-      putStr $ gray "\nnew starting value will be set to: $"
-      putStrLn $ purple $ show sayStart
-      putStrLn $
-        gray
-          "\n { you can adjsut starting value in the '..Settings/runProgramSetting' } "
-      newrunProgramSettings
-        askBookP
-        bidBookP
-        logP
-        orderBookDetailsP
-        positionInfoP
-        initPriceP
-        posCloseDatP
-        wipingStartingValue
-    else if proceed == "n" || proceed == "N"
-           then error (red "stopping program")
-           else -}
   runProgram
 
  --  Entry points of program
@@ -122,7 +81,7 @@ runProgram :: IO ()
 runProgram = do
   start  <- getCPUTime
 
-  when autoRestore 
+  when autoRestore
     (newrunProgramSettings
       askBookP
       bidBookP
@@ -175,50 +134,22 @@ runProgram = do
 
   end <- getCPUTime
   let diff = fromIntegral (end - start) / (10^(12 :: Integer))
-
-  printf "Overall time: %.6f seconds\n" (diff :: Double)
-
-runProgramProgramHelp :: Stats -> Int -> IO [(Int, VolumeSide)]
-runProgramProgramHelp aggregatedStats remainingrunPrograms = do
-  mainLoop aggregatedStats remainingrunPrograms []
+  printf "Overall time of running code: %.6f seconds\n" (diff :: Double)
 
 
--- | loop initializing the main processes
-mainLoop :: Stats -> Int -> [(Int, Position)] -> IO [(Int, VolumeSide)]
-mainLoop aggregatedStats remainingrunPrograms accumulatedStats = do
-  if remainingrunPrograms > 0
-    then do
-      positions <-
-        forM [1 .. numPositions] $ \indexPosition -> do
-          randomToTempleate <- randomOptionGen
-          generateRandomPosition
-            (processTempleaterunProgram indexPosition randomToTempleate)
-      let newAggregatedStats =
-            foldl (flip aggregateStats) aggregatedStats positions
-      let newAccumulatedStats
+genVolumeAux :: Int -> Int -> VolumeStage -> [(Int, VolumeSide)] -> IO [(Int, VolumeSide)]
+genVolumeAux aux numPositions' stage takerAcc
+  | aux >= numPositions' = return takerAcc
+  | otherwise = do
+      randomToTemplate <- randomOptionGen
+      (taker, newStage) <- generateRandomPosition (processTempleaterunProgram aux randomToTemplate) stage
+      genVolumeAux (aux + 1) numPositions' newStage (taker ++ takerAcc)
 
-           = accumulatedStats ++ zip [1 ..] positions
-      mainLoop newAggregatedStats (remainingrunPrograms - 1) newAccumulatedStats
-    else do
-      noRemainingrunProgram aggregatedStats accumulatedStats
-
-
-noRemainingrunProgram :: Stats -> [(Int, Position)] -> IO [(Int, VolumeSide)]
-noRemainingrunProgram aggregatedStats accumulatedStats = do
-  -- printFinal aggregatedStats
-
-  -- Accumulate all the results first
-  results <-
-    forM accumulatedStats $ \(indexPosition, positionInfo) -> do
-      (volume, side, acc) <-
-        printPositionStats indexPosition positionInfo initialPositionData
-      return (volume, side, acc)
-
-
-  -- Return the results, discarding the [PositionData] part
-  return [(volume, side) | (volume, side, _) <- results]
-
-
+genVolume :: {-Stats-}  IO [(Int, VolumeSide)]
+genVolume {-aggregatedStats-}    = do
+ -- trace ("mainLoop - remainingrunPrograms: " ++ show remainingrunPrograms) $ return ()
+ -- trace ("mainLoop - accumulatedStats: " ++ show accumulatedStats) $ return ()
+  genVolumeAux 0 numPositions Undefined []
 
 generator ::
      Bool
@@ -246,10 +177,11 @@ generator isBidEmpty isAskEmpty orderbook_bid orderbook_ask fileBidBook fileAskB
              -- ? ADDING STATS FROM 'MAINLOOP' TOGETHER
              -- | price change
              -- ? volume ist everything is being generated out of
-  volumesAndSides <- runProgramProgramHelp initStats numberOfrunPrograms
+  volumesAndSides <- genVolume  {-initStats-}
 
   let initialBookDetailsList = [initialBookDetails]
   let listofvolumes = volumesAndSides
+  --print listofvolumes
   isCloseEmpty <- isCloseDataEmpty
   --  print isCloseEmpty
   initAccLongClose <-
@@ -294,14 +226,10 @@ localCheck :: IO ()
 localCheck = do
   volumechecker
     minvolume
-    basecaseValueLongNew
-    basecaseValueShortNew
-    basecaseValueLongClose
-    basecaseValueShortClose
-    upperBoundLongNew
-    upperBoundShortNew
-    upperBoundLongClose
-    upperBoundShortClose
+    minBuyVol
+    minSellVol
+    maxBuyVol
+    maxSellVol
   positionamountcheck minvolume 1 -- TODO take out this 1
 
 warnings :: IO ()
@@ -370,12 +298,3 @@ orderBook initstartingPoint gen1 gen2
     , fullwallsASK
     , fullwallsBIDS
     , inittotakefromwall)
-
-
-
-{-
-            -- | calling python script (graph)
-            --  TODO make this way more effective, calling the script below
-             Control.Monad.when plotCharts $
-               callCommand "python scripts/plot_prices.py"
--}

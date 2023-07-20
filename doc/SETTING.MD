@@ -146,10 +146,10 @@ minvolume = 250
 --〇 ID = VOL02
 -- | BUY VOUME
 -- | longs NEW
-basecaseValueLongNew :: Int
-basecaseValueLongNew = 300
-upperBoundLongNew :: Int
-upperBoundLongNew = 162100
+minBuyVol :: Int
+minBuyVol = 300
+maxBuyVol :: Int
+maxBuyVol = 162100
 -- | shorts CLOSE
 basecaseValueShortClose :: Int
 basecaseValueShortClose = 500
@@ -157,10 +157,10 @@ upperBoundShortClose :: Int
 upperBoundShortClose = 161200
 -- | SELL VOLUME
 -- | shorts NEW
-basecaseValueShortNew :: Int
-basecaseValueShortNew = 250
-upperBoundShortNew :: Int
-upperBoundShortNew = 160000
+minSellVol :: Int
+minSellVol = 250
+maxSellVol :: Int
+maxSellVol = 160000
 -- | longs CLOSE
 basecaseValueLongClose :: Int
 basecaseValueLongClose = 250
@@ -334,10 +334,10 @@ minvolume = 80
 --〇 ID = VOL02
 -- | BUY VOUME
 -- | longs NEW
-basecaseValueLongNew :: Int
-basecaseValueLongNew = 80
-upperBoundLongNew :: Int
-upperBoundLongNew = 10000
+minBuyVol :: Int
+minBuyVol = 80
+maxBuyVol :: Int
+maxBuyVol = 10000
 -- | shorts CLOSE
 basecaseValueShortClose :: Int
 basecaseValueShortClose = 80
@@ -345,10 +345,10 @@ upperBoundShortClose :: Int
 upperBoundShortClose = 11000
 -- | SELL VOLUME
 -- | shorts NEW
-basecaseValueShortNew :: Int
-basecaseValueShortNew = 80
-upperBoundShortNew :: Int
-upperBoundShortNew = 10500
+minSellVol :: Int
+minSellVol = 80
+maxSellVol :: Int
+maxSellVol = 10500
 -- | longs CLOSE
 basecaseValueLongClose :: Int
 basecaseValueLongClose = 80
