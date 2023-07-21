@@ -97,7 +97,7 @@ import           Data.Sequence        (Seq (Empty), ViewL ((:<), EmptyL), (<|), 
 --import           System.Random.Shuffle (shuffleM)
 
 -- | debugging
-import Criterion.Main
+--import Criterion.Main
 import Debug.Trace
 import Control.Exception(evaluate)
 

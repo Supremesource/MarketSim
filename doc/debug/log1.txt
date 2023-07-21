@@ -1,0 +1,160 @@
+# wihtout liquidation
+
+Monte carlo: 
+[(18322147,Sell),(15793875,Sell),(16783420,Buy),(12109224,Sell),(17316690,Sell),(11143879,Sell),(18926926,Sell),(11991175,Buy),(19967287,Buy),(12034558,Buy)]
+
+
+##########1.######
+
+traced list if null: 
+[(18322147,Sell),(15793875,Sell),(16783420,Buy),(12109224,Sell),(17316690,Sell),(11143879,Sell),(18926926,Sell),(11991175,Buy),(19967287,Buy),(12034558,Buy)]
+
+ list 2
+
+[(18322147,Sell),(15793875,Sell),(16783420,Buy),(12109224,Sell),(17316690,Sell),(11143879,Sell),(18926926,Sell),(11991175,Buy),(19967287,Buy),(12034558,Buy)]
+head: (18322147,Sell)
+
+add vol acc: 
+[]
+
+##########2.######
+
+traced list if null: 
+[(15793875,Sell),(16783420,Buy),(12109224,Sell),(17316690,Sell),(11143879,Sell),(18926926,Sell),(11991175,Buy),(19967287,Buy),(12034558,Buy)]
+
+ list 2
+
+[(15793875,Sell),(16783420,Buy),(12109224,Sell),(17316690,Sell),(11143879,Sell),(18926926,Sell),(11991175,Buy),(19967287,Buy),(12034558,Buy)]
+head: (15793875,Sell)
+
+
+add vol acc: 
+[]
+
+
+##########3.######
+
+
+traced list if null: 
+[(16783420,Buy),(12109224,Sell),(17316690,Sell),(11143879,Sell),(18926926,Sell),(11991175,Buy),(19967287,Buy),(12034558,Buy)]
+
+ list 2
+
+[(16783420,Buy),(12109224,Sell),(17316690,Sell),(11143879,Sell),(18926926,Sell),(11991175,Buy),(19967287,Buy),(12034558,Buy)]
+head: (16783420,Buy)
+
+
+add vol acc: 
+[]
+
+##########4.######
+
+
+traced list if null: 
+[(12109224,Sell),(17316690,Sell),(11143879,Sell),(18926926,Sell),(11991175,Buy),(19967287,Buy),(12034558,Buy)]
+
+ list 2
+
+[(12109224,Sell),(17316690,Sell),(11143879,Sell),(18926926,Sell),(11991175,Buy),(19967287,Buy),(12034558,Buy)]
+head: (12109224,Sell)
+
+
+add vol acc: 
+[]
+
+##########5.######
+
+traced list if null: 
+[(17316690,Sell),(11143879,Sell),(18926926,Sell),(11991175,Buy),(19967287,Buy),(12034558,Buy)]
+
+ list 2
+
+[(17316690,Sell),(11143879,Sell),(18926926,Sell),(11991175,Buy),(19967287,Buy),(12034558,Buy)]
+head: (17316690,Sell)
+
+
+add vol acc: 
+[]
+
+##########6.######
+
+
+traced list if null: 
+[(11143879,Sell),(18926926,Sell),(11991175,Buy),(19967287,Buy),(12034558,Buy)]
+
+ list 2
+
+[(11143879,Sell),(18926926,Sell),(11991175,Buy),(19967287,Buy),(12034558,Buy)]
+head: (11143879,Sell)
+
+
+add vol acc: 
+[]
+
+##########7.######
+
+
+traced list if null: 
+[(18926926,Sell),(11991175,Buy),(19967287,Buy),(12034558,Buy)]
+
+ list 2
+
+[(18926926,Sell),(11991175,Buy),(19967287,Buy),(12034558,Buy)]
+head: (18926926,Sell)
+
+
+add vol acc: 
+[]
+
+##########8.######
+
+
+traced list if null: 
+[(11991175,Buy),(19967287,Buy),(12034558,Buy)]
+
+ list 2
+
+[(11991175,Buy),(19967287,Buy),(12034558,Buy)]
+head: (11991175,Buy)
+
+
+add vol acc: 
+[]
+
+##########9.######
+
+
+traced list if null: 
+[(19967287,Buy),(12034558,Buy)]
+
+ list 2
+
+[(19967287,Buy),(12034558,Buy)]
+head: (19967287,Buy)
+
+
+add vol acc: 
+[]
+
+##########10.######
+
+
+traced list if null: 
+[(12034558,Buy)]
+
+ list 2
+
+[(12034558,Buy)]
+head: (12034558,Buy)
+
+
+add vol acc: 
+[]
+
+##########11.######
+
+traced list if null: 
+[]
+base case volume: 
+[]
+OUTPUT SUCCESFULLY GENERATED

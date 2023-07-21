@@ -32,7 +32,7 @@ dependencies:
 - haskell-dap
 - random-shuffle
 - hspec-expectations
-- criterion
+
 
 ghc-options:
 - -Wall
@@ -97,7 +97,7 @@ executables:
     - haskell-dap
     - random-shuffle
     - hspec-expectations
-    - criterion
+  
  
    
   marketsim-server-exe:

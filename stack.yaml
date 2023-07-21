@@ -43,6 +43,11 @@ packages:
 extra-deps:
   - ghci-dap-0.0.21.0
   - haskell-dap-0.0.16.0
+ 
+
+#ghc-options:
+#  "*": -O2 -rtsopts -fprof-auto -threaded
+#  "$locals": -fobject-code
 
 
 # Override default flag values for local packages and extra-deps

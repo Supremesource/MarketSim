@@ -63,6 +63,8 @@ import           Lib
 import           PosCycle
 import           RunSettings
 import           Util
+import Debug.Trace
+import Colours
 
 
 
@@ -106,14 +108,33 @@ data GenerationPass = GenerationPass
 generaterunProgram ::
      GenerationPass
   -> IO  GenerationOutput
+generaterunProgram genPass = do
+
+  putStrLn $ red "traced list if null: "
+  let tracedList = trace (show (listofvolumesInput genPass)) (listofvolumesInput genPass) 
+  
+  if null tracedList
+  -- && null (initLiquidationAcc1Input genPass >< initLiquidationAcc2Input genPass) 
+  then handleBaseCase genPass
+  else handleGeneralCase genPass
+  
+  
+  -- TODO
+   -- ! turn back on
+{-
+generaterunProgram ::
+     GenerationPass
+  -> IO  GenerationOutput
 generaterunProgram genPass
+
   |  null (listofvolumesInput genPass)
  -- && null (initLiquidationAcc1Input genPass >< initLiquidationAcc2Input genPass) 
   =  handleBaseCase genPass
   |  otherwise
   = handleGeneralCase genPass
+-}
 
-
+-- FUNCTION IS NOT USING UPDATED VOLUME ACCUMULATOR
 -- base case do block
 handleBaseCase :: GenerationPass -> IO GenerationOutput
 handleBaseCase genPass = do
@@ -124,20 +145,20 @@ handleBaseCase genPass = do
   let shortinfo = initAccShortCloseInput genPass
   let bidBook = bidBookInput genPass
   let askBook = askBookInput genPass
-  let bookDetails = initialBookDetailsListInput genPass
-  let posStats = initStatsInput genPass
+  let bookDetails = tail $ reverse $  initialBookDetailsListInput genPass
+  let posStats =  tail $ reverse $ initStatsInput genPass
   -- / ACTION
   -- ? DATA
   let posFuture =  TransactionFut $ toList $ longinfo >< shortinfo
   BL.writeFile posCloseDatP $ encodePretty posFuture
   -- ? OUTPUT
-  ids <- idList
-  let reversedBookDetails = tail (reverse bookDetails)
+  ids <- idList $ length posStats
+  
   let marginCall = toList writeLiqInfo :: MarginCall
-  let convertposStats = tail (reverse posStats)
-  writeLog  reversedBookDetails ids
-  writeBook reversedBookDetails ids
-  writePosition convertposStats marginCall ids
+  
+  writeLog  bookDetails ids
+  writeBook bookDetails ids
+  writePosition posStats marginCall ids
   -- ? DATA DO NOT TOUCH
   -- | / rewriting orderbooks
   let writeBidBook = Book {book = toList bidBook}
@@ -161,7 +182,8 @@ handleBaseCase genPass = do
       , posStatsOutput    = posStats
     }
 
-
+-- TODO debug liquidation info being passed incorrectly at the end
+-- also being passed twice 
 handleGeneralCase :: GenerationPass -> IO GenerationOutput
 handleGeneralCase genPass@GenerationPass{} = do
   let liqinfo = initLiquidationAcc1Input genPass
@@ -169,9 +191,15 @@ handleGeneralCase genPass@GenerationPass{} = do
   let posinfo = initPositioningAccInput genPass
   let longinfo = initAccLongCloseInput genPass
   let shortinfo = initAccShortCloseInput genPass
-  let (x, xs) = case  listofvolumesInput genPass of
+  putStrLn "\n list 2"
+  let tracedList = trace (show (listofvolumesInput genPass)) (listofvolumesInput genPass)
+  let (x, xs) = case tracedList of
         [] -> error "listofvolumesInput was empty!"
         (y:ys) -> (y, ys)
+--  let (x, xs) = case  listofvolumesInput genPass of
+--        [] -> error "listofvolumesInput was empty!"
+--        (y:ys) -> (y, ys)
+  putStrLn $ green "\nhead: " ++ show x
   let bidBook = bidBookInput genPass
   let askBook = askBookInput genPass
   let gen1 = gen1Input genPass
@@ -182,6 +210,7 @@ handleGeneralCase genPass@GenerationPass{} = do
   let takeWall = inittotakefromwallInput genPass
   let bookDetails = initialBookDetailsListInput genPass
   let posStats = initStatsInput genPass
+
   orderbookLoop
     ListPass
     {   liqinfoInpt          = liqinfo
@@ -208,18 +237,22 @@ handleGeneralCase genPass@GenerationPass{} = do
       , newBookDetailsOutpt  = newBookDetails
       , additionalVolAccOutpt= additionalVolAcc
       , newPosStatsOutpt     = newPosStats } -> do
-
+    
+    putStrLn "new position stats: \n"
+    print newPosStats
+    putStrLn "\n"
     let (newGen1, newGen2)   = (fst (split gen1), fst (split gen2))
     generaterunProgram
-
      GenerationPass
      {  initLiquidationAcc1Input = newliqinfo
       , initLiquidationAcc2Input = writeLiqInfo >< newWriteLiqInfo
       , initPositioningAccInput  = newPosInfo
-      , initAccLongCloseInput   = newLonginfo
-      , initAccShortCloseInput  = newShortinfo
+      , initAccLongCloseInput    = newLonginfo
+      , initAccShortCloseInput   = newShortinfo
        -- ? `++` should not be a significant performance bottleneck here
-      , listofvolumesInput = additionalVolAcc ++ xs
+      , listofvolumesInput = additionalVolAcc ++ xs -- todo add it back
+              
+       
       , bidBookInput = newBidBook
       , askBookInput = newAskBook
       , gen1Input    = newGen1
@@ -230,6 +263,9 @@ handleGeneralCase genPass@GenerationPass{} = do
       , inittotakefromwallInput = takeWall
       , initialBookDetailsListInput = newBookDetails : bookDetails
       , initStatsInput = newPosStats : posStats }
+
+      
+      
 
 data ListPass = ListPass
     { liqinfoInpt       :: Seq (Int, String, String)
@@ -324,7 +360,7 @@ volLiqProcessing listPass@ListPass{} (wholeLIQvolume, wholeLIQside)  = do
                               , longinfoInputCycle  = longinfo
                               , shortinfoInputCycle = shortinfo
                               , vAmountInputCycle   = adjVolAmount
-                              , posinfoInputCycle   = posinfo 
+                              , posinfoInputCycle   = posinfo
                               , vSideInputCycle     = adjVolSide}
 
   let PositionCycleOutput
@@ -338,7 +374,13 @@ volLiqProcessing listPass@ListPass{} (wholeLIQvolume, wholeLIQside)  = do
         then fromList [(0, "", "")]
         else newLiqInfoGenerated
   let newStats       = aggregateStats localPositions initStats
+
+-- in case of liquidation it will add the volume to the accumulator
   let addVolAcc      = ([(vAmount, vSide') | wholeLIQvolume /= 0])
+ -- let addVolAcc   = ([(wholeLIQvolume,wholeLIQside) | wholeLIQvolume /= 0])
+--  let addVolAcc' = ([(vAmount, vSide') | wholeLIQvolume /= 0])
+  putStrLn $ blue "\nadd vol acc: "
+  print addVolAcc
   let newbookDetails = orderBookDetails
 
   return
@@ -440,6 +482,8 @@ data AdditionalBook    = AdditionData
         , listBID'Input     :: SeqOrderBook
         , sPriceInput       :: Double
       }
+
+      -- TODO make this funciton perform better, it's not very efficient
 -- | continuing orderbook processing, with additional data
 additionalBookInfo :: AdditionalBook -> IO BookStats
 additionalBookInfo additionalBook@AdditionData{} = do
