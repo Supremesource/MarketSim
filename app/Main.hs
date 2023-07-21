@@ -181,7 +181,8 @@ generator isBidEmpty isAskEmpty orderbook_bid orderbook_ask fileBidBook fileAskB
 
   let initialBookDetailsList = [initialBookDetails]
   let listofvolumes = volumesAndSides
-  --print listofvolumes
+  putStrLn $ red "Monte carlo: "
+  print listofvolumes
   isCloseEmpty <- isCloseDataEmpty
   --  print isCloseEmpty
   initAccLongClose <-
@@ -196,6 +197,7 @@ generator isBidEmpty isAskEmpty orderbook_bid orderbook_ask fileBidBook fileAskB
       else do
   -- filterfuture no liquidation for exit short
         filterClosePos  "z" <$> readClosePos
+  
   _ <-
     generaterunProgram
      GenerationPass

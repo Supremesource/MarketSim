@@ -69,9 +69,9 @@ generateId = do
   let randomChars = randomRs (0, length symbols - 1) gen
   return $ map (symbols !!) $ take 10 randomChars
 
-idList :: IO [String]
-idList = do
-  replicateM numPositions generateId
+idList :: Int -> IO [String]
+idList size = do
+  replicateM size generateId
 
 writeBook :: [BookStats] -> [String] -> IO ()
 writeBook statsList idList02 = do

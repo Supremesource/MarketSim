@@ -1,0 +1,162 @@
+# with liquidation
+
+Monte carlo: 
+[(8600892,Sell),(8051978,Sell),(7391678,Sell),(6865721,Buy),(7904326,Sell),(4901988,Sell),(5351761,Sell),(9748806,Sell),(4362729,Buy),(4406611,Sell)]
+
+
+##########1.######
+traced list if null: 
+[(8600892,Sell),(8051978,Sell),(7391678,Sell),(6865721,Buy),(7904326,Sell),(4901988,Sell),(5351761,Sell),(9748806,Sell),(4362729,Buy),(4406611,Sell)]
+
+ list 2
+
+[(8600892,Sell),(8051978,Sell),(7391678,Sell),(6865721,Buy),(7904326,Sell),(4901988,Sell),(5351761,Sell),(9748806,Sell),(4362729,Buy),(4406611,Sell)]
+head: (8600892,Sell)
+
+
+add vol acc: 
+[]
+
+##########2.######
+traced list if null: 
+[(8051978,Sell),(7391678,Sell),(6865721,Buy),(7904326,Sell),(4901988,Sell),(5351761,Sell),(9748806,Sell),(4362729,Buy),(4406611,Sell)]
+
+ list 2
+
+[(8051978,Sell),(7391678,Sell),(6865721,Buy),(7904326,Sell),(4901988,Sell),(5351761,Sell),(9748806,Sell),(4362729,Buy),(4406611,Sell)]
+head: (8051978,Sell)
+
+
+add vol acc: 
+[]
+
+##########3.######
+
+traced list if null: 
+[(7391678,Sell),(6865721,Buy),(7904326,Sell),(4901988,Sell),(5351761,Sell),(9748806,Sell),(4362729,Buy),(4406611,Sell)]
+
+ list 2
+
+[(7391678,Sell),(6865721,Buy),(7904326,Sell),(4901988,Sell),(5351761,Sell),(9748806,Sell),(4362729,Buy),(4406611,Sell)]
+head: (7391678,Sell)
+
+
+add vol acc: 
+[]
+
+##########4.######
+
+traced list if null: 
+[(6865721,Buy),(7904326,Sell),(4901988,Sell),(5351761,Sell),(9748806,Sell),(4362729,Buy),(4406611,Sell)]
+
+ list 2
+
+[(6865721,Buy),(7904326,Sell),(4901988,Sell),(5351761,Sell),(9748806,Sell),(4362729,Buy),(4406611,Sell)]
+head: (6865721,Buy)
+
+
+add vol acc: 
+[]
+
+##########5.######
+
+traced list if null: 
+[(7904326,Sell),(4901988,Sell),(5351761,Sell),(9748806,Sell),(4362729,Buy),(4406611,Sell)]
+
+ list 2
+
+[(7904326,Sell),(4901988,Sell),(5351761,Sell),(9748806,Sell),(4362729,Buy),(4406611,Sell)]
+head: (7904326,Sell)
+
+
+add vol acc: 
+[]
+
+##########6.######
+
+traced list if null: 
+[(4901988,Sell),(5351761,Sell),(9748806,Sell),(4362729,Buy),(4406611,Sell)]
+
+ list 2
+
+[(4901988,Sell),(5351761,Sell),(9748806,Sell),(4362729,Buy),(4406611,Sell)]
+head: (4901988,Sell)
+
+
+add vol acc: 
+[]
+
+##########7.######
+
+traced list if null: 
+[(5351761,Sell),(9748806,Sell),(4362729,Buy),(4406611,Sell)]
+
+ list 2
+
+[(5351761,Sell),(9748806,Sell),(4362729,Buy),(4406611,Sell)]
+head: (5351761,Sell)
+
+
+add vol acc: 
+[]
+
+##########8.######
+
+traced list if null: 
+[(9748806,Sell),(4362729,Buy),(4406611,Sell)]
+
+ list 2
+
+[(9748806,Sell),(4362729,Buy),(4406611,Sell)]
+head: (9748806,Sell)
+
+
+add vol acc: 
+[]
+
+##########9.######
+
+traced list if null: 
+[(4362729,Buy),(4406611,Sell)]
+
+ list 2
+
+[(4362729,Buy),(4406611,Sell)]
+head: (4362729,Buy)
+
+
+add vol acc: 
+[(4362729,Buy)]
+
+##########10.######
+
+traced list if null: 
+[(4362729,Buy),(4406611,Sell)]
+
+ list 2
+
+[(4362729,Buy),(4406611,Sell)]
+head: (4362729,Buy)
+
+
+add vol acc: 
+[]
+
+##########11.######
+traced list if null: 
+[(4406611,Sell)]
+
+ list 2
+
+[(4406611,Sell)]
+head: (4406611,Sell)
+
+##########12.######
+add vol acc: 
+[]
+traced list if null: 
+[]
+base case volume: 
+[]
+OUTPUT SUCCESFULLY GENERATED
+Overall time of running code: 1.588085 seconds
