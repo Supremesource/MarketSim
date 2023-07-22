@@ -1,0 +1,216 @@
+[
+    {
+        "buy_volume_pos": 130348698,
+        "identifier_position": "&dZo4&KHCs",
+        "liquidation_info_pos": [
+            0,
+            "",
+            ""
+        ],
+        "maker_f_pos": 0,
+        "maker_x_pos": 0,
+        "maker_y_pos": 130348698,
+        "maker_z_pos": 0,
+        "overal_open_interest_pos": 130348698,
+        "overal_volume_pos": 130348698,
+        "sell_volume_pos": 0,
+        "taker_f_pos": 0,
+        "taker_x_pos": 130348698,
+        "taker_y_pos": 0,
+        "taker_z_pos": 0,
+        "total_f_pos_amount": 0,
+        "total_f_pos_count": 0,
+        "total_x_pos_amount": 130348698,
+        "total_x_pos_count": 3,
+        "total_y_pos_amount": 130348698,
+        "total_y_pos_count": 1,
+        "total_z_pos_amount": 0,
+        "total_z_pos_count": 0
+    },
+   
+   
+   
+   
+    {
+        "buy_volume_pos": 0,
+        "identifier_position": "p1gF@gOhHx",
+        "liquidation_info_pos": [
+            0,
+            "",
+            ""
+        ],
+        "maker_f_pos": 0,
+        "maker_x_pos": 359590319,
+        "maker_y_pos": 0,
+        "maker_z_pos": 0,
+        "overal_open_interest_pos": 359590319,
+        "overal_volume_pos": 359590319,
+        "sell_volume_pos": 359590319,
+        "taker_f_pos": 0,
+        "taker_x_pos": 0,
+        "taker_y_pos": 359590319,
+        "taker_z_pos": 0,
+        "total_f_pos_amount": 0,
+        "total_f_pos_count": 0,
+        "total_x_pos_amount": 359590319,
+        "total_x_pos_count": 3,
+        "total_y_pos_amount": 359590319,
+        "total_y_pos_count": 2,
+        "total_z_pos_amount": 0,
+        "total_z_pos_count": 0
+    },
+   
+   
+    {
+        "buy_volume_pos": 0,
+        "identifier_position": "IJ7t5$wsRj",
+        "liquidation_info_pos": [
+            0,
+            "",
+            ""
+        ],
+        "maker_f_pos": 0,
+        "maker_x_pos": 168862818,
+        "maker_y_pos": 0,
+        "maker_z_pos": 0,
+        "overal_open_interest_pos": 112924946,
+        "overal_volume_pos": 168862818,
+        "sell_volume_pos": 168 862 818,
+        "taker_f_pos": 55937872,
+        "taker_x_pos": 0,
+        "taker_y_pos": 112924946,
+        "taker_z_pos": 0,
+        "total_f_pos_amount": 55937872,
+        "total_f_pos_count": 2,
+        "total_x_pos_amount": 168862818,
+        "total_x_pos_count": 3,
+        "total_y_pos_amount": 112924946,
+        "total_y_pos_count": 2,
+        "total_z_pos_amount": 0,
+        "total_z_pos_count": 0
+    },
+    
+    
+    {
+        "buy_volume_pos": 351 005 731,
+        "identifier_position": "9ARuxxMKNo",
+        "liquidation_info_pos": [
+            67539234,
+            "z",
+            "stp"
+        ],
+        "maker_f_pos": 0,
+        "maker_x_pos": 0,
+        "maker_y_pos": 351005731,
+        "maker_z_pos": 0,
+        "overal_open_interest_pos": 351005731,
+        "overal_volume_pos": 351005731,
+        "sell_volume_pos": 0,
+        "taker_f_pos": 0,
+        "taker_x_pos": 351005731,
+        "taker_y_pos": 0,
+        "taker_z_pos": 0,
+        "total_f_pos_amount": 0,
+        "total_f_pos_count": 0,
+        "total_x_pos_amount": 351005731,
+        "total_x_pos_count": 4,
+        "total_y_pos_amount": 351005731,
+        "total_y_pos_count": 4,
+        "total_z_pos_amount": 0,
+        "total_z_pos_count": 0
+    },
+   
+   
+    {            
+        "buy_volume_pos": 180 464 180,
+        "identifier_position": "X89jQyueN!",
+        "liquidation_info_pos": [
+            32937602, -- sum of liq above its liq liq below
+            "z",
+            "liq"
+        ],
+        "maker_f_pos": 180464180,
+        "maker_x_pos": 0,
+        "maker_y_pos": 0,
+        "maker_z_pos": 0,
+        "overal_open_interest_pos": -180464180,
+        "overal_volume_pos": 180 464 180,
+        "sell_volume_pos": 0,
+        "taker_f_pos": 0,
+        "taker_x_pos": 0,
+        "taker_y_pos": 0,
+        "taker_z_pos": 180464180,
+        "total_f_pos_amount": 180464180,
+        "total_f_pos_count": 1,
+        "total_x_pos_amount": 0,
+        "total_x_pos_count": 0,
+        "total_y_pos_amount": 0,
+        "total_y_pos_count": 0,
+        "total_z_pos_amount": 180464180,
+        "total_z_pos_count": 1
+    },
+   
+   
+    {
+        "buy_volume_pos": 90 611 754, -- liq after
+      
+        "identifier_position": "BrdkSceEYz",
+        "liquidation_info_pos": [
+            79987344,
+            "z",
+            "stp"
+        ],
+        "maker_f_pos": 84913458,
+        "maker_x_pos": 0,
+        "maker_y_pos": 5698296,
+        "maker_z_pos": 0,
+        "overal_open_interest_pos": -84913458,
+        "overal_volume_pos": 90611754,
+        "sell_volume_pos": 0,
+        "taker_f_pos": 0,
+        "taker_x_pos": 0,
+        "taker_y_pos": 0,
+        "taker_z_pos": 90611754,
+        "total_f_pos_amount": 84913458,
+        "total_f_pos_count": 2,
+        "total_x_pos_amount": 0,
+        "total_x_pos_count": 0,
+        "total_y_pos_amount": 5698296,
+        "total_y_pos_count": 1,
+        "total_z_pos_amount": 90611754,
+        "total_z_pos_count": 1
+    },
+   
+ 
+    
+
+
+    {
+        "buy_volume_pos": 177 334 546,
+        "identifier_position": "VM0Dhk8DL9",
+        "liquidation_info_pos": [
+            90611754,
+            "z",
+            "stp"
+        ],
+        "maker_f_pos": 112659670,
+        "maker_x_pos": 0,
+        "maker_y_pos": 64674876,
+        "maker_z_pos": 0,
+        "overal_open_interest_pos": -112659670,
+        "overal_volume_pos": 177334546,
+        "sell_volume_pos": 0,
+        "taker_f_pos": 0,
+        "taker_x_pos": 0,
+        "taker_y_pos": 0,
+        "taker_z_pos": 177334546,
+        "total_f_pos_amount": 112659670,
+        "total_f_pos_count": 2,
+        "total_x_pos_amount": 0,
+        "total_x_pos_count": 0,
+        "total_y_pos_amount": 64674876,
+        "total_y_pos_count": 1,
+        "total_z_pos_amount": 177334546,
+        "total_z_pos_count": 1
+    }
+]

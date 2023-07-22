@@ -133,7 +133,8 @@ data FileWritePosition    = FileWritePosition
   ,sellVolumePos          :: Int
   ,overalVolumePos        :: Int
   ,overalOpenInterestPos  :: Int
-  ,liquidationInfoPos     :: (Int,String,String)
+  ,activatedExitPos       :: Seq (Int,String,String)
+  ,isVolForcedPos         :: (Bool,String)
   } deriving Generic
   deriving (FromJSON, ToJSON)
   via JSONConfig FileWritePosition
@@ -178,6 +179,8 @@ data Stats = Stats
   , makerY      :: Int
   , makerZ      :: Int
   , makerF      :: Int
+  , forceCall   :: Seq (Int,String,String)
+  , isVolForced :: (Bool,String)
   } deriving (Show,Eq)
 
 data Options =

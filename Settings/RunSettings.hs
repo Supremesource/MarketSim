@@ -80,7 +80,7 @@ numPositions = 5
 -- TODO add more complex statistic distribution
 -- | what is the maximum of makers in one transaction , i.e 1000 buy matched with 1000 sell, now the max makers filled in that transaction can be specified below
 maxMakers :: Int
-maxMakers = 4
+maxMakers = 1
 -- | note that max takers is hardcoded to be 95% of maxmakers (done on real market observtions)
 -- ? Not recommended to change this from 0.95
 maxTakers :: Int
@@ -125,18 +125,18 @@ runProgramlist = [DWW,DWW,DWW,DWW,DWW,DWW,DWW,DWW,DWW,DWW]
 -- | note that this function only works as a correctness checker for yourslf, exchanges always have a minimum volume allowed by the user, make yours
 -- | not recommended to go below 10 , depends on your maxmakers, maxtakers, there is potential error catching metric implemented, but still set this rather high
 minvolume :: Int
-minvolume = 1000000
+minvolume = 100000
 --〇 ID = VOL02
 -- | BUY VOUME
 minBuyVol :: Int
-minBuyVol = 100000000
+minBuyVol = 10000000
 maxBuyVol :: Int
-maxBuyVol = 400000000
+maxBuyVol = 70000000
 -- | SELL VOLUME
 minSellVol :: Int
-minSellVol = 100000000
+minSellVol = 10000000
 maxSellVol :: Int
-maxSellVol = 400000000
+maxSellVol = 70000000
 
 -- previous stat amount now it's probability 
 --  VOLUME Probability
@@ -158,7 +158,7 @@ takerxProb :: Int
 takerxProb = 7
 
 closingProb :: Int
-closingProb = 7
+closingProb = 1
 
 -- TODO add closing probability x
 -- ! ORDERBOOK SETINGS

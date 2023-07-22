@@ -86,7 +86,8 @@ initLiquidationAcc = empty
 
 -- | helper funciton for the funciton below (where everything is starting at)
 initStats :: Stats
-initStats = Stats 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+initStats = Stats 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+            (fromList [(0,"","")]) (False,"")
 
 setupBookDetails :: InitBookStats -> BookStats
 setupBookDetails (startingP', maxMinL', asksTot', bidsTot', takewall', lengchngBid', lengchngAsk', listASK', listBID', vSide', volumeA', sprd', sprice', bidAskR') =
@@ -109,8 +110,8 @@ setupBookDetails (startingP', maxMinL', asksTot', bidsTot', takewall', lengchngB
 
 
 -- | aggregating stats together
-aggregateStats :: (TakerPositions, MakerPositions) -> Stats -> Stats
-aggregateStats (taker, maker) stats =
+aggregateStats :: (TakerPositions, MakerPositions) -> Seq (Int,String,String) -> (Bool,String) -> Stats -> Stats
+aggregateStats (taker, maker) liquidation isforced stats  =
   Stats
     { overallOI =
         overallOI stats + interestorPlus taker maker -
@@ -139,7 +140,10 @@ aggregateStats (taker, maker) stats =
     , makerY = makerY stats + elementSize     "y" maker
     , makerZ = makerZ stats + elementSize     "z" maker
     , makerF = makerF stats + elementSize     "f" maker
-    }
+    , forceCall   =  liquidation  
+    , isVolForced = isforced
+    
+     }
 
 -- FUNCTIONS
 settingcheck :: VolumeSide -> Int -> Int -> Int -> IO ()
