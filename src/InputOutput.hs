@@ -96,15 +96,15 @@ writeBook statsList idList02 = do
               }
         return fileWriteBook
 
-writePosition :: [Stats] -> MarginCall -> [String] -> IO ()
-writePosition statList marginCall' idList02 = do
+writePosition :: [Stats] -> [String] -> IO ()
+writePosition statList idList02 = do
   -- | deleting the old json contents, before writing the updated accumulator
   writeFile positionInfoP ""
-  let positionStats = zipWith3 writePositionStat statList idList02 marginCall'
+  let positionStats = zipWith writePositionStat statList idList02 
   BL.appendFile positionInfoP (encodePretty positionStats)
   where
-    writePositionStat :: Stats -> String -> (Int, String, String) -> FileWritePosition
-    writePositionStat stats identifier marginCall = FileWritePosition
+    writePositionStat :: Stats -> String  -> FileWritePosition
+    writePositionStat stats identifier = FileWritePosition
       { identifierPosition     = identifier
       , totalXPosAmount        = offX        stats
       , totalYPosAmount        = offY        stats
@@ -126,7 +126,8 @@ writePosition statList marginCall' idList02 = do
       , sellVolumePos          = sellVolume  stats
       , overalVolumePos        = totalVolume stats
       , overalOpenInterestPos  = overallOI   stats
-      , liquidationInfoPos     = marginCall
+      , activatedExitPos       = forceCall stats
+      , isVolForcedPos         = isVolForced stats
       }
 
 

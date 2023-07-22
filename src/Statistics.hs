@@ -124,9 +124,11 @@ customRandomR (low, high) gen = (num, gen3)
 -- and then a volumeDistribution is created based on that
 ------------------------------------------------------------------------------
 
+-- todo
+-- ! modify
 takenLeverage :: IO Int
 takenLeverage = do
-  l <- randomRIO (1, 100) :: IO Int
+  l <- randomRIO (99, 100) :: IO Int
   return $
     case l of
       _

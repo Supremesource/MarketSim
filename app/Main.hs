@@ -183,40 +183,40 @@ generator isBidEmpty isAskEmpty orderbook_bid orderbook_ask fileBidBook fileAskB
   let listofvolumes = volumesAndSides
   putStrLn $ red "Monte carlo: "
   print listofvolumes
-  isCloseEmpty <- isCloseDataEmpty
+  -- isCloseEmpty <- isCloseDataEmpty
   --  print isCloseEmpty
   initAccLongClose <-
-    if isCloseEmpty
-      then return closeAccLong
-      else do
+   -- if isCloseEmpty
+     return closeAccLong
+     -- else do
   -- filterfuture no liquidation for exit long
-        filterClosePos "f" <$> readClosePos
+      --  filterClosePos "f" <$> readClosePos
   initAccShortClose <-
-    if isCloseEmpty
-      then return closeAccLong
-      else do
+   -- if isCloseEmpty
+       return closeAccLong
+     -- else do
   -- filterfuture no liquidation for exit short
-        filterClosePos  "z" <$> readClosePos
+        --filterClosePos  "z" <$> readClosePos
   
   _ <-
     generaterunProgram
      GenerationPass
-      {   initLiquidationAcc1Input = initLiquidationAcc
-        , initLiquidationAcc2Input =initLiquidationAcc
-        , initPositioningAccInput = initPositioningAcc
-        , initAccLongCloseInput = fromList initAccLongClose
-        , initAccShortCloseInput = fromList initAccShortClose
-        , listofvolumesInput = listofvolumes
-        , bidBookInput = bidBook
-        , askBookInput = askBook
-        , gen1Input = gen1
-        , gen2Input = gen2
-        , fullwallsASKInput = fullwallsASK
-        , fullwallsBIDSInput =fullwallsBIDS
-        , initstartingPointInput =initstartingPoint
-        , inittotakefromwallInput = inittotakefromwall
-        , initialBookDetailsListInput= initialBookDetailsList
-        , initStatsInput = [initStats] }
+      {   initLiquidationAccInput = initLiquidationAcc
+        , initPositioningAccInput  = initPositioningAcc
+        , initAccLongCloseInput    = fromList initAccLongClose
+        , initAccShortCloseInput   = fromList initAccShortClose
+        , listofvolumesInput       = listofvolumes
+        , bidBookInput             = bidBook
+        , askBookInput             = askBook
+        , gen1Input                = gen1
+        , gen2Input                = gen2
+        , fullwallsASKInput        = fullwallsASK
+        , fullwallsBIDSInput       = fullwallsBIDS
+        , initstartingPointInput   = initstartingPoint
+        , inittotakefromwallInput     = inittotakefromwall
+        , initialBookDetailsListInput = initialBookDetailsList
+        , initStatsInput              = [initStats]
+        , liquidationTagInput       = [(False,"")] }
 
   -- | formating price document
   --   removeEmptyLines pricePath
