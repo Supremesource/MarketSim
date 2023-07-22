@@ -45,7 +45,7 @@ Heart of the whole backend:
 Establishing generating of orderbook
 Managing position functions 
 Managing liquidations
-
+-- TODO use sequences for volume
 -}
 where
 -- | importing external libraries
@@ -317,7 +317,7 @@ processTransaction genPass@GenerationPass{} = do
       , fullwallsASKInpt     = fullwallsASK
       , fullwallsBIDSInpt    = fullwallsBIDS
       , sPointInpt           = sPoint
-      , takeWallInpt         = takeWall 
+      , takeWallInpt         = takeWall
       , liquidationTagInpt   = liquidationTag } >>= \ ReturnData
 
     {
@@ -329,7 +329,7 @@ processTransaction genPass@GenerationPass{} = do
       , newAskBookOutpt      = newAskBook
       , newBookDetailsOutpt  = newBookDetails
       , updatedVolumeOutpt   = newVolume
-      , newPosStatsOutpt     = newPosStats 
+      , newPosStatsOutpt     = newPosStats
       , liquidationTagOutpt  = newLiquidationTag } -> do
 
 
@@ -364,6 +364,8 @@ processTransaction genPass@GenerationPass{} = do
       , liquidationTagInput = newLiquidationTag
       }
 
+insertAt :: Int -> [a] -> [a] -> [a]
+insertAt i xs ys = let (before, after) = splitAt i ys in before ++ xs ++ after
 
 
 volumeProcessing :: ListPass  -> IO ReturnVolumeProcess
@@ -428,8 +430,10 @@ volumeProcessing listPass@ListPass{}  = do
           ,newPosFutureShort = newPosFutureShortGenerated  } = positionGenerator
 
   let liquidationString = if null newLiqInfoGenerated then [""] else (toList . fmap (\(_, _, s) -> s)) newLiqInfoGenerated
-  let liquidationTag = if null newLiqInfoGenerated then  [(False,"")] else map (True, ) liquidationString
-  
+  let liquidationTag    = if null newLiqInfoGenerated then  [(False,"")] else map (True, ) liquidationString
+  let maybeLiqConcat = if null newLiqInfoGenerated then [] else map (True, ) liquidationString
+  let liquidationTagOut = if null liqTRest then liquidationTag else  liqTRest  ++ maybeLiqConcat
+
 
  -- ++ liquidation information 
   let newStats       = aggregateStats localPositions newLiqInfoGenerated liqT initStats
@@ -449,6 +453,11 @@ volumeProcessing listPass@ListPass{}  = do
                             if side == "z" || side == "x"
                                then (amt, Buy)
                                   else (amt, Sell) ) newLiqInfoGenerated
+
+  let concatVolProcess = if null liqTRest
+      then toList liquidationTOvol ++ restOfVol
+      else insertAt (length liqTRest) (toList liquidationTOvol) restOfVol
+
   return
                ReturnData
                         {                           -- liq output of pos cycle + that 
@@ -459,9 +468,9 @@ volumeProcessing listPass@ListPass{}  = do
                           , newBidBookOutpt       = finalBookBidGenerated
                           , newAskBookOutpt       = finalBookAskGenerated
                           , newBookDetailsOutpt   = newbookDetails
-                          , updatedVolumeOutpt    = (toList liquidationTOvol ) ++ restOfVol
-                          , newPosStatsOutpt      = newStats 
-                          , liquidationTagOutpt   = liquidationTag }
+                          , updatedVolumeOutpt    = concatVolProcess
+                          , newPosStatsOutpt      = newStats
+                          , liquidationTagOutpt   = liquidationTagOut }
 
 
 
