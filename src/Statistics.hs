@@ -128,7 +128,7 @@ customRandomR (low, high) gen = (num, gen3)
 -- ! modify
 takenLeverage :: IO Int
 takenLeverage = do
-  l <- randomRIO (99, 100) :: IO Int
+  l <- randomRIO (1, 100) :: IO Int
   return $
     case l of
       _

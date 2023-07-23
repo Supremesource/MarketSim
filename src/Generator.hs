@@ -1,6 +1,5 @@
 {-# OPTIONS_GHC -Wno-missing-export-lists #-}
 {-# LANGUAGE OverloadedStrings #-}
-{-# OPTIONS_GHC -Wno-incomplete-uni-patterns #-}
 {-# OPTIONS_GHC -Wno-missing-fields #-}
 {-# LANGUAGE TupleSections #-}
 {-
@@ -88,13 +87,13 @@ generaterunProgram ::
 generaterunProgram genPass = do
 
   putStrLn $ red "traced list if null: "
-  let tracedList = trace (show (listofvolumesInput genPass)) (listofvolumesInput genPass)
+  let listOfVolumes = trace (show (listofvolumesInput genPass)) (listofvolumesInput genPass)
 
 -- if the list of volumes is empty we write otherwise we accumulate
-  if null tracedList 
+  if null listOfVolumes 
   then processTransactionBase genPass
 
---  else if null tracedList && not (null liqList) then do
+--  else if null listOfVolumes && not (null liqList) then do
 --       putStrLn $ purple "Debug.bang it is happening liquidation is the last element"
 --       processTransaction adjustedGenPass
   else processTransaction genPass
@@ -279,16 +278,16 @@ processTransaction genPass@GenerationPass{} = do
   let posinfo   = initPositioningAccInput genPass
   let longinfo  = initAccLongCloseInput genPass
   let shortinfo = initAccShortCloseInput genPass
-  putStrLn "\n list 2"
-  let tracedList = trace (show (listofvolumesInput genPass)) (listofvolumesInput genPass)
 
-  let (x, _) = case tracedList of
-        [] -> error "list of volumes empty"
-        (y:ys) -> (y, ys)
+  let listOfVolumes = listofvolumesInput genPass
+
+--  let (x, _) = case listOfVolumes of
+--        [] -> error "list of volumes empty"
+--        (y:ys) -> (y, ys)
 --  let (x, xs) = case  listofvolumesInput genPass of
 --        [] -> error "listofvolumesInput was empty!"
 --        (y:ys) -> (y, ys)
-  putStrLn $ green "\nhead: " ++ show x
+ -- putStrLn $ green "\nhead: " ++ show x
   let bidBook = bidBookInput genPass
   let askBook = askBookInput genPass
   let gen1 = gen1Input genPass
@@ -309,7 +308,7 @@ processTransaction genPass@GenerationPass{} = do
       , posinfoInpt          = posinfo
       , longinfoInpt         = longinfo
       , shortinfoInpt        = shortinfo
-      , volLstWholeImpt      = tracedList
+      , volLstWholeImpt      = listOfVolumes
       , bidBookInpt          = bidBook
       , askBookInpt          = askBook
       , gen1Inpt             = gen1
@@ -335,8 +334,6 @@ processTransaction genPass@GenerationPass{} = do
 
     -- / 
 
-
-    putStrLn "\n"
     let (newGen1, newGen2)   = (fst (split gen1), fst (split gen2))
 
 
@@ -370,7 +367,7 @@ insertAt i xs ys = let (before, after) = splitAt i ys in before ++ xs ++ after
 
 volumeProcessing :: ListPass  -> IO ReturnVolumeProcess
 volumeProcessing listPass@ListPass{}  = do
-  let (liqinfo,posinfo,longinfo,shortinfo,vol:restOfVol,sPoint,takeWall,(liqT:liqTRest)) =
+  let (liqinfo,posinfo,longinfo,shortinfo,vol:restOfVol,sPoint,takeWall,liqT:liqTRest) =
         ( liqinfoInpt         listPass,
           posinfoInpt         listPass,
           longinfoInpt        listPass,

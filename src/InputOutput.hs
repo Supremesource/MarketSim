@@ -85,7 +85,7 @@ writeBook statsList idList02 = do
         let strSpread = printf ("%." ++ show maxDecimal ++ "f") (spread stats) :: String
         let fileWriteBook         = FileWriteBook
               { identifierBook    = identifier
-              , startingPriceBook = startingprice stats
+              , priceBook = startingprice stats
               , bidAskRatioBook   = bidAskRatioStr
               , bidsTotalBook     = bidsTotal stats
               , asksTotalBook     = asksTotal stats
@@ -137,14 +137,19 @@ writeLog statsList idList02 = do
   BL.appendFile logP (encodePretty logStats)
   where
     writeStat stats identifier = do
+        let maxdownStr = printf ("%." ++ show maxDecimal ++ "f") (maxDownMove) :: String
+        let maxupStr = printf ("%." ++ show maxDecimal ++ "f") (maxUpMove) :: String
+        let minupStr = printf ("%." ++ show maxDecimal ++ "f") (minUpMove) :: String
+        let mindownStr = printf ("%." ++ show maxDecimal ++ "f") (minDownMove) :: String
+        let spreadStr = printf ("%." ++ show maxDecimal ++ "f") (spread stats) :: String
         let fileWritesLog = FileWritesLog
               { identifierLOG  = identifier
               , startingPointLOG = startingPoint stats
               , takeamountLOG = takeamount
-              , maxUpMoveLOG = maxUpMove
-              , minUpMoveLOG = minUpMove
-              , maxDownMoveLOG = maxDownMove
-              , minDownMoveLOG = minDownMove
+              , maxUpMoveLOG = maxupStr
+              , minUpMoveLOG = minupStr
+              , maxDownMoveLOG = maxdownStr
+              , minDownMoveLOG =  mindownStr
               , minimum'LOG = minimum'
               , maximum'LOG = maximum'
               , maximumActualLOG = fst (maxMinLimit stats)
@@ -165,7 +170,7 @@ writeLog statsList idList02 = do
               , listBIDLOG = toList $ listBID stats
               , vSideLOG = show (vSide stats)
               , volumeAmountLOG = volumeAmount stats
-              , spreadLOG = roundTo maxDecimal (spread stats)
+              , spreadLOG = spreadStr
               , startingPriceLOG = startingprice stats
               } -- append mode
         return fileWritesLog
@@ -205,29 +210,6 @@ printPositionStats  (taker, makers)  = do
 --    BL.writeFile newLongsPath' jsonData
 
 
-
-{-
-
-
-  B.hPutStrLn handlePosition (BL.toStrict $ encodePretty fileWritesPosition)
-  --B.hPutStrLn handlePosition $ BC.pack (show totalX)
-  -- | total Y
-  B.hPutStrLn handlePosition2 $ BC.pack (show totalY)
-  -- | total Z
-  B.hPutStrLn handlePosition3 $ BC.pack (show totalZ)
-  -- | total F
-  B.hPutStrLn handlePosition4 $ BC.pack (show totalF)
-  -- | Buy volume
-  B.hPutStrLn handleVol $ BC.pack (show buyVOLUME)
-  -- | Sell volume
-  B.hPutStrLn handleVol2 $ BC.pack (show sellVOLUME)
-  -- | Overal volume
-  B.hPutStrLn handleVol3 $ BC.pack (show overalVOLUME)
-  -- | Overal open interest
-  B.hPutStrLn handleInterest $ BC.pack (show overalOpenInterest)
-  
- 
--}
 
 
 -- | final overview
@@ -301,196 +283,5 @@ nonNegative :: TakerPositions -> Bool
 nonNegative []          = True
 nonNegative ((x, _):xs) = (x >= 0) && nonNegative xs
 
-{-
--- | overal aggregated data associated with positioning
-printStats :: Stats -> IO ()
-printStats stats = do
-  let takerCount =
-        [ ( takerXc stats + takerYc stats + takerFc stats + takerZc stats
-          , " <- count of takers")
-        , (takerXc stats + takerZc stats, " <- buying")
-        , (takerYc stats + takerFc stats, " <- selling")
-        , ( takerXc stats + takerZc stats - takerYc stats - takerFc stats
-          , "delta")
-        ]
-  let makerCount =
-        [ ( makerXc stats + makerYc stats + makerFc stats + makerZc stats
-          , " <- count of makers")
-        , (makerXc stats + makerZc stats, " <- buying")
-        , (makerYc stats + makerFc stats, " <- selling")
-        , ( makerXc stats + makerZc stats - makerYc stats - makerFc stats
-          , "delta")
-        ]
-  let overalxCount = takerXc stats + makerXc stats
-  let overalyCount = takerYc stats + makerYc stats
-  let overalzCount = takerZc stats + makerZc stats
-  let overalfCount = takerFc stats + makerFc stats
-  let overalLongs = overalxCount - overalfCount
-  let overalShorts = overalyCount - overalzCount
-  let longShortRatioLONGS =
-        (fromIntegral overalLongs / fromIntegral (overalLongs + overalShorts)) *
-        100 :: Double
-  let longShortRatioSHORTS =
-        (fromIntegral overalShorts / fromIntegral (overalLongs + overalShorts)) *
-        100 :: Double
-  let roundedLongShortRatioL = roundToTwoDecimals longShortRatioLONGS :: Double
-  let roundedLongShortRatioS = roundToTwoDecimals longShortRatioSHORTS :: Double
-  let checkResult = checkers stats
- -- putStrLn $ red "----------------------------"
- -- putStrLn $ red "| Check        | Result    |"
- -- putStrLn $ red "----------------------------"
- -- mapM_
-  --  (\(name, result) -> putStrLn $ "| " ++ name ++ " | " ++ result ++ " |")
-  --  checkResult
-  --putStrLn "----------------------------"
- -- | how many takers and makers are there
--- //  let lsprediction = [ (if (takerXc stats + takerZc stats) > (makerXc stats + makerZc stats) then "C up" else "C down", if buyVolume stats > sellVolume stats then "V up" else "V down", if offX stats > offY stats then "A up" else "A down")]
--- | some scope definitions
--- | checking the correcthnes of output
--- | to stop unvanted missinformation
-
--- | printing the results formated as a table
--- | final IO ()
--- | this function is called by the main loop if we reached the runPrograms
---printFinal :: Stats -> IO ()
---printFinal aggregatedStats = do
---   print "\n" -- get rid of
-
--}
-{- 
-  formatAndPrintInfo :: BookStats -> IO ()
-formatAndPrintInfo stats = do
-  identifier <- generateId
-  
-
-  let formatRow x y z =
-        B.pack $ printf (lime "| %-15s | %-15s | %-15s |\n") x y z
-  let line = B.pack $ lime (replicate 54 '-' ++ "\n")
- 
-
- 
-  B.putStr line
-  B.putStr $ formatRow "Field" "Value" "Unit"
-  B.putStr line
-  B.putStr $ formatRow "ID" identifier ""
-  B.putStr $
-    formatRow
-      "Spread"
-      (printf ("%." ++ show maxDecimal ++ "f") (spread stats) :: String)
-      "$"
-  B.putStr $ formatRow "Asks total" (show (asksTotal stats)) "$"
-  B.putStr $ formatRow "Bids total" (show (bidsTotal stats)) "$"
-  B.putStr $
-    formatRow "Bid/Ask ratio" (printf "%.4f" (bidAskRatio stats) :: String) ""
-  B.putStr $
-    formatRow
-      "Starting price"
-      (printf "%.4f" (startingprice stats) :: String)
-      "$" -- If startingPoint is Double
-  B.putStr $ formatRow "Volume side" (show (vSide stats)) "" -- If vSide is show-able
-  B.putStr $ formatRow "Volume amount" (show (volumeAmount stats)) "$"
-  B.putStr $ formatRow "Taken from ASK" (show (lengthchangeBID stats)) "$"
-  B.putStr $ formatRow "Taken from BID" (show (lengthchangeASK stats)) "$"
-  B.putStr line
-
--}
-
-{-
-  -- ? REWRTING INTO FILES 2 ? --
-  -- | Asociated with the orderbook
-  -- | rewriting price changes
-    bracket (openFile pricePath AppendMode) hClose $ \handlePrice -> do
-      B.hPutStr handlePrice $ BC.pack "\n"
-      B.hPutStrLn handlePrice $ BC.pack (show $ startingprice stats)
-      hClose handlePrice
-    bracket (openFile bidAskRPath AppendMode) hClose $ \handleRatio -> do
-      
-      hPutStrLn handleRatio (printf "%.4f" $ bidAskRatio stats)
-      hClose handleRatio
-    bracket (openFile bidToAskRPath AppendMode) hClose $ \handleTORatio -> do
-      hPutStrLn
-        handleTORatio
-       
-        (show (bidsTotal stats) ++ " / " ++ show (asksTotal stats))
-      hClose handleTORatio
--}
-
-  {-
- 
-  let statsList =
-        [ ("Metric", "Value")
-        , ("Taker X", show (takerX stats))
-        , ("Taker Y", show (takerY stats))
-        , ("Taker Z", show (takerZ stats))
-        , ("Taker F", show (takerF stats))
-        , ("Maker X", show (makerX stats))
-        , ("Maker Y", show (makerY stats))
-        , ("Maker Z", show (makerZ stats))
-        , ("Maker F", show (makerF stats))
-        , ("Overall Open Interest", show (overallOI stats))
-        , ("Total Volume", show (totalVolume stats))
-        , ("Buy Volume", show (buyVolume stats))
-        , ("Sell Volume", show (sellVolume stats))
-        , ("Count X", show overalxCount)
-        , ("Count Y", show overalyCount)
-        , ("Count Z", show overalzCount)
-        , ("Count F", show overalfCount)
-        , ("Taker Count", show takerCount)
-        , ("Maker Count", show makerCount)
-        , ( "Long Ratio"
-          , show overalLongs ++ ", " ++ show roundedLongShortRatioL ++ "%")
-        , ( "Short Ratio"
-          , show overalShorts ++ ", " ++ show roundedLongShortRatioS ++ "%")
-        , ("Value X", show (offX stats) ++ "$")
-        , ("Value Y", show (offY stats) ++ "$")
-        , ("Value Z", show (offZ stats) ++ "$")
-        , ("Value F", show (offF stats) ++ "$")
-        ]
-  
- 
-  
-  putStrLn $
-    red
-      "+------------------------------------------------+---------------------------+"
-  putStrLn $
-    red
-      "|                  Metric                        |               Value       |"
-  putStrLn $
-    red
-      "+------------------------------------------------+---------------------------+"
-  mapM_
-    (\(metric, value) ->
-       Text.Printf.printf "| %-50s | %25s |\n" (purple metric) value)
-    statsList
-  putStrLn
-    "+------------------------------------------------+---------------------------+"
-  putStrLn "\n"
 
 
-
- -}
-
-   {-
-  putStrLn $ "yn| Position number    | " ++ show i ++ "\n\n"
-  putStrLn $ "\n| Taker                | \n\n\n" ++ show taker
-  putStrLn $ "\n| Makers               | \n\n\n" ++ show makers
-   
-  putStrLn $ "| Overal open interest | " ++ show overalOpenInterest
-  putStrLn $ "| Volume               | " ++ show overalVOLUME
-  putStrLn $ "| Buy volume           | " ++ show buyVOLUME
-  putStrLn $ "| Sell volume          | " ++ show sellVOLUME
-  putStrLn $ "| Taker X count        | " ++ show takercounter_X
-  putStrLn $ "| Taker Y count        | " ++ show takercounter_Y
-  putStrLn $ "| Taker Z count        | " ++ show takercounter_Z
-  putStrLn $ "| Taker F count        | " ++ show takercounter_F
-  putStrLn $ "| Maker X count        | " ++ show makerelement_counter_of_X
-  putStrLn $ "| Maker Y count        | " ++ show makerelement_counter_of_Y
-  putStrLn $ "| Maker Z count        | " ++ show makerelement_counter_of_Z
-  putStrLn $ "| Maker F count        | " ++ show makerelement_counter_of_F
-  putStrLn "----------TOTAL---------"
-  putStrLn $ purple "| Total USD X | " ++ show totalX
-  putStrLn $ purple "| Total USD Y | " ++ show totalY
-  putStrLn $ purple "| Total USD Z | " ++ show totalZ
-  putStrLn $ purple "| Total USD F | " ++ show totalF
-  putStrLn "------------------------\n"
-    -}
