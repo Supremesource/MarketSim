@@ -72,7 +72,7 @@ import System.CPUTime
 import Text.Printf
 
 main :: IO ()
-main = do 
+main = do
   writeFile logP ""
   runProgram
 
@@ -80,7 +80,7 @@ main = do
 runProgram :: IO ()
 runProgram = do
   start  <- getCPUTime
-
+  putStrLn "Generating dataset ..."
   when autoRestore
     (newrunProgramSettings
       askBookP
@@ -134,8 +134,8 @@ runProgram = do
 
   end <- getCPUTime
   let diff = fromIntegral (end - start) / (10^(12 :: Integer))
-  printf "Overall time of running code: %.6f seconds\n" (diff :: Double)
-
+  printf "Dataset generated in %.6f seconds\n" (diff :: Double)
+  plotGraph
 
 genVolumeAux :: Int -> Int -> VolumeStage -> [(Int, VolumeSide)] -> IO [(Int, VolumeSide)]
 genVolumeAux aux numPositions' stage takerAcc
@@ -181,23 +181,19 @@ generator isBidEmpty isAskEmpty orderbook_bid orderbook_ask fileBidBook fileAskB
 
   let initialBookDetailsList = [initialBookDetails]
   let listofvolumes = volumesAndSides
-  putStrLn $ red "Monte carlo: "
-  print listofvolumes
+  --putStrLn $ red "Monte carlo: "
+  --print listofvolumes
   -- isCloseEmpty <- isCloseDataEmpty
   --  print isCloseEmpty
-  initAccLongClose <-
-   -- if isCloseEmpty
-     return closeAccLong
+  let initAccLongClose = closeAccLong
      -- else do
   -- filterfuture no liquidation for exit long
       --  filterClosePos "f" <$> readClosePos
-  initAccShortClose <-
-   -- if isCloseEmpty
-       return closeAccLong
+  let initAccShortClose = closeAccLong
      -- else do
   -- filterfuture no liquidation for exit short
         --filterClosePos  "z" <$> readClosePos
-  
+
   _ <-
     generaterunProgram
      GenerationPass
@@ -220,7 +216,9 @@ generator isBidEmpty isAskEmpty orderbook_bid orderbook_ask fileBidBook fileAskB
 
   -- | formating price document
   --   removeEmptyLines pricePath
-  putStrLn $ gray "OUTPUT SUCCESFULLY GENERATED"
+ -- putStrLn $ gray "OUTPUT SUCCESFULLY GENERATED"
+
+  return ()
 
 
 -- checking settings, so bugs are caught before the program is runProgramning

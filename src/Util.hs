@@ -147,16 +147,15 @@ aggregateStats (taker, maker) liquidation isforced stats  =
 
 -- FUNCTIONS
 settingcheck :: VolumeSide -> Int -> Int -> Int -> IO ()
-settingcheck vSide' volumeA' asksTot' bidsTot' = do
-  let check :: String
-        | vSide' /= Buy && vSide' /= Sell =
-          error $ red "wrong volume specification !"
-        | vSide' == Buy && volumeA' > asksTot' =
-          error $ red "THE VOLUME EXCEEDED THE ORDERBOOK CAPACITY !"
-        | vSide' == Sell && volumeA' > bidsTot' =
-          error $ red "THE VOLUME EXCEEDED THE ORDERBOOK CAPACITY !"
-        | otherwise = ""
-  putStrLn check
+settingcheck vSide' volumeA' asksTot' bidsTot'
+  | vSide' /= Buy && vSide' /= Sell =
+      error $ red "wrong volume specification !"
+  | vSide' == Buy && volumeA' > asksTot' =
+      error $ red "THE VOLUME EXCEEDED THE ORDERBOOK CAPACITY !"
+  | vSide' == Sell && volumeA' > bidsTot' =
+      error $ red "THE VOLUME EXCEEDED THE ORDERBOOK CAPACITY !"
+  | otherwise = return ()
+
 
 -- retrurns volumes in order Sell, Buy
 calculateVolumes :: VolumeSide -> Int -> (Int, Int)

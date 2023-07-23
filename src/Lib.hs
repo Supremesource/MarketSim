@@ -65,6 +65,8 @@ import           Colours
 import           DataTypes
 import           RunSettings
 import           Statistics
+import System.Process
+
 
 
 -- ? WALLS
@@ -342,8 +344,11 @@ positionamountcheck a b
 addsupto100 :: Int -> Int -> IO ()
 addsupto100 first second
   | first + second == 100 = return ()
-  | otherwise =
-    putStr (red "\nWarning probabilites in settings do not add up to 100%")
+  | otherwise = do
+    putStr "\n/RunSettings.hs "
+    putStrLn $ purple "[WARNING]\n"
+    putStr ("\n         |\naprx.144 |" ++ blue "  probabilites in settings do not add up to 100%"  
+         ++ "\n         |" ++ blue "  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\n")
 
 
 -- ? TEMPLEATE runProgram FUNCITOINS
@@ -375,14 +380,14 @@ optionProcessor a i =
     _   -> templeaterunProgramSELL i a
 
 
--- TODO change to more realistic probability amplifier
+
 templeaterunProgramBUY :: Int -> Options -> Int
 templeaterunProgramBUY a op =
   case op of
-    -- increasing b vol by 200% (Amplifier)
-    UP  -> a * 2
+     -- increasing b vol by 200% (Amplifier)
+    UP  -> round $ fromIntegral a * (1.15 :: Double)
     -- increasing b vol by 400% (Amplifier)
-    UPP -> a * 4
+    UPP -> round $ fromIntegral a * (1.25 :: Double)
     -- doing nothing to downtrend (Amplifier)
     DW  -> a
     -- extreme downtrend doing nothing (Amplifier)
@@ -398,9 +403,9 @@ templeaterunProgramSELL a op =
     -- nothing (Amplifier)
     UPP -> a
      -- increasing s vol by 200% (Amplifier)
-    DW  -> a * 2
+    DW  ->  round $ fromIntegral a * (1.15 :: Double)
     -- increasing s vol by 400% (Amplifier)
-    DWW -> a * 4
+    DWW -> round $ fromIntegral a * (1.25 :: Double)
     CN  -> a
     _   -> error $ red "your templeate pattern matching did not go through"
 
@@ -545,3 +550,9 @@ generateVolumes numPos totalVolume' = do
 
   let lastVolume = totalVolume' - sum volumes
   return (volumes ++ [lastVolume])
+
+plotGraph :: IO ()
+plotGraph = do
+    if plotCharts
+        then callCommand "python3 /Users/janzimula/workspace/marketsim/backtestapp/strategy-back/procesGraph.py"
+        else putStrLn "Plotting is turned off."

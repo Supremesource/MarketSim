@@ -58,7 +58,8 @@ import System.Random
 import Data.Maybe
 import Control.Exception (try, ErrorCall)
 import Control.Monad
-import Data.Sequence   (fromList, (><))
+import Data.Sequence (fromList, (><), ViewL(..), viewl)
+import qualified Data.Sequence
 import Data.Monoid
 import           Data.Foldable        (toList)
 
@@ -192,7 +193,7 @@ testsLib = hspec $ do
       (all (> 0) list) `shouldBe` True
   
   -- POSITION TESTS
-  describe "Lib.sumInts"  $ do
+  describe "Lib.sumInts" $ do 
     it "returns sum of integers" $ do
       let list = fromList [(11.2, 100), (12.5,200),(13.5,400),(14,0),(14.1,0),(15,1000)]
       let sum = sumInts list
@@ -205,7 +206,7 @@ testsLib = hspec $ do
       let spread = spread' bestAsk bestBid
       spread `shouldBe` 0.001
 
-  describe "Lib.countElements" $ do
+  describe "Lib.countElements" $ do
     it "returns the amount of a particular element in a list" $ do
       let list = [(1,"x"),(2,"x"),(3,"x"),(4,"y")]
       let amount = countElements "x" list 
@@ -254,22 +255,22 @@ testsLib = hspec $ do
       let runProgram = processlist options list number
       runProgram `shouldBe`  UPP
 
-  describe "Lib.randomhandler" $ do
-    it "returs second option passed into the function in case of `RANDOM` as first input" $ do
+  describe "Lib.randomhandler" $ do
+    it "returs second option passed into the function in case of `RANDOM` as first input" $ do
       let option = RANDOM
       let generatedOption = UPP
       let runProgram = randomhandler option generatedOption
       runProgram `shouldBe` UPP
 
   describe "Lib.optionProcessor" $ do
-    it "returns a new probability for volume /UPP" $ do
+    it "returns a new probability for volume /UPP" $ do
       let option = UPP
       let probability = 20
       let newProbability = optionProcessor option probability
       newProbability `shouldBe` 80
 
-  describe "Lib.optionProcessor" $ do
-    it "returns a new probability for volume /DW" $ do
+  describe "Lib.optionProcessor" $ do
+    it "returns a new probability for volume /DW" $ do
       let option = DW
       let probability = 20
       let newProbability = optionProcessor option probability
@@ -340,8 +341,10 @@ testsUtil = hspec $ do
           let (takerSide,makerSide)=([(100,"x"),(10,"z"),(1,"x"),(0,"z")],[(90,"f"),(21,"y")])      
           let takerSide' = []
           let makerSide' = []
+          let liq = fromList [(0,"","")]
+          let forceinfo = (False,"") 
           let startingStats = initStats 
-          aggregateStats (takerSide,makerSide) startingStats
+          aggregateStats (takerSide,makerSide) liq forceinfo startingStats
             `shouldBe` Stats
                         { overallOI   = 11
                         , totalVolume = 111
@@ -426,7 +429,7 @@ testsUtil = hspec $ do
       
       let finalSetupBid  = fromList [(100 , round $ 0        / divisionValue)
                                   ,(0000.9, round $ 200      / divisionValue)
-                                  ,(0     , round $ 300      / divisionValue)]  
+                                  ,(0     , round $ 300      / divisionValue)]  
     
       calculateBookLists askSetupGrid bidSetupGrid askSetupAmount bidSetupAmount
         `shouldBe` (finalSetupAsk,finalSetupBid)
@@ -757,7 +760,11 @@ recursiveOutputCheck (x:xs) =
       sellVol = sellVolumePos x
       totalVol = overalVolumePos x
       openInterest = overalOpenInterestPos x
-      (amt,side,liqtype) = liquidationInfoPos x -- todo on liquidation info
+        -- todo on liquidation info
+      (amt,side,liqtype) = case viewl (activatedExitPos x) of
+                       (amt', side', liqtype') :< _ -> (amt', side', liqtype')
+                       EmptyL -> (0, "", "")
+      (isforce, isstop) = isVolForcedPos x
       checkTakerXY = if buyVol > 0 && openInterest > 0 then Just (takerX > makerX) else Nothing
       checkLiquidation = if amt > 0 && side == "z" then Just (buyVol > 0 && sellVol == 0  {-&& openInterest <= 0 -}) else Nothing
       checkVolBuy          = if buyVol > 0    then Just (sellVol == 0)  else Nothing
@@ -770,6 +777,7 @@ recursiveOutputCheck (x:xs) =
       checkerCountwithVol2 = if yPosCount > 0 then Just (yPosAmount > 0) else Nothing
       checkerCountwithVol3 = if zPosCount > 0 then Just (zPosAmount > 0) else Nothing
       checkerCountwithVol4 = if fPosCount > 0 then Just (fPosAmount > 0) else Nothing
+      checkForceOrderCount = if isforce == True then Just ((takerX + takerY + takerZ + takerF) == 1) else Nothing
       checks = 
     
                     [
@@ -809,6 +817,7 @@ recursiveOutputCheck (x:xs) =
                         , fromMaybe True checkerCountwithVol2
                         , fromMaybe True checkerCountwithVol3
                         , fromMaybe True checkerCountwithVol4
+                        , fromMaybe True checkForceOrderCount
 
 
 

@@ -54,7 +54,8 @@ autoRestore = True
 --〇 ID = PLTCHRT
 -- | if TRUE you will see price displayed as a chart
 plotCharts :: Bool
-plotCharts = False
+plotCharts = True
+
 
 --〇 ID = STRVAL
 -- | starting value
@@ -66,7 +67,7 @@ wipingStartingValue = 100
 -- | number of positions you want to take place in the simulation runProgram
 -- | number of positions
 numPositions :: Int
-numPositions = 5
+numPositions = 20000
 
 --〇 ID = NUMrunProgram
 -- | number of runPrograms, this is a loop how many times will the simulation repeat itself (random generators are updating each time though)
@@ -80,7 +81,7 @@ numPositions = 5
 -- TODO add more complex statistic distribution
 -- | what is the maximum of makers in one transaction , i.e 1000 buy matched with 1000 sell, now the max makers filled in that transaction can be specified below
 maxMakers :: Int
-maxMakers = 1
+maxMakers = 10
 -- | note that max takers is hardcoded to be 95% of maxmakers (done on real market observtions)
 -- ? Not recommended to change this from 0.95
 maxTakers :: Int
@@ -115,9 +116,11 @@ maxDecimal = 4
 -- | DWW = down down
 -- | DW = down
 -- | for more info you can check the LIB.hs file, to see how everything works
-runProgramlist :: [Options]
-runProgramlist = [DWW,DWW,DWW,DWW,DWW,DWW,DWW,DWW,DWW,DWW]
 
+-- ! list start is the end and list end is the start (SO IT MAIGHT BE CONFUSING)
+-- (the thing you write at the start is the end of the run vice versa)
+runProgramlist :: [Options]
+runProgramlist = [DWW,DW,RANDOM,CN,CN,UP,UP,UPP,UPP]
 
 --  Volume settings:
 -- 〇 ID = VOL
@@ -125,24 +128,25 @@ runProgramlist = [DWW,DWW,DWW,DWW,DWW,DWW,DWW,DWW,DWW,DWW]
 -- | note that this function only works as a correctness checker for yourslf, exchanges always have a minimum volume allowed by the user, make yours
 -- | not recommended to go below 10 , depends on your maxmakers, maxtakers, there is potential error catching metric implemented, but still set this rather high
 minvolume :: Int
-minvolume = 100000
+minvolume = 1000
 --〇 ID = VOL02
 -- | BUY VOUME
 minBuyVol :: Int
-minBuyVol = 10000000
+minBuyVol = 1000
 maxBuyVol :: Int
-maxBuyVol = 70000000
+maxBuyVol = 200000
+
 -- | SELL VOLUME
 minSellVol :: Int
-minSellVol = 10000000
+minSellVol = 1000
 maxSellVol :: Int
-maxSellVol = 70000000
+maxSellVol = 200000
 
 -- previous stat amount now it's probability 
 --  VOLUME Probability
 -- | BUY VOLUME
 buyTakerProb :: Int
-buyTakerProb = 55
+buyTakerProb = 50
 -- | SELL VOLUME
 sellTakerProb :: Int
 sellTakerProb = 50
@@ -151,14 +155,16 @@ sellTakerProb = 50
 
 -- ? all Prob have a minimum value of 1 and maximum value of 10 ! 
 -- | otherwise an error will be thrown
+
+-- TODO debug why low better performace 
 stopProb :: Int
-stopProb = 7
+stopProb = 5
 
 takerxProb :: Int
-takerxProb = 7
+takerxProb = 5
 
 closingProb :: Int
-closingProb = 1
+closingProb = 8
 
 -- TODO add closing probability x
 -- ! ORDERBOOK SETINGS

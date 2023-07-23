@@ -65,10 +65,11 @@ data FileWritesLog = FileWritesLog
    {  identifierLOG           :: String
     , startingPointLOG        :: Double 
     , takeamountLOG           :: Int
-    , maxUpMoveLOG            :: Double
-    , minUpMoveLOG            :: Double
-    , maxDownMoveLOG          :: Double
-    , minDownMoveLOG          :: Double
+    -- printf formated
+    , maxUpMoveLOG            :: String
+    , minUpMoveLOG            :: String
+    , maxDownMoveLOG          :: String
+    , minDownMoveLOG          :: String
     , minimum'LOG             :: Int
     , minimumActualLOG        :: Int
     , maximum'LOG             :: Int
@@ -89,7 +90,8 @@ data FileWritesLog = FileWritesLog
     , listBIDLOG              :: [(Double, Int)]
     , vSideLOG                :: String 
     , volumeAmountLOG         :: Int
-    , spreadLOG               :: Double
+    -- formated with printf
+    , spreadLOG               :: String
     , startingPriceLOG        :: Double
     } deriving Generic
   deriving (FromJSON, ToJSON)
@@ -97,7 +99,7 @@ data FileWritesLog = FileWritesLog
 
 data FileWriteBook = FileWriteBook
   { identifierBook    :: String 
-  , startingPriceBook :: Double
+  , priceBook :: Double
   -- formated with printf
   , bidAskRatioBook   :: String 
   , bidsTotalBook     :: Int
