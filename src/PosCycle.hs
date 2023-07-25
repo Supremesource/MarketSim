@@ -299,6 +299,7 @@ allOtherThirdEqual seq c =
       | x == "" || x == c -> allOtherThirdEqual xs c
       | otherwise -> False
 
+-- debug the small n
 splitAmountToRandomList :: Int -> IO [Int]
 splitAmountToRandomList 0 = return [0]
 splitAmountToRandomList 1 = return [1]
@@ -312,7 +313,6 @@ splitAmountToRandomList n = do
                       | n < 20000 -> 8
                       | otherwise -> 10 
               
-
     case () of _
                 | n < chunkCount -> return [n]
                 | otherwise -> do

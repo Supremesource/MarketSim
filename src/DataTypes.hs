@@ -59,7 +59,9 @@ data VolumeStage =
                 Undefined |
                    LowVol |
                 MediumVol |
-                HighVol deriving (Show, Eq)
+                HighVol   |
+                SpikeVol |
+                DeadVol   deriving (Show, Eq)
 
 data FileWritesLog = FileWritesLog
    {  identifierLOG           :: String
