@@ -51,7 +51,7 @@ library:
     - src
     - app
     - Settings
-    - property-test
+  
   
   exposed-modules: 
    - Lib
@@ -64,7 +64,8 @@ library:
    - Colours
    - Generator
    - PosCycle
-   - Tests
+  
+
   default-extensions:
    - ImportQualifiedPost
    - InstanceSigs

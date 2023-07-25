@@ -1,4 +1,5 @@
 {-# OPTIONS_GHC -Wno-missing-export-lists #-}
+{-# LANGUAGE BlockArguments #-}
 {-
 Supreme Source (c) 2023
 All rights reserved.
@@ -55,36 +56,44 @@ import           DataTypes
 
 markovChainVolume :: (Int,Int) -> VolumeStage -> IO (Int,VolumeStage)
 markovChainVolume (low, high) volStage = do
-  phaseRandomiser <- randomRIO (1,3) :: IO Int
-  switchPhase <- randomRIO (1,25) :: IO Int
+  phaseRandomiser <- randomRIO (1,5) :: IO Int
+  switchPhase <- randomRIO (1,50) :: IO Int
   let initialPhase        = case () of _
                                         | phaseRandomiser <= 1 -> LowVol
                                         | phaseRandomiser <= 2 -> MediumVol
+                                        | phaseRandomiser <= 3 -> SpikeVol
+                                        | phaseRandomiser <= 4 -> DeadVol
                                         | otherwise -> HighVol
+ 
   let maybeRandomVolPhase = case () of _
-                                        | switchPhase == 25 -> initialPhase
+                                        | switchPhase == 50 -> initialPhase
                                         | otherwise -> volStage
   let volumePhase         = case () of _
-                                        | volStage == Undefined -> initialPhase
+                                        | volStage == Undefined || volStage == SpikeVol -> initialPhase
                                         | otherwise -> maybeRandomVolPhase
 
-  let customLowH = high `div` 10
-  let customMediumH = high `div` 2
-  let customHighH = high
-  let lowVolumeAmount    = randomRIO (low, customLowH)
-  let mediumVolumeAmount = randomRIO (low, customMediumH)
-  let highVolumeAmount =   randomRIO (low,  customHighH)
-
-  volumeAmt <- case () of _
-                              | volumePhase == LowVol -> lowVolumeAmount
-                              | volumePhase == MediumVol -> mediumVolumeAmount
-                              | volumePhase == HighVol -> highVolumeAmount
-                              | otherwise -> error $ red "volumePhase is not valid"
+  volumeAmt <- stageDistributionAux volumePhase (low, high)
+                             
   -- local volume check
-  Control.Monad.when (volumeAmt > high) $ error 
+  Control.Monad.when ((volumeAmt > high) && (volumePhase /= SpikeVol)) $ error 
     $ red "volumeAmt is greater than high, try to check if you specified correct volum settings"
+  Control.Monad.when (volumeAmt < low) $ error 
+    $ red "volumeAmt is less than low, try to check if you specified correct volum settings"
   return (volumeAmt, volumePhase)
 
+stageDistributionAux :: VolumeStage -> (Int,Int) -> IO Int
+stageDistributionAux stage (low,high) = do
+  highSLow <- randomRIO (low,high)
+  mediumSHigh <- randomRIO (low,high)
+  lowSHigh <- randomRIO (low,mediumSHigh)
+  deadSHigh <- randomRIO (low,lowSHigh)
+  case stage of
+    HighVol -> randomRIO (highSLow, high)
+    MediumVol -> randomRIO(low, mediumSHigh)
+    LowVol -> randomRIO (low, lowSHigh)
+    SpikeVol -> randomRIO (low, (5 * high))
+    DeadVol -> randomRIO (low, deadSHigh)
+    _ -> error $ red "stage is not valid"
 
 -- | the low and high being passed are:
 -- low  - base case either for long or short

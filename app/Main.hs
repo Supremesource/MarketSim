@@ -40,9 +40,18 @@ where
     -- | display in charts using javascript/ html / css
     -- | make frontend more efficient the way the python script is called now is just terrible+
     -- | better UI with timeframes
-    -- | fix negative orderbook levels on bids by stopping ask generation at that point as well, (probable stop ask gen at that point)
-    -- | make reusable output 
-  -- TODO
+    -- | better orderbook market making logic
+    -- Todo add leverage info   
+   -- todo add restrictive settings for everything
+   -- optimize code
+   -- make general bug check of output
+    -- // fix negative orderbook levels on bids by stopping ask generation at that point as well, (probable stop ask gen at that point)
+    -- //  | make reusable output 
+
+    -- ! bugs
+    -- // fix taker splitting to small amounts 
+    -- // fix small volume low
+ -- TODO
 
 
 -- imports
@@ -178,6 +187,8 @@ generator isBidEmpty isAskEmpty orderbook_bid orderbook_ask fileBidBook fileAskB
              -- | price change
              -- ? volume ist everything is being generated out of
   volumesAndSides <- genVolume  {-initStats-}
+  --putStrLn "volume list : "
+  --print volumesAndSides
 
   let initialBookDetailsList = [initialBookDetails]
   let listofvolumes = volumesAndSides

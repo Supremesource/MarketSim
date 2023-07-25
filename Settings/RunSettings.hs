@@ -54,20 +54,20 @@ autoRestore = True
 --〇 ID = PLTCHRT
 -- | if TRUE you will see price displayed as a chart
 plotCharts :: Bool
-plotCharts = True
+plotCharts = False
 
 
 --〇 ID = STRVAL
 -- | starting value
 -- | you can activate this price point by runProgramning `w` - wiping runProgram
 wipingStartingValue :: Int
-wipingStartingValue = 100
+wipingStartingValue = 29223
 
 --〇 ID = NUMPOS
 -- | number of positions you want to take place in the simulation runProgram
 -- | number of positions
 numPositions :: Int
-numPositions = 20000
+numPositions = 30000
 
 --〇 ID = NUMrunProgram
 -- | number of runPrograms, this is a loop how many times will the simulation repeat itself (random generators are updating each time though)
@@ -81,7 +81,7 @@ numPositions = 20000
 -- TODO add more complex statistic distribution
 -- | what is the maximum of makers in one transaction , i.e 1000 buy matched with 1000 sell, now the max makers filled in that transaction can be specified below
 maxMakers :: Int
-maxMakers = 10
+maxMakers = 20
 -- | note that max takers is hardcoded to be 95% of maxmakers (done on real market observtions)
 -- ? Not recommended to change this from 0.95
 maxTakers :: Int
@@ -120,13 +120,14 @@ maxDecimal = 4
 -- ! list start is the end and list end is the start (SO IT MAIGHT BE CONFUSING)
 -- (the thing you write at the start is the end of the run vice versa)
 runProgramlist :: [Options]
-runProgramlist = [DWW,DW,RANDOM,CN,CN,UP,UP,UPP,UPP]
+runProgramlist = [UPP,CN,UPP,RANDOM,UPP,UPP,CN,CN,CN,RANDOM]
 
 --  Volume settings:
 -- 〇 ID = VOL
 -- | (functionality defined in Lib)
 -- | note that this function only works as a correctness checker for yourslf, exchanges always have a minimum volume allowed by the user, make yours
 -- | not recommended to go below 10 , depends on your maxmakers, maxtakers, there is potential error catching metric implemented, but still set this rather high
+-- ! note that volume can exceed your maximum value up to 5 x times when volume spike volume is activated in statistics
 minvolume :: Int
 minvolume = 1000
 --〇 ID = VOL02
@@ -134,13 +135,13 @@ minvolume = 1000
 minBuyVol :: Int
 minBuyVol = 1000
 maxBuyVol :: Int
-maxBuyVol = 200000
+maxBuyVol = 2000000
 
 -- | SELL VOLUME
 minSellVol :: Int
 minSellVol = 1000
 maxSellVol :: Int
-maxSellVol = 200000
+maxSellVol = 2000000
 
 -- previous stat amount now it's probability 
 --  VOLUME Probability
@@ -151,20 +152,18 @@ buyTakerProb = 50
 sellTakerProb :: Int
 sellTakerProb = 50
 
-
-
 -- ? all Prob have a minimum value of 1 and maximum value of 10 ! 
 -- | otherwise an error will be thrown
 
 -- TODO debug why low better performace 
 stopProb :: Int
-stopProb = 5
+stopProb = 9
 
 takerxProb :: Int
-takerxProb = 5
+takerxProb = 9
 
 closingProb :: Int
-closingProb = 8
+closingProb = 7
 
 -- TODO add closing probability x
 -- ! ORDERBOOK SETINGS
@@ -186,23 +185,23 @@ maximum' = 400000 -- maximum order $ amount
 -- | for bid = bid liquidity (< min move + max move <  = more liquidity, vice versa)
 -- TODO add more complex statistical distribuiton
 minUpMove :: Double
-minUpMove = 0.009
+minUpMove = 0.9
 maxUpMove :: Double
-maxUpMove = 0.01
+maxUpMove = 0.2
 -- | Minimum & Maximum DOWN move in the orderbook structure
 -- | for ask = ask liquidity (< min move + max move <  = more liquidity, vice versa)
 minDownMove :: Double
-minDownMove = 0.009
+minDownMove = 0.9
 maxDownMove :: Double
-maxDownMove = 0.01
+maxDownMove = 0.2
 
 --〇 ID = TakeBidAsk
 -- | Size of bid orderbook
 takeamountBID :: Int
-takeamountBID = 10000
+takeamountBID = 20000
 -- | Size of ask orderbook
 takeamountASK :: Int
-takeamountASK = 10000
+takeamountASK = 20000
 
 --  'WALL' SETTINGS:
 --〇 ID = wallLikeHood
@@ -211,7 +210,7 @@ takeamountASK = 10000
 -- | /2  -- (recommended 40-80, possibly even higher, it is going to be `div` by 2 so it gets distributed into bids and asks )
 -- | defines in how many orders in the initial book will a wall occour
 orderwalllikelyhood :: Int
-orderwalllikelyhood = 200
+orderwalllikelyhood = 250
 
 --〇 ID = wallAmp
 -- | Amplifier of Wall  occurrences

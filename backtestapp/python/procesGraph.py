@@ -118,24 +118,24 @@ def dark_mode_toggle(dark):
 
 
 def main():
-    units_per_candle = 20  # change this to the desired units per candle
+    units_per_candle = 80  # change this to the desired units per candle
 
     # Process and write price data
     price_data_file = '/Users/janzimula/workspace/marketsim/output/bookInfo.json'
     candles_price = process_dataPrice(price_data_file, units_per_candle)
-    output_price_file = '/Users/janzimula/workspace/marketsim/backtestapp/strategy-back/data/assetPriceData.json'
+    output_price_file = '/Users/janzimula/workspace/marketsim/backtestapp/python/data/assetPriceData.json'
     write_dataPrice(output_price_file, candles_price)
 
     # Process and write volume data
     volume_data_file = '/Users/janzimula/workspace/marketsim/output/bookInfo.json' # Modify this if your volume data is in a different file
     candles_volume = process_dataVolume(volume_data_file, units_per_candle)
-    output_volume_file = '/Users/janzimula/workspace/marketsim/backtestapp/strategy-back/data/assetVolumeData.json'
+    output_volume_file = '/Users/janzimula/workspace/marketsim/backtestapp/python/assetVolumeData.json'
     write_dataVolume(output_volume_file, candles_volume)
 
-    output_price_file = '/Users/janzimula/workspace/marketsim/backtestapp/strategy-back/data/assetPriceData.json'
+    output_price_file = '/Users/janzimula/workspace/marketsim/backtestapp/python/data/assetPriceData.json'
     df_price = pd.read_json(output_price_file)
 
-    output_volume_file = '/Users/janzimula/workspace/marketsim/backtestapp/strategy-back/data/assetVolumeData.json'
+    output_volume_file = '/Users/janzimula/workspace/marketsim/backtestapp/python/assetVolumeData.json'
     df_volume = pd.read_json(output_volume_file)
 
     # Adding open and close to volume data to match the example
@@ -146,11 +146,11 @@ def main():
     now = date.today().strftime('%Y-%m-%d')
 
     # Set a mock timestamp index (since we don't have real timestamps in your data)
-    df_price.index = pd.date_range(start='2011-08-18', periods=len(df_price))
-    df_volume.index = pd.date_range(start='2011-08-18', periods=len(df_volume))
+    df_price.index = pd.date_range(start='2023-07-25', periods=len(df_price))
+    df_volume.index = pd.date_range(start='2023-07-25', periods=len(df_volume))
 
     # plot price
-    ax,ax2 = fplt.create_plot('Your Asset 2011-%s'%now.split('-')[0], rows=2)
+    ax,ax2 = fplt.create_plot('Kaspers BTC -%s'%now.split('-')[0], rows=2)
     fplt.candlestick_ochl(df_price[['open', 'close', 'high', 'low']], ax=ax)
 
     # plot volume

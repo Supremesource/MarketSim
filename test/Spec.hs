@@ -90,7 +90,9 @@ tests = do
 
 testsExpected :: SpecWith ()
 testsExpected = do
- testsoutput
+ testOutputPosition
+ testOutputBook
+ testDataOrderBook
 
 testsLib :: IO ()
 testsLib = hspec $ do
@@ -696,49 +698,24 @@ testsPosCycle = hspec $ do
       -- random implementation adds up to desired amount
       (sum $ fmap (\(_,amt,_) -> amt) (toList result3Random)) `shouldBe` 300
 
-testsoutput :: SpecWith ()
-testsoutput = do
 
-  describe "output/positions.json" $ do
+
+-- TESTTING OUTPUT THAT WAS GENERATED
+testOutputPosition :: SpecWith ()
+testOutputPosition = do
+  describe "output/positionInfo.json" $ do
       it "returns realistic output" $ do
         positions <- readPositions positionInfoP
         case positions of 
           Left _ -> expectationFailure "Failed to parse positions."
-          Right pos -> recursiveOutputCheck pos `shouldBe` True
+          Right pos -> positionsOutputCheckAux pos `shouldBe` True
 
 
-{-
-data FileWritePosition    = FileWritePosition
-  {identifierPosition     :: String
-  ,totalXPosAmount        :: Int 
-  ,totalYPosAmount        :: Int
-  ,totalZPosAmount        :: Int
-  ,totalFPosAmount        :: Int
-  ,totalXPosCount         :: Int
-  ,totalYPosCount         :: Int
-  ,totalZPosCount         :: Int
-  ,totalFPosCount         :: Int
-  ,takerXPos              :: Int
-  ,takerYPos              :: Int
-  ,takerZPos              :: Int  
-  ,takerFPos              :: Int
-  ,makerXPos              :: Int
-  ,makerYPos              :: Int
-  ,makerZPos              :: Int
-  ,makerFPos              :: Int
-  ,buyVolumePos           :: Int
-  ,sellVolumePos          :: Int
-  ,overalVolumePos        :: Int
-  ,overalOpenInterestPos  :: Int
-  ,liquidationInfoPos     :: (Int,String,String)
-  } deriving Generic
-  deriving (FromJSON, ToJSON)
-  via JSONConfig FileWritePosition
--}
+-- ! add equal side positioning testing
 
-recursiveOutputCheck :: [FileWritePosition] -> Bool
-recursiveOutputCheck [] = True
-recursiveOutputCheck (x:xs) = 
+positionsOutputCheckAux        :: [FileWritePosition] -> Bool
+positionsOutputCheckAux []     = True
+positionsOutputCheckAux (x:xs) = 
   let identPos = identifierPosition x
       xPosAmount = totalXPosAmount x
       yPosAmount = totalYPosAmount x
@@ -761,27 +738,25 @@ recursiveOutputCheck (x:xs) =
       totalVol = overalVolumePos x
       openInterest = overalOpenInterestPos x
         -- todo on liquidation info
-      (amt,side,liqtype) = case viewl (activatedExitPos x) of
+      (amt,side,liqtype)   = case viewl (activatedExitPos x) of
                        (amt', side', liqtype') :< _ -> (amt', side', liqtype')
                        EmptyL -> (0, "", "")
-      (isforce, isstop) = isVolForcedPos x
-      checkTakerXY = if buyVol > 0 && openInterest > 0 then Just (takerX > makerX) else Nothing
-      checkLiquidation = if amt > 0 && side == "z" then Just (buyVol > 0 && sellVol == 0  {-&& openInterest <= 0 -}) else Nothing
-      checkVolBuy          = if buyVol > 0    then Just (sellVol == 0)  else Nothing
-      checkVolSell         = if sellVol > 0   then Just (buyVol == 0)   else Nothing
-      checkVolPosBuy       = if buyVol > 0    then Just ((takerX > 0 || takerZ > 0) && (takerY == 0 && takerF == 0) )else Nothing
-      checkVolPosSell      = if sellVol > 0   then Just ((takerY > 0 || takerF > 0) && (takerX == 0 && takerZ == 0)) else Nothing
-      checkVolPosBuyMaker  = if buyVol > 0    then Just ((makerY > 0 || makerF > 0) && (makerX == 0 && makerZ == 0)) else Nothing
-      checkVolPosSellMaker = if sellVol > 0   then Just ((makerX > 0 || makerZ > 0) && (makerY == 0 && makerF == 0)) else Nothing
-      checkerCountwithVol  = if xPosCount > 0 then Just (xPosAmount > 0) else Nothing
-      checkerCountwithVol2 = if yPosCount > 0 then Just (yPosAmount > 0) else Nothing
-      checkerCountwithVol3 = if zPosCount > 0 then Just (zPosAmount > 0) else Nothing
+      (isforce, isstop)    = isVolForcedPos x
+      checkTakerXY         = if buyVol    > 0 && openInterest > 0 then Just (takerX > makerX) else Nothing
+      checkLiquidation     = if amt       > 0 && side == "z" then Just (buyVol > 0 && sellVol == 0 ) else Nothing
+      checkVolBuy          = if buyVol    > 0    then Just (sellVol == 0)  else Nothing
+      checkVolSell         = if sellVol   > 0    then Just (buyVol == 0)   else Nothing
+      checkVolPosBuy       = if buyVol    > 0    then Just ((takerX > 0 || takerZ > 0) && (takerY == 0 && takerF == 0) )else Nothing
+      checkVolPosSell      = if sellVol   > 0    then Just ((takerY > 0 || takerF > 0) && (takerX == 0 && takerZ == 0)) else Nothing
+      checkVolPosBuyMaker  = if buyVol    > 0    then Just ((makerY > 0 || makerF > 0) && (makerX == 0 && makerZ == 0)) else Nothing
+      checkVolPosSellMaker = if sellVol   > 0    then Just ((makerX > 0 || makerZ > 0) && (makerY == 0 && makerF == 0)) else Nothing
+      checkerCountwithVol  = if xPosCount > 0    then Just (xPosAmount > 0) else Nothing
+      checkerCountwithVol2 = if yPosCount > 0    then Just (yPosAmount > 0) else Nothing
+      checkerCountwithVol3 = if zPosCount > 0    then Just (zPosAmount > 0) else Nothing
       checkerCountwithVol4 = if fPosCount > 0 then Just (fPosAmount > 0) else Nothing
       checkForceOrderCount = if isforce == True then Just ((takerX + takerY + takerZ + takerF) == 1) else Nothing
-      checks = 
-    
-                    [
-                          takerX + makerX == xPosAmount                                                
+      checkForceOI         = if isforce == True then Just (openInterest <= 0) else Nothing
+      checks =        [   takerX + makerX == xPosAmount                                                
                         , takerY + makerY == yPosAmount                                                  
                         , takerZ + makerZ == zPosAmount                                                     
                         , takerF + makerF == fPosAmount                                            
@@ -818,9 +793,79 @@ recursiveOutputCheck (x:xs) =
                         , fromMaybe True checkerCountwithVol3
                         , fromMaybe True checkerCountwithVol4
                         , fromMaybe True checkForceOrderCount
+                        , fromMaybe True checkForceOI ]
+                    in all id checks && positionsOutputCheckAux xs
 
+testOutputBook :: SpecWith ()
+testOutputBook = do 
+  describe "output/bookInfo.json" $ do
+      it "returns realistic output" $ do
+        bookStats <- readBookInfo orderBookDetailsP
+        case bookStats of 
+          Left _ -> expectationFailure "Failed to parse book."
+          Right book -> bookOutputCheckAux book `shouldBe` True
 
+bookOutputCheckAux :: [FileWriteBook] -> Bool
+bookOutputCheckAux [a] = True
+bookOutputCheckAux [] = True
+bookOutputCheckAux (x:y:xs) = 
+  let  (identifier,identifier2)        = (identifierBook x    , identifierBook y)
+       (price,price2)                  = (priceBook x         , priceBook y)
+       (bidAskRatio,bidAskRatio2)      = (bidAskRatioBook x   , bidAskRatioBook y)
+       (bidsTotal,bidsTotal2)          = (bidsTotalBook x     , bidsTotalBook y )
+       (asksTotal,asksTotal2)          = (asksTotalBook x     , asksTotalBook y)
+       (maxMinLmt,maxMinLmt2)          = (maxMinLmtBook x     , maxMinLmtBook y) 
+       (vSide,vSide2)                  = (vSideBook x         , vSideBook y)
+       (volumeAmount,volumeAmount2)    = (volumeAmountBook x  , volumeAmountBook y)
+       (spread,spread2)                = (spreadBook x        , spreadBook y)
+       checkPriceMovementUP = if vSide2  == Buy                   then Just (price2 >= price) else Nothing
+       checkPriceMovementDW = if vSide2  == Sell                  then Just (price2 <= price) else Nothing
+       checkPriceUPprecise  = if vSide2  == Buy  && vSide == Sell then Just (price2 > price)  else Nothing
+       checkPriceDWprecise  = if vSide2  == Sell && vSide == Buy  then Just (price2 < price)  else Nothing
+       bidReduction         = if vSide2  == Sell then Just  (bidsTotal2 ==  (bidsTotal - volumeAmount2 ))  else Nothing
+       askReduction         = if vSide2  == Buy  then Just  (asksTotal2 == (asksTotal - volumeAmount2 )) else Nothing 
+      -- | bid ask ratio functionality
+      -- bidAskRMechanic = if bidAskRatio2 < bidAskRatio then Just (vSide == Buy) else Nothing
+       -- fix mechanics for these 2 checks down not to hold true:
+---------------  & this is pseudo-marketmaking-bullshit that has to be handeled different  -- - - - - - -- - - - 
+      
+       bidMechanic = if vSide2 == Sell && bidAskRatio2 < bidAskRatio then Just (asksTotal2 > asksTotal) else Nothing
+       askMechanic = if vSide2 == Buy && bidAskRatio2 > bidAskRatio then Just (bidsTotal2 > bidsTotal) else Nothing
+        
+----------------- &      -  -- - -- -----   - - - - - ------    - - - - - - - - - - --- - ------- -- - - - - - - - -
+       checks       =  [ price >= 0       && price2 >= 0,
+                         volumeAmount > 0 && volumeAmount2 > 0,
+                         (read spread      :: Double)  >= 0 && (read spread2      :: Double) >= 0,
+                         (read bidAskRatio :: Double)  >= 0 && (read bidAskRatio2 :: Double) >= 0,
+                         fromMaybe True checkPriceMovementUP, 
+                         fromMaybe True checkPriceMovementDW,
+                         fromMaybe True checkPriceUPprecise,
+                         fromMaybe True checkPriceDWprecise,
+                         fromMaybe True bidReduction,
+                         fromMaybe True askReduction,
+                         fromMaybe True bidMechanic,
+                         fromMaybe True askMechanic   ]  
+      in all id checks && bookOutputCheckAux xs
 
-                    ]
-                    in all id checks && recursiveOutputCheck xs
+testDataOrderBook :: SpecWith ()
+testDataOrderBook = do 
+  describe "data/bidbook.json, askbook.json" $ do
+      it "returns realistic output" $ do
+        orderBookBid <- readBook bidBookP
+        orderBookAsk <- readBook askBookP
+        case orderBookBid of 
+          [] -> expectationFailure "Failed to parse bookBid"
+          output -> bookDataCheckAux output `shouldBe` True
+        case orderBookAsk of 
+          [] -> expectationFailure "Failed to parse bookAsk"
+          output -> bookDataCheckAux output `shouldBe` True
 
+bookDataCheckAux :: [(Double, Int)] -> Bool
+bookDataCheckAux [] = True
+bookDataCheckAux ((price, amount):xs) =
+  let 
+    checks =
+      [ price >= 0,
+        amount >= 0
+      ]
+  in all id checks && bookDataCheckAux xs

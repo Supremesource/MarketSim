@@ -340,3 +340,8 @@ readPositions :: FilePath -> IO (Either String [FileWritePosition])
 readPositions filePath = do
   jsonData <- B.readFile filePath
   return $ eitherDecode jsonData
+
+readBookInfo :: FilePath -> IO (Either String [FileWriteBook])
+readBookInfo filePath = do
+  jsonData <- B.readFile filePath
+  return $ eitherDecode jsonData

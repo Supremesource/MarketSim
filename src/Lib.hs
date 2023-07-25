@@ -51,6 +51,7 @@ import           Data.Ratio                ((%))
 import qualified Data.Text                 as T
 import qualified Data.Text.IO              as TIO
 import           Data.Time.Clock.POSIX     (getPOSIXTime)
+import Data.List (sort)
 import           System.IO                 (IOMode (ReadMode), hClose,
                                             hFileSize, openFile)
 import           System.Random             (Random (randomR, randomRs),
@@ -535,22 +536,50 @@ startingPointFromFile filePath = do
     error $ red "Starting price cannot be negative"
   return toDouble
 
+-- splits volume into smaller lists
 generateVolumes :: Int -> Int -> IO [Int]
+generateVolumes _ 0 = return [0]
+generateVolumes _ 1 = return [1]
 generateVolumes numPos totalVolume' = do
   Control.Monad.when (numPos < 1) $
     error $ red "Number of transactions cannot be less than 1"
-  Control.Monad.when (totalVolume' < 1) $
-    error $ red "Total volume cannot be less than 1"
+  Control.Monad.when (totalVolume' < 0) $
+    error $ red "Total volume cannot be less than zero"
   Control.Monad.when (totalVolume' < numPos) $
     error $ red "Total volume cannot be less than number of transactions"
-  let maxVol = totalVolume' `div` round ((fromIntegral numPos :: Double) / 1.2)
 
+  let chunkCount = numPos
+
+  case () of _
+              | totalVolume' < chunkCount -> return [totalVolume']
+              | otherwise -> do
+                let (q, _) = totalVolume' `divMod` chunkCount
+                -- > RANDOMNESS <
+                chunks <- replicateM (chunkCount - 1) (randomRIO (q `div` 2, q * 3 `div` 2))
+                let lastChunk = totalVolume' - sum chunks
+                let sortedList = sort (lastChunk : chunks)
+                let processedList = fixList 0 sortedList
+
+                if any (< numPos) processedList
+                then error "hey" 
+                else do return $ filter (/= 0) processedList
+  where
+    fixList _ [] = []
+    fixList acc (x:xs)
+      | acc + x < numPos = fixList (acc + x) xs
+      | otherwise = (acc + x) : fixList 0 xs
+
+
+
+
+  {-
+  let maxVol = totalVolume' `div` round ((fromIntegral numPos :: Double) / 1.2)
   -- > RANDOMNESS <
   volumes <- replicateM (numPos - 1) (randomRIO (1, maxVol))
-
   let lastVolume = totalVolume' - sum volumes
-  return (volumes ++ [lastVolume])
-
+  let output = (volumes ++ [lastVolume])
+  if sum output == totalVolume' then error "volume generation experienced a bug" else return output -- todo optimize
+-}
 plotGraph :: IO ()
 plotGraph = do
     if plotCharts
