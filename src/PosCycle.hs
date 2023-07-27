@@ -136,14 +136,14 @@ closingConversion (takers, makers)
 
 
 -- TODO better leverage statistics
-positionFuture :: Double -> (TakerPositions, MakerPositions) -> IO ClosePositionData
-positionFuture price' (taker, maker) = do
+positionFuture :: Int -> Double -> (TakerPositions, MakerPositions) -> IO ClosePositionData
+positionFuture leverage price' (taker, maker) = do
   let (takerConver, makerConvert) = closingConversion (taker, maker)
-  let concatTakerMaker = takerConver ++ makerConvert
+  let concatTakerMaker = takerConver ++ makerConvert -- todo might be overhead
   mapM calcPosition concatTakerMaker
   where
     calcPosition (amt, side) = do
-      leverage <- takenLeverage
+     -- leverage <- takenLeverage
       let liquidationPrice
             | leverage /= 1 && side == "z" =
               (price' / fromIntegral leverage) + price'
@@ -469,7 +469,8 @@ normalrunProgram ::
   -> Double
   -> String
   -> IO ( SeqClosePositionData    -- # updated accumulator short # updated accumulator long
-        , NewPositioning ) -- # updated accumulator positions
+        , NewPositioning  -- # updated accumulator positions
+        , Int )          -- # taken leverage
 normalrunProgram volSide (volumeSplitT, volumeSplitM) (oldLongFuture, oldShortFuture) -- TODO TAKE OUT oldPositions
                                                sPrice liqSide = do
   newPositioning <-
@@ -479,7 +480,8 @@ normalrunProgram volSide (volumeSplitT, volumeSplitM) (oldLongFuture, oldShortFu
       volumeSplitM
       (oldLongFuture, oldShortFuture)
       liqSide
-  posFut <- positionFuture sPrice newPositioning
+  leverage <- takenLeverage
+  posFut <- positionFuture leverage sPrice newPositioning
  -- let adjustedLiquidation = if liqSide == "" then "no" else "yes"
   let converToTransaction = TransactionFut {future = posFut}
   let (filteredLongFuture, filteredShortFuture) =
@@ -514,4 +516,4 @@ normalrunProgram volSide (volumeSplitT, volumeSplitM) (oldLongFuture, oldShortFu
   return
     ( updatedFutureAcc -- # already concat to new accumulator
     , unorderedPosNew -- # returning in a raw form to positionCycle
-     )
+    , leverage) -- # returning the leverage to positionCycle 

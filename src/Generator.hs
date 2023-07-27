@@ -160,6 +160,7 @@ data GenerationPass = GenerationPass
   , initialBookDetailsListInput     :: [BookStats]
   , initStatsInput                  :: [Stats]
   , liquidationTagInput             :: [(Bool, String)]
+
   }
 
 data GenerationOutput = GenerationOutput
@@ -171,6 +172,8 @@ data GenerationOutput = GenerationOutput
   , askBookOutput     :: SeqOrderBook
   , bookDetailsOutput :: [BookStats]
   , posStatsOutput    :: [Stats]
+
+  
   }
 
 data ListPass = ListPass
@@ -202,6 +205,7 @@ data ReturnVolumeProcess = ReturnData
     , newPosStatsOutpt      :: Stats
     , updatedVolumeOutpt    :: VolumeList
     , liquidationTagOutpt   :: [(Bool, String)]
+
     }
 
 
@@ -249,20 +253,8 @@ data PositionCycleOutput = PositionCycleOutput
   , newPositions      :: NewPositioning
   , newPosFutureLong  :: Seq (Double, Int, String)
   , newPosFutureShort :: Seq (Double, Int, String)
+  , newPoslevg              :: Int
   } deriving (Eq)
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -329,7 +321,8 @@ processTransaction genPass@GenerationPass{} = do
       , newBookDetailsOutpt  = newBookDetails
       , updatedVolumeOutpt   = newVolume
       , newPosStatsOutpt     = newPosStats
-      , liquidationTagOutpt  = newLiquidationTag } -> do
+      , liquidationTagOutpt  = newLiquidationTag 
+      } -> do
 
 
     -- / 
@@ -359,6 +352,7 @@ processTransaction genPass@GenerationPass{} = do
       , initialBookDetailsListInput = newBookDetails : bookDetails
       , initStatsInput = newPosStats : posStats
       , liquidationTagInput = newLiquidationTag
+      
       }
 
 insertAt :: Int -> [a] -> [a] -> [a]
@@ -430,7 +424,8 @@ volumeProcessing listPass@ListPass{}  = do
           ,nullLiqInfo       = newPositionsGenerated
           ,newPositions      = localPositions
           ,newPosFutureLong  = newPosFutureLongGenerated
-          ,newPosFutureShort = newPosFutureShortGenerated  } = positionGenerator
+          ,newPosFutureShort = newPosFutureShortGenerated  
+          ,newPoslevg        = newPosLevg } = positionGenerator
 
   let liquidationString = if null newLiqInfoGenerated then [""] else (toList . fmap (\(_, _, s) -> s)) newLiqInfoGenerated
   let liquidationTag    = if null newLiqInfoGenerated then  [(False,"")] else map (True, ) liquidationString
@@ -439,7 +434,7 @@ volumeProcessing listPass@ListPass{}  = do
 
 
  -- ++ liquidation information 
-  let newStats       = aggregateStats localPositions newLiqInfoGenerated liqT initStats
+  let newStats       = aggregateStats localPositions newLiqInfoGenerated liqT newPosLevg initStats
 
 -- in case of liquidation it will add the volume to the accumulator
   --let isVolAtOneElement = vAmount == [a]
@@ -479,7 +474,8 @@ volumeProcessing listPass@ListPass{}  = do
                           , newBookDetailsOutpt   = newbookDetails
                           , updatedVolumeOutpt    = concatVolProcess
                           , newPosStatsOutpt      = newStats
-                          , liquidationTagOutpt   = liquidationTagOut }
+                          , liquidationTagOutpt   = liquidationTagOut
+                           }
 
 
 
@@ -646,7 +642,7 @@ positionCycle positionCyclePass@PositionCyclePass{} = do
       (longliq, shortliq)
       sPricegen
       liquidationString
-  let ((newPosFutureShortGen, newPosFutureLongGen), newPositionsGen) =
+  let ((newPosFutureShortGen, newPosFutureLongGen), newPositionsGen, leverage) =
           runProgram
       -- | (TakerPositions,MakerPositions)
       -- TODO convert into seq and keep it until base case
@@ -664,6 +660,7 @@ positionCycle positionCyclePass@PositionCyclePass{} = do
     , newPositions      = newPositionsGen
     , newPosFutureLong  = newPosFutureLongGen
     , newPosFutureShort = newPosFutureShortGen
+    , newPoslevg        = leverage
     }
 
 
@@ -679,6 +676,7 @@ processTransactionBase genPass = do
   let askBook      = askBookInput genPass
   let bookDetails  = tail $ reverse $  initialBookDetailsListInput genPass
   let posStats     = tail $ reverse $ initStatsInput genPass
+  --let leverageAmt  = tail $ levgInput genPass
   -- / ACTION
   -- ? DATA
   let posFuture =  TransactionFut $ toList $ longinfo >< shortinfo
@@ -710,4 +708,5 @@ processTransactionBase genPass = do
       , askBookOutput     = askBook
       , bookDetailsOutput = bookDetails
       , posStatsOutput    = posStats
+   --   , levgOutput        = leverageAmt
     }

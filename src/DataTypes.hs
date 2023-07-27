@@ -141,6 +141,7 @@ data FileWritePosition    = FileWritePosition
   ,overalOpenInterestPos  :: Int
   ,activatedExitPos       :: Seq (Int,String,String)
   ,isVolForcedPos         :: (Bool,String)
+  ,leverageAmtPos         :: Int
   } deriving Generic
   deriving (FromJSON, ToJSON)
   via JSONConfig FileWritePosition
@@ -187,6 +188,7 @@ data Stats = Stats
   , makerF      :: Int
   , forceCall   :: Seq (Int,String,String)
   , isVolForced :: (Bool,String)
+  , leverageAmt :: Int
   } deriving (Show,Eq)
 
 data Options =
