@@ -67,7 +67,7 @@ import           DataTypes
 import           RunSettings
 import           Statistics
 import System.Process
-
+import Data.Sequence (Seq(..))
 
 
 -- ? WALLS
@@ -318,12 +318,12 @@ interestorPlus ((n1, s1):takers) ((n2, s2):makers)
 -- | checking volume
 volumechecker ::
      Int -> Int -> Int -> Int -> Int -> IO ()
-volumechecker minimumV a b c d 
+volumechecker minimumV a b c d
   | a < minimumV   ||
       b < minimumV ||
       c < minimumV ||
       d < minimumV =
-     
+
     error
       (red
          "\n\nVolume must be greater than minimum volume specified in settings")
@@ -347,8 +347,8 @@ addsupto100 first second
   | first + second == 100 = return ()
   | otherwise = do
     putStr "\n/RunSettings.hs "
-    putStrLn $ purple "[WARNING]\n"
-    putStr ("\n         |\naprx.144 |" ++ blue "  probabilites in settings do not add up to 100%"  
+    putStrLn $ purple "[WARNING]\n"
+    putStr ("\n         |\naprx.144 |" ++ blue "  probabilites in settings do not add up to 100%"
          ++ "\n         |" ++ blue "  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\n")
 
 
@@ -536,6 +536,33 @@ startingPointFromFile filePath = do
     error $ red "Starting price cannot be negative"
   return toDouble
 
+positionAdjustementAux :: Int -> Int -> Int
+positionAdjustementAux 0 _ = 0
+positionAdjustementAux 1 _ = 1
+positionAdjustementAux pos vol | vol > (2 * (pos * pos)) = pos
+                               | otherwise =  positionAdjustementAux (pos - 1) vol
+
+generateVolumes :: Int -> Int -> IO [Int]
+generateVolumes npos ttlVol
+      | npos < 1      = error "Number of transactions cannot be less than 1"
+      | ttlVol < 1    = error "Total volume cannot be less than 1"
+ --     | ttlVol < npos = error "Total volume cannot be less than number of transactions"
+      | otherwise     = do
+          let adjustedNpos = positionAdjustementAux npos ttlVol
+          if adjustedNpos == 1 then return [ttlVol]
+          else do
+            let toReplicate  = adjustedNpos - 1
+            -- layer 1
+            a <- replicateM (toReplicate + 1) (randomRIO (adjustedNpos, adjustedNpos * 2))
+            let lastChunk  = ttlVol - sum a
+            -- layer 2
+            b <- replicateM toReplicate (randomRIO ((lastChunk `div` toReplicate) `div` 2, lastChunk `div` toReplicate))
+            let lastChunk2 = lastChunk - sum b
+            let b' = lastChunk2 : b
+            -- final
+            let c = zipWith (+) a b'
+            return c
+{-
 -- splits volume into smaller lists
 generateVolumes :: Int -> Int -> IO [Int]
 generateVolumes _ 0 = return [0]
@@ -569,7 +596,7 @@ generateVolumes numPos totalVolume' = do
       | acc + x < numPos = fixList (acc + x) xs
       | otherwise = (acc + x) : fixList 0 xs
 
-
+-}
 
 
   {-
@@ -580,6 +607,16 @@ generateVolumes numPos totalVolume' = do
   let output = (volumes ++ [lastVolume])
   if sum output == totalVolume' then error "volume generation experienced a bug" else return output -- todo optimize
 -}
+
+safeHead :: [a] ->  Maybe a
+safeHead [] = Nothing
+safeHead (x:_) = Just x
+
+safeSeqTail :: Seq a -> Maybe (Seq a)
+safeSeqTail Empty      = Nothing
+safeSeqTail (_ :<| xs) = Just xs
+
+
 plotGraph :: IO ()
 plotGraph = do
     if plotCharts

@@ -36,7 +36,8 @@ module NRandomFunc
   -}
 where
 
--- | External libraries
+-- | External libraries,
+import System.Random
 import Test.Hspec
 import Test.QuickCheck ()
 import Control.Exception (evaluate)
@@ -53,6 +54,7 @@ import Data.Aeson (FromJSON, ToJSON, eitherDecode)
 import GHC.Generics (Generic)
 import qualified Data.ByteString.Lazy as B
 import qualified Data.Bifunctor
+import Debug.Trace
 
 
 -- | Internal libraries
@@ -345,3 +347,94 @@ readBookInfo :: FilePath -> IO (Either String [FileWriteBook])
 readBookInfo filePath = do
   jsonData <- B.readFile filePath
   return $ eitherDecode jsonData
+
+readPosFuture :: FilePath -> IO (Either String TransactionFut)
+readPosFuture filePath = do
+  jsonData <- B.readFile filePath
+  return $ eitherDecode jsonData
+
+{-
+nonBuggyVolumeSplit :: Int -> Int -> IO [Int]
+generateVolumes _ 0 = return [0]
+generateVolumes _ 1 = return [1]
+nonBuggyVolumeSplit numPos totalVolume' = do
+  Control.Monad.when (numPos < 1) $
+    error $ red "Number of transactions cannot be less than 1"
+  Control.Monad.when (totalVolume' < 1) $
+    error $ red "Total volume cannot be less than 1"
+  Control.Monad.when (totalVolume' < numPos) $
+    error $ red "Total volume cannot be less than number of transactions"
+  let maybeProceed = if (fromIntegral totalVolume' ) /  (fromIntegral(numPos * 2)) < 1
+        then True
+        else False
+        
+  result = if maybeProceed == True then return [totalVolume'] else 
+    generateListAux [] numPos totalVolume'
+      where 
+        generateListAux :: [Int] -> Int -> Int -> IO [Int]
+        generateListAux [] _ _ = return []
+        generateListAux accList nPos totVol = do
+          randomizerL <- randomRIO (1, 10) :: IO Int
+          let customLow = if randomizerL =< 5 then (randomRIO (nPos, totVol `div` nPos)) else nPos
+          randomizerH <- randomRIO (1, 10) :: IO Int
+          let customHigh  = if ranomizerH =< 3 then round (1.5 * (fromIntegral (totVol `div` nPos))) :: Int else totVol `div` nPos
+          toReplicate = if sum chunks + (nPos * 2) > totVol then False else True
+          chunks <- if toReplicate /= True then replicateM (nPos - 1) (randomRIO (customLow, customHigh)) else -- return the result it has currently been replicated at
+          let lastChunk = totVol - sum chunks
+
+-}
+
+
+positionAdjustement :: Int -> Int -> Int 
+positionAdjustement 0 _ = 0
+positionAdjustement 1 _ = 1
+positionAdjustement pos vol | vol > (2 * (pos * pos)) = pos
+                            | otherwise =  positionAdjustement (pos - 1) vol 
+  
+generateVolumesX :: Int -> Int -> IO [Int]
+generateVolumesX npos ttlVol 
+      | npos < 1      = error "Number of transactions cannot be less than 1"
+      | ttlVol < 1    = error "Total volume cannot be less than 1"
+      | ttlVol < npos = error "Total volume cannot be less than number of transactions"
+      | npos == 1     = return [ttlVol]
+      | otherwise     = do
+          let adjustedNpos = positionAdjustement npos ttlVol
+          trace ("adjustedNpos: " ++ show adjustedNpos) $ return ()
+          let toReplicate  = adjustedNpos - 1
+          -- layer 1
+          a <- replicateM (toReplicate + 1) (randomRIO (adjustedNpos, (adjustedNpos * 2)))
+          let lastChunk  = ttlVol - sum a
+          -- layer 2
+          b <- replicateM toReplicate (randomRIO (((lastChunk `div` toReplicate) `div` 2), (lastChunk `div` toReplicate)))
+          let lastChunk2 = lastChunk - sum b
+          let b' = lastChunk2 : b
+          -- final
+          let c = zipWith (+) a b'
+          return c
+
+
+{-
+nonBuggyVolumeSplit :: Int -> Int -> IO [Int]
+nonBuggyVolumeSplit numPos totalVolume'
+  | numPos < 1 = error "Number of transactions cannot be less than 1"
+  | totalVolume' < 1 = error "Total volume cannot be less than 1"
+  | totalVolume' < numPos = error "Total volume cannot be less than number of transactions"
+  | numPos == 1 = return [totalVolume']
+  | otherwise = generateListAux [] numPos totalVolume' totalVolume'
+  where
+    
+    generateListAux :: [Int] -> Int -> Int -> Int -> IO [Int]
+    generateListAux accList 0 _ _ = return accList
+    generateListAux accList nPos totVol totalVlm = do
+      randomizerH <- randomRIO (1, 10) :: IO Int
+      let customHigh = if randomizerH == 1 then totVol else totVol `div` nPos
+      randNum <- randomRIO (1, customHigh)
+      let newTotVol = totVol - randNum
+      let newAccList = updateAccList accList nPos totVol totalVlm newTotVol randNum
+      generateListAux newAccList (nPos - 1) newTotVol totalVlm
+   
+    updateAccList :: [Int] -> Int -> Int -> Int -> Int -> Int -> [Int]
+    updateAccList accList nPos _ totalVlm newTotVol randNum
+      | newTotVol == 0 || nPos == 1 = (totalVlm - sum accList) : accList
+      | otherwise = randNum : accList
+-}

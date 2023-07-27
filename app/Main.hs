@@ -43,12 +43,13 @@ where
     -- | better orderbook market making logic
     -- Todo add leverage info   
    -- todo add restrictive settings for everything
-   -- optimize code
+   -- optimize code, there is too much exponetial time complexity
    -- make general bug check of output
     -- // fix negative orderbook levels on bids by stopping ask generation at that point as well, (probable stop ask gen at that point)
     -- //  | make reusable output 
 
     -- ! bugs
+    -- TODO fix liquidation bug
     -- // fix taker splitting to small amounts 
     -- // fix small volume low
  -- TODO
