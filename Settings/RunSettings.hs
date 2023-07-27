@@ -80,8 +80,9 @@ numPositions = 5000
 --〇 ID = maxM/T
 -- TODO add more complex statistic distribution
 -- | what is the maximum of makers in one transaction , i.e 1000 buy matched with 1000 sell, now the max makers filled in that transaction can be specified below
+-- ! do not change , i will remove this later
 maxMakers :: Int
-maxMakers = 10
+maxMakers = 1
 -- | note that max takers is hardcoded to be 95% of maxmakers (done on real market observtions)
 -- ? Not recommended to change this from 0.95
 maxTakers :: Int

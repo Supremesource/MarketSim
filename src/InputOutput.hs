@@ -128,6 +128,7 @@ writePosition statList idList02 = do
       , overalOpenInterestPos  = overallOI   stats
       , activatedExitPos       = forceCall stats
       , isVolForcedPos         = isVolForced stats
+      , leverageAmtPos         = leverageAmt stats
       }
 
 
