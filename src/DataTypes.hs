@@ -53,14 +53,16 @@ type JSONConfig a =
 
 data TransactionFut = TransactionFut {
     future :: ClosePositionData
-  } deriving (Show, Generic, FromJSON, ToJSON)
+  } deriving (Show, Eq, Generic)
+  deriving (FromJSON, ToJSON)
+  via JSONConfig TransactionFut
 
 data VolumeStage =
                 Undefined |
                    LowVol |
                 MediumVol |
                 HighVol   |
-                SpikeVol |
+                SpikeVol  |
                 DeadVol   deriving (Show, Eq)
 
 data FileWritesLog = FileWritesLog

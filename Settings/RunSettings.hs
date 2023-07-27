@@ -61,13 +61,13 @@ plotCharts = False
 -- | starting value
 -- | you can activate this price point by runProgramning `w` - wiping runProgram
 wipingStartingValue :: Int
-wipingStartingValue = 29223
+wipingStartingValue = 100
 
 --〇 ID = NUMPOS
 -- | number of positions you want to take place in the simulation runProgram
 -- | number of positions
 numPositions :: Int
-numPositions = 30000
+numPositions = 5000
 
 --〇 ID = NUMrunProgram
 -- | number of runPrograms, this is a loop how many times will the simulation repeat itself (random generators are updating each time though)
@@ -81,7 +81,7 @@ numPositions = 30000
 -- TODO add more complex statistic distribution
 -- | what is the maximum of makers in one transaction , i.e 1000 buy matched with 1000 sell, now the max makers filled in that transaction can be specified below
 maxMakers :: Int
-maxMakers = 20
+maxMakers = 10
 -- | note that max takers is hardcoded to be 95% of maxmakers (done on real market observtions)
 -- ? Not recommended to change this from 0.95
 maxTakers :: Int
@@ -120,7 +120,7 @@ maxDecimal = 4
 -- ! list start is the end and list end is the start (SO IT MAIGHT BE CONFUSING)
 -- (the thing you write at the start is the end of the run vice versa)
 runProgramlist :: [Options]
-runProgramlist = [UPP,CN,UPP,RANDOM,UPP,UPP,CN,CN,CN,RANDOM]
+runProgramlist = [DWW,DWW,DWW,DWW,DWW,DWW,DWW,DWW,DWW,DWW]
 
 --  Volume settings:
 -- 〇 ID = VOL
@@ -129,19 +129,19 @@ runProgramlist = [UPP,CN,UPP,RANDOM,UPP,UPP,CN,CN,CN,RANDOM]
 -- | not recommended to go below 10 , depends on your maxmakers, maxtakers, there is potential error catching metric implemented, but still set this rather high
 -- ! note that volume can exceed your maximum value up to 5 x times when volume spike volume is activated in statistics
 minvolume :: Int
-minvolume = 1000
+minvolume = 100
 --〇 ID = VOL02
 -- | BUY VOUME
 minBuyVol :: Int
-minBuyVol = 1000
+minBuyVol = 100
 maxBuyVol :: Int
-maxBuyVol = 2000000
-
+maxBuyVol = 400000
 -- | SELL VOLUME
 minSellVol :: Int
-minSellVol = 1000
+minSellVol = 100
 maxSellVol :: Int
-maxSellVol = 2000000
+maxSellVol = 400000
+
 
 -- previous stat amount now it's probability 
 --  VOLUME Probability
@@ -160,10 +160,10 @@ stopProb :: Int
 stopProb = 9
 
 takerxProb :: Int
-takerxProb = 9
+takerxProb = 5
 
 closingProb :: Int
-closingProb = 7
+closingProb = 1
 
 -- TODO add closing probability x
 -- ! ORDERBOOK SETINGS
@@ -185,15 +185,15 @@ maximum' = 400000 -- maximum order $ amount
 -- | for bid = bid liquidity (< min move + max move <  = more liquidity, vice versa)
 -- TODO add more complex statistical distribuiton
 minUpMove :: Double
-minUpMove = 0.9
+minUpMove = 0.009
 maxUpMove :: Double
-maxUpMove = 0.2
+maxUpMove = 0.01
 -- | Minimum & Maximum DOWN move in the orderbook structure
 -- | for ask = ask liquidity (< min move + max move <  = more liquidity, vice versa)
 minDownMove :: Double
-minDownMove = 0.9
+minDownMove = 0.009
 maxDownMove :: Double
-maxDownMove = 0.2
+maxDownMove = 0.01
 
 --〇 ID = TakeBidAsk
 -- | Size of bid orderbook
@@ -210,7 +210,7 @@ takeamountASK = 20000
 -- | /2  -- (recommended 40-80, possibly even higher, it is going to be `div` by 2 so it gets distributed into bids and asks )
 -- | defines in how many orders in the initial book will a wall occour
 orderwalllikelyhood :: Int
-orderwalllikelyhood = 250
+orderwalllikelyhood = 200
 
 --〇 ID = wallAmp
 -- | Amplifier of Wall  occurrences

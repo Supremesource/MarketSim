@@ -409,10 +409,16 @@ volumeProcessing listPass@ListPass{}  = do
                               ,listBID'Input        = listBIDGenerated
                               ,sPriceInput          = sPriceGenerated }
   let (volAmt, volSide) = vol
+
+  let headLiqInfo = case safeHead $ toList liqinfo  of
+          Nothing -> []
+          Just (a,b,c) -> [(a,b,c)]
+
+  -- // pass safe head liqinfo
   positionGenerator <- positionCycle
             PositionCyclePass
                             {  sPriceInputCycle     = sPriceGenerated
-                              , liqinfoInputCycle   = toList liqinfo
+                              , liqinfoInputCycle   = headLiqInfo -- // toList liqinfo
                               , longinfoInputCycle  = longinfo
                               , shortinfoInputCycle = shortinfo
                               , vAmountInputCycle   = volAmt
@@ -455,10 +461,16 @@ volumeProcessing listPass@ListPass{}  = do
       then toList liquidationTOvol ++ restOfVol
       else insertAt (length liqTRest) (toList liquidationTOvol) restOfVol
 
+
+  let newaccLiqinfo = case safeSeqTail liqinfo of
+        Nothing -> newLiqInfoGenerated
+        Just a -> a <> newLiqInfoGenerated
+        
+  -- concat newLiqInfoGenerated with old one 
   return
                ReturnData
                         {                           -- liq output of pos cycle + that 
-                            newliqinfoOutpt       = newLiqInfoGenerated
+                            newliqinfoOutpt       =  newaccLiqinfo -- // newLiqInfoGenerated
                           , newPosInfoOutpt       = newPositionsGenerated
                           , newLonginfoOutpt      = newPosFutureLongGenerated
                           , newShortinfoOutpt     = newPosFutureShortGenerated
@@ -655,19 +667,6 @@ positionCycle positionCyclePass@PositionCyclePass{} = do
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 -- FUNCTION IS NOT USING UPDATED VOLUME ACCUMULATOR
 -- base case do block
 processTransactionBase :: GenerationPass -> IO GenerationOutput
@@ -704,7 +703,7 @@ processTransactionBase genPass = do
     GenerationOutput
     {
         liqInfoOutput     = liqinfo
-      ,  posInfoOutput     = posinfo
+      ,  posInfoOutput    = posinfo
       , longInfoOutput    = longinfo
       , shortInfoOutput   = shortinfo
       , bidBookOutput     = bidBook

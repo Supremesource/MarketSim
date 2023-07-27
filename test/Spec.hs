@@ -78,14 +78,14 @@ import NRandomFunc
 
 main :: IO ()
 main = do
-    --tests
+    tests
     hspec testsExpected
 
 -- ? comment tests in this function if you want to skip some
 tests :: IO ()
 tests = do
-  testsLib
-  testsUtil
+ -- testsLib
+ -- testsUtil
   testsPosCycle
 
 testsExpected :: SpecWith ()
@@ -93,6 +93,7 @@ testsExpected = do
  testOutputPosition
  testOutputBook
  testDataOrderBook
+ testDataPosFuture
 
 testsLib :: IO ()
 testsLib = hspec $ do
@@ -700,6 +701,16 @@ testsPosCycle = hspec $ do
 
 
 
+  describe "PosCycle.generateVolumes" $ do  
+    it "returns realistic volume split" $ do
+      let volumePass = 1000
+      let numberOfPosition = 20
+      result <- generateVolumesX numberOfPosition volumePass
+      sum result `shouldBe` 1000
+      any (< numberOfPosition) result `shouldBe` False
+     -- result `shouldBe` []
+
+
 -- TESTTING OUTPUT THAT WAS GENERATED
 testOutputPosition :: SpecWith ()
 testOutputPosition = do
@@ -709,6 +720,7 @@ testOutputPosition = do
         case positions of 
           Left _ -> expectationFailure "Failed to parse positions."
           Right pos -> positionsOutputCheckAux pos `shouldBe` True
+
 
 
 -- ! add equal side positioning testing
@@ -754,7 +766,8 @@ positionsOutputCheckAux (x:xs) =
       checkerCountwithVol2 = if yPosCount > 0    then Just (yPosAmount > 0) else Nothing
       checkerCountwithVol3 = if zPosCount > 0    then Just (zPosAmount > 0) else Nothing
       checkerCountwithVol4 = if fPosCount > 0 then Just (fPosAmount > 0) else Nothing
-      checkForceOrderCount = if isforce == True then Just ((takerX + takerY + takerZ + takerF) == 1) else Nothing
+     -- buggy
+      checkForceOrderCount = if isforce == True then Just (xPosCount + zPosCount == 1 || yPosCount + fPosCount == 1) else Nothing
       checkForceOI         = if isforce == True then Just (openInterest <= 0) else Nothing
       checks =        [   takerX + makerX == xPosAmount                                                
                         , takerY + makerY == yPosAmount                                                  
@@ -793,7 +806,9 @@ positionsOutputCheckAux (x:xs) =
                         , fromMaybe True checkerCountwithVol3
                         , fromMaybe True checkerCountwithVol4
                         , fromMaybe True checkForceOrderCount
-                        , fromMaybe True checkForceOI ]
+                        , fromMaybe True checkForceOI  
+                                                          ]  
+                                                      
                     in all id checks && positionsOutputCheckAux xs
 
 testOutputBook :: SpecWith ()
@@ -836,16 +851,16 @@ bookOutputCheckAux (x:y:xs) =
        checks       =  [ price >= 0       && price2 >= 0,
                          volumeAmount > 0 && volumeAmount2 > 0,
                          (read spread      :: Double)  >= 0 && (read spread2      :: Double) >= 0,
-                         (read bidAskRatio :: Double)  >= 0 && (read bidAskRatio2 :: Double) >= 0,
-                         fromMaybe True checkPriceMovementUP, 
-                         fromMaybe True checkPriceMovementDW,
-                         fromMaybe True checkPriceUPprecise,
-                         fromMaybe True checkPriceDWprecise,
-                         fromMaybe True bidReduction,
-                         fromMaybe True askReduction,
-                         fromMaybe True bidMechanic,
-                         fromMaybe True askMechanic   ]  
-      in all id checks && bookOutputCheckAux xs
+                         (read bidAskRatio :: Double)  >= 0 && (read bidAskRatio2 :: Double) >= 0, 
+                            fromMaybe True checkPriceMovementUP ,
+                            fromMaybe True checkPriceMovementDW , 
+                            fromMaybe True checkPriceUPprecise,
+                            fromMaybe True checkPriceDWprecise ,
+                            fromMaybe True bidReduction,
+                            fromMaybe True askReduction,
+                            fromMaybe True bidMechanic,
+                            fromMaybe True askMechanic      ]
+                 in all id checks && bookOutputCheckAux xs
 
 testDataOrderBook :: SpecWith ()
 testDataOrderBook = do 
@@ -869,3 +884,20 @@ bookDataCheckAux ((price, amount):xs) =
         amount >= 0
       ]
   in all id checks && bookDataCheckAux xs
+
+testDataPosFuture :: SpecWith ()
+testDataPosFuture = do
+  describe "data/poFuture.json"
+    $ it "returns realistic output" $ do
+        eTransactionFut <- readPosFuture posCloseDatP
+        case eTransactionFut of 
+          Left _ -> expectationFailure "Failed to parse future."
+          Right transactionFut -> futureDataCheckAux (future transactionFut) `shouldBe` True
+
+
+futureDataCheckAux ::  [(Double, Int, String)] -> Bool
+futureDataCheckAux [] = True
+futureDataCheckAux ((price,amount,side):xs) = 
+    let checks = [ price >= 0 && amount >= 0 && side /= "" ]
+    in all id checks && futureDataCheckAux xs
+  
