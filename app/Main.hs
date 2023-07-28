@@ -43,6 +43,9 @@ where
     -- | better orderbook market making logic
     
     -- // Todo add leverage info   
+    -- todo add stop calculation 
+    -- TODO add slippage
+    -- todo add leverage info into pos future
     -- TODO delete Max makers to 1
     -- TODO add much better leverage info
     -- todo add restrictive settings for everything
@@ -242,12 +245,11 @@ generator isBidEmpty isAskEmpty orderbook_bid orderbook_ask fileBidBook fileAskB
 localCheck :: IO ()
 localCheck = do
   volumechecker
-    minvolume
     minBuyVol
     minSellVol
     maxBuyVol
     maxSellVol
-  positionamountcheck minvolume 1 -- TODO take out this 1
+  --positionamountcheck  1 -- TODO take out this 1
 
 warnings :: IO ()
 warnings

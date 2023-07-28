@@ -317,10 +317,9 @@ interestorPlus ((n1, s1):takers) ((n2, s2):makers)
 -- ? CHECKERS
 -- | checking volume
 volumechecker ::
-     Int -> Int -> Int -> Int -> Int -> IO ()
-volumechecker minimumV a b c d
-  | a < minimumV   ||
-      b < minimumV ||
+       Int -> Int -> Int -> Int -> IO ()
+volumechecker minimumV  b c d
+     |b < minimumV ||
       c < minimumV ||
       d < minimumV =
 
@@ -329,7 +328,7 @@ volumechecker minimumV a b c d
          "\n\nVolume must be greater than minimum volume specified in settings")
   | otherwise = return ()
 
-
+{-
 -- | checking position amount
 positionamountcheck :: Int -> Int -> IO ()
 positionamountcheck a b
@@ -338,7 +337,7 @@ positionamountcheck a b
       (red
          "\n\nPosition amount must be greater than 2 times the minimum volume specified in settings\n\n(you can fix this in the settings, 'catching potential errors)")
   | otherwise = return ()
-
+-}
 
 -- | warning checker for settings
 -- | helper function for probability settings (/% checker)
