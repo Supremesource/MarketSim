@@ -166,12 +166,28 @@ positionFuture (leverageTaker, leverageMaker) price' (taker, maker) = do
   return $ takerCalculation ++ makerCalculation
   where
     calcPosition leverage (amt, side) = do
+      shouldAddStop  <- randomRIO (stopProb, 50) :: IO Int
+
       let liquidationPrice
             | leverage /= 1 && side == "z" = (price' / fromIntegral leverage) + price'
             | leverage /= 1 && side == "f" = price' - (price' / fromIntegral leverage)
             | leverage == 1 && side == "z" = 2 * price'
             | otherwise                    = 0
-      return (liquidationPrice, amt, side, price', fromIntegral leverage)
+
+      stopAdd  <- stopCalculation price' liquidationPrice
+      let stopCheckPrice = when (stopAdd < price' ) $ error "stop is to big"
+      let stopCheckLiqPriceLng = when (stopAdd < liquidationPrice && side == "f") $ error "stop is too small"
+      let stopCheckLiqPriceShrt = when (stopAdd > liquidationPrice && side == "z") $ error "stop is too small"
+
+      when (shouldAddStop == 50) $ do
+            stopCheckPrice
+            stopCheckLiqPriceLng
+            stopCheckLiqPriceShrt
+      let forcePrice = if shouldAddStop == 50 then   stopAdd
+                                              else   liquidationPrice
+      let isForceStop = shouldAddStop == 50
+
+      return (forcePrice, amt, side, price', fromIntegral leverage, isForceStop) -- add is Stop -> True / False
 
 
 
@@ -195,7 +211,7 @@ randomSide = do
       else "y"
 -}
 
-type SeqClosePositionData = (Seq (Double, Int, String, Double, Double), Seq (Double, Int, String, Double, Double))
+type SeqClosePositionData = (Seq (Double, Int, String, Double, Double, Bool), Seq (Double, Int, String, Double, Double, Bool))
 
 normalGenerator ::
      VolumeSide -> [Int] -> [Int] -> SeqClosePositionData -> String -> IO (TakerPositions, MakerPositions)
@@ -204,9 +220,9 @@ normalGenerator tVolumeSide takerLst makerLst (toTakeFromLong, toTakeFromShort) 
     error "closingProb must be between 1 and 10"
   let genType =
         if sum takerLst + sum makerLst >=
-           getSum (foldMap (\(_, n, _, _, _) -> Sum n) toTakeFromLong) &&
+           getSum (foldMap (\(_, n, _, _, _, _) -> Sum n) toTakeFromLong) &&
            sum takerLst + sum makerLst >=
-           getSum (foldMap (\(_, n, _, _, _) -> Sum n) toTakeFromShort)
+           getSum (foldMap (\(_, n, _, _, _ , _) -> Sum n) toTakeFromShort)
           then openingGen
           else normalGen
   genType
@@ -291,14 +307,14 @@ readClosePos = do
 
 filterClosePos :: {-String ->-} String -> TransactionFut -> ClosePositionData
 filterClosePos {-liq-} pos transaction =
- {- if liq == "no" then -}filter (\(_, _, s, _, _) -> s == pos) (future transaction) --else future transaction
+ {- if liq == "no" then -}filter (\(_, _, s, _, _, _) -> s == pos) (future transaction) --else future transaction
 
 
 -- // end of position future
 filterTuple :: String -> [(Int, String)] -> [(Int, String)]
 filterTuple pos = filter (\(_, s) -> s == pos)
 
-type SeqFuture = Seq (Double, Int, String, Double, Double)
+type SeqFuture = Seq (Double, Int, String, Double, Double, Bool)
 
 -- | Function to get third element from 3-tuple
 thrd :: (a, b, c) -> c
@@ -365,7 +381,7 @@ filterCloseAmount ((num, _):ns) closePosData = do
       filterFutureVol (x:xs) closePosData' ns' =
         case Seq.viewl closePosData' of
             Seq.EmptyL -> return Seq.Empty
-            ((liq, amt, sid, ent, lvg) :< rest) -> do
+            ((liq, amt, sid, ent, lvg, isStp) :< rest) -> do
                 -- > RANDOMNESS <
                 -- this is a bit of a bottleneck but i belive it to be worth it
                 -- as it makes the simulation more realistic
@@ -373,8 +389,8 @@ filterCloseAmount ((num, _):ns) closePosData = do
                 let shouldReverseBool = shouldReverseNumberical < 6
                 case () of _
                             | x < amt -> do
-                                  let reversedFutureInfo = rest |> (liq, amt - x, sid, ent, lvg)
-                                  let nonReversedFutureInfo = (liq, amt - x, sid, ent, lvg) <| rest
+                                  let reversedFutureInfo = rest |> (liq, amt - x, sid, ent, lvg, isStp)
+                                  let nonReversedFutureInfo = (liq, amt - x, sid, ent, lvg, isStp) <| rest
                                   let updatedFutureInfo =
                                         if shouldReverseBool
                                           then reversedFutureInfo
@@ -427,16 +443,16 @@ liquidationDuty ::
 liquidationDuty futureInfoL futureInfoS price' = do
   let liquidationFunction =
         mapM
-          (\(p, n, s, _, _) ->
+          (\(p, n, s, _, _, isStop) ->
              (if (price' <= p && s == "f") || (price' >= p && s == "z")
-                then randomLiquidationEvent >>= \event -> return (n, s, event)
+                then forceEvent isStop >>= \event -> return (n, s, event)
                 else return (0, "", "")))
   liquidationEventsL <- liquidationFunction futureInfoL
   liquidationEventsS <- liquidationFunction futureInfoS
   let liquidationListL = Seq.filter (\(n, _, _) -> n /= 0) liquidationEventsL
   let liquidationListS = Seq.filter (\(n, _, _) -> n /= 0) liquidationEventsS
-  let updatedFutureInfoL = Seq.filter (\(p, _, _,_,_) -> price' <= p) futureInfoL
-  let updatedFutureInfoS = Seq.filter (\(p, _, _,_,_) -> price' >= p) futureInfoS
+  let updatedFutureInfoL = Seq.filter (\(p, _, _,_,_, _) -> price' <= p) futureInfoL
+  let updatedFutureInfoS = Seq.filter (\(p, _, _,_,_, _) -> price' >= p) futureInfoS
 
 -- filter the updatedFutureInfoL from futureInfoL
   let newFutureInfoL = Seq.filter (`notElem` updatedFutureInfoL) futureInfoL
@@ -504,8 +520,11 @@ normalrunProgram volSide (volumeSplitT, volumeSplitM) (oldLongFuture, oldShortFu
       (oldLongFuture, oldShortFuture)
       liqSide
 
-  let leverageLong = 50  --  <- takenLeverage baseLeverageLong
-  let leverageShort = 1 -- <- takenLeverage baseLeverageShort
+  --let leverageLong  = 1  --   
+  leverageLong <- takenLeverage baseLeverageLong
+  --let leverageShort = 10 --  
+  leverageShort <- takenLeverage baseLeverageShort
+
   let (takerPositioning,makerPositioning) = newPositioning
   let leverageTaker = if "x" `elem` (snd <$> takerPositioning) then leverageLong else leverageShort
   let leverageMaker = if leverageTaker == leverageLong then leverageShort else leverageLong
