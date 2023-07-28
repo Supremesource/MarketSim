@@ -168,6 +168,7 @@ sellTakerProb = 50
 -- | otherwise an error will be thrown
 
 -- TODO debug why low better performace 
+-- here 1 to 50 where 50 means certain stop on every transaction
 stopProb :: Int
 stopProb = 9
 
