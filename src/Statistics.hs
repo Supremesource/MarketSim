@@ -91,7 +91,7 @@ stageDistributionAux stage (low,high) = do
     HighVol -> randomRIO (highSLow, high)
     MediumVol -> randomRIO (low, mediumSHigh)
     LowVol -> randomRIO (low, lowSHigh)
-    SpikeVol -> randomRIO (low, (5 * high))
+    SpikeVol -> randomRIO (low, 5 * high)
     DeadVol -> randomRIO (low, deadSHigh)
     _ -> error $ red "stage is not valid"
 
