@@ -171,7 +171,7 @@ positionFuture (leverageTaker, leverageMaker) price' (taker, maker) = do
             | leverage /= 1 && side == "f" = price' - (price' / fromIntegral leverage)
             | leverage == 1 && side == "z" = 2 * price'
             | otherwise                    = 0
-      return (liquidationPrice, amt, side)
+      return (liquidationPrice, amt, side, price', (fromIntegral leverage))
 
 
 
@@ -195,7 +195,7 @@ randomSide = do
       else "y"
 -}
 
-type SeqClosePositionData = (Seq (Double, Int, String), Seq (Double, Int, String))
+type SeqClosePositionData = (Seq (Double, Int, String, Double, Double), Seq (Double, Int, String, Double, Double))
 
 normalGenerator ::
      VolumeSide -> [Int] -> [Int] -> SeqClosePositionData -> String -> IO (TakerPositions, MakerPositions)
@@ -204,9 +204,9 @@ normalGenerator tVolumeSide takerLst makerLst (toTakeFromLong, toTakeFromShort) 
     error "closingProb must be between 1 and 10"
   let genType =
         if sum takerLst + sum makerLst >=
-           getSum (foldMap (\(_, n, _) -> Sum n) toTakeFromLong) &&
+           getSum (foldMap (\(_, n, _, _, _) -> Sum n) toTakeFromLong) &&
            sum takerLst + sum makerLst >=
-           getSum (foldMap (\(_, n, _) -> Sum n) toTakeFromShort)
+           getSum (foldMap (\(_, n, _, _, _) -> Sum n) toTakeFromShort)
           then openingGen
           else normalGen
   genType
@@ -291,14 +291,14 @@ readClosePos = do
 
 filterClosePos :: {-String ->-} String -> TransactionFut -> ClosePositionData
 filterClosePos {-liq-} pos transaction =
- {- if liq == "no" then -}filter (\(_, _, s) -> s == pos) (future transaction) --else future transaction
+ {- if liq == "no" then -}filter (\(_, _, s, _, _) -> s == pos) (future transaction) --else future transaction
 
 
 -- // end of position future
 filterTuple :: String -> [(Int, String)] -> [(Int, String)]
 filterTuple pos = filter (\(_, s) -> s == pos)
 
-type SeqFuture = Seq (Double, Int, String)
+type SeqFuture = Seq (Double, Int, String, Double, Double)
 
 -- | Function to get third element from 3-tuple
 thrd :: (a, b, c) -> c
@@ -365,7 +365,7 @@ filterCloseAmount ((num, _):ns) closePosData = do
       filterFutureVol (x:xs) closePosData' ns' =
         case Seq.viewl closePosData' of
             Seq.EmptyL -> return Seq.Empty
-            ((liq, amt, sid) :< rest) -> do
+            ((liq, amt, sid, ent, lvg) :< rest) -> do
                 -- > RANDOMNESS <
                 -- this is a bit of a bottleneck but i belive it to be worth it
                 -- as it makes the simulation more realistic
@@ -373,8 +373,8 @@ filterCloseAmount ((num, _):ns) closePosData = do
                 let shouldReverseBool = shouldReverseNumberical < 6
                 case () of _
                             | x < amt -> do
-                                  let reversedFutureInfo = rest |> (liq, amt - x, sid)
-                                  let nonReversedFutureInfo = (liq, amt - x, sid) <| rest
+                                  let reversedFutureInfo = rest |> (liq, amt - x, sid, ent, lvg)
+                                  let nonReversedFutureInfo = (liq, amt - x, sid, ent, lvg) <| rest
                                   let updatedFutureInfo =
                                         if shouldReverseBool
                                           then reversedFutureInfo
@@ -427,7 +427,7 @@ liquidationDuty ::
 liquidationDuty futureInfoL futureInfoS price' = do
   let liquidationFunction =
         mapM
-          (\(p, n, s) ->
+          (\(p, n, s, _, _) ->
              (if (price' <= p && s == "f") || (price' >= p && s == "z")
                 then randomLiquidationEvent >>= \event -> return (n, s, event)
                 else return (0, "", "")))
@@ -435,8 +435,8 @@ liquidationDuty futureInfoL futureInfoS price' = do
   liquidationEventsS <- liquidationFunction futureInfoS
   let liquidationListL = Seq.filter (\(n, _, _) -> n /= 0) liquidationEventsL
   let liquidationListS = Seq.filter (\(n, _, _) -> n /= 0) liquidationEventsS
-  let updatedFutureInfoL = Seq.filter (\(p, _, _) -> price' <= p) futureInfoL
-  let updatedFutureInfoS = Seq.filter (\(p, _, _) -> price' >= p) futureInfoS
+  let updatedFutureInfoL = Seq.filter (\(p, _, _,_,_) -> price' <= p) futureInfoL
+  let updatedFutureInfoS = Seq.filter (\(p, _, _,_,_) -> price' >= p) futureInfoS
 
 -- filter the updatedFutureInfoL from futureInfoL
   let newFutureInfoL = Seq.filter (`notElem` updatedFutureInfoL) futureInfoL
@@ -491,9 +491,9 @@ normalrunProgram ::
   -> SeqClosePositionData
   -> Double
   -> String
-  -> IO ( SeqClosePositionData    -- # updated accumulator short # updated accumulator long
-        , NewPositioning  -- # updated accumulator positions
-        , (Int,Int) )          -- # taken leverage
+  -> IO ( SeqClosePositionData     -- # updated accumulator short # updated accumulator long
+        , NewPositioning           -- # updated accumulator positions
+        , (Int,Int) )              -- # taken leverage
 normalrunProgram volSide (volumeSplitT, volumeSplitM) (oldLongFuture, oldShortFuture) -- TODO TAKE OUT oldPositions
                                                sPrice liqSide = do
   newPositioning <-
@@ -514,6 +514,7 @@ normalrunProgram volSide (volumeSplitT, volumeSplitM) (oldLongFuture, oldShortFu
 
   posFut <- positionFuture (leverageLong,leverageShort) sPrice newPositioning
  -- let adjustedLiquidation = if liqSide == "" then "no" else "yes"
+  
   let converToTransaction = TransactionFut {future = posFut}
   let (filteredLongFuture, filteredShortFuture) =
         ( filterClosePos {-adjustedLiquidation-}  "f" converToTransaction
@@ -524,8 +525,8 @@ normalrunProgram volSide (volumeSplitT, volumeSplitM) (oldLongFuture, oldShortFu
         Data.Bifunctor.bimap (filterTuple "z") (filterTuple "f") orderedTupleNew
   let (filteredShortTuple, filteredLongTuple) = (longTuple, shortTuple)
 
-
-  newLongsAcc <- filterCloseAmount filteredLongTuple oldLongFuture
+-- filters out the future from the old future
+  newLongsAcc   <- filterCloseAmount filteredLongTuple  oldLongFuture
   newShortsAcc  <- filterCloseAmount filteredShortTuple oldShortFuture
 
   let futureToSeq =

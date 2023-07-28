@@ -146,8 +146,8 @@ liqAdjustement listPass@ListPass{} = do
 data GenerationPass = GenerationPass
   { initLiquidationAccInput         :: Seq (Int, String, String) -- liqudation output 2 writing accumulator
   , initPositioningAccInput         :: (Seq (Int, String), Seq (Int, String))
-  , initAccLongCloseInput           :: Seq (Double, Int, String)
-  , initAccShortCloseInput          :: Seq (Double, Int, String)
+  , initAccLongCloseInput           :: Seq (Double, Int, String, Double, Double)
+  , initAccShortCloseInput          :: Seq (Double, Int, String, Double, Double)
   , listofvolumesInput              :: VolumeList
   , bidBookInput                    :: SeqOrderBook
   , askBookInput                    :: SeqOrderBook
@@ -166,8 +166,8 @@ data GenerationPass = GenerationPass
 data GenerationOutput = GenerationOutput
   { liqInfoOutput     :: Seq (Int, String, String)
   , posInfoOutput     :: (Seq (Int, String), Seq (Int, String))
-  , longInfoOutput    :: Seq (Double, Int, String)
-  , shortInfoOutput   :: Seq (Double, Int, String)
+  , longInfoOutput    :: Seq (Double, Int, String, Double, Double)
+  , shortInfoOutput   :: Seq (Double, Int, String, Double, Double)
   , bidBookOutput     :: SeqOrderBook
   , askBookOutput     :: SeqOrderBook
   , bookDetailsOutput :: [BookStats]
@@ -179,8 +179,8 @@ data GenerationOutput = GenerationOutput
 data ListPass = ListPass
     { liqinfoInpt        :: Seq (Int, String, String)
     , posinfoInpt        :: (Seq (Int, String), Seq (Int, String))
-    , longinfoInpt       :: Seq (Double, Int, String)
-    , shortinfoInpt      :: Seq (Double, Int, String)
+    , longinfoInpt       :: Seq (Double, Int, String, Double, Double)
+    , shortinfoInpt      :: Seq (Double, Int, String, Double, Double)
     , volLstInpt         :: Volume
     , volLstWholeImpt    :: VolumeList
     , bidBookInpt        :: SeqOrderBook
@@ -196,8 +196,8 @@ data ListPass = ListPass
 data ReturnVolumeProcess = ReturnData
     { newliqinfoOutpt       :: Seq (Int, String, String)
     , newPosInfoOutpt       :: (Seq (Int, String), Seq (Int, String))
-    , newLonginfoOutpt      :: Seq (Double, Int, String)
-    , newShortinfoOutpt     :: Seq (Double, Int, String)
+    , newLonginfoOutpt      :: Seq (Double, Int, String, Double, Double)
+    , newShortinfoOutpt     :: Seq (Double, Int, String, Double, Double)
     , newBidBookOutpt       :: SeqOrderBook
     , newAskBookOutpt       :: SeqOrderBook
     , newBookDetailsOutpt   :: BookStats
@@ -240,8 +240,8 @@ data AdditionalBook    = AdditionData
 data PositionCyclePass = PositionCyclePass
   {   liqinfoInputCycle   :: MarginCall
     , sPriceInputCycle    :: Double
-    , longinfoInputCycle  :: Seq (Double, Int, String)
-    , shortinfoInputCycle :: Seq (Double, Int, String)
+    , longinfoInputCycle  :: Seq (Double, Int, String, Double, Double)
+    , shortinfoInputCycle :: Seq (Double, Int, String, Double, Double)
     , vAmountInputCycle   :: Int
     , posinfoInputCycle   :: (Seq (Int, String), Seq (Int, String))
     , vSideInputCycle     :: VolumeSide
@@ -251,8 +251,8 @@ data PositionCycleOutput = PositionCycleOutput
   { newLiqInfo        :: Seq (Int, String, String)
   , nullLiqInfo       :: (Seq (Int, String), Seq (Int, String))
   , newPositions      :: NewPositioning
-  , newPosFutureLong  :: Seq (Double, Int, String)
-  , newPosFutureShort :: Seq (Double, Int, String)
+  , newPosFutureLong  :: Seq (Double, Int, String, Double, Double)
+  , newPosFutureShort :: Seq (Double, Int, String, Double, Double)
   , newPoslevgT              :: Int
   , newPoslevgM              :: Int
   } deriving (Eq)
