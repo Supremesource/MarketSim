@@ -171,7 +171,7 @@ positionFuture (leverageTaker, leverageMaker) price' (taker, maker) = do
             | leverage /= 1 && side == "f" = price' - (price' / fromIntegral leverage)
             | leverage == 1 && side == "z" = 2 * price'
             | otherwise                    = 0
-      return (liquidationPrice, amt, side, price', (fromIntegral leverage))
+      return (liquidationPrice, amt, side, price', fromIntegral leverage)
 
 
 
@@ -503,18 +503,22 @@ normalrunProgram volSide (volumeSplitT, volumeSplitM) (oldLongFuture, oldShortFu
       volumeSplitM
       (oldLongFuture, oldShortFuture)
       liqSide
-      
-  leverageLong <- takenLeverage baseLeverageLong
-  leverageShort <- takenLeverage baseLeverageShort
+
+  let leverageLong = 50  --  <- takenLeverage baseLeverageLong
+  let leverageShort = 1 -- <- takenLeverage baseLeverageShort
   let (takerPositioning,makerPositioning) = newPositioning
   let leverageTaker = if "x" `elem` (snd <$> takerPositioning) then leverageLong else leverageShort
   let leverageMaker = if leverageTaker == leverageLong then leverageShort else leverageLong
+
+
   let isLeverageZeroTaker = if any (\x -> x == "z" || x == "f") (snd <$> takerPositioning) then 0 else leverageTaker
   let isLeverageZeroMaker = if any (\x -> x == "z" || x == "f") (snd <$> makerPositioning) then 0 else leverageMaker
 
-  posFut <- positionFuture (leverageLong,leverageShort) sPrice newPositioning
+  posFut <- positionFuture (leverageTaker,leverageMaker) sPrice newPositioning
+
+
  -- let adjustedLiquidation = if liqSide == "" then "no" else "yes"
-  
+
   let converToTransaction = TransactionFut {future = posFut}
   let (filteredLongFuture, filteredShortFuture) =
         ( filterClosePos {-adjustedLiquidation-}  "f" converToTransaction
