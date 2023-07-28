@@ -503,8 +503,8 @@ normalrunProgram volSide (volumeSplitT, volumeSplitM) (oldLongFuture, oldShortFu
       volumeSplitM
       (oldLongFuture, oldShortFuture)
       liqSide
-  leverageTaker <- takenLeverage
-  leverageMaker <- takenLeverage
+  leverageTaker <- takenLeverage baseLeverage
+  leverageMaker <- takenLeverage baseLeverage
 
   let (takerPositioning,makerPositioning) = newPositioning
   let isLeverageZeroTaker = if any (\x -> x == "z" || x == "f") (snd <$> takerPositioning) then 0 else leverageTaker

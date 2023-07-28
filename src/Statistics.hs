@@ -64,7 +64,7 @@ markovChainVolume (low, high) volStage = do
                                         | phaseRandomiser <= 3 -> SpikeVol
                                         | phaseRandomiser <= 4 -> DeadVol
                                         | otherwise -> HighVol
- 
+
   let maybeRandomVolPhase = case () of _
                                         | switchPhase == 50 -> initialPhase
                                         | otherwise -> volStage
@@ -73,11 +73,11 @@ markovChainVolume (low, high) volStage = do
                                         | otherwise -> maybeRandomVolPhase
 
   volumeAmt <- stageDistributionAux volumePhase (low, high)
-                             
+
   -- local volume check
-  Control.Monad.when ((volumeAmt > high) && (volumePhase /= SpikeVol)) $ error 
+  Control.Monad.when ((volumeAmt > high) && (volumePhase /= SpikeVol)) $ error
     $ red "volumeAmt is greater than high, try to check if you specified correct volum settings"
-  Control.Monad.when (volumeAmt < low) $ error 
+  Control.Monad.when (volumeAmt < low) $ error
     $ red "volumeAmt is less than low, try to check if you specified correct volum settings"
   return (volumeAmt, volumePhase)
 
@@ -89,7 +89,7 @@ stageDistributionAux stage (low,high) = do
   deadSHigh <- randomRIO (low,lowSHigh)
   case stage of
     HighVol -> randomRIO (highSLow, high)
-    MediumVol -> randomRIO(low, mediumSHigh)
+    MediumVol -> randomRIO (low, mediumSHigh)
     LowVol -> randomRIO (low, lowSHigh)
     SpikeVol -> randomRIO (low, (5 * high))
     DeadVol -> randomRIO (low, deadSHigh)
@@ -133,11 +133,69 @@ customRandomR (low, high) gen = (num, gen3)
 -- and then a volumeDistribution is created based on that
 ------------------------------------------------------------------------------
 
--- todo
--- ! modify
-takenLeverage :: IO Int
-takenLeverage = do
-  l <- randomRIO (30, 100) :: IO Int
+-- data LeverageStage = HighLeverage | MediumLeverage | LowLeverage | UndefinedLeverage deriving (Show, Eq)
+
+
+
+takenLeverage :: {-LeverageStage ->-} Int ->  IO Int
+takenLeverage {-levgStage-} baseProbability = do
+  Control.Monad.when (baseProbability < 1 || baseProbability > 500) $ error "baseProbability must be between 1 and 500"
+ -- EXPLINATION:
+  -- | levgState = High -> statistically + 10% of higher leverage
+  -- | levgState = Medium -> statistically + 5% of higher leverage
+  -- | levgState = Low -> statistically + 0% of higher leverage
+ -- lvgHigh <- randomRIO (baseProbability + 50, 500) :: IO Int
+ -- lvgMedium <-  randomRIO (baseProbability + 25, 100) :: IO Int
+  randomLeverage <- randomRIO (baseProbability, 500) :: IO Int
+
+{-
+  switchPhase <- randomRIO (1,5) :: IO Int
+  stage <- randomRIO (1,3) :: IO Int
+  let rotatedLvgState = case stage of
+        1 -> HighLeverage
+        2 -> MediumLeverage
+        3 -> LowLeverage
+        _ -> error "something went wrong in takenLeverage"
+
+  let adjustedLeverageState = if levgStage == UndefinedLeverage || switchPhase == 5 then rotatedLvgState else levgStage
+  let passLeverage = case adjustedLeverageState of
+        HighLeverage -> lvgHigh
+        MediumLeverage -> lvgMedium
+        LowLeverage -> lvgLow
+        _ -> error "something went wrong in takenLeverage"
+-}
+  paretoLeverageAux randomLeverage
+
+paretoLeverageAux :: Int -> IO Int
+paretoLeverageAux l = do
+  when (l < 1 || l > 500) $ error "l must be between 1 and 500"
+
+  let leverage =  l
+  return $
+    case leverage of
+      _
+        | leverage >= 1  && leverage <= 305 -> 1
+        | leverage > 305 && leverage <= 320 -> 2
+        | leverage > 320 && leverage <= 335 -> 3
+        | leverage > 335 && leverage <= 350 -> 4
+        | leverage > 350 && leverage <= 365 -> 5
+        | leverage > 365 && leverage <= 380 -> 6
+        | leverage > 380 && leverage <= 395 -> 7
+        | leverage > 395 && leverage <= 410 -> 8
+        | leverage > 410 && leverage <= 425 -> 9
+        | leverage > 425 && leverage <= 430 -> 10
+        | leverage > 430 && leverage <= 435 -> 20
+        | leverage > 435 && leverage <= 440 -> 30
+        | leverage > 440 && leverage <= 445 -> 40
+        | leverage > 445 && leverage <= 450 -> 50
+        | leverage > 450 && leverage <= 455 -> 60
+        | leverage > 455 && leverage <= 460 -> 70
+        | leverage > 460 && leverage <= 465 -> 80
+        | leverage > 465 && leverage <= 470 -> 90
+        | leverage > 470 -> 100
+        | otherwise -> error "something went wrong in paretoLeverageAux"
+
+  {-
   return $
     case l of
       _
@@ -152,7 +210,7 @@ takenLeverage = do
         | l == 100 -> 100
         | otherwise -> error "something went wrong in takenLeverage"
 
-
+-}
 
 
 -- ~  /stat6
@@ -242,7 +300,7 @@ generateRandomPosition (buyProbLong, sellProbShort) volStage = do
         , (sellProbShort,  (sVolShort, Sell)) ]
 
   taker' <- weightedRandom takeROptions
- 
+
   let takerProbab
         | snd taker' == Buy =
           [(buyProbLong, (fst taker', Buy))]

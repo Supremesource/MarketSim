@@ -57,6 +57,13 @@ plotCharts :: Bool
 plotCharts = False
 
 
+-- must be between 1 and 500
+-- note that 305 is the base leverage pareto distribution starts at
+-- hence if you want highly dynamic leverage, set it to (250 - 305)
+  -- 430 will make leverage > 10 all of the times
+baseLeverage :: Int
+baseLeverage = 305 
+
 --〇 ID = STRVAL
 -- | starting value
 -- | you can activate this price point by runProgramning `w` - wiping runProgram
@@ -77,6 +84,7 @@ numPositions = 5000
 
 -- ! activate later
 
+{-
 --〇 ID = maxM/T
 -- TODO add more complex statistic distribution
 -- | what is the maximum of makers in one transaction , i.e 1000 buy matched with 1000 sell, now the max makers filled in that transaction can be specified below
@@ -87,7 +95,7 @@ maxMakers = 1
 -- ? Not recommended to change this from 0.95
 maxTakers :: Int
 maxTakers = round (fromIntegral maxMakers * (0.95 :: Double))
-
+-}
 
 -- | in terms of newly opened positions
 
@@ -129,8 +137,7 @@ runProgramlist = [DWW,DWW,DWW,DWW,DWW,DWW,DWW,DWW,DWW,DWW]
 -- | note that this function only works as a correctness checker for yourslf, exchanges always have a minimum volume allowed by the user, make yours
 -- | not recommended to go below 10 , depends on your maxmakers, maxtakers, there is potential error catching metric implemented, but still set this rather high
 -- ! note that volume can exceed your maximum value up to 5 x times when volume spike volume is activated in statistics
-minvolume :: Int
-minvolume = 100
+
 --〇 ID = VOL02
 -- | BUY VOUME
 minBuyVol :: Int
