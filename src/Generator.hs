@@ -253,7 +253,8 @@ data PositionCycleOutput = PositionCycleOutput
   , newPositions      :: NewPositioning
   , newPosFutureLong  :: Seq (Double, Int, String)
   , newPosFutureShort :: Seq (Double, Int, String)
-  , newPoslevg              :: Int
+  , newPoslevgT              :: Int
+  , newPoslevgM              :: Int
   } deriving (Eq)
 
 
@@ -425,7 +426,8 @@ volumeProcessing listPass@ListPass{}  = do
           ,newPositions      = localPositions
           ,newPosFutureLong  = newPosFutureLongGenerated
           ,newPosFutureShort = newPosFutureShortGenerated  
-          ,newPoslevg        = newPosLevg } = positionGenerator
+          ,newPoslevgT        = newPosLevgT 
+          ,newPoslevgM     = newPosLevgM } = positionGenerator
 
   let liquidationString = if null newLiqInfoGenerated then [""] else (toList . fmap (\(_, _, s) -> s)) newLiqInfoGenerated
   let liquidationTag    = if null newLiqInfoGenerated then  [(False,"")] else map (True, ) liquidationString
@@ -434,7 +436,7 @@ volumeProcessing listPass@ListPass{}  = do
 
 
  -- ++ liquidation information 
-  let newStats       = aggregateStats localPositions newLiqInfoGenerated liqT newPosLevg initStats
+  let newStats       = aggregateStats localPositions newLiqInfoGenerated liqT (newPosLevgT,newPosLevgM) initStats
 
 -- in case of liquidation it will add the volume to the accumulator
   --let isVolAtOneElement = vAmount == [a]
@@ -623,12 +625,17 @@ positionCycle positionCyclePass@PositionCyclePass{} = do
 
 -- ? POSITION FUTURE
       -- | check if the future file is empty
+  -- ! get rid of !
   -- > RANDOMNESS <
-  numTakers <- randomRIO (1, maxTakers) :: IO Int   -- select how many takers
-  numMakers <- randomRIO (1, maxMakers) :: IO Int   -- select how many makers
+--  numTakers <- randomRIO (1, maxTakers) :: IO Int   -- select how many takers
+--  numMakers <- randomRIO (1, maxMakers) :: IO Int   -- select how many makers
 
-  volumeSplitT <- generateVolumes numTakers vAmount -- split the volume
-  volumeSplitM <- generateVolumes numMakers vAmount -- split the volume
+
+  --volumeSplitT <- generateVolumes numTakers vAmount -- split the volume
+  --volumeSplitM <- generateVolumes numMakers vAmount -- split the volume
+  let volumeSplitT = [vAmount]
+  let volumeSplitM = [vAmount]
+
   liquidated   <- liquidationDuty longinfo shortinfo sPricegen
 
 --   print longinfo
@@ -642,7 +649,7 @@ positionCycle positionCyclePass@PositionCyclePass{} = do
       (longliq, shortliq)
       sPricegen
       liquidationString
-  let ((newPosFutureShortGen, newPosFutureLongGen), newPositionsGen, leverage) =
+  let ((newPosFutureShortGen, newPosFutureLongGen), newPositionsGen, (leverageT,leverageM)) =
           runProgram
       -- | (TakerPositions,MakerPositions)
       -- TODO convert into seq and keep it until base case
@@ -660,7 +667,8 @@ positionCycle positionCyclePass@PositionCyclePass{} = do
     , newPositions      = newPositionsGen
     , newPosFutureLong  = newPosFutureLongGen
     , newPosFutureShort = newPosFutureShortGen
-    , newPoslevg        = leverage
+    , newPoslevgT        = leverageT
+    , newPoslevgM        = leverageM
     }
 
 
