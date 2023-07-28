@@ -61,8 +61,11 @@ plotCharts = False
 -- note that 305 is the base leverage pareto distribution starts at
 -- hence if you want highly dynamic leverage, set it to (250 - 305)
   -- 430 will make leverage > 10 all of the times
-baseLeverage :: Int
-baseLeverage = 305 
+baseLeverageLong :: Int
+baseLeverageLong = 1 
+
+baseLeverageShort :: Int
+baseLeverageShort = 1
 
 --〇 ID = STRVAL
 -- | starting value
@@ -167,8 +170,8 @@ sellTakerProb = 50
 stopProb :: Int
 stopProb = 9
 
-takerxProb :: Int
-takerxProb = 5
+--takerxProb :: Int
+--takerxProb = 5
 
 closingProb :: Int
 closingProb = 1

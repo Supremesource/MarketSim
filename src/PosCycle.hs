@@ -503,14 +503,16 @@ normalrunProgram volSide (volumeSplitT, volumeSplitM) (oldLongFuture, oldShortFu
       volumeSplitM
       (oldLongFuture, oldShortFuture)
       liqSide
-  leverageTaker <- takenLeverage baseLeverage
-  leverageMaker <- takenLeverage baseLeverage
-
+      
+  leverageLong <- takenLeverage baseLeverageLong
+  leverageShort <- takenLeverage baseLeverageShort
   let (takerPositioning,makerPositioning) = newPositioning
+  let leverageTaker = if "x" `elem` (snd <$> takerPositioning) then leverageLong else leverageShort
+  let leverageMaker = if leverageTaker == leverageLong then leverageShort else leverageLong
   let isLeverageZeroTaker = if any (\x -> x == "z" || x == "f") (snd <$> takerPositioning) then 0 else leverageTaker
   let isLeverageZeroMaker = if any (\x -> x == "z" || x == "f") (snd <$> makerPositioning) then 0 else leverageMaker
 
-  posFut <- positionFuture (leverageTaker,leverageMaker) sPrice newPositioning
+  posFut <- positionFuture (leverageLong,leverageShort) sPrice newPositioning
  -- let adjustedLiquidation = if liqSide == "" then "no" else "yes"
   let converToTransaction = TransactionFut {future = posFut}
   let (filteredLongFuture, filteredShortFuture) =
