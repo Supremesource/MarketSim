@@ -118,7 +118,7 @@ def dark_mode_toggle(dark):
 
 
 def main():
-    units_per_candle = 80  # change this to the desired units per candle
+    units_per_candle = 20  # change this to the desired units per candle
 
     # Process and write price data
     price_data_file = '/Users/janzimula/workspace/marketsim/output/bookInfo.json'

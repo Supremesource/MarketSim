@@ -63,7 +63,7 @@ plotCharts = False
 -- hence if you want highly dynamic leverage, set it to (250 - 305)
   -- 430 will make leverage > 10 all of the times
 baseLeverageLong :: Int
-baseLeverageLong = 1 
+baseLeverageLong = 450
 
 baseLeverageShort :: Int
 baseLeverageShort = 1
@@ -78,7 +78,7 @@ wipingStartingValue = 100
 -- | number of positions you want to take place in the simulation runProgram
 -- | number of positions
 numPositions :: Int
-numPositions = 5000
+numPositions = 40
 
 --〇 ID = NUMrunProgram
 -- | number of runPrograms, this is a loop how many times will the simulation repeat itself (random generators are updating each time though)
@@ -133,7 +133,7 @@ maxDecimal = 4
 -- ! list start is the end and list end is the start (SO IT MAIGHT BE CONFUSING)
 -- (the thing you write at the start is the end of the run vice versa)
 runProgramlist :: [Options]
-runProgramlist = [DWW,DWW,DWW,DWW,DWW,DWW,DWW,DWW,DWW,DWW]
+runProgramlist = [CN,CN,CN,CN,CN,CN,CN,CN,CN,CN]
 
 --  Volume settings:
 -- 〇 ID = VOL
