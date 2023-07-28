@@ -220,16 +220,37 @@ paretoLeverageAux l = do
 -- user passes probability of stop, that is then used as a base case
 -- and then a volumeDistribution is created based on that
 ------------------------------------------------------------------------------
-randomLiquidationEvent :: IO String
-randomLiquidationEvent = do
-  -- > RANDOMNESS <
-  randVal <- randomRIO (1, 10) :: IO Int
-  unless (stopProb >= 1 && stopProb <= 10) $
-    error ("maxStop is 10 you have: " ++ show stopProb)
-  return $
-    if randVal < stopProb
-      then "stp"
-      else "liq"
+forceEvent :: Bool -> IO String
+forceEvent isStop = if isStop then return "stp" else return "liq"
+
+
+stopCalculation :: Double -> Double -> IO Double
+stopCalculation currentP liqP = do
+  let priceArea = abs $ currentP - liqP
+  let chunk = priceArea / 100
+  randomizer <- randomRIO (1, 100) :: IO Int
+  case randomizer of
+    _ | randomizer >= 1  && randomizer <= 10  -> (currentP +) <$> randomRIO (chunk * 2, chunk * 5)
+      | randomizer >= 11 && randomizer <= 20  -> (currentP +) <$> randomRIO (chunk * 2, chunk * 10)
+      | randomizer >= 21 && randomizer <= 30  -> (currentP +) <$> randomRIO (chunk * 2, chunk * 15)
+      | randomizer >= 31 && randomizer <= 40  -> (currentP +) <$> randomRIO (chunk * 2, chunk * 20)
+      | randomizer >= 41 && randomizer <= 50  -> (currentP +) <$> randomRIO (chunk * 2, chunk * 25)
+      | randomizer >= 51 && randomizer <= 60  -> (currentP +) <$> randomRIO (chunk * 2, chunk * 30)
+      | randomizer >= 61 && randomizer <= 65  -> (currentP +) <$> randomRIO (chunk * 2, chunk * 35)
+      | randomizer >= 66 && randomizer <= 70  -> (currentP +) <$> randomRIO (chunk * 2, chunk * 40)
+      | randomizer >= 71 && randomizer <= 75  -> (currentP +) <$> randomRIO (chunk * 2, chunk * 45)
+      | randomizer >= 76 && randomizer <= 80  -> (currentP +) <$> randomRIO (chunk * 2, chunk * 50)
+      | randomizer >= 81 && randomizer <= 85  -> (currentP +) <$> randomRIO (chunk * 2, chunk * 55)
+      | randomizer >= 86 && randomizer <= 88  -> (currentP +) <$> randomRIO (chunk * 2, chunk * 60)
+      | randomizer >= 89 && randomizer <= 90  -> (currentP +) <$> randomRIO (chunk * 2, chunk * 65)
+      | randomizer >= 91 && randomizer <= 92  -> (currentP +) <$> randomRIO (chunk * 2, chunk * 70)
+      | randomizer >= 93 && randomizer <= 94  -> (currentP +) <$> randomRIO (chunk * 2, chunk * 75)
+      | randomizer >= 95 && randomizer <= 96  -> (currentP +) <$> randomRIO (chunk * 2, chunk * 80)
+      | randomizer >= 97 && randomizer <= 98  -> (currentP +) <$> randomRIO (chunk * 2, chunk * 85)
+      | randomizer >= 99 && randomizer <= 100 -> (currentP +) <$> randomRIO (chunk * 2, chunk * 90)
+      | otherwise -> error "something went wrong in stopCalculation"
+
+
 
 
 -- ~ /stat5

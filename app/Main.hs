@@ -44,12 +44,14 @@ where
     
     -- // Todo add leverage info   
     -- add liquidation price into posInfo 
+    -- TODO represent sides by data types
+    -- TODO add much better leverage info
     -- todo readjust leverage at the end by looking at current margin and initial leverage with initial margin
     -- todo add stop calculation 
     -- TODO add slippage
-    -- todo add leverage info into pos future
+    -- // todo add leverage info into pos future
     -- TODO delete Max makers to 1
-    -- TODO add much better leverage info
+   
     -- todo add restrictive settings for everything
     -- todo when closing take only some part of the position
     -- optimize code, there is too much exponetial time complexity

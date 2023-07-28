@@ -1,1757 +1,2632 @@
 [
     {
-        "open": 66817,
-        "close": 7332,
-        "total_volume": 769131
+        "open": 102298,
+        "close": 24587,
+        "total_volume": 1066731
     },
     {
-        "open": 153148,
-        "close": 2051,
-        "total_volume": 1073438
+        "open": 41879,
+        "close": 61757,
+        "total_volume": 1037132
     },
     {
-        "open": 9177,
-        "close": 982,
-        "total_volume": 823918
+        "open": 66802,
+        "close": 40335,
+        "total_volume": 1035828
     },
     {
-        "open": 7962,
-        "close": 132944,
-        "total_volume": 553750
+        "open": 47055,
+        "close": 1941,
+        "total_volume": 751715
     },
     {
-        "open": 3276,
-        "close": 28296,
-        "total_volume": 464263
+        "open": 69472,
+        "close": 101,
+        "total_volume": 1206715
     },
     {
-        "open": 71104,
-        "close": 51729,
-        "total_volume": 489461
+        "open": 114597,
+        "close": 166900,
+        "total_volume": 823170
     },
     {
-        "open": 9099,
-        "close": 32898,
-        "total_volume": 607510
+        "open": 57238,
+        "close": 25444,
+        "total_volume": 1101659
     },
     {
-        "open": 93521,
-        "close": 1307,
-        "total_volume": 479161
+        "open": 2003,
+        "close": 175,
+        "total_volume": 964940
     },
     {
-        "open": 3030,
-        "close": 6031,
-        "total_volume": 497830
+        "open": 19256,
+        "close": 121486,
+        "total_volume": 1471324
     },
     {
-        "open": 1069,
-        "close": 89949,
-        "total_volume": 485420
+        "open": 38595,
+        "close": 37802,
+        "total_volume": 1243721
     },
     {
-        "open": 2883,
-        "close": 133511,
-        "total_volume": 604508
+        "open": 61785,
+        "close": 101111,
+        "total_volume": 855726
     },
     {
-        "open": 65068,
-        "close": 21595,
-        "total_volume": 439832
+        "open": 53415,
+        "close": 30500,
+        "total_volume": 1252612
     },
     {
-        "open": 1210,
-        "close": 5990,
-        "total_volume": 621753
+        "open": 175127,
+        "close": 9018,
+        "total_volume": 474727
     },
     {
-        "open": 3977,
-        "close": 3098,
-        "total_volume": 351305
+        "open": 82581,
+        "close": 5407,
+        "total_volume": 644930
     },
     {
-        "open": 2947,
-        "close": 91378,
-        "total_volume": 809058
+        "open": 35972,
+        "close": 1521,
+        "total_volume": 585830
     },
     {
-        "open": 49961,
-        "close": 11890,
-        "total_volume": 283508
+        "open": 3170,
+        "close": 710,
+        "total_volume": 849803
     },
     {
-        "open": 769,
-        "close": 80636,
-        "total_volume": 529934
+        "open": 24824,
+        "close": 103090,
+        "total_volume": 2100222
     },
     {
-        "open": 26411,
-        "close": 95081,
-        "total_volume": 607078
+        "open": 9192,
+        "close": 5680,
+        "total_volume": 2197793
     },
     {
-        "open": 42861,
-        "close": 23957,
-        "total_volume": 628343
+        "open": 221,
+        "close": 108066,
+        "total_volume": 5188112
     },
     {
-        "open": 29521,
-        "close": 381912,
-        "total_volume": 2473078
+        "open": 255687,
+        "close": 374970,
+        "total_volume": 6478404
     },
     {
-        "open": 338922,
-        "close": 305231,
-        "total_volume": 5863619
+        "open": 204020,
+        "close": 380667,
+        "total_volume": 6270197
     },
     {
-        "open": 140853,
-        "close": 399591,
-        "total_volume": 5527813
+        "open": 231491,
+        "close": 285141,
+        "total_volume": 6315704
     },
     {
-        "open": 266755,
-        "close": 229929,
-        "total_volume": 6738349
+        "open": 385461,
+        "close": 382495,
+        "total_volume": 5785668
     },
     {
-        "open": 223428,
-        "close": 308050,
-        "total_volume": 6146314
+        "open": 257215,
+        "close": 378822,
+        "total_volume": 6123529
     },
     {
-        "open": 280680,
-        "close": 236924,
-        "total_volume": 5395954
+        "open": 298327,
+        "close": 89728,
+        "total_volume": 1762163
     },
     {
-        "open": 363929,
-        "close": 347819,
-        "total_volume": 6050063
+        "open": 100690,
+        "close": 192,
+        "total_volume": 394419
     },
     {
-        "open": 295026,
-        "close": 183810,
-        "total_volume": 2680288
+        "open": 157,
+        "close": 75056,
+        "total_volume": 453280
     },
     {
-        "open": 419,
-        "close": 97533,
-        "total_volume": 1315394
+        "open": 4431,
+        "close": 71218,
+        "total_volume": 540390
     },
     {
-        "open": 150284,
-        "close": 4033,
-        "total_volume": 2103470
+        "open": 256985,
+        "close": 11464,
+        "total_volume": 694522
     },
     {
-        "open": 1102,
-        "close": 46790,
-        "total_volume": 1793625
+        "open": 92791,
+        "close": 123,
+        "total_volume": 1147690
     },
     {
-        "open": 29181,
-        "close": 69493,
-        "total_volume": 1968781
+        "open": 16338,
+        "close": 130948,
+        "total_volume": 1487298
     },
     {
-        "open": 11977,
-        "close": 37223,
-        "total_volume": 3220897
+        "open": 248,
+        "close": 189570,
+        "total_volume": 2255650
     },
     {
-        "open": 10020,
-        "close": 110324,
-        "total_volume": 2622600
+        "open": 234794,
+        "close": 362351,
+        "total_volume": 5783399
     },
     {
-        "open": 1618,
-        "close": 11266,
-        "total_volume": 994853
+        "open": 393518,
+        "close": 325885,
+        "total_volume": 5909488
     },
     {
-        "open": 36560,
-        "close": 28007,
-        "total_volume": 825488
+        "open": 326798,
+        "close": 333268,
+        "total_volume": 5984502
     },
     {
-        "open": 89082,
-        "close": 55449,
-        "total_volume": 1113421
+        "open": 338264,
+        "close": 374332,
+        "total_volume": 6278910
     },
     {
-        "open": 244895,
-        "close": 64781,
-        "total_volume": 2850067
+        "open": 330226,
+        "close": 680,
+        "total_volume": 979786
     },
     {
-        "open": 168036,
-        "close": 8888,
-        "total_volume": 1765957
+        "open": 2030,
+        "close": 52983,
+        "total_volume": 390998
     },
     {
-        "open": 28871,
-        "close": 2937,
-        "total_volume": 923976
+        "open": 42944,
+        "close": 379668,
+        "total_volume": 2271807
     },
     {
-        "open": 1271,
-        "close": 33593,
-        "total_volume": 380608
+        "open": 67227,
+        "close": 380881,
+        "total_volume": 5905828
     },
     {
-        "open": 14587,
-        "close": 2393,
-        "total_volume": 517599
+        "open": 384774,
+        "close": 354059,
+        "total_volume": 6118865
     },
     {
-        "open": 194,
-        "close": 19012,
-        "total_volume": 439538
+        "open": 223946,
+        "close": 359062,
+        "total_volume": 5958571
     },
     {
-        "open": 31181,
-        "close": 442,
-        "total_volume": 499017
+        "open": 206348,
+        "close": 365120,
+        "total_volume": 6283816
     },
     {
-        "open": 339,
-        "close": 134836,
-        "total_volume": 1477481
+        "open": 350733,
+        "close": 230091,
+        "total_volume": 5341416
     },
     {
-        "open": 32108,
-        "close": 53549,
-        "total_volume": 1715430
+        "open": 304135,
+        "close": 123922,
+        "total_volume": 4024701
     },
     {
-        "open": 81006,
-        "close": 276289,
-        "total_volume": 1967819
+        "open": 219384,
+        "close": 3922,
+        "total_volume": 2102373
     },
     {
-        "open": 76474,
-        "close": 182303,
-        "total_volume": 3799205
+        "open": 131878,
+        "close": 58856,
+        "total_volume": 2158923
     },
     {
-        "open": 278844,
-        "close": 226420,
-        "total_volume": 5885104
+        "open": 278393,
+        "close": 59121,
+        "total_volume": 1515898
     },
     {
-        "open": 322868,
-        "close": 197948,
-        "total_volume": 6258241
+        "open": 66470,
+        "close": 55194,
+        "total_volume": 1198305
     },
     {
-        "open": 397850,
-        "close": 358029,
-        "total_volume": 5672079
+        "open": 89850,
+        "close": 6001,
+        "total_volume": 2229224
     },
     {
-        "open": 158979,
-        "close": 339562,
-        "total_volume": 5359051
+        "open": 10951,
+        "close": 202414,
+        "total_volume": 2433186
     },
     {
-        "open": 706698,
-        "close": 191991,
-        "total_volume": 2909348
+        "open": 265676,
+        "close": 176550,
+        "total_volume": 2517971
     },
     {
-        "open": 202156,
-        "close": 3753,
-        "total_volume": 2078517
+        "open": 7595,
+        "close": 112684,
+        "total_volume": 1900655
     },
     {
-        "open": 295159,
-        "close": 1229,
-        "total_volume": 1871920
+        "open": 295279,
+        "close": 52386,
+        "total_volume": 2099977
     },
     {
-        "open": 206468,
-        "close": 386569,
-        "total_volume": 2863958
+        "open": 13841,
+        "close": 10208,
+        "total_volume": 1187300
     },
     {
-        "open": 371855,
-        "close": 141380,
-        "total_volume": 5632060
+        "open": 12736,
+        "close": 22847,
+        "total_volume": 906073
     },
     {
-        "open": 272872,
-        "close": 180305,
-        "total_volume": 5455507
+        "open": 8236,
+        "close": 1398,
+        "total_volume": 623491
     },
     {
-        "open": 274019,
-        "close": 5125,
-        "total_volume": 4261150
+        "open": 69905,
+        "close": 359179,
+        "total_volume": 3320640
     },
     {
-        "open": 342,
-        "close": 156737,
-        "total_volume": 960424
+        "open": 310532,
+        "close": 237232,
+        "total_volume": 6317837
     },
     {
-        "open": 126691,
-        "close": 964,
-        "total_volume": 1430990
+        "open": 382578,
+        "close": 79747,
+        "total_volume": 5556541
     },
     {
-        "open": 10535,
-        "close": 54903,
-        "total_volume": 953611
+        "open": 127525,
+        "close": 156323,
+        "total_volume": 5623180
     },
     {
-        "open": 8031,
-        "close": 266876,
-        "total_volume": 1416257
+        "open": 348885,
+        "close": 301724,
+        "total_volume": 5215957
     },
     {
-        "open": 106722,
-        "close": 1070,
-        "total_volume": 1111048
+        "open": 161310,
+        "close": 380069,
+        "total_volume": 5564640
     },
     {
-        "open": 1589,
-        "close": 7275,
-        "total_volume": 1552332
+        "open": 360728,
+        "close": 360394,
+        "total_volume": 6449347
     },
     {
-        "open": 98686,
-        "close": 395717,
-        "total_volume": 3895181
+        "open": 344710,
+        "close": 390154,
+        "total_volume": 5779261
     },
     {
-        "open": 282113,
-        "close": 100344,
-        "total_volume": 5528860
+        "open": 316510,
+        "close": 41670,
+        "total_volume": 5741354
     },
     {
-        "open": 1345,
-        "close": 39827,
-        "total_volume": 999889
+        "open": 342201,
+        "close": 321335,
+        "total_volume": 6667425
     },
     {
-        "open": 290,
-        "close": 6080,
-        "total_volume": 1141543
+        "open": 191051,
+        "close": 288477,
+        "total_volume": 5720863
     },
     {
-        "open": 277,
-        "close": 2372,
-        "total_volume": 3144331
+        "open": 382729,
+        "close": 192307,
+        "total_volume": 5903238
     },
     {
-        "open": 5244,
-        "close": 203,
-        "total_volume": 1198696
+        "open": 305484,
+        "close": 390942,
+        "total_volume": 6124493
     },
     {
-        "open": 340522,
-        "close": 185078,
-        "total_volume": 2653906
+        "open": 365119,
+        "close": 75917,
+        "total_volume": 5980633
     },
     {
-        "open": 80644,
-        "close": 256233,
-        "total_volume": 1699997
+        "open": 275274,
+        "close": 490,
+        "total_volume": 2991328
     },
     {
-        "open": 359469,
-        "close": 96079,
-        "total_volume": 2330960
+        "open": 10071,
+        "close": 29576,
+        "total_volume": 287751
     },
     {
-        "open": 23702,
-        "close": 329110,
-        "total_volume": 4348789
+        "open": 29308,
+        "close": 10001,
+        "total_volume": 442707
     },
     {
-        "open": 349908,
-        "close": 345438,
-        "total_volume": 5095953
+        "open": 58942,
+        "close": 123101,
+        "total_volume": 506193
     },
     {
-        "open": 362104,
-        "close": 105012,
-        "total_volume": 5115206
+        "open": 12440,
+        "close": 3698,
+        "total_volume": 265176
     },
     {
-        "open": 227,
-        "close": 114014,
-        "total_volume": 2372163
+        "open": 14966,
+        "close": 11155,
+        "total_volume": 642820
     },
     {
-        "open": 324544,
-        "close": 419,
-        "total_volume": 4088332
+        "open": 15059,
+        "close": 3888,
+        "total_volume": 434431
     },
     {
-        "open": 3251,
-        "close": 60447,
-        "total_volume": 2563722
+        "open": 15308,
+        "close": 42824,
+        "total_volume": 615641
     },
     {
-        "open": 143390,
-        "close": 2543,
-        "total_volume": 1456970
+        "open": 34451,
+        "close": 23725,
+        "total_volume": 1006414
     },
     {
-        "open": 43597,
-        "close": 16880,
-        "total_volume": 3877271
+        "open": 6313,
+        "close": 84785,
+        "total_volume": 1127747
     },
     {
-        "open": 189773,
-        "close": 7378,
-        "total_volume": 2247605
+        "open": 141941,
+        "close": 317906,
+        "total_volume": 5249715
     },
     {
-        "open": 3335,
-        "close": 20209,
-        "total_volume": 818452
+        "open": 399853,
+        "close": 377311,
+        "total_volume": 6468987
     },
     {
-        "open": 63664,
-        "close": 272646,
-        "total_volume": 1983476
+        "open": 272885,
+        "close": 392529,
+        "total_volume": 5725195
     },
     {
-        "open": 325481,
-        "close": 17942,
-        "total_volume": 3139928
+        "open": 238071,
+        "close": 387629,
+        "total_volume": 5914500
     },
     {
-        "open": 31567,
-        "close": 61021,
-        "total_volume": 2321537
+        "open": 373970,
+        "close": 261092,
+        "total_volume": 5896395
     },
     {
-        "open": 3521,
-        "close": 2809,
-        "total_volume": 784099
+        "open": 115612,
+        "close": 331544,
+        "total_volume": 5408156
     },
     {
-        "open": 298588,
-        "close": 37766,
-        "total_volume": 2036378
+        "open": 293927,
+        "close": 391634,
+        "total_volume": 6088613
     },
     {
-        "open": 20487,
-        "close": 365691,
-        "total_volume": 3117826
+        "open": 264321,
+        "close": 2159,
+        "total_volume": 5092543
     },
     {
-        "open": 343100,
-        "close": 15094,
-        "total_volume": 2127121
+        "open": 360,
+        "close": 344136,
+        "total_volume": 4354212
     },
     {
-        "open": 5541,
-        "close": 6722,
-        "total_volume": 2634611
+        "open": 371761,
+        "close": 228567,
+        "total_volume": 5292535
     },
     {
-        "open": 120328,
-        "close": 357843,
-        "total_volume": 1637788
+        "open": 148243,
+        "close": 374839,
+        "total_volume": 6473338
     },
     {
-        "open": 235412,
-        "close": 274498,
-        "total_volume": 3060587
+        "open": 378550,
+        "close": 95214,
+        "total_volume": 3215761
     },
     {
-        "open": 344003,
-        "close": 391522,
-        "total_volume": 7038058
+        "open": 56153,
+        "close": 65207,
+        "total_volume": 1007054
     },
     {
-        "open": 304705,
-        "close": 103793,
-        "total_volume": 5962666
+        "open": 13746,
+        "close": 7336,
+        "total_volume": 336796
     },
     {
-        "open": 242307,
-        "close": 197292,
-        "total_volume": 5544277
+        "open": 269146,
+        "close": 368,
+        "total_volume": 1222579
     },
     {
-        "open": 232914,
-        "close": 173445,
-        "total_volume": 5901959
+        "open": 90170,
+        "close": 89526,
+        "total_volume": 1210293
     },
     {
-        "open": 364778,
-        "close": 265005,
-        "total_volume": 5248206
+        "open": 281651,
+        "close": 63568,
+        "total_volume": 2305685
     },
     {
-        "open": 240219,
-        "close": 395957,
-        "total_volume": 6078000
+        "open": 56860,
+        "close": 7757,
+        "total_volume": 3395304
     },
     {
-        "open": 399532,
-        "close": 173003,
-        "total_volume": 5931727
+        "open": 18349,
+        "close": 1081,
+        "total_volume": 1022340
     },
     {
-        "open": 220788,
-        "close": 84371,
-        "total_volume": 1686030
+        "open": 42089,
+        "close": 53361,
+        "total_volume": 824086
     },
     {
-        "open": 23141,
-        "close": 40258,
-        "total_volume": 951958
+        "open": 73599,
+        "close": 366678,
+        "total_volume": 2443383
     },
     {
-        "open": 11966,
-        "close": 38940,
-        "total_volume": 1080917
+        "open": 365585,
+        "close": 154370,
+        "total_volume": 6340255
     },
     {
-        "open": 3853,
-        "close": 100385,
-        "total_volume": 686900
+        "open": 370171,
+        "close": 1008,
+        "total_volume": 3725698
     },
     {
-        "open": 17594,
-        "close": 28200,
-        "total_volume": 524676
+        "open": 24450,
+        "close": 70125,
+        "total_volume": 1255437
     },
     {
-        "open": 1994,
-        "close": 2733,
-        "total_volume": 297971
+        "open": 45988,
+        "close": 275973,
+        "total_volume": 5617703
     },
     {
-        "open": 1290,
-        "close": 30445,
-        "total_volume": 677402
+        "open": 338723,
+        "close": 219231,
+        "total_volume": 6202799
     },
     {
-        "open": 770,
-        "close": 6892,
-        "total_volume": 189667
+        "open": 264455,
+        "close": 253154,
+        "total_volume": 5441616
     },
     {
-        "open": 456,
-        "close": 378,
-        "total_volume": 575880
+        "open": 399424,
+        "close": 353583,
+        "total_volume": 5737875
     },
     {
-        "open": 467,
-        "close": 7182,
-        "total_volume": 534806
+        "open": 191934,
+        "close": 290018,
+        "total_volume": 6210967
     },
     {
-        "open": 17052,
-        "close": 3464,
-        "total_volume": 329256
+        "open": 631407,
+        "close": 352965,
+        "total_volume": 6184234
     },
     {
-        "open": 31215,
-        "close": 2692,
-        "total_volume": 804068
+        "open": 370843,
+        "close": 335772,
+        "total_volume": 6053227
     },
     {
-        "open": 5793,
-        "close": 655,
-        "total_volume": 559128
+        "open": 168188,
+        "close": 242349,
+        "total_volume": 6019141
     },
     {
-        "open": 12397,
-        "close": 6157,
-        "total_volume": 420244
+        "open": 211293,
+        "close": 395914,
+        "total_volume": 6605923
     },
     {
-        "open": 60562,
-        "close": 196,
-        "total_volume": 498059
+        "open": 152627,
+        "close": 365442,
+        "total_volume": 6100771
     },
     {
-        "open": 16769,
-        "close": 22599,
-        "total_volume": 1502539
+        "open": 51753,
+        "close": 190255,
+        "total_volume": 6426932
     },
     {
-        "open": 44084,
-        "close": 8713,
-        "total_volume": 1950522
+        "open": 365708,
+        "close": 384883,
+        "total_volume": 6145983
     },
     {
-        "open": 142034,
-        "close": 26304,
-        "total_volume": 1753007
+        "open": 359255,
+        "close": 392032,
+        "total_volume": 6101949
     },
     {
-        "open": 5855,
-        "close": 7970,
-        "total_volume": 1926224
+        "open": 283348,
+        "close": 56863,
+        "total_volume": 5831273
     },
     {
-        "open": 88268,
-        "close": 46120,
-        "total_volume": 1939031
+        "open": 362871,
+        "close": 67434,
+        "total_volume": 2005872
     },
     {
-        "open": 11771,
-        "close": 5516,
-        "total_volume": 1675828
+        "open": 53975,
+        "close": 45517,
+        "total_volume": 2096396
     },
     {
-        "open": 217075,
-        "close": 172366,
-        "total_volume": 1802762
+        "open": 75423,
+        "close": 76066,
+        "total_volume": 2598811
     },
     {
-        "open": 81535,
-        "close": 43163,
-        "total_volume": 2987170
+        "open": 184617,
+        "close": 194962,
+        "total_volume": 3201142
     },
     {
-        "open": 33474,
-        "close": 146498,
-        "total_volume": 2124415
+        "open": 45873,
+        "close": 388936,
+        "total_volume": 6017652
     },
     {
-        "open": 20141,
-        "close": 203768,
-        "total_volume": 1767132
+        "open": 306477,
+        "close": 331662,
+        "total_volume": 6169182
     },
     {
-        "open": 22437,
-        "close": 103554,
-        "total_volume": 1519745
+        "open": 375698,
+        "close": 167760,
+        "total_volume": 6095590
     },
     {
-        "open": 43441,
-        "close": 12098,
-        "total_volume": 774206
+        "open": 235296,
+        "close": 348608,
+        "total_volume": 6057493
     },
     {
-        "open": 30017,
-        "close": 67308,
-        "total_volume": 446866
+        "open": 257144,
+        "close": 358718,
+        "total_volume": 4662099
     },
     {
-        "open": 5962,
-        "close": 3972,
-        "total_volume": 347499
+        "open": 30,
+        "close": 335278,
+        "total_volume": 4622916
     },
     {
-        "open": 75090,
-        "close": 2344,
-        "total_volume": 495089
+        "open": 375698,
+        "close": 24934,
+        "total_volume": 4073571
     },
     {
-        "open": 12844,
-        "close": 3756,
-        "total_volume": 3311489
+        "open": 42078,
+        "close": 100621,
+        "total_volume": 1413092
     },
     {
-        "open": 33702,
-        "close": 163595,
-        "total_volume": 2291034
+        "open": 2439,
+        "close": 9595,
+        "total_volume": 727718
     },
     {
-        "open": 163420,
-        "close": 30651,
-        "total_volume": 1778027
+        "open": 15043,
+        "close": 3076,
+        "total_volume": 541956
     },
     {
-        "open": 38856,
-        "close": 138314,
-        "total_volume": 2683114
+        "open": 5731,
+        "close": 169640,
+        "total_volume": 747753
     },
     {
-        "open": 215635,
-        "close": 370024,
-        "total_volume": 2044118
+        "open": 86578,
+        "close": 1551,
+        "total_volume": 1048341
     },
     {
-        "open": 87219,
-        "close": 123331,
-        "total_volume": 2066333
+        "open": 687,
+        "close": 287853,
+        "total_volume": 3045065
     },
     {
-        "open": 31688,
-        "close": 65486,
-        "total_volume": 1922907
+        "open": 183890,
+        "close": 391321,
+        "total_volume": 5904676
     },
     {
-        "open": 92893,
-        "close": 173804,
-        "total_volume": 2767529
+        "open": 333193,
+        "close": 340515,
+        "total_volume": 6286086
     },
     {
-        "open": 16045,
-        "close": 196331,
-        "total_volume": 1538926
+        "open": 397914,
+        "close": 117982,
+        "total_volume": 2442578
     },
     {
-        "open": 399464,
-        "close": 291352,
-        "total_volume": 6333618
+        "open": 50770,
+        "close": 71432,
+        "total_volume": 793991
     },
     {
-        "open": 140268,
-        "close": 294232,
-        "total_volume": 5527205
+        "open": 144,
+        "close": 358770,
+        "total_volume": 5506923
     },
     {
-        "open": 390357,
-        "close": 399829,
-        "total_volume": 6555205
+        "open": 313309,
+        "close": 275829,
+        "total_volume": 5642339
     },
     {
-        "open": 345256,
-        "close": 380335,
-        "total_volume": 6304717
+        "open": 68661,
+        "close": 343723,
+        "total_volume": 5599232
     },
     {
-        "open": 235411,
-        "close": 107197,
-        "total_volume": 5203003
+        "open": 379267,
+        "close": 192066,
+        "total_volume": 6126075
     },
     {
-        "open": 279773,
-        "close": 270848,
-        "total_volume": 5817130
+        "open": 399830,
+        "close": 77874,
+        "total_volume": 2093446
     },
     {
-        "open": 321963,
-        "close": 341930,
-        "total_volume": 6476873
+        "open": 26381,
+        "close": 31287,
+        "total_volume": 854004
     },
     {
-        "open": 386044,
-        "close": 107945,
-        "total_volume": 6448033
+        "open": 23004,
+        "close": 291530,
+        "total_volume": 3144230
     },
     {
-        "open": 238662,
-        "close": 373814,
-        "total_volume": 6635125
+        "open": 397400,
+        "close": 95291,
+        "total_volume": 6191801
     },
     {
-        "open": 399408,
-        "close": 267486,
-        "total_volume": 6302228
+        "open": 394625,
+        "close": 380395,
+        "total_volume": 5796669
     },
     {
-        "open": 343693,
-        "close": 122625,
-        "total_volume": 6241044
+        "open": 268888,
+        "close": 290655,
+        "total_volume": 5846073
     },
     {
-        "open": 214167,
-        "close": 345566,
-        "total_volume": 5392618
+        "open": 386844,
+        "close": 193986,
+        "total_volume": 2715646
     },
     {
-        "open": 196535,
-        "close": 392910,
-        "total_volume": 5572201
+        "open": 2155,
+        "close": 55371,
+        "total_volume": 1533029
     },
     {
-        "open": 343082,
-        "close": 271345,
-        "total_volume": 5954172
+        "open": 22112,
+        "close": 163179,
+        "total_volume": 747166
     },
     {
-        "open": 315063,
-        "close": 394187,
-        "total_volume": 5790092
+        "open": 76541,
+        "close": 63791,
+        "total_volume": 1487413
     },
     {
-        "open": 286738,
-        "close": 237315,
-        "total_volume": 6409399
+        "open": 37795,
+        "close": 55154,
+        "total_volume": 1107987
     },
     {
-        "open": 395586,
-        "close": 366451,
-        "total_volume": 6047964
+        "open": 70123,
+        "close": 463,
+        "total_volume": 955052
     },
     {
-        "open": 353852,
-        "close": 387741,
-        "total_volume": 6081164
+        "open": 2302,
+        "close": 123797,
+        "total_volume": 2347043
     },
     {
-        "open": 361782,
-        "close": 14430,
-        "total_volume": 3929069
+        "open": 64948,
+        "close": 9797,
+        "total_volume": 679626
     },
     {
-        "open": 7042,
-        "close": 45155,
-        "total_volume": 734974
+        "open": 28839,
+        "close": 72288,
+        "total_volume": 1174521
     },
     {
-        "open": 1604,
-        "close": 14402,
-        "total_volume": 553662
+        "open": 87963,
+        "close": 329899,
+        "total_volume": 2081186
     },
     {
-        "open": 74289,
-        "close": 24550,
-        "total_volume": 650158
+        "open": 114063,
+        "close": 34020,
+        "total_volume": 2007849
     },
     {
-        "open": 70504,
-        "close": 72962,
-        "total_volume": 953226
+        "open": 627,
+        "close": 118702,
+        "total_volume": 1446018
     },
     {
-        "open": 20295,
-        "close": 202255,
-        "total_volume": 783910
+        "open": 42289,
+        "close": 92562,
+        "total_volume": 4618031
     },
     {
-        "open": 16816,
-        "close": 11422,
-        "total_volume": 879497
+        "open": 362459,
+        "close": 301343,
+        "total_volume": 5294995
     },
     {
-        "open": 2496,
-        "close": 1564,
-        "total_volume": 976980
+        "open": 326700,
+        "close": 4490,
+        "total_volume": 6739977
     },
     {
-        "open": 90210,
-        "close": 11876,
-        "total_volume": 1243188
+        "open": 162,
+        "close": 104394,
+        "total_volume": 1843903
     },
     {
-        "open": 7708,
-        "close": 377228,
-        "total_volume": 1232381
+        "open": 201371,
+        "close": 284018,
+        "total_volume": 2344182
     },
     {
-        "open": 394427,
-        "close": 114920,
-        "total_volume": 2053508
+        "open": 182075,
+        "close": 41450,
+        "total_volume": 566702
     },
     {
-        "open": 138648,
-        "close": 4764,
-        "total_volume": 750705
+        "open": 5062,
+        "close": 791,
+        "total_volume": 905070
     },
     {
-        "open": 76117,
-        "close": 33839,
-        "total_volume": 486394
+        "open": 240518,
+        "close": 195723,
+        "total_volume": 2162370
     },
     {
-        "open": 181015,
-        "close": 36299,
-        "total_volume": 903870
+        "open": 39416,
+        "close": 182654,
+        "total_volume": 2077245
     },
     {
-        "open": 5928,
-        "close": 2266,
-        "total_volume": 1089181
+        "open": 64088,
+        "close": 8820,
+        "total_volume": 721796
     },
     {
-        "open": 36979,
-        "close": 124521,
-        "total_volume": 1111357
+        "open": 18480,
+        "close": 50586,
+        "total_volume": 519678
     },
     {
-        "open": 1498,
-        "close": 3154,
-        "total_volume": 913908
+        "open": 122096,
+        "close": 9852,
+        "total_volume": 410091
     },
     {
-        "open": 98488,
-        "close": 253226,
-        "total_volume": 2888214
+        "open": 175,
+        "close": 23566,
+        "total_volume": 318924
     },
     {
-        "open": 346917,
-        "close": 14761,
-        "total_volume": 2372487
+        "open": 59413,
+        "close": 4821,
+        "total_volume": 357803
     },
     {
-        "open": 95261,
-        "close": 26016,
-        "total_volume": 1921015
+        "open": 70467,
+        "close": 114264,
+        "total_volume": 421604
     },
     {
-        "open": 120459,
-        "close": 23239,
-        "total_volume": 1745177
+        "open": 132070,
+        "close": 24651,
+        "total_volume": 1660633
     },
     {
-        "open": 38144,
-        "close": 366,
-        "total_volume": 1162951
+        "open": 68980,
+        "close": 154065,
+        "total_volume": 2221135
     },
     {
-        "open": 9096,
-        "close": 11154,
-        "total_volume": 2091197
+        "open": 154614,
+        "close": 91685,
+        "total_volume": 1911416
     },
     {
-        "open": 162280,
-        "close": 49547,
-        "total_volume": 2791444
+        "open": 54126,
+        "close": 29320,
+        "total_volume": 1276585
     },
     {
-        "open": 22922,
-        "close": 97554,
-        "total_volume": 1505317
+        "open": 40173,
+        "close": 16360,
+        "total_volume": 963154
     },
     {
-        "open": 2412,
-        "close": 3219,
-        "total_volume": 223150
+        "open": 868,
+        "close": 1803,
+        "total_volume": 844817
     },
     {
-        "open": 1660,
-        "close": 10376,
-        "total_volume": 478891
+        "open": 39092,
+        "close": 2637,
+        "total_volume": 1880144
     },
     {
-        "open": 445,
-        "close": 306706,
-        "total_volume": 735379
+        "open": 56429,
+        "close": 2866,
+        "total_volume": 825800
     },
     {
-        "open": 36306,
-        "close": 606,
-        "total_volume": 742247
+        "open": 89888,
+        "close": 17732,
+        "total_volume": 319335
     },
     {
-        "open": 3385,
-        "close": 13635,
-        "total_volume": 927828
+        "open": 4214,
+        "close": 1684,
+        "total_volume": 363963
     },
     {
-        "open": 35487,
-        "close": 86877,
-        "total_volume": 524082
+        "open": 180,
+        "close": 21897,
+        "total_volume": 594447
     },
     {
-        "open": 428,
-        "close": 9923,
-        "total_volume": 411271
+        "open": 3899,
+        "close": 69487,
+        "total_volume": 539203
     },
     {
-        "open": 9250,
-        "close": 16377,
-        "total_volume": 828193
+        "open": 3507,
+        "close": 363707,
+        "total_volume": 7255798
     },
     {
-        "open": 165,
-        "close": 269121,
-        "total_volume": 2874764
+        "open": 342675,
+        "close": 158218,
+        "total_volume": 2948706
     },
     {
-        "open": 250600,
-        "close": 385814,
-        "total_volume": 6037062
+        "open": 96382,
+        "close": 6772,
+        "total_volume": 1780568
     },
     {
-        "open": 145391,
-        "close": 10600,
-        "total_volume": 2234678
+        "open": 5370,
+        "close": 194460,
+        "total_volume": 4717053
     },
     {
-        "open": 41655,
-        "close": 81960,
-        "total_volume": 605862
+        "open": 342464,
+        "close": 332294,
+        "total_volume": 5665538
     },
     {
-        "open": 834,
-        "close": 156625,
-        "total_volume": 740479
+        "open": 168554,
+        "close": 125652,
+        "total_volume": 3992372
     },
     {
-        "open": 58854,
-        "close": 151974,
-        "total_volume": 1084646
+        "open": 995,
+        "close": 147636,
+        "total_volume": 2107835
     },
     {
-        "open": 38910,
-        "close": 380197,
-        "total_volume": 2495346
+        "open": 104195,
+        "close": 47488,
+        "total_volume": 1928574
     },
     {
-        "open": 196144,
-        "close": 379283,
-        "total_volume": 5717269
+        "open": 33916,
+        "close": 57294,
+        "total_volume": 1921088
     },
     {
-        "open": 358782,
-        "close": 149434,
-        "total_volume": 5911703
+        "open": 23615,
+        "close": 211156,
+        "total_volume": 2114326
     },
     {
-        "open": 216428,
-        "close": 241676,
-        "total_volume": 5455850
+        "open": 188644,
+        "close": 211402,
+        "total_volume": 2283211
     },
     {
-        "open": 242733,
-        "close": 167907,
-        "total_volume": 3157640
+        "open": 32897,
+        "close": 92041,
+        "total_volume": 2003596
     },
     {
-        "open": 26413,
-        "close": 4526,
-        "total_volume": 469294
+        "open": 21125,
+        "close": 12362,
+        "total_volume": 2177201
     },
     {
-        "open": 23389,
-        "close": 45305,
-        "total_volume": 725672
+        "open": 1946,
+        "close": 220654,
+        "total_volume": 2159017
     },
     {
-        "open": 590,
-        "close": 27186,
-        "total_volume": 845808
+        "open": 53810,
+        "close": 53804,
+        "total_volume": 2028323
     },
     {
-        "open": 17593,
-        "close": 631,
-        "total_volume": 1155950
+        "open": 98547,
+        "close": 39689,
+        "total_volume": 2201228
     },
     {
-        "open": 12511,
-        "close": 7907,
-        "total_volume": 2921153
+        "open": 4399,
+        "close": 180386,
+        "total_volume": 1042155
     },
     {
-        "open": 28242,
-        "close": 28590,
-        "total_volume": 519523
+        "open": 9721,
+        "close": 325,
+        "total_volume": 938554
     },
     {
-        "open": 28737,
-        "close": 73369,
-        "total_volume": 1229052
+        "open": 84415,
+        "close": 45653,
+        "total_volume": 4502623
     },
     {
-        "open": 129125,
-        "close": 107675,
-        "total_volume": 1865608
+        "open": 1743488,
+        "close": 298780,
+        "total_volume": 6549105
     },
     {
-        "open": 17127,
-        "close": 5835,
-        "total_volume": 1266651
+        "open": 288489,
+        "close": 91463,
+        "total_volume": 3620137
     },
     {
-        "open": 141575,
-        "close": 158784,
-        "total_volume": 3882062
+        "open": 50728,
+        "close": 470,
+        "total_volume": 3089194
     },
     {
-        "open": 346932,
-        "close": 135535,
-        "total_volume": 2439994
-    },
-    {
-        "open": 19550,
-        "close": 36868,
-        "total_volume": 457428
-    },
-    {
-        "open": 16993,
-        "close": 180781,
-        "total_volume": 872184
-    },
-    {
-        "open": 20249,
-        "close": 42905,
-        "total_volume": 914662
-    },
-    {
-        "open": 124341,
-        "close": 6883,
-        "total_volume": 986018
-    },
-    {
-        "open": 15003,
-        "close": 129509,
-        "total_volume": 1076458
-    },
-    {
-        "open": 3057,
-        "close": 4504,
-        "total_volume": 370274
-    },
-    {
-        "open": 6600,
-        "close": 885,
-        "total_volume": 637978
-    },
-    {
-        "open": 6506,
-        "close": 429,
-        "total_volume": 716561
-    },
-    {
-        "open": 78043,
-        "close": 72907,
-        "total_volume": 1218918
-    },
-    {
-        "open": 6639,
-        "close": 218292,
-        "total_volume": 990539
-    },
-    {
-        "open": 123489,
-        "close": 24592,
-        "total_volume": 1172288
-    },
-    {
-        "open": 11461,
-        "close": 18075,
-        "total_volume": 1848659
-    },
-    {
-        "open": 234502,
-        "close": 5887,
-        "total_volume": 1298303
-    },
-    {
-        "open": 3484,
-        "close": 28491,
-        "total_volume": 1149292
-    },
-    {
-        "open": 28880,
-        "close": 24761,
-        "total_volume": 944685
-    },
-    {
-        "open": 24675,
-        "close": 3302,
-        "total_volume": 1533463
-    },
-    {
-        "open": 16268,
-        "close": 2009,
-        "total_volume": 422067
-    },
-    {
-        "open": 48798,
-        "close": 16179,
-        "total_volume": 759812
-    },
-    {
-        "open": 110793,
-        "close": 28783,
-        "total_volume": 655094
-    },
-    {
-        "open": 144416,
-        "close": 10334,
-        "total_volume": 653029
-    },
-    {
-        "open": 23737,
-        "close": 1556,
-        "total_volume": 1047978
-    },
-    {
-        "open": 32276,
-        "close": 3222,
-        "total_volume": 1909617
-    },
-    {
-        "open": 133649,
-        "close": 39675,
-        "total_volume": 1570185
-    },
-    {
-        "open": 24267,
-        "close": 35202,
-        "total_volume": 1381935
-    },
-    {
-        "open": 116199,
-        "close": 76470,
-        "total_volume": 1188743
+        "open": 3341,
+        "close": 2150,
+        "total_volume": 250922
     },
     {
         "open": 142,
-        "close": 27481,
-        "total_volume": 449855
+        "close": 20145,
+        "total_volume": 1343146
     },
     {
-        "open": 53364,
-        "close": 16079,
-        "total_volume": 609053
+        "open": 34276,
+        "close": 79382,
+        "total_volume": 2149704
     },
     {
-        "open": 67300,
-        "close": 15198,
-        "total_volume": 463120
+        "open": 35669,
+        "close": 124007,
+        "total_volume": 2558049
     },
     {
-        "open": 63526,
-        "close": 2479,
-        "total_volume": 1163375
+        "open": 44322,
+        "close": 22008,
+        "total_volume": 1739168
     },
     {
-        "open": 2965,
-        "close": 92047,
-        "total_volume": 353176
+        "open": 108799,
+        "close": 136540,
+        "total_volume": 2299548
     },
     {
-        "open": 25135,
-        "close": 189,
-        "total_volume": 299984
+        "open": 194701,
+        "close": 203605,
+        "total_volume": 2541573
     },
     {
-        "open": 2445,
-        "close": 300445,
-        "total_volume": 497792
+        "open": 262353,
+        "close": 108391,
+        "total_volume": 2457574
     },
     {
-        "open": 212024,
-        "close": 309341,
-        "total_volume": 6185484
+        "open": 6933,
+        "close": 57648,
+        "total_volume": 1811837
     },
     {
-        "open": 349991,
-        "close": 333288,
-        "total_volume": 6110264
+        "open": 5284,
+        "close": 23916,
+        "total_volume": 2055903
     },
     {
-        "open": 376806,
-        "close": 306489,
-        "total_volume": 4839883
+        "open": 39533,
+        "close": 51457,
+        "total_volume": 2216736
     },
     {
-        "open": 2775,
-        "close": 259196,
-        "total_volume": 1135906
+        "open": 43747,
+        "close": 58193,
+        "total_volume": 2387958
     },
     {
-        "open": 236856,
-        "close": 18842,
-        "total_volume": 3774509
+        "open": 1108,
+        "close": 17379,
+        "total_volume": 882715
     },
     {
-        "open": 96334,
-        "close": 42156,
-        "total_volume": 2628388
+        "open": 22957,
+        "close": 225517,
+        "total_volume": 3097684
     },
     {
-        "open": 379,
-        "close": 3213,
-        "total_volume": 334804
+        "open": 280233,
+        "close": 119706,
+        "total_volume": 6189497
     },
     {
-        "open": 4424,
-        "close": 2124,
-        "total_volume": 554373
+        "open": 4545,
+        "close": 243785,
+        "total_volume": 5747741
     },
     {
-        "open": 68190,
-        "close": 326279,
-        "total_volume": 2542498
+        "open": 340015,
+        "close": 223,
+        "total_volume": 3292158
     },
     {
-        "open": 284322,
-        "close": 2441,
-        "total_volume": 4998814
+        "open": 31836,
+        "close": 3214,
+        "total_volume": 634833
     },
     {
-        "open": 7125,
-        "close": 20789,
-        "total_volume": 1409279
+        "open": 41219,
+        "close": 250,
+        "total_volume": 857692
     },
     {
-        "open": 9960,
-        "close": 109876,
-        "total_volume": 789157
+        "open": 1518,
+        "close": 3581,
+        "total_volume": 548968
     },
     {
-        "open": 5632,
-        "close": 7175,
-        "total_volume": 2124180
+        "open": 1428,
+        "close": 27506,
+        "total_volume": 526109
     },
     {
-        "open": 290599,
-        "close": 7110,
-        "total_volume": 2578977
+        "open": 1574,
+        "close": 14578,
+        "total_volume": 602748
     },
     {
-        "open": 672,
-        "close": 130856,
-        "total_volume": 4634332
+        "open": 144,
+        "close": 10580,
+        "total_volume": 613348
     },
     {
-        "open": 128301,
-        "close": 85343,
-        "total_volume": 1295402
+        "open": 63946,
+        "close": 3863,
+        "total_volume": 507727
     },
     {
-        "open": 15383,
-        "close": 135684,
-        "total_volume": 1506147
+        "open": 167912,
+        "close": 78451,
+        "total_volume": 686358
     },
     {
-        "open": 95185,
-        "close": 159352,
-        "total_volume": 1350381
+        "open": 69624,
+        "close": 23459,
+        "total_volume": 1581248
     },
     {
-        "open": 4307,
-        "close": 1128,
-        "total_volume": 1562229
+        "open": 191157,
+        "close": 53429,
+        "total_volume": 1874265
     },
     {
-        "open": 125796,
-        "close": 28999,
-        "total_volume": 3858371
+        "open": 44349,
+        "close": 84502,
+        "total_volume": 511938
     },
     {
-        "open": 156460,
-        "close": 33499,
-        "total_volume": 550969
+        "open": 6828,
+        "close": 20376,
+        "total_volume": 269126
     },
     {
-        "open": 9965,
-        "close": 74424,
-        "total_volume": 5687809
+        "open": 2237,
+        "close": 1266,
+        "total_volume": 683564
     },
     {
-        "open": 16361,
-        "close": 49133,
-        "total_volume": 960952
+        "open": 1337,
+        "close": 4781,
+        "total_volume": 225315
     },
     {
-        "open": 156478,
-        "close": 53584,
-        "total_volume": 816041
+        "open": 15545,
+        "close": 13758,
+        "total_volume": 428894
     },
     {
-        "open": 276482,
-        "close": 368317,
-        "total_volume": 2888278
+        "open": 141822,
+        "close": 16661,
+        "total_volume": 817341
     },
     {
-        "open": 240219,
-        "close": 288018,
-        "total_volume": 4899599
+        "open": 8830,
+        "close": 25463,
+        "total_volume": 420896
     },
     {
-        "open": 247433,
-        "close": 12898,
-        "total_volume": 1182621
+        "open": 11563,
+        "close": 155757,
+        "total_volume": 567871
     },
     {
-        "open": 24190,
-        "close": 1757,
-        "total_volume": 3310737
+        "open": 855,
+        "close": 118565,
+        "total_volume": 2794561
     },
     {
-        "open": 233333,
-        "close": 329242,
-        "total_volume": 4502467
+        "open": 67578,
+        "close": 182812,
+        "total_volume": 1031579
     },
     {
-        "open": 378323,
-        "close": 428,
-        "total_volume": 3096702
+        "open": 11499,
+        "close": 162569,
+        "total_volume": 1454350
     },
     {
-        "open": 13733,
-        "close": 188442,
-        "total_volume": 1168404
+        "open": 32794,
+        "close": 34132,
+        "total_volume": 907706
     },
     {
-        "open": 96286,
-        "close": 204171,
-        "total_volume": 2491510
+        "open": 66311,
+        "close": 35167,
+        "total_volume": 759260
     },
     {
-        "open": 373814,
-        "close": 347868,
-        "total_volume": 4386342
+        "open": 13509,
+        "close": 15919,
+        "total_volume": 1038481
     },
     {
-        "open": 250059,
-        "close": 158846,
-        "total_volume": 2722619
+        "open": 211689,
+        "close": 397229,
+        "total_volume": 4726560
     },
     {
-        "open": 79744,
-        "close": 361782,
-        "total_volume": 4268416
+        "open": 392869,
+        "close": 279587,
+        "total_volume": 5002065
     },
     {
-        "open": 355048,
-        "close": 3126,
-        "total_volume": 1346394
+        "open": 248044,
+        "close": 311260,
+        "total_volume": 5786834
     },
     {
-        "open": 6845,
-        "close": 226518,
-        "total_volume": 2079499
+        "open": 304965,
+        "close": 23843,
+        "total_volume": 2113909
     },
     {
-        "open": 215635,
-        "close": 188909,
-        "total_volume": 2100426
+        "open": 48818,
+        "close": 10023,
+        "total_volume": 880505
     },
     {
-        "open": 36650,
-        "close": 34062,
-        "total_volume": 3378540
+        "open": 105888,
+        "close": 387736,
+        "total_volume": 4216795
     },
     {
-        "open": 1514,
-        "close": 8713,
-        "total_volume": 1419396
+        "open": 156310,
+        "close": 308232,
+        "total_volume": 5308764
     },
     {
-        "open": 141350,
-        "close": 126466,
-        "total_volume": 3304313
+        "open": 392615,
+        "close": 244183,
+        "total_volume": 6779008
     },
     {
-        "open": 275346,
-        "close": 4453,
-        "total_volume": 1405519
+        "open": 21529,
+        "close": 53844,
+        "total_volume": 1420438
     },
     {
-        "open": 222383,
-        "close": 113173,
-        "total_volume": 2768146
+        "open": 36128,
+        "close": 148623,
+        "total_volume": 1826142
     },
     {
-        "open": 103554,
-        "close": 6810,
-        "total_volume": 630023
+        "open": 42365,
+        "close": 269070,
+        "total_volume": 2058685
     },
     {
-        "open": 5569,
-        "close": 387841,
-        "total_volume": 3314372
+        "open": 208554,
+        "close": 127491,
+        "total_volume": 2262231
     },
     {
-        "open": 119799,
-        "close": 5507,
-        "total_volume": 2145369
+        "open": 141490,
+        "close": 131744,
+        "total_volume": 2704543
     },
     {
-        "open": 1738,
-        "close": 54480,
-        "total_volume": 1231869
+        "open": 119447,
+        "close": 31266,
+        "total_volume": 1816609
     },
     {
-        "open": 10213,
-        "close": 271910,
-        "total_volume": 2906688
+        "open": 84051,
+        "close": 2214,
+        "total_volume": 2027878
     },
     {
-        "open": 12670,
-        "close": 86929,
-        "total_volume": 1080992
+        "open": 102633,
+        "close": 5561,
+        "total_volume": 1871774
     },
     {
-        "open": 46730,
-        "close": 177923,
-        "total_volume": 2456073
+        "open": 14947,
+        "close": 25185,
+        "total_volume": 1751701
     },
     {
-        "open": 46374,
-        "close": 81960,
-        "total_volume": 1627500
+        "open": 520,
+        "close": 15891,
+        "total_volume": 2337276
     },
     {
-        "open": 834,
-        "close": 363249,
-        "total_volume": 3444812
+        "open": 96655,
+        "close": 103212,
+        "total_volume": 1541602
     },
     {
-        "open": 298236,
-        "close": 31668,
-        "total_volume": 3244417
+        "open": 557,
+        "close": 31426,
+        "total_volume": 1394184
     },
     {
-        "open": 129125,
-        "close": 37832,
-        "total_volume": 864167
+        "open": 123292,
+        "close": 385636,
+        "total_volume": 5984139
     },
     {
-        "open": 1775545,
-        "close": 183697,
-        "total_volume": 3469388
+        "open": 373821,
+        "close": 9838,
+        "total_volume": 3599893
     },
     {
-        "open": 48886,
-        "close": 38535,
-        "total_volume": 1384723
+        "open": 155660,
+        "close": 1262125,
+        "total_volume": 5133002
     },
     {
-        "open": 40634,
-        "close": 272519,
-        "total_volume": 2136705
+        "open": 55800,
+        "close": 19284,
+        "total_volume": 464788
     },
     {
-        "open": 326408,
-        "close": 5282,
-        "total_volume": 1465109
+        "open": 445,
+        "close": 95492,
+        "total_volume": 557442
     },
     {
-        "open": 13252,
-        "close": 3057,
-        "total_volume": 2303499
+        "open": 41681,
+        "close": 77268,
+        "total_volume": 679209
     },
     {
-        "open": 10013,
-        "close": 15317,
-        "total_volume": 440226
+        "open": 11237,
+        "close": 32400,
+        "total_volume": 398001
     },
     {
-        "open": 14632,
-        "close": 11153,
-        "total_volume": 1241877
+        "open": 24198,
+        "close": 2155,
+        "total_volume": 392010
     },
     {
-        "open": 89111,
-        "close": 118,
-        "total_volume": 744632
+        "open": 1046,
+        "close": 366839,
+        "total_volume": 6328330
     },
     {
-        "open": 611,
-        "close": 1787,
-        "total_volume": 1057982
+        "open": 208187,
+        "close": 54109,
+        "total_volume": 2618265
     },
     {
-        "open": 7783,
-        "close": 129809,
-        "total_volume": 1174861
+        "open": 66421,
+        "close": 76757,
+        "total_volume": 1770556
     },
     {
-        "open": 3768,
-        "close": 67949,
-        "total_volume": 1367290
+        "open": 197839,
+        "close": 314558,
+        "total_volume": 2355468
     },
     {
-        "open": 14543,
-        "close": 21980,
-        "total_volume": 1180541
+        "open": 134210,
+        "close": 139485,
+        "total_volume": 2913918
     },
     {
-        "open": 11208,
-        "close": 8339,
-        "total_volume": 493310
+        "open": 79353,
+        "close": 70438,
+        "total_volume": 1673192
     },
     {
-        "open": 25135,
-        "close": 113319,
-        "total_volume": 1704406
+        "open": 77438,
+        "close": 42231,
+        "total_volume": 2731928
     },
     {
-        "open": 30595,
-        "close": 33349,
-        "total_volume": 1056603
+        "open": 228879,
+        "close": 306263,
+        "total_volume": 4207629
     },
     {
-        "open": 15703,
-        "close": 24406,
-        "total_volume": 1006743
+        "open": 76716,
+        "close": 256983,
+        "total_volume": 5453551
     },
     {
-        "open": 218292,
-        "close": 14441,
-        "total_volume": 1416579
+        "open": 387270,
+        "close": 37607,
+        "total_volume": 3422624
     },
     {
-        "open": 61638,
-        "close": 6246,
-        "total_volume": 893541
+        "open": 119960,
+        "close": 11725,
+        "total_volume": 1817867
     },
     {
-        "open": 429,
-        "close": 290,
-        "total_volume": 252617
+        "open": 307057,
+        "close": 3368,
+        "total_volume": 929803
     },
     {
-        "open": 16988,
-        "close": 84806,
-        "total_volume": 915038
+        "open": 7210,
+        "close": 23940,
+        "total_volume": 1117266
     },
     {
-        "open": 36385,
-        "close": 270045,
-        "total_volume": 2388457
+        "open": 224348,
+        "close": 28757,
+        "total_volume": 2186953
     },
     {
-        "open": 302748,
-        "close": 349768,
-        "total_volume": 6419568
+        "open": 71338,
+        "close": 149215,
+        "total_volume": 2657415
     },
     {
-        "open": 346346,
-        "close": 256762,
-        "total_volume": 6436641
+        "open": 15833,
+        "close": 47469,
+        "total_volume": 2229204
     },
     {
-        "open": 387775,
-        "close": 340702,
-        "total_volume": 6068496
+        "open": 39703,
+        "close": 73136,
+        "total_volume": 1152082
     },
     {
-        "open": 388615,
-        "close": 334887,
-        "total_volume": 6526848
+        "open": 203788,
+        "close": 8383,
+        "total_volume": 1053736
     },
     {
-        "open": 339200,
-        "close": 366193,
-        "total_volume": 6255840
+        "open": 103456,
+        "close": 69214,
+        "total_volume": 1214300
     },
     {
-        "open": 234244,
-        "close": 62653,
-        "total_volume": 5477104
+        "open": 22991,
+        "close": 35789,
+        "total_volume": 794974
     },
     {
-        "open": 671,
-        "close": 5150,
-        "total_volume": 427944
+        "open": 94711,
+        "close": 1204,
+        "total_volume": 791620
     },
     {
-        "open": 685,
-        "close": 47938,
-        "total_volume": 542422
+        "open": 132516,
+        "close": 72218,
+        "total_volume": 1964880
+    },
+    {
+        "open": 194337,
+        "close": 19593,
+        "total_volume": 2240306
+    },
+    {
+        "open": 154931,
+        "close": 20366,
+        "total_volume": 1809020
+    },
+    {
+        "open": 166798,
+        "close": 80522,
+        "total_volume": 1488006
+    },
+    {
+        "open": 52973,
+        "close": 30669,
+        "total_volume": 857932
+    },
+    {
+        "open": 176183,
+        "close": 21599,
+        "total_volume": 1027365
+    },
+    {
+        "open": 42347,
+        "close": 226152,
+        "total_volume": 3388496
+    },
+    {
+        "open": 361249,
+        "close": 104178,
+        "total_volume": 5337407
+    },
+    {
+        "open": 280618,
+        "close": 263979,
+        "total_volume": 5021956
+    },
+    {
+        "open": 379921,
+        "close": 392488,
+        "total_volume": 6328854
+    },
+    {
+        "open": 137547,
+        "close": 398684,
+        "total_volume": 5950105
+    },
+    {
+        "open": 372941,
+        "close": 312100,
+        "total_volume": 6118297
+    },
+    {
+        "open": 301490,
+        "close": 261022,
+        "total_volume": 5847305
+    },
+    {
+        "open": 373032,
+        "close": 2941,
+        "total_volume": 4215594
+    },
+    {
+        "open": 7652,
+        "close": 36620,
+        "total_volume": 2600820
+    },
+    {
+        "open": 156223,
+        "close": 108404,
+        "total_volume": 3237294
+    },
+    {
+        "open": 58864,
+        "close": 251659,
+        "total_volume": 4414978
+    },
+    {
+        "open": 131791,
+        "close": 112872,
+        "total_volume": 4690047
+    },
+    {
+        "open": 221636,
+        "close": 100618,
+        "total_volume": 5054832
+    },
+    {
+        "open": 4859,
+        "close": 159056,
+        "total_volume": 774571
+    },
+    {
+        "open": 802,
+        "close": 198552,
+        "total_volume": 1559651
+    },
+    {
+        "open": 379034,
+        "close": 223972,
+        "total_volume": 6139226
+    },
+    {
+        "open": 342529,
+        "close": 185286,
+        "total_volume": 5737950
+    },
+    {
+        "open": 385576,
+        "close": 121573,
+        "total_volume": 4316320
+    },
+    {
+        "open": 183067,
+        "close": 7360,
+        "total_volume": 1983212
+    },
+    {
+        "open": 38850,
+        "close": 381389,
+        "total_volume": 5297439
+    },
+    {
+        "open": 281207,
+        "close": 372089,
+        "total_volume": 6310276
+    },
+    {
+        "open": 204572,
+        "close": 211584,
+        "total_volume": 3871933
+    },
+    {
+        "open": 12971,
+        "close": 91705,
+        "total_volume": 2129131
+    },
+    {
+        "open": 53701,
+        "close": 10977,
+        "total_volume": 640183
+    },
+    {
+        "open": 5827,
+        "close": 1245,
+        "total_volume": 461685
+    },
+    {
+        "open": 50299,
+        "close": 152,
+        "total_volume": 749019
+    },
+    {
+        "open": 1083,
+        "close": 14588,
+        "total_volume": 423765
+    },
+    {
+        "open": 25081,
+        "close": 2913,
+        "total_volume": 329859
+    },
+    {
+        "open": 69872,
+        "close": 439,
+        "total_volume": 536803
+    },
+    {
+        "open": 28153,
+        "close": 18679,
+        "total_volume": 646723
+    },
+    {
+        "open": 39895,
+        "close": 244,
+        "total_volume": 416802
+    },
+    {
+        "open": 11367,
+        "close": 25249,
+        "total_volume": 612158
+    },
+    {
+        "open": 35730,
+        "close": 3749,
+        "total_volume": 251195
+    },
+    {
+        "open": 11121,
+        "close": 1487,
+        "total_volume": 272614
+    },
+    {
+        "open": 99087,
+        "close": 25753,
+        "total_volume": 544087
+    },
+    {
+        "open": 28133,
+        "close": 22599,
+        "total_volume": 399636
     },
     {
         "open": 1884,
-        "close": 324,
-        "total_volume": 479670
+        "close": 217,
+        "total_volume": 499069
     },
     {
-        "open": 62208,
-        "close": 16624,
-        "total_volume": 594957
+        "open": 46753,
+        "close": 4721,
+        "total_volume": 398863
     },
     {
-        "open": 52724,
-        "close": 4649,
-        "total_volume": 597254
+        "open": 35882,
+        "close": 155414,
+        "total_volume": 774828
     },
     {
-        "open": 20398,
-        "close": 104925,
-        "total_volume": 1287379
+        "open": 65506,
+        "close": 5886,
+        "total_volume": 464745
     },
     {
-        "open": 108095,
-        "close": 7133,
-        "total_volume": 1156458
+        "open": 7170,
+        "close": 559,
+        "total_volume": 287961
     },
     {
-        "open": 65198,
-        "close": 3106,
-        "total_volume": 1485094
+        "open": 1481,
+        "close": 7525,
+        "total_volume": 430981
     },
     {
-        "open": 93406,
-        "close": 2320,
-        "total_volume": 785131
+        "open": 1554,
+        "close": 11553,
+        "total_volume": 776395
     },
     {
-        "open": 24392,
-        "close": 3237,
-        "total_volume": 1089171
+        "open": 59083,
+        "close": 4032,
+        "total_volume": 852101
     },
     {
-        "open": 18592,
-        "close": 40591,
-        "total_volume": 978434
+        "open": 709,
+        "close": 175,
+        "total_volume": 466203
     },
     {
-        "open": 10751,
-        "close": 3031,
-        "total_volume": 880789
+        "open": 120488,
+        "close": 30899,
+        "total_volume": 888448
     },
     {
-        "open": 9405,
-        "close": 370417,
-        "total_volume": 4898658
+        "open": 209687,
+        "close": 10265,
+        "total_volume": 1550265
     },
     {
-        "open": 336159,
-        "close": 282626,
-        "total_volume": 6521285
+        "open": 94265,
+        "close": 195579,
+        "total_volume": 4154798
     },
     {
-        "open": 176539,
-        "close": 360905,
-        "total_volume": 6155290
+        "open": 376913,
+        "close": 6559,
+        "total_volume": 2482334
     },
     {
-        "open": 213589,
-        "close": 244670,
-        "total_volume": 5576115
+        "open": 4580,
+        "close": 109293,
+        "total_volume": 2854343
     },
     {
-        "open": 320676,
-        "close": 343215,
-        "total_volume": 5820120
+        "open": 347226,
+        "close": 265635,
+        "total_volume": 5673512
     },
     {
-        "open": 365404,
-        "close": 393117,
-        "total_volume": 6304738
+        "open": 366392,
+        "close": 348102,
+        "total_volume": 6217048
     },
     {
-        "open": 292009,
-        "close": 386455,
-        "total_volume": 6120414
+        "open": 49390,
+        "close": 371,
+        "total_volume": 949455
     },
     {
-        "open": 378881,
-        "close": 366456,
-        "total_volume": 6604110
+        "open": 12029,
+        "close": 2456,
+        "total_volume": 483107
     },
     {
-        "open": 232957,
-        "close": 285242,
-        "total_volume": 6307866
+        "open": 421,
+        "close": 2714,
+        "total_volume": 574956
     },
     {
-        "open": 115483,
-        "close": 399383,
-        "total_volume": 6066434
+        "open": 14163,
+        "close": 30872,
+        "total_volume": 473286
     },
     {
-        "open": 378027,
-        "close": 285517,
-        "total_volume": 5911967
+        "open": 3764,
+        "close": 1114,
+        "total_volume": 703183
     },
     {
-        "open": 295844,
-        "close": 340644,
-        "total_volume": 5894753
+        "open": 101,
+        "close": 3358,
+        "total_volume": 1880848
     },
     {
-        "open": 319263,
-        "close": 109994,
-        "total_volume": 4215389
+        "open": 82354,
+        "close": 41306,
+        "total_volume": 1236006
     },
     {
-        "open": 13379,
-        "close": 182,
-        "total_volume": 672379
+        "open": 290624,
+        "close": 370700,
+        "total_volume": 5948175
+    },
+    {
+        "open": 381430,
+        "close": 347932,
+        "total_volume": 6296133
+    },
+    {
+        "open": 368567,
+        "close": 92921,
+        "total_volume": 3272939
+    },
+    {
+        "open": 333909,
+        "close": 12537,
+        "total_volume": 2537423
+    },
+    {
+        "open": 160390,
+        "close": 20922,
+        "total_volume": 2120109
+    },
+    {
+        "open": 6231,
+        "close": 2304,
+        "total_volume": 1531142
+    },
+    {
+        "open": 143631,
+        "close": 251029,
+        "total_volume": 2619545
+    },
+    {
+        "open": 42907,
+        "close": 38713,
+        "total_volume": 1648879
+    },
+    {
+        "open": 257049,
+        "close": 54269,
+        "total_volume": 2214196
+    },
+    {
+        "open": 37935,
+        "close": 2176,
+        "total_volume": 1351173
+    },
+    {
+        "open": 15289,
+        "close": 182954,
+        "total_volume": 1145561
+    },
+    {
+        "open": 49655,
+        "close": 24692,
+        "total_volume": 1174584
+    },
+    {
+        "open": 72513,
+        "close": 369698,
+        "total_volume": 2059871
+    },
+    {
+        "open": 114334,
+        "close": 266495,
+        "total_volume": 6222473
+    },
+    {
+        "open": 337781,
+        "close": 339037,
+        "total_volume": 3986504
+    },
+    {
+        "open": 397033,
+        "close": 141947,
+        "total_volume": 5436831
+    },
+    {
+        "open": 378098,
+        "close": 215786,
+        "total_volume": 5488175
+    },
+    {
+        "open": 343563,
+        "close": 306046,
+        "total_volume": 5758778
+    },
+    {
+        "open": 382924,
+        "close": 241954,
+        "total_volume": 5677296
+    },
+    {
+        "open": 10095,
+        "close": 1196,
+        "total_volume": 1025061
+    },
+    {
+        "open": 41880,
+        "close": 2265,
+        "total_volume": 883712
+    },
+    {
+        "open": 51294,
+        "close": 283965,
+        "total_volume": 5867772
+    },
+    {
+        "open": 115754,
+        "close": 293508,
+        "total_volume": 5656745
+    },
+    {
+        "open": 352393,
+        "close": 6843,
+        "total_volume": 1389063
+    },
+    {
+        "open": 3831,
+        "close": 151291,
+        "total_volume": 3881792
+    },
+    {
+        "open": 8057,
+        "close": 163014,
+        "total_volume": 2409299
+    },
+    {
+        "open": 147534,
+        "close": 18559,
+        "total_volume": 2992640
+    },
+    {
+        "open": 16550,
+        "close": 30996,
+        "total_volume": 1930183
+    },
+    {
+        "open": 32225,
+        "close": 17982,
+        "total_volume": 2515258
+    },
+    {
+        "open": 110550,
+        "close": 97791,
+        "total_volume": 2142102
+    },
+    {
+        "open": 31016,
+        "close": 81980,
+        "total_volume": 1898455
+    },
+    {
+        "open": 54369,
+        "close": 58720,
+        "total_volume": 587325
+    },
+    {
+        "open": 14959,
+        "close": 33224,
+        "total_volume": 573548
+    },
+    {
+        "open": 79836,
+        "close": 104703,
+        "total_volume": 5418385
+    },
+    {
+        "open": 207585,
+        "close": 205602,
+        "total_volume": 4918541
+    },
+    {
+        "open": 7993,
+        "close": 398971,
+        "total_volume": 3318603
+    },
+    {
+        "open": 298171,
+        "close": 373221,
+        "total_volume": 5000588
+    },
+    {
+        "open": 376231,
+        "close": 264244,
+        "total_volume": 5272704
+    },
+    {
+        "open": 397401,
+        "close": 975556,
+        "total_volume": 4361491
+    },
+    {
+        "open": 353710,
+        "close": 203532,
+        "total_volume": 3951157
+    },
+    {
+        "open": 100,
+        "close": 268076,
+        "total_volume": 1819677
+    },
+    {
+        "open": 1535,
+        "close": 26030,
+        "total_volume": 1520904
+    },
+    {
+        "open": 1478,
+        "close": 117324,
+        "total_volume": 1039990
+    },
+    {
+        "open": 85314,
+        "close": 29682,
+        "total_volume": 811071
+    },
+    {
+        "open": 101219,
+        "close": 77922,
+        "total_volume": 992647
+    },
+    {
+        "open": 3018,
+        "close": 17820,
+        "total_volume": 969762
+    },
+    {
+        "open": 5394,
+        "close": 24197,
+        "total_volume": 1174922
+    },
+    {
+        "open": 149723,
+        "close": 258629,
+        "total_volume": 3528909
+    },
+    {
+        "open": 192332,
+        "close": 353310,
+        "total_volume": 4768631
+    },
+    {
+        "open": 324648,
+        "close": 167650,
+        "total_volume": 4293761
+    },
+    {
+        "open": 218849,
+        "close": 22571,
+        "total_volume": 2064563
+    },
+    {
+        "open": 48120,
+        "close": 55266,
+        "total_volume": 1753517
+    },
+    {
+        "open": 256042,
+        "close": 32214,
+        "total_volume": 2516821
+    },
+    {
+        "open": 374205,
+        "close": 309262,
+        "total_volume": 5513457
+    },
+    {
+        "open": 214026,
+        "close": 287789,
+        "total_volume": 6444553
+    },
+    {
+        "open": 277667,
+        "close": 325563,
+        "total_volume": 5196717
+    },
+    {
+        "open": 21502,
+        "close": 182270,
+        "total_volume": 5352752
+    },
+    {
+        "open": 239511,
+        "close": 373414,
+        "total_volume": 5844846
+    },
+    {
+        "open": 313557,
+        "close": 164791,
+        "total_volume": 6211802
+    },
+    {
+        "open": 74004,
+        "close": 309588,
+        "total_volume": 4333521
+    },
+    {
+        "open": 1209,
+        "close": 369289,
+        "total_volume": 4606409
+    },
+    {
+        "open": 205058,
+        "close": 28401,
+        "total_volume": 5128286
+    },
+    {
+        "open": 294051,
+        "close": 295794,
+        "total_volume": 4833293
+    },
+    {
+        "open": 389265,
+        "close": 395133,
+        "total_volume": 5294176
+    },
+    {
+        "open": 335350,
+        "close": 131954,
+        "total_volume": 5547365
+    },
+    {
+        "open": 2818,
+        "close": 35182,
+        "total_volume": 906051
+    },
+    {
+        "open": 12634,
+        "close": 26161,
+        "total_volume": 498030
+    },
+    {
+        "open": 80893,
+        "close": 4354,
+        "total_volume": 1350762
+    },
+    {
+        "open": 55675,
+        "close": 129408,
+        "total_volume": 775671
+    },
+    {
+        "open": 39610,
+        "close": 165191,
+        "total_volume": 6248372
+    },
+    {
+        "open": 175895,
+        "close": 1023,
+        "total_volume": 1242512
+    },
+    {
+        "open": 5155,
+        "close": 3103,
+        "total_volume": 308081
+    },
+    {
+        "open": 10233,
+        "close": 137,
+        "total_volume": 364008
+    },
+    {
+        "open": 51409,
+        "close": 261,
+        "total_volume": 332002
+    },
+    {
+        "open": 17752,
+        "close": 377323,
+        "total_volume": 6079446
+    },
+    {
+        "open": 321125,
+        "close": 328694,
+        "total_volume": 4527324
+    },
+    {
+        "open": 171084,
+        "close": 267394,
+        "total_volume": 6095987
+    },
+    {
+        "open": 145218,
+        "close": 5410,
+        "total_volume": 1124341
+    },
+    {
+        "open": 253,
+        "close": 20902,
+        "total_volume": 833839
+    },
+    {
+        "open": 72421,
+        "close": 85885,
+        "total_volume": 2197457
+    },
+    {
+        "open": 183354,
+        "close": 47488,
+        "total_volume": 1534314
+    },
+    {
+        "open": 387282,
+        "close": 39387,
+        "total_volume": 1237782
+    },
+    {
+        "open": 6529,
+        "close": 394926,
+        "total_volume": 4231807
+    },
+    {
+        "open": 390394,
+        "close": 267175,
+        "total_volume": 5517503
+    },
+    {
+        "open": 202206,
+        "close": 254221,
+        "total_volume": 5717265
+    },
+    {
+        "open": 388926,
+        "close": 293075,
+        "total_volume": 5538003
+    },
+    {
+        "open": 168017,
+        "close": 267656,
+        "total_volume": 5819932
+    },
+    {
+        "open": 257797,
+        "close": 150227,
+        "total_volume": 5159753
+    },
+    {
+        "open": 98261,
+        "close": 32228,
+        "total_volume": 1091108
+    },
+    {
+        "open": 30606,
+        "close": 124922,
+        "total_volume": 1019744
+    },
+    {
+        "open": 269555,
+        "close": 57646,
+        "total_volume": 790448
+    },
+    {
+        "open": 53842,
+        "close": 24312,
+        "total_volume": 788060
+    },
+    {
+        "open": 273,
+        "close": 91762,
+        "total_volume": 1102102
+    },
+    {
+        "open": 53767,
+        "close": 70798,
+        "total_volume": 2092369
+    },
+    {
+        "open": 93339,
+        "close": 1455,
+        "total_volume": 2774158
+    },
+    {
+        "open": 4569,
+        "close": 4895,
+        "total_volume": 727509
+    },
+    {
+        "open": 5939,
+        "close": 80271,
+        "total_volume": 2176260
+    },
+    {
+        "open": 2484,
+        "close": 111996,
+        "total_volume": 2515844
+    },
+    {
+        "open": 542,
+        "close": 60188,
+        "total_volume": 831735
+    },
+    {
+        "open": 9802,
+        "close": 51284,
+        "total_volume": 1543130
+    },
+    {
+        "open": 6695,
+        "close": 44148,
+        "total_volume": 846902
+    },
+    {
+        "open": 174712,
+        "close": 23884,
+        "total_volume": 1096834
+    },
+    {
+        "open": 21088,
+        "close": 67285,
+        "total_volume": 972966
+    },
+    {
+        "open": 17654,
+        "close": 30640,
+        "total_volume": 1126045
+    },
+    {
+        "open": 25765,
+        "close": 22857,
+        "total_volume": 993721
+    },
+    {
+        "open": 8948,
+        "close": 10652,
+        "total_volume": 739259
+    },
+    {
+        "open": 2119,
+        "close": 9589,
+        "total_volume": 874193
+    },
+    {
+        "open": 31007,
+        "close": 37172,
+        "total_volume": 961999
+    },
+    {
+        "open": 49123,
+        "close": 18196,
+        "total_volume": 1000772
+    },
+    {
+        "open": 17399,
+        "close": 214559,
+        "total_volume": 1148354
+    },
+    {
+        "open": 64349,
+        "close": 196,
+        "total_volume": 515041
+    },
+    {
+        "open": 40025,
+        "close": 128639,
+        "total_volume": 1264380
+    },
+    {
+        "open": 1461,
+        "close": 19193,
+        "total_volume": 483215
+    },
+    {
+        "open": 15589,
+        "close": 6098,
+        "total_volume": 986981
+    },
+    {
+        "open": 13682,
+        "close": 6247,
+        "total_volume": 725979
+    },
+    {
+        "open": 2605,
+        "close": 7790,
+        "total_volume": 866376
+    },
+    {
+        "open": 9946,
+        "close": 95510,
+        "total_volume": 981226
+    },
+    {
+        "open": 195412,
+        "close": 380429,
+        "total_volume": 6619527
+    },
+    {
+        "open": 316670,
+        "close": 321460,
+        "total_volume": 4933130
+    },
+    {
+        "open": 323835,
+        "close": 253870,
+        "total_volume": 6408521
+    },
+    {
+        "open": 223448,
+        "close": 36279,
+        "total_volume": 2055300
+    },
+    {
+        "open": 51387,
+        "close": 5974,
+        "total_volume": 1411471
+    },
+    {
+        "open": 8711,
+        "close": 89314,
+        "total_volume": 1162772
+    },
+    {
+        "open": 41333,
+        "close": 33504,
+        "total_volume": 594114
+    },
+    {
+        "open": 15432,
+        "close": 28777,
+        "total_volume": 3317088
+    },
+    {
+        "open": 25398,
+        "close": 396665,
+        "total_volume": 2045556
+    },
+    {
+        "open": 366387,
+        "close": 242836,
+        "total_volume": 3983965
+    },
+    {
+        "open": 349368,
+        "close": 137254,
+        "total_volume": 5408925
+    },
+    {
+        "open": 241747,
+        "close": 67412,
+        "total_volume": 2374488
+    },
+    {
+        "open": 48983,
+        "close": 7723,
+        "total_volume": 2451193
+    },
+    {
+        "open": 1325,
+        "close": 2469,
+        "total_volume": 268005
+    },
+    {
+        "open": 48291,
+        "close": 35944,
+        "total_volume": 759740
+    },
+    {
+        "open": 4575,
+        "close": 206,
+        "total_volume": 232560
+    },
+    {
+        "open": 13712,
+        "close": 259993,
+        "total_volume": 4586723
+    },
+    {
+        "open": 204397,
+        "close": 291069,
+        "total_volume": 4258978
+    },
+    {
+        "open": 383760,
+        "close": 365564,
+        "total_volume": 6366238
+    },
+    {
+        "open": 307009,
+        "close": 373957,
+        "total_volume": 5060498
+    },
+    {
+        "open": 358598,
+        "close": 286344,
+        "total_volume": 4029841
+    },
+    {
+        "open": 3269,
+        "close": 399502,
+        "total_volume": 3085657
+    },
+    {
+        "open": 396768,
+        "close": 151542,
+        "total_volume": 6117142
+    },
+    {
+        "open": 231968,
+        "close": 351179,
+        "total_volume": 5729960
+    },
+    {
+        "open": 297172,
+        "close": 129150,
+        "total_volume": 5420310
+    },
+    {
+        "open": 347817,
+        "close": 162945,
+        "total_volume": 4865958
+    },
+    {
+        "open": 371774,
+        "close": 33026,
+        "total_volume": 3806799
+    },
+    {
+        "open": 2613,
+        "close": 308270,
+        "total_volume": 5188484
+    },
+    {
+        "open": 166538,
+        "close": 339350,
+        "total_volume": 5089664
+    },
+    {
+        "open": 381715,
+        "close": 4507,
+        "total_volume": 3717964
+    },
+    {
+        "open": 9175,
+        "close": 3262,
+        "total_volume": 497591
+    },
+    {
+        "open": 106,
+        "close": 117556,
+        "total_volume": 686782
+    },
+    {
+        "open": 27770,
+        "close": 1533,
+        "total_volume": 377407
+    },
+    {
+        "open": 631,
+        "close": 48261,
+        "total_volume": 468218
+    },
+    {
+        "open": 1802,
+        "close": 192935,
+        "total_volume": 818793
+    },
+    {
+        "open": 2529,
+        "close": 15119,
+        "total_volume": 532943
+    },
+    {
+        "open": 1186,
+        "close": 10451,
+        "total_volume": 1542567
+    },
+    {
+        "open": 2450,
+        "close": 4924,
+        "total_volume": 1080725
+    },
+    {
+        "open": 179,
+        "close": 1920,
+        "total_volume": 693582
+    },
+    {
+        "open": 10629,
+        "close": 4709,
+        "total_volume": 950190
+    },
+    {
+        "open": 6022,
+        "close": 66671,
+        "total_volume": 664449
+    },
+    {
+        "open": 41941,
+        "close": 21301,
+        "total_volume": 3435928
+    },
+    {
+        "open": 2422,
+        "close": 23764,
+        "total_volume": 682859
     }
 ]

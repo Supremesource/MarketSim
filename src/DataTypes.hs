@@ -243,8 +243,8 @@ type TakerPositions     =   [(Int, String)]
 type MarginCall         =   [(Int,String,String)] 
 type FutureAcc          =   (ClosePositionData, ClosePositionData)
 type Position           =   ([(Int, String)], [(Int, String)])
-                      -- liquidation price, amount, side, entry price, leverage 
-type ClosePositionData  =   [(Double, Int, String, Double, Double)] 
+                      -- liquidation price, amount, side, entry price, leverage, is force Stop 
+type ClosePositionData  =   [(Double, Int, String, Double, Double, Bool)] 
 type NewPositioning     =   (TakerPositions, MakerPositions)
 type SeqNewPositioning  =   Seq NewPositioning
 -- | order-book
