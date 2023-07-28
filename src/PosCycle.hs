@@ -135,6 +135,8 @@ closingConversion (takers, makers)
     hasBothXY xs = "x" `elem` map snd xs && "y" `elem` map snd xs
 
 
+
+{-
 -- TODO better leverage statistics
 positionFuture :: Int -> Double -> (TakerPositions, MakerPositions) -> IO ClosePositionData
 positionFuture leverage price' (taker, maker) = do
@@ -152,6 +154,27 @@ positionFuture leverage price' (taker, maker) = do
             | leverage == 1 && side == "z" = 2 * price'
             | otherwise                    = 0
       return (liquidationPrice, amt, side)
+
+-}
+
+
+positionFuture :: (Int,Int) -> Double -> (TakerPositions, MakerPositions) -> IO ClosePositionData
+positionFuture (leverageTaker, leverageMaker) price' (taker, maker) = do
+  let (takerConver, makerConvert) = closingConversion (taker, maker)
+  takerCalculation <- mapM (calcPosition leverageTaker) takerConver
+  makerCalculation <- mapM (calcPosition leverageMaker) makerConvert
+  return $ takerCalculation ++ makerCalculation
+  where
+    calcPosition leverage (amt, side) = do
+      let liquidationPrice
+            | leverage /= 1 && side == "z" = (price' / fromIntegral leverage) + price'
+            | leverage /= 1 && side == "f" = price' - (price' / fromIntegral leverage)
+            | leverage == 1 && side == "z" = 2 * price'
+            | otherwise                    = 0
+      return (liquidationPrice, amt, side)
+
+
+
 
 oppositeSide :: String -> String
 oppositeSide side =
@@ -305,14 +328,14 @@ splitAmountToRandomList 0 = return [0]
 splitAmountToRandomList 1 = return [1]
 splitAmountToRandomList n = do
      -- Change this to adjust the number of chunks
-    let chunkCount =       
+    let chunkCount =
           case () of _
                       | n < 1000  -> 2
                       | n < 5000  -> 4
                       | n < 10000 -> 6
                       | n < 20000 -> 8
-                      | otherwise -> 10 
-              
+                      | otherwise -> 10
+
     case () of _
                 | n < chunkCount -> return [n]
                 | otherwise -> do
@@ -342,21 +365,21 @@ filterCloseAmount ((num, _):ns) closePosData = do
       filterFutureVol (x:xs) closePosData' ns' =
         case Seq.viewl closePosData' of
             Seq.EmptyL -> return Seq.Empty
-            ((liq, amt, sid) :< rest) -> do          
+            ((liq, amt, sid) :< rest) -> do
                 -- > RANDOMNESS <
                 -- this is a bit of a bottleneck but i belive it to be worth it
                 -- as it makes the simulation more realistic
                 shouldReverseNumberical <- randomRIO (0, 9) :: IO Int -- 
                 let shouldReverseBool = shouldReverseNumberical < 6
                 case () of _
-                            | x < amt -> do                                                              
+                            | x < amt -> do
                                   let reversedFutureInfo = rest |> (liq, amt - x, sid)
-                                  let nonReversedFutureInfo = (liq, amt - x, sid) <| rest 
+                                  let nonReversedFutureInfo = (liq, amt - x, sid) <| rest
                                   let updatedFutureInfo =
                                         if shouldReverseBool
                                           then reversedFutureInfo
-                                          else nonReversedFutureInfo                               
-                                  filterFutureVol xs updatedFutureInfo ns'                       
+                                          else nonReversedFutureInfo
+                                  filterFutureVol xs updatedFutureInfo ns'
                             | otherwise -> do
                                 let updatedFutureInfo = rest
                                 let newX = x - amt
@@ -470,7 +493,7 @@ normalrunProgram ::
   -> String
   -> IO ( SeqClosePositionData    -- # updated accumulator short # updated accumulator long
         , NewPositioning  -- # updated accumulator positions
-        , Int )          -- # taken leverage
+        , (Int,Int) )          -- # taken leverage
 normalrunProgram volSide (volumeSplitT, volumeSplitM) (oldLongFuture, oldShortFuture) -- TODO TAKE OUT oldPositions
                                                sPrice liqSide = do
   newPositioning <-
@@ -480,8 +503,14 @@ normalrunProgram volSide (volumeSplitT, volumeSplitM) (oldLongFuture, oldShortFu
       volumeSplitM
       (oldLongFuture, oldShortFuture)
       liqSide
-  leverage <- takenLeverage
-  posFut <- positionFuture leverage sPrice newPositioning
+  leverageTaker <- takenLeverage
+  leverageMaker <- takenLeverage
+
+  let (takerPositioning,makerPositioning) = newPositioning
+  let isLeverageZeroTaker = if any (\x -> x == "z" || x == "f") (snd <$> takerPositioning) then 0 else leverageTaker
+  let isLeverageZeroMaker = if any (\x -> x == "z" || x == "f") (snd <$> makerPositioning) then 0 else leverageMaker
+
+  posFut <- positionFuture (leverageTaker,leverageMaker) sPrice newPositioning
  -- let adjustedLiquidation = if liqSide == "" then "no" else "yes"
   let converToTransaction = TransactionFut {future = posFut}
   let (filteredLongFuture, filteredShortFuture) =
@@ -496,10 +525,6 @@ normalrunProgram volSide (volumeSplitT, volumeSplitM) (oldLongFuture, oldShortFu
 
   newLongsAcc <- filterCloseAmount filteredLongTuple oldLongFuture
   newShortsAcc  <- filterCloseAmount filteredShortTuple oldShortFuture
-
-
-
-
 
   let futureToSeq =
         let ((firstOld, secondOld), (firstNew, secondNew), newPos) =
@@ -516,4 +541,4 @@ normalrunProgram volSide (volumeSplitT, volumeSplitM) (oldLongFuture, oldShortFu
   return
     ( updatedFutureAcc -- # already concat to new accumulator
     , unorderedPosNew -- # returning in a raw form to positionCycle
-    , leverage) -- # returning the leverage to positionCycle 
+    , (isLeverageZeroTaker , isLeverageZeroMaker)) -- # returning the leverage to positionCycle 

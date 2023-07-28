@@ -42,7 +42,9 @@ where
     -- | better UI with timeframes
     -- | better orderbook market making logic
     
-    -- Todo add leverage info   
+    -- // Todo add leverage info   
+    -- TODO delete Max makers to 1
+    -- TODO add much better leverage info
     -- todo add restrictive settings for everything
     -- todo when closing take only some part of the position
     -- optimize code, there is too much exponetial time complexity

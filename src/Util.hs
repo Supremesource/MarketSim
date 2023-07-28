@@ -88,7 +88,7 @@ initLiquidationAcc = empty
 -- | helper funciton for the funciton below (where everything is starting at)
 initStats :: Stats
 initStats = Stats 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
-            (fromList [(0,"","")]) (False,"") 0
+            (fromList [(0,"","")]) (False,"") 0 0
 
 setupBookDetails :: InitBookStats -> BookStats
 setupBookDetails (startingP', maxMinL', asksTot', bidsTot', takewall', lengchngBid', lengchngAsk', listASK', listBID', vSide', volumeA', sprd', sprice', bidAskR') =
@@ -111,8 +111,8 @@ setupBookDetails (startingP', maxMinL', asksTot', bidsTot', takewall', lengchngB
 
 
 -- | aggregating stats together
-aggregateStats :: (TakerPositions, MakerPositions) -> Seq (Int,String,String) -> (Bool,String) -> Int -> Stats -> Stats
-aggregateStats (taker, maker) liquidation isforced lvg stats  =
+aggregateStats :: (TakerPositions, MakerPositions) -> Seq (Int,String,String) -> (Bool,String) -> (Int,Int) -> Stats -> Stats
+aggregateStats (taker, maker) liquidation isforced (lvgT,lvgM) stats  =
   Stats
     { overallOI =
         overallOI stats + interestorPlus taker maker -
@@ -143,7 +143,9 @@ aggregateStats (taker, maker) liquidation isforced lvg stats  =
     , makerF = makerF stats + elementSize     "f" maker
     , forceCall   = liquidation  
     , isVolForced = isforced
-    , leverageAmt = lvg
+    , leverageAmtT = lvgT
+    , leverageAmtM = lvgM
+    
     }
 
 -- FUNCTIONS
