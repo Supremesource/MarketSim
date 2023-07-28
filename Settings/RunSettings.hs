@@ -46,6 +46,7 @@ import           DataTypes (Options (..))
 -- | !ORDERBOOK SETTINGS / liquidity  / order walls / orderbook structure
 -- FILL IN THE SETTINGS BELOW !     :
 
+-- ! Just keep on True otherwise it will get fucked, i will remove it later
 -- every run new == True
 autoRestore :: Bool
 autoRestore = True

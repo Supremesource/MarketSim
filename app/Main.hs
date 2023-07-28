@@ -43,6 +43,8 @@ where
     -- | better orderbook market making logic
     
     -- // Todo add leverage info   
+    -- add liquidation price into posInfo 
+    -- todo readjust leverage at the end by looking at current margin and initial leverage with initial margin
     -- todo add stop calculation 
     -- TODO add slippage
     -- todo add leverage info into pos future
