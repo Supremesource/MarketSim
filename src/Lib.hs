@@ -322,7 +322,6 @@ volumechecker minimumV  b c d
      |b < minimumV ||
       c < minimumV ||
       d < minimumV =
-
     error
       (red
          "\n\nVolume must be greater than minimum volume specified in settings")
