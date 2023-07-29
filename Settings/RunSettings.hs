@@ -168,15 +168,22 @@ sellTakerProb = 50
 -- | otherwise an error will be thrown
 
 -- TODO debug why low better performace 
--- here 1 to 50 where 50 means certain stop on every transaction
-stopProb :: Int
-stopProb = 9
+-- stop probability, rangle: |1 to 50| -> 50 -> certain stop each transaction
+stopProbLong :: Int
+stopProbLong = 9
+
+stopProbShort :: Int
+stopProbShort  = 10
 
 --takerxProb :: Int
 --takerxProb = 5
 
-closingProb :: Int
-closingProb = 5
+closingProbLong :: Int
+closingProbLong = 5
+
+-- TODO add this as well
+closingProbShort :: Int
+closingProbShort = 5
 
 -- TODO add closing probability x
 -- ! ORDERBOOK SETINGS

@@ -166,8 +166,9 @@ positionFuture (leverageTaker, leverageMaker) price' (taker, maker) = do
   return $ takerCalculation ++ makerCalculation
   where
     calcPosition leverage (amt, side) = do
-      shouldAddStop  <- randomRIO (stopProb, 50) :: IO Int
-
+      shouldAddStopLong  <- randomRIO (stopProbLong , 50) :: IO Int
+      shouldAddStopShort <- randomRIO (stopProbShort, 50) :: IO Int
+      let shouldAddStop = if side == "f" then shouldAddStopLong else shouldAddStopShort
       let liquidationPrice
             | leverage /= 1 && side == "z" = (price' / fromIntegral leverage) + price'
             | leverage /= 1 && side == "f" = price' - (price' / fromIntegral leverage)
@@ -188,8 +189,6 @@ positionFuture (leverageTaker, leverageMaker) price' (taker, maker) = do
       let isForceStop = shouldAddStop == 50
 
       return (forcePrice, amt, side, price', fromIntegral leverage, isForceStop) -- add is Stop -> True / False
-
-
 
 
 oppositeSide :: String -> String
@@ -216,6 +215,7 @@ type SeqClosePositionData = (Seq (Double, Int, String, Double, Double, Bool), Se
 normalGenerator ::
      VolumeSide -> [Int] -> [Int] -> SeqClosePositionData -> String -> IO (TakerPositions, MakerPositions)
 normalGenerator tVolumeSide takerLst makerLst (toTakeFromLong, toTakeFromShort) liqSide = do
+  let closingProb = if tVolumeSide == Buy then closingProbLong else closingProbShort
   unless (closingProb >= 1 && closingProb <= 10) $
     error "closingProb must be between 1 and 10"
   let genType =
@@ -223,72 +223,52 @@ normalGenerator tVolumeSide takerLst makerLst (toTakeFromLong, toTakeFromShort) 
            getSum (foldMap (\(_, n, _, _, _, _) -> Sum n) toTakeFromLong) &&
            sum takerLst + sum makerLst >=
            getSum (foldMap (\(_, n, _, _, _ , _) -> Sum n) toTakeFromShort)
-          then openingGen
-          else normalGen
+          then openingGen tVolumeSide liqSide takerLst makerLst 
+          else normalGen tVolumeSide liqSide takerLst makerLst closingProb
   genType
-  where
-    openingGen :: IO (TakerPositions, MakerPositions)
-    openingGen = do
-      let toTakerSide = if tVolumeSide == Buy then "x" else "y"
-      let takerSide' = toTakerSide
-
-      let finalTakerSide =
-            if liqSide /= ""
-              then liqSide
-              else takerSide'
-      let editedTakerLst =
-            if liqSide /= ""
-              then sumList takerLst
-              else takerLst
-      let makerside = oppositeSide finalTakerSide
-      let takerT =
-            zip editedTakerLst $ replicate (length takerLst) finalTakerSide
-      let makerT = zip makerLst $ replicate (length makerLst) makerside
-      return (takerT, makerT)
-    normalGen :: IO (TakerPositions, MakerPositions)
-    normalGen = do
-      let toTakerSide = if tVolumeSide == Buy then "x" else "y"
-      let takerSide' = toTakerSide
-      let finalTakerSide =
-            if liqSide /= ""
-              then liqSide
-              else takerSide'
-      let editedTakerLst =
-            if liqSide /= ""
-              then sumList takerLst
-              else takerLst
-      let makerside = oppositeSide finalTakerSide
-      let closingSideT
-            | finalTakerSide == "x" && liqSide == "" = "z"
-            | finalTakerSide == "y" && liqSide == "" = "f"
-            | otherwise                              = finalTakerSide
-      let closingSideM =
-            if makerside == "x"
-              then "z"
-              else "f"
-      takerT <-
-        mapM
-          (\val -> do
-             -- > RANDOMNESS <
-             randVal <- randomRIO (1, 10) :: IO Int
-             let sideT =
-                   if randVal < closingProb
-                     then closingSideT
-                     else finalTakerSide
-             return (val, sideT))
-          editedTakerLst
-      makerT <-
-        mapM
-          (\val -> do
-             -- > RANDOMNESS <
-             randVal <- randomRIO (1, 10) :: IO Int
-             let sideM =
-                   if randVal < closingProb
-                     then closingSideM
-                     else makerside
-             return (val, sideM))
-          makerLst
-      return (takerT, makerT)
+  
+-- involves only opening transactions  
+openingGen :: VolumeSide -> String -> [Int] -> [Int]  -> IO (TakerPositions, MakerPositions)
+openingGen tVolumeSide liqSide takerLst makerLst  = do
+  let toTakerSide = if tVolumeSide == Buy then "x" else "y"
+  let takerSide' = toTakerSide
+  let finalTakerSide = if liqSide /= ""  then liqSide else takerSide'
+  let editedTakerLst = if liqSide /= ""  then sumList takerLst else takerLst
+  let makerside = oppositeSide finalTakerSide
+  let takerT = zip editedTakerLst $ replicate (length takerLst) finalTakerSide
+  let makerT = zip makerLst $ replicate (length makerLst) makerside
+  return (takerT, makerT)
+   
+-- mixing opening transactions with closing ones   
+normalGen :: VolumeSide -> String -> [Int] -> [Int] -> Int -> IO (TakerPositions, MakerPositions)
+normalGen tVolumeSide liqSide takerLst makerLst closingProb  = do
+  let toTakerSide = if tVolumeSide == Buy then "x" else "y"
+  let takerSide' = toTakerSide
+  let finalTakerSide = if liqSide /= "" then liqSide else takerSide'
+  let editedTakerLst = if liqSide /= "" then sumList takerLst  else takerLst
+  let makerside = oppositeSide finalTakerSide
+  let closingSideT
+        | finalTakerSide == "x" && liqSide == "" = "z"
+        | finalTakerSide == "y" && liqSide == "" = "f"
+        | otherwise                              = finalTakerSide
+  let closingSideM = if makerside == "x"  then "z" else "f"
+  takerT <-
+    mapM
+      (\val -> do
+          -- > RANDOMNESS <
+          randVal <- randomRIO (1, 10) :: IO Int
+          let sideT = if randVal < closingProb then closingSideT else finalTakerSide
+          return (val, sideT))
+      editedTakerLst
+  makerT <-
+    mapM
+      (\val -> do
+          -- > RANDOMNESS <
+          randVal <- randomRIO (1, 10) :: IO Int
+          let sideM = if randVal < closingProb   then closingSideM else makerside
+          return (val, sideM))
+      makerLst
+  return (takerT, makerT)
 
 
 -- ? helper funcitons for position management
@@ -528,8 +508,6 @@ normalrunProgram volSide (volumeSplitT, volumeSplitM) (oldLongFuture, oldShortFu
   let (takerPositioning,makerPositioning) = newPositioning
   let leverageTaker = if "x" `elem` (snd <$> takerPositioning) then leverageLong else leverageShort
   let leverageMaker = if leverageTaker == leverageLong then leverageShort else leverageLong
-
-
   let isLeverageZeroTaker = if any (\x -> x == "z" || x == "f") (snd <$> takerPositioning) then 0 else leverageTaker
   let isLeverageZeroMaker = if any (\x -> x == "z" || x == "f") (snd <$> makerPositioning) then 0 else leverageMaker
 
