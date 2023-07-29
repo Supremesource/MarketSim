@@ -35,6 +35,7 @@ library
       Colours
       Generator
       PosCycle
+      EndMetrics
   other-modules:
       Main
       Paths_marketsim

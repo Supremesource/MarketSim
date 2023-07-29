@@ -177,13 +177,13 @@ stopProbShort  = 10
 
 --takerxProb :: Int
 --takerxProb = 5
-
+-- closing probab ranges from 0 to 11 where 11 is certain closing and zero is never close
 closingProbLong :: Int
-closingProbLong = 5
+closingProbLong = 11
 
 -- TODO add this as well
 closingProbShort :: Int
-closingProbShort = 5
+closingProbShort = 0
 
 -- TODO add closing probability x
 -- ! ORDERBOOK SETINGS

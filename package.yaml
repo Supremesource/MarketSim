@@ -64,6 +64,7 @@ library:
    - Colours
    - Generator
    - PosCycle
+   - EndMetrics
   
 
   default-extensions:
