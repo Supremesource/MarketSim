@@ -67,8 +67,14 @@ import Statistics
 import Generator
 import Filepaths
 
+closingProb = 7
+stopProb = 7
 
+type NrndSeqClosePositionData = (Seq (Double, Int, String), Seq (Double, Int, String))
+type NrndSeqFuture = Seq (Double, Int, String)
+type NrdClosePositionData = (Double, Int, String)
 
+{-
 -- $ HELPER FUNCITONS FOR TESTS
 -- ? testsPosCycle functions 
   -- ##################################################
@@ -84,7 +90,7 @@ takenLeverageNonRandom = do
         | otherwise -> error "something went wrong in non-random takenLeverage"
 
 -- TODO better leverage statistics
-positionFutureNonRandom :: Double -> (TakerPositions, MakerPositions) -> IO ClosePositionData
+positionFutureNonRandom :: Double -> (TakerPositions, MakerPositions) -> IO [NrdClosePositionData]
 positionFutureNonRandom price' (taker, maker) = do
   let (takerConver, makerConvert) = closingConversion (taker, maker)
   let concatTakerMaker = takerConver ++ makerConvert
@@ -131,8 +137,8 @@ nonRandomSplitAmountToRandomList n = do
 
 nonRandomFilterCloseAmount ::
      [(Int, String)]     -- Tuple of positions to take out
-  -> SeqFuture           -- old closePosData
-  -> IO SeqFuture        -- returns a new closePosData
+  -> NrndSeqFuture           -- old closePosData
+  -> IO NrndSeqFuture        -- returns a new closePosData
 nonRandomFilterCloseAmount [] closePosData          = return closePosData
 nonRandomFilterCloseAmount ((num, _):ns) closePosData = do    
     -- | splitting transaction volume into smaller parts such that exiting 
@@ -162,7 +168,7 @@ nonRandomFilterCloseAmount ((num, _):ns) closePosData = do
 
 
 nonRandomizedfilterFutureClose ::
-     Position -> (SeqFuture, SeqFuture) -> IO (SeqFuture, SeqFuture)
+     Position -> (NrndSeqFuture, NrndSeqFuture) -> IO (NrndSeqFuture, NrndSeqFuture)
 nonRandomizedfilterFutureClose (closingLong, closingShort) (oldLong, oldShort) {-output (newLong,newShort-}
   = do
   let formatedTupleLong   = filterTuple "z" closingLong
@@ -173,10 +179,11 @@ nonRandomizedfilterFutureClose (closingLong, closingShort) (oldLong, oldShort) {
 
 
 nonRandomNormalGenerator ::
-     [Int] -> [Int] -> SeqClosePositionData -> String -> String -> IO (TakerPositions, MakerPositions)
+     [Int] -> [Int] ->NrndSeqClosePositionData -> String -> String -> IO (TakerPositions, MakerPositions)
 nonRandomNormalGenerator takerLst makerLst (toTakeFromLong, toTakeFromShort) liqSide nonRandomSide = do
-  unless (closingProb >= 1 && closingProb <= 10) $
+  unless (closingProbLong >= 1 && closingProbLong <= 10 && closingProbShort >= 1 && closingProbShort <= 10) $
     error "closingProb must be between 1 and 10"
+  
   let genType =
         if sum takerLst + sum makerLst >=
            getSum (foldMap (\(_, n, _) -> Sum n) toTakeFromLong) &&
@@ -256,12 +263,12 @@ nonRandomLiquidationEvent = do
       else "liq"
 
 nonRandomLiquidationDuty ::
-     SeqFuture
-  -> SeqFuture
+     NrndSeqFuture
+  -> NrndSeqFuture
   -> Double
   -> IO ( 
       Seq (Int, String, String)     -- info about the liquidation
-        , (SeqFuture, SeqFuture)    -- updated futures
+        , (NrndSeqFuture, NrndSeqFuture)    -- updated futures
          )
 nonRandomLiquidationDuty futureInfoL futureInfoS price' = do
   let liquidationFunction =
@@ -283,13 +290,20 @@ nonRandomLiquidationDuty futureInfoL futureInfoS price' = do
   return
     (liquidationListL >< liquidationListS, (newFutureInfoL, newFutureInfoS))
 
+
+data TransactionFutNrd = TransactionFutNrd {
+    future' :: NrdClosePositionData
+  } deriving (Show, Eq, Generic)
+  deriving (FromJSON, ToJSON)
+  via JSONConfig TransactionFut
+
 nonRandomNormalrunProgram ::
      ([Int], [Int])
-  -> SeqClosePositionData
+  ->NrndSeqClosePositionData
   -> Double
   -> String
   -> String 
-  -> IO ( SeqClosePositionData    -- # updated accumulator short # updated accumulator long
+  -> IO (NrndSeqClosePositionData    -- # updated accumulator short # updated accumulator long
         , NewPositioning )        -- # updated accumulator positions
          
 nonRandomNormalrunProgram (volumeSplitT, volumeSplitM) (oldLongFuture, oldShortFuture) -- TODO TAKE OUT oldPositions
@@ -304,7 +318,7 @@ nonRandomNormalrunProgram (volumeSplitT, volumeSplitM) (oldLongFuture, oldShortF
 
   posFut <- positionFutureNonRandom sPrice newPositioning 
   
-  let converToTransaction = TransactionFut {future = posFut}
+  let converToTransaction = TransactionFutNrd {future' = posFut}
   let (filteredLongFuture, filteredShortFuture) =
         ( filterClosePos {-adjustedLiquidation-}  "f" converToTransaction
         , filterClosePos {-adjustedLiquidation-}  "z" converToTransaction)
@@ -336,7 +350,7 @@ nonRandomNormalrunProgram (volumeSplitT, volumeSplitM) (oldLongFuture, oldShortF
     ( updatedFutureAcc  -- # already concat to new accumulator
     , unorderedPosNew   -- # returning in a raw form to positionCycle
      )
-
+-}
 
 readPositions :: FilePath -> IO (Either String [FileWritePosition])
 readPositions filePath = do

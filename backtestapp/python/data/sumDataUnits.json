@@ -1,4802 +1,1642 @@
 [
     {
-        "total_x_pos_amount": 276384,
-        "total_y_pos_amount": 263577,
-        "total_z_pos_amount": 244787,
-        "total_f_pos_amount": 257594,
-        "overal_open_interest_pos": 18790,
-        "overal_volume_pos": 521171
-    },
-    {
-        "total_x_pos_amount": 264989,
-        "total_y_pos_amount": 273060,
-        "total_z_pos_amount": 266083,
-        "total_f_pos_amount": 258012,
-        "overal_open_interest_pos": 6977,
-        "overal_volume_pos": 531072
-    },
-    {
-        "total_x_pos_amount": 250926,
-        "total_y_pos_amount": 235837,
-        "total_z_pos_amount": 221949,
-        "total_f_pos_amount": 237038,
-        "overal_open_interest_pos": 13888,
-        "overal_volume_pos": 472875
-    },
-    {
-        "total_x_pos_amount": 127652,
-        "total_y_pos_amount": 132036,
-        "total_z_pos_amount": 150810,
-        "total_f_pos_amount": 146426,
-        "overal_open_interest_pos": -18774,
-        "overal_volume_pos": 278462
-    },
-    {
-        "total_x_pos_amount": 24545,
-        "total_y_pos_amount": 28096,
-        "total_z_pos_amount": 46184,
-        "total_f_pos_amount": 42633,
-        "overal_open_interest_pos": -18088,
-        "overal_volume_pos": 70729
-    },
-    {
-        "total_x_pos_amount": 63865,
-        "total_y_pos_amount": 68344,
-        "total_z_pos_amount": 50788,
-        "total_f_pos_amount": 46309,
-        "overal_open_interest_pos": 17556,
-        "overal_volume_pos": 114653
-    },
-    {
-        "total_x_pos_amount": 123626,
-        "total_y_pos_amount": 136411,
-        "total_z_pos_amount": 139476,
-        "total_f_pos_amount": 126691,
-        "overal_open_interest_pos": -3065,
-        "overal_volume_pos": 263102
-    },
-    {
-        "total_x_pos_amount": 130278,
-        "total_y_pos_amount": 138765,
-        "total_z_pos_amount": 139759,
-        "total_f_pos_amount": 131272,
-        "overal_open_interest_pos": -994,
-        "overal_volume_pos": 270037
-    },
-    {
-        "total_x_pos_amount": 59072,
-        "total_y_pos_amount": 66180,
-        "total_z_pos_amount": 77748,
-        "total_f_pos_amount": 70640,
-        "overal_open_interest_pos": -11568,
-        "overal_volume_pos": 136820
-    },
-    {
-        "total_x_pos_amount": 106785,
-        "total_y_pos_amount": 106355,
-        "total_z_pos_amount": 93009,
-        "total_f_pos_amount": 93439,
-        "overal_open_interest_pos": 13346,
-        "overal_volume_pos": 199794
-    },
-    {
-        "total_x_pos_amount": 131920,
-        "total_y_pos_amount": 145042,
-        "total_z_pos_amount": 145167,
-        "total_f_pos_amount": 132045,
-        "overal_open_interest_pos": -125,
-        "overal_volume_pos": 277087
-    },
-    {
-        "total_x_pos_amount": 90437,
-        "total_y_pos_amount": 68600,
-        "total_z_pos_amount": 76510,
-        "total_f_pos_amount": 98347,
-        "overal_open_interest_pos": -7910,
-        "overal_volume_pos": 166947
-    },
-    {
-        "total_x_pos_amount": 154329,
-        "total_y_pos_amount": 182160,
-        "total_z_pos_amount": 174053,
-        "total_f_pos_amount": 146222,
-        "overal_open_interest_pos": 8107,
-        "overal_volume_pos": 328382
-    },
-    {
-        "total_x_pos_amount": 152184,
-        "total_y_pos_amount": 153476,
-        "total_z_pos_amount": 140500,
-        "total_f_pos_amount": 139208,
-        "overal_open_interest_pos": 12976,
-        "overal_volume_pos": 292684
-    },
-    {
-        "total_x_pos_amount": 256847,
-        "total_y_pos_amount": 260611,
-        "total_z_pos_amount": 277859,
-        "total_f_pos_amount": 274095,
-        "overal_open_interest_pos": -17248,
-        "overal_volume_pos": 534706
-    },
-    {
-        "total_x_pos_amount": 179568,
-        "total_y_pos_amount": 175030,
-        "total_z_pos_amount": 176584,
-        "total_f_pos_amount": 181122,
-        "overal_open_interest_pos": -1554,
-        "overal_volume_pos": 356152
-    },
-    {
-        "total_x_pos_amount": 79913,
-        "total_y_pos_amount": 76734,
-        "total_z_pos_amount": 62603,
-        "total_f_pos_amount": 65782,
-        "overal_open_interest_pos": 14131,
-        "overal_volume_pos": 142516
-    },
-    {
-        "total_x_pos_amount": 100568,
-        "total_y_pos_amount": 90956,
-        "total_z_pos_amount": 72347,
-        "total_f_pos_amount": 81959,
-        "overal_open_interest_pos": 18609,
-        "overal_volume_pos": 172915
-    },
-    {
-        "total_x_pos_amount": 21574,
-        "total_y_pos_amount": 16882,
-        "total_z_pos_amount": 49697,
-        "total_f_pos_amount": 54389,
-        "overal_open_interest_pos": -32815,
-        "overal_volume_pos": 71271
-    },
-    {
-        "total_x_pos_amount": 119169,
-        "total_y_pos_amount": 124521,
-        "total_z_pos_amount": 92660,
-        "total_f_pos_amount": 87308,
-        "overal_open_interest_pos": 31861,
-        "overal_volume_pos": 211829
-    },
-    {
-        "total_x_pos_amount": 189746,
-        "total_y_pos_amount": 207849,
-        "total_z_pos_amount": 205240,
-        "total_f_pos_amount": 187137,
-        "overal_open_interest_pos": 2609,
-        "overal_volume_pos": 394986
-    },
-    {
-        "total_x_pos_amount": 285018,
-        "total_y_pos_amount": 285320,
-        "total_z_pos_amount": 287688,
-        "total_f_pos_amount": 287386,
-        "overal_open_interest_pos": -2368,
-        "overal_volume_pos": 572706
-    },
-    {
-        "total_x_pos_amount": 185347,
-        "total_y_pos_amount": 196320,
-        "total_z_pos_amount": 207444,
-        "total_f_pos_amount": 196471,
-        "overal_open_interest_pos": -11124,
-        "overal_volume_pos": 392791
-    },
-    {
-        "total_x_pos_amount": 227540,
-        "total_y_pos_amount": 220764,
-        "total_z_pos_amount": 227591,
-        "total_f_pos_amount": 234367,
-        "overal_open_interest_pos": -6827,
-        "overal_volume_pos": 455131
-    },
-    {
-        "total_x_pos_amount": 261528,
-        "total_y_pos_amount": 221182,
-        "total_z_pos_amount": 206050,
-        "total_f_pos_amount": 246396,
-        "overal_open_interest_pos": 15132,
-        "overal_volume_pos": 467578
-    },
-    {
-        "total_x_pos_amount": 262705,
-        "total_y_pos_amount": 255234,
-        "total_z_pos_amount": 244242,
-        "total_f_pos_amount": 251713,
-        "overal_open_interest_pos": 10992,
-        "overal_volume_pos": 506947
-    },
-    {
-        "total_x_pos_amount": 133109,
-        "total_y_pos_amount": 148177,
-        "total_z_pos_amount": 186054,
-        "total_f_pos_amount": 170986,
-        "overal_open_interest_pos": -37877,
-        "overal_volume_pos": 319163
-    },
-    {
-        "total_x_pos_amount": 31956,
-        "total_y_pos_amount": 30333,
-        "total_z_pos_amount": 41419,
-        "total_f_pos_amount": 43042,
-        "overal_open_interest_pos": -11086,
-        "overal_volume_pos": 73375
-    },
-    {
-        "total_x_pos_amount": 178660,
-        "total_y_pos_amount": 189694,
-        "total_z_pos_amount": 174023,
-        "total_f_pos_amount": 162989,
-        "overal_open_interest_pos": 15671,
-        "overal_volume_pos": 352683
-    },
-    {
-        "total_x_pos_amount": 160865,
-        "total_y_pos_amount": 164291,
-        "total_z_pos_amount": 175454,
-        "total_f_pos_amount": 172028,
-        "overal_open_interest_pos": -11163,
-        "overal_volume_pos": 336319
-    },
-    {
-        "total_x_pos_amount": 129194,
-        "total_y_pos_amount": 150031,
-        "total_z_pos_amount": 140893,
-        "total_f_pos_amount": 120056,
-        "overal_open_interest_pos": 9138,
-        "overal_volume_pos": 270087
-    },
-    {
-        "total_x_pos_amount": 206953,
-        "total_y_pos_amount": 161556,
-        "total_z_pos_amount": 162675,
-        "total_f_pos_amount": 208072,
-        "overal_open_interest_pos": -1119,
-        "overal_volume_pos": 369628
-    },
-    {
-        "total_x_pos_amount": 116543,
-        "total_y_pos_amount": 128138,
-        "total_z_pos_amount": 126868,
-        "total_f_pos_amount": 115273,
-        "overal_open_interest_pos": 1270,
-        "overal_volume_pos": 243411
-    },
-    {
-        "total_x_pos_amount": 86960,
-        "total_y_pos_amount": 68545,
-        "total_z_pos_amount": 68661,
-        "total_f_pos_amount": 87076,
-        "overal_open_interest_pos": -116,
-        "overal_volume_pos": 155621
-    },
-    {
-        "total_x_pos_amount": 81307,
-        "total_y_pos_amount": 97654,
-        "total_z_pos_amount": 97847,
-        "total_f_pos_amount": 81500,
-        "overal_open_interest_pos": -193,
-        "overal_volume_pos": 179154
-    },
-    {
-        "total_x_pos_amount": 230445,
-        "total_y_pos_amount": 222154,
-        "total_z_pos_amount": 221951,
-        "total_f_pos_amount": 230242,
-        "overal_open_interest_pos": 203,
-        "overal_volume_pos": 452396
-    },
-    {
-        "total_x_pos_amount": 210013,
-        "total_y_pos_amount": 213464,
-        "total_z_pos_amount": 179491,
-        "total_f_pos_amount": 176040,
-        "overal_open_interest_pos": 33973,
-        "overal_volume_pos": 389504
-    },
-    {
-        "total_x_pos_amount": 242140,
-        "total_y_pos_amount": 256909,
-        "total_z_pos_amount": 276739,
-        "total_f_pos_amount": 261970,
-        "overal_open_interest_pos": -19830,
-        "overal_volume_pos": 518879
-    },
-    {
-        "total_x_pos_amount": 228704,
-        "total_y_pos_amount": 234840,
-        "total_z_pos_amount": 248786,
-        "total_f_pos_amount": 242650,
-        "overal_open_interest_pos": -13946,
-        "overal_volume_pos": 477490
-    },
-    {
-        "total_x_pos_amount": 213152,
-        "total_y_pos_amount": 188970,
-        "total_z_pos_amount": 161603,
-        "total_f_pos_amount": 185785,
-        "overal_open_interest_pos": 27367,
-        "overal_volume_pos": 374755
-    },
-    {
-        "total_x_pos_amount": 202221,
-        "total_y_pos_amount": 223878,
-        "total_z_pos_amount": 227417,
-        "total_f_pos_amount": 205760,
-        "overal_open_interest_pos": -3539,
-        "overal_volume_pos": 429638
-    },
-    {
-        "total_x_pos_amount": 204696,
-        "total_y_pos_amount": 199377,
-        "total_z_pos_amount": 204209,
-        "total_f_pos_amount": 209528,
-        "overal_open_interest_pos": -4832,
-        "overal_volume_pos": 408905
-    },
-    {
-        "total_x_pos_amount": 303921,
-        "total_y_pos_amount": 281321,
-        "total_z_pos_amount": 272992,
-        "total_f_pos_amount": 295592,
-        "overal_open_interest_pos": 8329,
-        "overal_volume_pos": 576913
-    },
-    {
-        "total_x_pos_amount": 57456,
-        "total_y_pos_amount": 69045,
-        "total_z_pos_amount": 102963,
-        "total_f_pos_amount": 91374,
-        "overal_open_interest_pos": -33918,
-        "overal_volume_pos": 160419
-    },
-    {
-        "total_x_pos_amount": 33262,
-        "total_y_pos_amount": 33380,
-        "total_z_pos_amount": 41565,
-        "total_f_pos_amount": 41447,
-        "overal_open_interest_pos": -8185,
-        "overal_volume_pos": 74827
-    },
-    {
-        "total_x_pos_amount": 34169,
-        "total_y_pos_amount": 38917,
-        "total_z_pos_amount": 38329,
-        "total_f_pos_amount": 33581,
-        "overal_open_interest_pos": 588,
-        "overal_volume_pos": 72498
-    },
-    {
-        "total_x_pos_amount": 38222,
-        "total_y_pos_amount": 38160,
-        "total_z_pos_amount": 38018,
-        "total_f_pos_amount": 38080,
-        "overal_open_interest_pos": 142,
-        "overal_volume_pos": 76240
-    },
-    {
-        "total_x_pos_amount": 40616,
-        "total_y_pos_amount": 37709,
-        "total_z_pos_amount": 37338,
-        "total_f_pos_amount": 40245,
-        "overal_open_interest_pos": 371,
-        "overal_volume_pos": 77954
-    },
-    {
-        "total_x_pos_amount": 120368,
-        "total_y_pos_amount": 136531,
-        "total_z_pos_amount": 130426,
-        "total_f_pos_amount": 114263,
-        "overal_open_interest_pos": 6105,
-        "overal_volume_pos": 250794
-    },
-    {
-        "total_x_pos_amount": 159950,
-        "total_y_pos_amount": 173875,
-        "total_z_pos_amount": 140542,
-        "total_f_pos_amount": 126617,
-        "overal_open_interest_pos": 33333,
-        "overal_volume_pos": 300492
-    },
-    {
-        "total_x_pos_amount": 36649,
-        "total_y_pos_amount": 44137,
-        "total_z_pos_amount": 83387,
-        "total_f_pos_amount": 75899,
-        "overal_open_interest_pos": -39250,
-        "overal_volume_pos": 120036
-    },
-    {
-        "total_x_pos_amount": 134595,
-        "total_y_pos_amount": 122732,
-        "total_z_pos_amount": 103352,
-        "total_f_pos_amount": 115215,
-        "overal_open_interest_pos": 19380,
-        "overal_volume_pos": 237947
-    },
-    {
-        "total_x_pos_amount": 170409,
-        "total_y_pos_amount": 187253,
-        "total_z_pos_amount": 194344,
-        "total_f_pos_amount": 177500,
-        "overal_open_interest_pos": -7091,
-        "overal_volume_pos": 364753
-    },
-    {
-        "total_x_pos_amount": 29958,
-        "total_y_pos_amount": 34713,
-        "total_z_pos_amount": 46429,
-        "total_f_pos_amount": 41674,
-        "overal_open_interest_pos": -11716,
-        "overal_volume_pos": 76387
-    },
-    {
-        "total_x_pos_amount": 36152,
-        "total_y_pos_amount": 38350,
-        "total_z_pos_amount": 40553,
-        "total_f_pos_amount": 38355,
-        "overal_open_interest_pos": -2203,
-        "overal_volume_pos": 76705
-    },
-    {
-        "total_x_pos_amount": 75366,
-        "total_y_pos_amount": 78560,
-        "total_z_pos_amount": 66638,
-        "total_f_pos_amount": 63444,
-        "overal_open_interest_pos": 11922,
-        "overal_volume_pos": 142004
-    },
-    {
-        "total_x_pos_amount": 42338,
-        "total_y_pos_amount": 37048,
-        "total_z_pos_amount": 47713,
-        "total_f_pos_amount": 53003,
-        "overal_open_interest_pos": -10665,
-        "overal_volume_pos": 90051
-    },
-    {
-        "total_x_pos_amount": 123236,
-        "total_y_pos_amount": 122417,
-        "total_z_pos_amount": 108273,
-        "total_f_pos_amount": 109092,
-        "overal_open_interest_pos": 14144,
-        "overal_volume_pos": 231509
-    },
-    {
-        "total_x_pos_amount": 156303,
-        "total_y_pos_amount": 156986,
-        "total_z_pos_amount": 144202,
-        "total_f_pos_amount": 143519,
-        "overal_open_interest_pos": 12784,
-        "overal_volume_pos": 300505
-    },
-    {
-        "total_x_pos_amount": 190275,
-        "total_y_pos_amount": 200326,
-        "total_z_pos_amount": 201554,
-        "total_f_pos_amount": 191503,
-        "overal_open_interest_pos": -1228,
-        "overal_volume_pos": 391829
-    },
-    {
-        "total_x_pos_amount": 266415,
-        "total_y_pos_amount": 248117,
-        "total_z_pos_amount": 244609,
-        "total_f_pos_amount": 262907,
-        "overal_open_interest_pos": 3508,
-        "overal_volume_pos": 511024
-    },
-    {
-        "total_x_pos_amount": 258130,
-        "total_y_pos_amount": 232615,
-        "total_z_pos_amount": 225658,
-        "total_f_pos_amount": 251173,
-        "overal_open_interest_pos": 6957,
-        "overal_volume_pos": 483788
-    },
-    {
-        "total_x_pos_amount": 225684,
-        "total_y_pos_amount": 196677,
-        "total_z_pos_amount": 205144,
-        "total_f_pos_amount": 234151,
-        "overal_open_interest_pos": -8467,
-        "overal_volume_pos": 430828
-    },
-    {
-        "total_x_pos_amount": 159749,
-        "total_y_pos_amount": 145572,
-        "total_z_pos_amount": 147441,
-        "total_f_pos_amount": 161618,
-        "overal_open_interest_pos": -1869,
-        "overal_volume_pos": 307190
-    },
-    {
-        "total_x_pos_amount": 279958,
-        "total_y_pos_amount": 240171,
-        "total_z_pos_amount": 238866,
-        "total_f_pos_amount": 278653,
-        "overal_open_interest_pos": 1305,
-        "overal_volume_pos": 518824
-    },
-    {
-        "total_x_pos_amount": 240167,
-        "total_y_pos_amount": 238071,
-        "total_z_pos_amount": 253174,
-        "total_f_pos_amount": 255270,
-        "overal_open_interest_pos": -15103,
-        "overal_volume_pos": 493341
-    },
-    {
-        "total_x_pos_amount": 209744,
-        "total_y_pos_amount": 227454,
-        "total_z_pos_amount": 206193,
-        "total_f_pos_amount": 188483,
-        "overal_open_interest_pos": 21261,
-        "overal_volume_pos": 415937
-    },
-    {
-        "total_x_pos_amount": 129240,
-        "total_y_pos_amount": 123907,
-        "total_z_pos_amount": 149315,
-        "total_f_pos_amount": 154648,
-        "overal_open_interest_pos": -25408,
-        "overal_volume_pos": 278555
-    },
-    {
-        "total_x_pos_amount": 122392,
-        "total_y_pos_amount": 127086,
-        "total_z_pos_amount": 115030,
-        "total_f_pos_amount": 110336,
-        "overal_open_interest_pos": 12056,
-        "overal_volume_pos": 237422
-    },
-    {
-        "total_x_pos_amount": 106600,
-        "total_y_pos_amount": 120078,
-        "total_z_pos_amount": 108081,
-        "total_f_pos_amount": 94603,
-        "overal_open_interest_pos": 11997,
-        "overal_volume_pos": 214681
-    },
-    {
-        "total_x_pos_amount": 227177,
-        "total_y_pos_amount": 168543,
-        "total_z_pos_amount": 181600,
-        "total_f_pos_amount": 240234,
-        "overal_open_interest_pos": -13057,
-        "overal_volume_pos": 408777
-    },
-    {
-        "total_x_pos_amount": 154616,
-        "total_y_pos_amount": 156181,
-        "total_z_pos_amount": 152936,
-        "total_f_pos_amount": 151371,
-        "overal_open_interest_pos": 3245,
-        "overal_volume_pos": 307552
-    },
-    {
-        "total_x_pos_amount": 160216,
-        "total_y_pos_amount": 133644,
-        "total_z_pos_amount": 141653,
-        "total_f_pos_amount": 168225,
-        "overal_open_interest_pos": -8009,
-        "overal_volume_pos": 301869
-    },
-    {
-        "total_x_pos_amount": 220327,
-        "total_y_pos_amount": 187993,
-        "total_z_pos_amount": 185105,
-        "total_f_pos_amount": 217439,
-        "overal_open_interest_pos": 2888,
-        "overal_volume_pos": 405432
-    },
-    {
-        "total_x_pos_amount": 151072,
-        "total_y_pos_amount": 155330,
-        "total_z_pos_amount": 155209,
-        "total_f_pos_amount": 150951,
-        "overal_open_interest_pos": 121,
-        "overal_volume_pos": 306281
-    },
-    {
-        "total_x_pos_amount": 151739,
-        "total_y_pos_amount": 161657,
-        "total_z_pos_amount": 145055,
-        "total_f_pos_amount": 135137,
-        "overal_open_interest_pos": 16602,
-        "overal_volume_pos": 296794
-    },
-    {
-        "total_x_pos_amount": 163235,
-        "total_y_pos_amount": 139547,
-        "total_z_pos_amount": 154895,
-        "total_f_pos_amount": 178583,
-        "overal_open_interest_pos": -15348,
-        "overal_volume_pos": 318130
-    },
-    {
-        "total_x_pos_amount": 141349,
-        "total_y_pos_amount": 158296,
-        "total_z_pos_amount": 159373,
-        "total_f_pos_amount": 142426,
-        "overal_open_interest_pos": -1077,
-        "overal_volume_pos": 300722
-    },
-    {
-        "total_x_pos_amount": 25001,
-        "total_y_pos_amount": 31438,
-        "total_z_pos_amount": 48426,
-        "total_f_pos_amount": 41989,
-        "overal_open_interest_pos": -16988,
-        "overal_volume_pos": 73427
-    },
-    {
-        "total_x_pos_amount": 149163,
-        "total_y_pos_amount": 152018,
-        "total_z_pos_amount": 104917,
-        "total_f_pos_amount": 102062,
-        "overal_open_interest_pos": 47101,
-        "overal_volume_pos": 254080
-    },
-    {
-        "total_x_pos_amount": 280552,
-        "total_y_pos_amount": 291567,
-        "total_z_pos_amount": 299404,
-        "total_f_pos_amount": 288389,
-        "overal_open_interest_pos": -7837,
-        "overal_volume_pos": 579956
-    },
-    {
-        "total_x_pos_amount": 255731,
-        "total_y_pos_amount": 269593,
-        "total_z_pos_amount": 280894,
-        "total_f_pos_amount": 267032,
-        "overal_open_interest_pos": -11301,
-        "overal_volume_pos": 536625
-    },
-    {
-        "total_x_pos_amount": 121323,
-        "total_y_pos_amount": 122597,
-        "total_z_pos_amount": 152155,
-        "total_f_pos_amount": 150881,
-        "overal_open_interest_pos": -29558,
-        "overal_volume_pos": 273478
-    },
-    {
-        "total_x_pos_amount": 161886,
-        "total_y_pos_amount": 127403,
-        "total_z_pos_amount": 117611,
-        "total_f_pos_amount": 152094,
-        "overal_open_interest_pos": 9792,
-        "overal_volume_pos": 279497
-    },
-    {
-        "total_x_pos_amount": 190870,
-        "total_y_pos_amount": 203190,
-        "total_z_pos_amount": 193428,
-        "total_f_pos_amount": 181108,
-        "overal_open_interest_pos": 9762,
-        "overal_volume_pos": 384298
-    },
-    {
-        "total_x_pos_amount": 157834,
-        "total_y_pos_amount": 168238,
-        "total_z_pos_amount": 163079,
-        "total_f_pos_amount": 152675,
-        "overal_open_interest_pos": 5159,
-        "overal_volume_pos": 320913
-    },
-    {
-        "total_x_pos_amount": 212731,
-        "total_y_pos_amount": 227575,
-        "total_z_pos_amount": 204754,
-        "total_f_pos_amount": 189910,
-        "overal_open_interest_pos": 22821,
-        "overal_volume_pos": 417485
-    },
-    {
-        "total_x_pos_amount": 83002,
-        "total_y_pos_amount": 72139,
-        "total_z_pos_amount": 95051,
-        "total_f_pos_amount": 105914,
-        "overal_open_interest_pos": -22912,
-        "overal_volume_pos": 178053
-    },
-    {
-        "total_x_pos_amount": 168299,
-        "total_y_pos_amount": 147457,
-        "total_z_pos_amount": 150201,
-        "total_f_pos_amount": 171043,
-        "overal_open_interest_pos": -2744,
-        "overal_volume_pos": 318500
-    },
-    {
-        "total_x_pos_amount": 262005,
-        "total_y_pos_amount": 335525,
-        "total_z_pos_amount": 324275,
-        "total_f_pos_amount": 250755,
-        "overal_open_interest_pos": 11250,
-        "overal_volume_pos": 586280
-    },
-    {
-        "total_x_pos_amount": 151418,
-        "total_y_pos_amount": 153000,
-        "total_z_pos_amount": 172497,
-        "total_f_pos_amount": 170915,
-        "overal_open_interest_pos": -19497,
-        "overal_volume_pos": 323915
-    },
-    {
-        "total_x_pos_amount": 30950,
-        "total_y_pos_amount": 32524,
-        "total_z_pos_amount": 45536,
-        "total_f_pos_amount": 43962,
-        "overal_open_interest_pos": -13012,
-        "overal_volume_pos": 76486
-    },
-    {
-        "total_x_pos_amount": 37675,
-        "total_y_pos_amount": 37477,
-        "total_z_pos_amount": 36520,
-        "total_f_pos_amount": 36718,
-        "overal_open_interest_pos": 957,
-        "overal_volume_pos": 74195
-    },
-    {
-        "total_x_pos_amount": 104326,
-        "total_y_pos_amount": 117549,
-        "total_z_pos_amount": 90723,
-        "total_f_pos_amount": 77500,
-        "overal_open_interest_pos": 26826,
-        "overal_volume_pos": 195049
-    },
-    {
-        "total_x_pos_amount": 84892,
-        "total_y_pos_amount": 76708,
-        "total_z_pos_amount": 79957,
-        "total_f_pos_amount": 88141,
-        "overal_open_interest_pos": -3249,
-        "overal_volume_pos": 164849
-    },
-    {
-        "total_x_pos_amount": 155383,
-        "total_y_pos_amount": 152293,
-        "total_z_pos_amount": 156446,
-        "total_f_pos_amount": 159536,
-        "overal_open_interest_pos": -4153,
-        "overal_volume_pos": 311829
-    },
-    {
-        "total_x_pos_amount": 130283,
-        "total_y_pos_amount": 125284,
-        "total_z_pos_amount": 131930,
-        "total_f_pos_amount": 136929,
-        "overal_open_interest_pos": -6646,
-        "overal_volume_pos": 262213
-    },
-    {
-        "total_x_pos_amount": 132629,
-        "total_y_pos_amount": 147673,
-        "total_z_pos_amount": 151696,
-        "total_f_pos_amount": 136652,
-        "overal_open_interest_pos": -4023,
-        "overal_volume_pos": 284325
-    },
-    {
-        "total_x_pos_amount": 123781,
-        "total_y_pos_amount": 132359,
-        "total_z_pos_amount": 129617,
-        "total_f_pos_amount": 121039,
-        "overal_open_interest_pos": 2742,
-        "overal_volume_pos": 253398
-    },
-    {
-        "total_x_pos_amount": 51089,
-        "total_y_pos_amount": 52967,
-        "total_z_pos_amount": 49038,
-        "total_f_pos_amount": 47160,
-        "overal_open_interest_pos": 3929,
-        "overal_volume_pos": 100127
-    },
-    {
-        "total_x_pos_amount": 257175,
-        "total_y_pos_amount": 238220,
-        "total_z_pos_amount": 217676,
-        "total_f_pos_amount": 236631,
-        "overal_open_interest_pos": 20544,
-        "overal_volume_pos": 474851
-    },
-    {
-        "total_x_pos_amount": 257465,
-        "total_y_pos_amount": 305001,
-        "total_z_pos_amount": 307870,
-        "total_f_pos_amount": 260334,
-        "overal_open_interest_pos": -2869,
-        "overal_volume_pos": 565335
-    },
-    {
-        "total_x_pos_amount": 272056,
-        "total_y_pos_amount": 255715,
-        "total_z_pos_amount": 258956,
-        "total_f_pos_amount": 275297,
-        "overal_open_interest_pos": -3241,
-        "overal_volume_pos": 531012
-    },
-    {
-        "total_x_pos_amount": 293710,
-        "total_y_pos_amount": 272512,
-        "total_z_pos_amount": 263705,
-        "total_f_pos_amount": 284903,
-        "overal_open_interest_pos": 8807,
-        "overal_volume_pos": 557415
-    },
-    {
-        "total_x_pos_amount": 205139,
-        "total_y_pos_amount": 172355,
-        "total_z_pos_amount": 179390,
-        "total_f_pos_amount": 212174,
-        "overal_open_interest_pos": -7035,
-        "overal_volume_pos": 384529
-    },
-    {
-        "total_x_pos_amount": 161089,
-        "total_y_pos_amount": 179644,
-        "total_z_pos_amount": 184239,
-        "total_f_pos_amount": 165684,
-        "overal_open_interest_pos": -4595,
-        "overal_volume_pos": 345328
-    },
-    {
-        "total_x_pos_amount": 82217,
-        "total_y_pos_amount": 91344,
-        "total_z_pos_amount": 87497,
-        "total_f_pos_amount": 78370,
-        "overal_open_interest_pos": 3847,
-        "overal_volume_pos": 169714
-    },
-    {
-        "total_x_pos_amount": 194358,
-        "total_y_pos_amount": 188017,
-        "total_z_pos_amount": 178721,
-        "total_f_pos_amount": 185062,
-        "overal_open_interest_pos": 9296,
-        "overal_volume_pos": 373079
-    },
-    {
-        "total_x_pos_amount": 250239,
-        "total_y_pos_amount": 274495,
-        "total_z_pos_amount": 294024,
-        "total_f_pos_amount": 269768,
-        "overal_open_interest_pos": -19529,
-        "overal_volume_pos": 544263
-    },
-    {
-        "total_x_pos_amount": 190829,
-        "total_y_pos_amount": 214887,
-        "total_z_pos_amount": 202823,
-        "total_f_pos_amount": 178765,
-        "overal_open_interest_pos": 12064,
-        "overal_volume_pos": 393652
-    },
-    {
-        "total_x_pos_amount": 75833,
-        "total_y_pos_amount": 76294,
-        "total_z_pos_amount": 96215,
-        "total_f_pos_amount": 95754,
-        "overal_open_interest_pos": -19921,
-        "overal_volume_pos": 172048
-    },
-    {
-        "total_x_pos_amount": 68596,
-        "total_y_pos_amount": 66830,
-        "total_z_pos_amount": 79430,
-        "total_f_pos_amount": 81196,
-        "overal_open_interest_pos": -12600,
-        "overal_volume_pos": 148026
-    },
-    {
-        "total_x_pos_amount": 74833,
-        "total_y_pos_amount": 71055,
-        "total_z_pos_amount": 63193,
-        "total_f_pos_amount": 66971,
-        "overal_open_interest_pos": 7862,
-        "overal_volume_pos": 138026
-    },
-    {
-        "total_x_pos_amount": 94293,
-        "total_y_pos_amount": 99652,
-        "total_z_pos_amount": 84340,
-        "total_f_pos_amount": 78981,
-        "overal_open_interest_pos": 15312,
-        "overal_volume_pos": 178633
-    },
-    {
-        "total_x_pos_amount": 220897,
-        "total_y_pos_amount": 210040,
-        "total_z_pos_amount": 217997,
-        "total_f_pos_amount": 228854,
-        "overal_open_interest_pos": -7957,
-        "overal_volume_pos": 438894
-    },
-    {
-        "total_x_pos_amount": 216181,
-        "total_y_pos_amount": 222302,
-        "total_z_pos_amount": 198366,
-        "total_f_pos_amount": 192245,
-        "overal_open_interest_pos": 23936,
-        "overal_volume_pos": 414547
-    },
-    {
-        "total_x_pos_amount": 218478,
-        "total_y_pos_amount": 196097,
-        "total_z_pos_amount": 217442,
-        "total_f_pos_amount": 239823,
-        "overal_open_interest_pos": -21345,
-        "overal_volume_pos": 435920
-    },
-    {
-        "total_x_pos_amount": 122845,
-        "total_y_pos_amount": 138827,
-        "total_z_pos_amount": 146849,
-        "total_f_pos_amount": 130867,
-        "overal_open_interest_pos": -8022,
-        "overal_volume_pos": 269694
-    },
-    {
-        "total_x_pos_amount": 68362,
-        "total_y_pos_amount": 80358,
-        "total_z_pos_amount": 90203,
-        "total_f_pos_amount": 78207,
-        "overal_open_interest_pos": -9845,
-        "overal_volume_pos": 158565
-    },
-    {
-        "total_x_pos_amount": 60167,
-        "total_y_pos_amount": 65515,
-        "total_z_pos_amount": 59108,
-        "total_f_pos_amount": 53760,
-        "overal_open_interest_pos": 6407,
-        "overal_volume_pos": 119275
-    },
-    {
-        "total_x_pos_amount": 250777,
-        "total_y_pos_amount": 302493,
-        "total_z_pos_amount": 264454,
-        "total_f_pos_amount": 212738,
-        "overal_open_interest_pos": 38039,
-        "overal_volume_pos": 515231
-    },
-    {
-        "total_x_pos_amount": 141347,
-        "total_y_pos_amount": 145530,
-        "total_z_pos_amount": 182848,
-        "total_f_pos_amount": 178665,
-        "overal_open_interest_pos": -37318,
-        "overal_volume_pos": 324195
-    },
-    {
-        "total_x_pos_amount": 138645,
-        "total_y_pos_amount": 131249,
-        "total_z_pos_amount": 127675,
-        "total_f_pos_amount": 135071,
-        "overal_open_interest_pos": 3574,
-        "overal_volume_pos": 266320
-    },
-    {
-        "total_x_pos_amount": 205605,
-        "total_y_pos_amount": 203608,
-        "total_z_pos_amount": 195131,
-        "total_f_pos_amount": 197128,
-        "overal_open_interest_pos": 8477,
-        "overal_volume_pos": 400736
-    },
-    {
-        "total_x_pos_amount": 270815,
-        "total_y_pos_amount": 308717,
-        "total_z_pos_amount": 280459,
-        "total_f_pos_amount": 242557,
-        "overal_open_interest_pos": 28258,
-        "overal_volume_pos": 551274
-    },
-    {
-        "total_x_pos_amount": 124085,
-        "total_y_pos_amount": 110298,
-        "total_z_pos_amount": 147343,
-        "total_f_pos_amount": 161130,
-        "overal_open_interest_pos": -37045,
-        "overal_volume_pos": 271428
-    },
-    {
-        "total_x_pos_amount": 187327,
-        "total_y_pos_amount": 186442,
-        "total_z_pos_amount": 179146,
-        "total_f_pos_amount": 180031,
-        "overal_open_interest_pos": 7296,
-        "overal_volume_pos": 366473
-    },
-    {
-        "total_x_pos_amount": 178915,
-        "total_y_pos_amount": 174833,
-        "total_z_pos_amount": 176196,
-        "total_f_pos_amount": 180278,
-        "overal_open_interest_pos": -1363,
-        "overal_volume_pos": 355111
-    },
-    {
-        "total_x_pos_amount": 181161,
-        "total_y_pos_amount": 178342,
-        "total_z_pos_amount": 150775,
-        "total_f_pos_amount": 153594,
-        "overal_open_interest_pos": 27567,
-        "overal_volume_pos": 331936
-    },
-    {
-        "total_x_pos_amount": 35226,
-        "total_y_pos_amount": 41281,
-        "total_z_pos_amount": 82046,
-        "total_f_pos_amount": 75991,
-        "overal_open_interest_pos": -40765,
-        "overal_volume_pos": 117272
-    },
-    {
-        "total_x_pos_amount": 103909,
-        "total_y_pos_amount": 100464,
-        "total_z_pos_amount": 86522,
-        "total_f_pos_amount": 89967,
-        "overal_open_interest_pos": 13942,
-        "overal_volume_pos": 190431
-    },
-    {
-        "total_x_pos_amount": 143769,
-        "total_y_pos_amount": 155777,
-        "total_z_pos_amount": 153206,
-        "total_f_pos_amount": 141198,
-        "overal_open_interest_pos": 2571,
-        "overal_volume_pos": 296975
-    },
-    {
-        "total_x_pos_amount": 209701,
-        "total_y_pos_amount": 202510,
-        "total_z_pos_amount": 189706,
-        "total_f_pos_amount": 196897,
-        "overal_open_interest_pos": 12804,
-        "overal_volume_pos": 399407
-    },
-    {
-        "total_x_pos_amount": 161645,
-        "total_y_pos_amount": 152347,
-        "total_z_pos_amount": 181246,
-        "total_f_pos_amount": 190544,
-        "overal_open_interest_pos": -28899,
-        "overal_volume_pos": 342891
-    },
-    {
-        "total_x_pos_amount": 158579,
-        "total_y_pos_amount": 146213,
-        "total_z_pos_amount": 136359,
-        "total_f_pos_amount": 148725,
-        "overal_open_interest_pos": 9854,
-        "overal_volume_pos": 294938
-    },
-    {
-        "total_x_pos_amount": 131177,
-        "total_y_pos_amount": 135654,
-        "total_z_pos_amount": 130564,
-        "total_f_pos_amount": 126087,
-        "overal_open_interest_pos": 5090,
-        "overal_volume_pos": 261741
-    },
-    {
-        "total_x_pos_amount": 128281,
-        "total_y_pos_amount": 131748,
-        "total_z_pos_amount": 145504,
-        "total_f_pos_amount": 142037,
-        "overal_open_interest_pos": -13756,
-        "overal_volume_pos": 273785
-    },
-    {
-        "total_x_pos_amount": 98104,
-        "total_y_pos_amount": 99030,
-        "total_z_pos_amount": 104161,
-        "total_f_pos_amount": 103235,
-        "overal_open_interest_pos": -5131,
-        "overal_volume_pos": 202265
-    },
-    {
-        "total_x_pos_amount": 39604,
-        "total_y_pos_amount": 34813,
-        "total_z_pos_amount": 34326,
-        "total_f_pos_amount": 39117,
-        "overal_open_interest_pos": 487,
-        "overal_volume_pos": 73930
-    },
-    {
-        "total_x_pos_amount": 97231,
-        "total_y_pos_amount": 96090,
-        "total_z_pos_amount": 60284,
-        "total_f_pos_amount": 61425,
-        "overal_open_interest_pos": 35806,
-        "overal_volume_pos": 157515
-    },
-    {
-        "total_x_pos_amount": 241337,
-        "total_y_pos_amount": 213071,
-        "total_z_pos_amount": 227978,
-        "total_f_pos_amount": 256244,
-        "overal_open_interest_pos": -14907,
-        "overal_volume_pos": 469315
-    },
-    {
-        "total_x_pos_amount": 189023,
-        "total_y_pos_amount": 165405,
-        "total_z_pos_amount": 166730,
-        "total_f_pos_amount": 190348,
-        "overal_open_interest_pos": -1325,
-        "overal_volume_pos": 355753
-    },
-    {
-        "total_x_pos_amount": 176494,
-        "total_y_pos_amount": 171679,
-        "total_z_pos_amount": 160462,
-        "total_f_pos_amount": 165277,
-        "overal_open_interest_pos": 11217,
-        "overal_volume_pos": 336956
-    },
-    {
-        "total_x_pos_amount": 111234,
-        "total_y_pos_amount": 108345,
-        "total_z_pos_amount": 139269,
-        "total_f_pos_amount": 142158,
-        "overal_open_interest_pos": -30924,
-        "overal_volume_pos": 250503
-    },
-    {
-        "total_x_pos_amount": 83056,
-        "total_y_pos_amount": 97016,
-        "total_z_pos_amount": 83270,
-        "total_f_pos_amount": 69310,
-        "overal_open_interest_pos": 13746,
-        "overal_volume_pos": 166326
-    },
-    {
-        "total_x_pos_amount": 56744,
-        "total_y_pos_amount": 58328,
-        "total_z_pos_amount": 56407,
-        "total_f_pos_amount": 54823,
-        "overal_open_interest_pos": 1921,
-        "overal_volume_pos": 113151
-    },
-    {
-        "total_x_pos_amount": 129220,
-        "total_y_pos_amount": 127415,
-        "total_z_pos_amount": 127366,
-        "total_f_pos_amount": 129171,
-        "overal_open_interest_pos": 49,
-        "overal_volume_pos": 256586
-    },
-    {
-        "total_x_pos_amount": 123524,
-        "total_y_pos_amount": 114591,
-        "total_z_pos_amount": 122995,
-        "total_f_pos_amount": 131928,
-        "overal_open_interest_pos": -8404,
-        "overal_volume_pos": 246519
-    },
-    {
-        "total_x_pos_amount": 86587,
-        "total_y_pos_amount": 77531,
-        "total_z_pos_amount": 79436,
-        "total_f_pos_amount": 88492,
-        "overal_open_interest_pos": -1905,
-        "overal_volume_pos": 166023
-    },
-    {
-        "total_x_pos_amount": 70413,
-        "total_y_pos_amount": 79214,
-        "total_z_pos_amount": 77281,
-        "total_f_pos_amount": 68480,
-        "overal_open_interest_pos": 1933,
-        "overal_volume_pos": 147694
-    },
-    {
-        "total_x_pos_amount": 35627,
-        "total_y_pos_amount": 32828,
-        "total_z_pos_amount": 39742,
-        "total_f_pos_amount": 42541,
-        "overal_open_interest_pos": -6914,
-        "overal_volume_pos": 75369
-    },
-    {
-        "total_x_pos_amount": 230871,
-        "total_y_pos_amount": 214445,
-        "total_z_pos_amount": 185038,
-        "total_f_pos_amount": 201464,
-        "overal_open_interest_pos": 29407,
-        "overal_volume_pos": 415909
-    },
-    {
-        "total_x_pos_amount": 268814,
-        "total_y_pos_amount": 278259,
-        "total_z_pos_amount": 271822,
-        "total_f_pos_amount": 262377,
-        "overal_open_interest_pos": 6437,
-        "overal_volume_pos": 540636
-    },
-    {
-        "total_x_pos_amount": 48924,
-        "total_y_pos_amount": 46685,
-        "total_z_pos_amount": 78137,
-        "total_f_pos_amount": 80376,
-        "overal_open_interest_pos": -31452,
-        "overal_volume_pos": 127061
-    },
-    {
-        "total_x_pos_amount": 113272,
-        "total_y_pos_amount": 118704,
-        "total_z_pos_amount": 108432,
-        "total_f_pos_amount": 103000,
-        "overal_open_interest_pos": 10272,
-        "overal_volume_pos": 221704
-    },
-    {
-        "total_x_pos_amount": 123057,
-        "total_y_pos_amount": 119456,
-        "total_z_pos_amount": 125313,
-        "total_f_pos_amount": 128914,
-        "overal_open_interest_pos": -5857,
-        "overal_volume_pos": 248370
-    },
-    {
-        "total_x_pos_amount": 31547,
-        "total_y_pos_amount": 33478,
-        "total_z_pos_amount": 42986,
-        "total_f_pos_amount": 41055,
-        "overal_open_interest_pos": -9508,
-        "overal_volume_pos": 74533
-    },
-    {
-        "total_x_pos_amount": 216262,
-        "total_y_pos_amount": 252445,
-        "total_z_pos_amount": 228333,
-        "total_f_pos_amount": 192150,
-        "overal_open_interest_pos": 24112,
-        "overal_volume_pos": 444595
-    },
-    {
-        "total_x_pos_amount": 135214,
-        "total_y_pos_amount": 133645,
-        "total_z_pos_amount": 116529,
-        "total_f_pos_amount": 118098,
-        "overal_open_interest_pos": 17116,
-        "overal_volume_pos": 251743
-    },
-    {
-        "total_x_pos_amount": 185704,
-        "total_y_pos_amount": 180785,
-        "total_z_pos_amount": 207060,
-        "total_f_pos_amount": 211979,
-        "overal_open_interest_pos": -26275,
-        "overal_volume_pos": 392764
-    },
-    {
-        "total_x_pos_amount": 78676,
-        "total_y_pos_amount": 74490,
-        "total_z_pos_amount": 72907,
-        "total_f_pos_amount": 77093,
-        "overal_open_interest_pos": 1583,
-        "overal_volume_pos": 151583
-    },
-    {
-        "total_x_pos_amount": 104279,
-        "total_y_pos_amount": 95638,
-        "total_z_pos_amount": 112905,
-        "total_f_pos_amount": 121546,
-        "overal_open_interest_pos": -17267,
-        "overal_volume_pos": 217184
-    },
-    {
-        "total_x_pos_amount": 99677,
-        "total_y_pos_amount": 93711,
-        "total_z_pos_amount": 78443,
-        "total_f_pos_amount": 84409,
-        "overal_open_interest_pos": 15268,
-        "overal_volume_pos": 178120
-    },
-    {
-        "total_x_pos_amount": 170907,
-        "total_y_pos_amount": 156703,
-        "total_z_pos_amount": 127788,
-        "total_f_pos_amount": 141992,
-        "overal_open_interest_pos": 28915,
-        "overal_volume_pos": 298695
-    },
-    {
-        "total_x_pos_amount": 282343,
-        "total_y_pos_amount": 234945,
-        "total_z_pos_amount": 253254,
-        "total_f_pos_amount": 300652,
-        "overal_open_interest_pos": -18309,
-        "overal_volume_pos": 535597
-    },
-    {
-        "total_x_pos_amount": 241872,
-        "total_y_pos_amount": 213162,
-        "total_z_pos_amount": 198170,
-        "total_f_pos_amount": 226880,
-        "overal_open_interest_pos": 14992,
-        "overal_volume_pos": 440042
-    },
-    {
-        "total_x_pos_amount": 201547,
-        "total_y_pos_amount": 203425,
-        "total_z_pos_amount": 238658,
-        "total_f_pos_amount": 236780,
-        "overal_open_interest_pos": -35233,
-        "overal_volume_pos": 440205
-    },
-    {
-        "total_x_pos_amount": 164802,
-        "total_y_pos_amount": 170331,
-        "total_z_pos_amount": 161777,
-        "total_f_pos_amount": 156248,
-        "overal_open_interest_pos": 8554,
-        "overal_volume_pos": 326579
-    },
-    {
-        "total_x_pos_amount": 138061,
-        "total_y_pos_amount": 130364,
-        "total_z_pos_amount": 134375,
-        "total_f_pos_amount": 142072,
-        "overal_open_interest_pos": -4011,
-        "overal_volume_pos": 272436
-    },
-    {
-        "total_x_pos_amount": 117684,
-        "total_y_pos_amount": 119444,
-        "total_z_pos_amount": 92557,
-        "total_f_pos_amount": 90797,
-        "overal_open_interest_pos": 26887,
-        "overal_volume_pos": 210241
-    },
-    {
-        "total_x_pos_amount": 177430,
-        "total_y_pos_amount": 187718,
-        "total_z_pos_amount": 194918,
-        "total_f_pos_amount": 184630,
-        "overal_open_interest_pos": -7200,
-        "overal_volume_pos": 372348
-    },
-    {
-        "total_x_pos_amount": 301767,
-        "total_y_pos_amount": 281505,
-        "total_z_pos_amount": 275207,
-        "total_f_pos_amount": 295469,
-        "overal_open_interest_pos": 6298,
-        "overal_volume_pos": 576974
-    },
-    {
-        "total_x_pos_amount": 280643,
-        "total_y_pos_amount": 267895,
-        "total_z_pos_amount": 281787,
-        "total_f_pos_amount": 294535,
-        "overal_open_interest_pos": -13892,
-        "overal_volume_pos": 562430
-    },
-    {
-        "total_x_pos_amount": 243744,
-        "total_y_pos_amount": 222693,
-        "total_z_pos_amount": 222018,
-        "total_f_pos_amount": 243069,
-        "overal_open_interest_pos": 675,
-        "overal_volume_pos": 465762
-    },
-    {
-        "total_x_pos_amount": 186575,
-        "total_y_pos_amount": 189792,
-        "total_z_pos_amount": 191617,
-        "total_f_pos_amount": 188400,
-        "overal_open_interest_pos": -1825,
-        "overal_volume_pos": 378192
-    },
-    {
-        "total_x_pos_amount": 107189,
-        "total_y_pos_amount": 93961,
-        "total_z_pos_amount": 78207,
-        "total_f_pos_amount": 91435,
-        "overal_open_interest_pos": 15754,
-        "overal_volume_pos": 185396
-    },
-    {
-        "total_x_pos_amount": 197427,
-        "total_y_pos_amount": 208188,
-        "total_z_pos_amount": 231590,
-        "total_f_pos_amount": 220829,
-        "overal_open_interest_pos": -23402,
-        "overal_volume_pos": 429017
-    },
-    {
-        "total_x_pos_amount": 154455,
-        "total_y_pos_amount": 152681,
-        "total_z_pos_amount": 159753,
-        "total_f_pos_amount": 161527,
-        "overal_open_interest_pos": -7072,
-        "overal_volume_pos": 314208
-    },
-    {
-        "total_x_pos_amount": 105922,
-        "total_y_pos_amount": 111514,
-        "total_z_pos_amount": 104473,
-        "total_f_pos_amount": 98881,
-        "overal_open_interest_pos": 7041,
-        "overal_volume_pos": 210395
-    },
-    {
-        "total_x_pos_amount": 58796,
-        "total_y_pos_amount": 50407,
-        "total_z_pos_amount": 60848,
-        "total_f_pos_amount": 69237,
-        "overal_open_interest_pos": -10441,
-        "overal_volume_pos": 119644
-    },
-    {
-        "total_x_pos_amount": 38076,
-        "total_y_pos_amount": 34617,
-        "total_z_pos_amount": 37256,
-        "total_f_pos_amount": 40715,
-        "overal_open_interest_pos": -2639,
-        "overal_volume_pos": 75332
-    },
-    {
-        "total_x_pos_amount": 94022,
-        "total_y_pos_amount": 98925,
-        "total_z_pos_amount": 97093,
-        "total_f_pos_amount": 92190,
-        "overal_open_interest_pos": 1832,
-        "overal_volume_pos": 191115
-    },
-    {
-        "total_x_pos_amount": 95087,
-        "total_y_pos_amount": 101581,
-        "total_z_pos_amount": 79323,
-        "total_f_pos_amount": 72829,
-        "overal_open_interest_pos": 22258,
-        "overal_volume_pos": 174410
-    },
-    {
-        "total_x_pos_amount": 43831,
-        "total_y_pos_amount": 37983,
-        "total_z_pos_amount": 46663,
-        "total_f_pos_amount": 52511,
-        "overal_open_interest_pos": -8680,
-        "overal_volume_pos": 90494
-    },
-    {
-        "total_x_pos_amount": 29305,
-        "total_y_pos_amount": 27579,
-        "total_z_pos_amount": 42826,
-        "total_f_pos_amount": 44552,
-        "overal_open_interest_pos": -15247,
-        "overal_volume_pos": 72131
-    },
-    {
-        "total_x_pos_amount": 35563,
-        "total_y_pos_amount": 37474,
-        "total_z_pos_amount": 37009,
-        "total_f_pos_amount": 35098,
-        "overal_open_interest_pos": 465,
-        "overal_volume_pos": 72572
-    },
-    {
-        "total_x_pos_amount": 63311,
-        "total_y_pos_amount": 67225,
-        "total_z_pos_amount": 54560,
-        "total_f_pos_amount": 50646,
-        "overal_open_interest_pos": 12665,
-        "overal_volume_pos": 117871
-    },
-    {
-        "total_x_pos_amount": 58784,
-        "total_y_pos_amount": 54962,
-        "total_z_pos_amount": 61597,
-        "total_f_pos_amount": 65419,
-        "overal_open_interest_pos": -6635,
-        "overal_volume_pos": 120381
-    },
-    {
-        "total_x_pos_amount": 53320,
-        "total_y_pos_amount": 52769,
-        "total_z_pos_amount": 47167,
-        "total_f_pos_amount": 47718,
-        "overal_open_interest_pos": 5602,
-        "overal_volume_pos": 100487
-    },
-    {
-        "total_x_pos_amount": 238893,
-        "total_y_pos_amount": 242734,
-        "total_z_pos_amount": 215581,
-        "total_f_pos_amount": 211740,
-        "overal_open_interest_pos": 27153,
-        "overal_volume_pos": 454474
-    },
-    {
-        "total_x_pos_amount": 234052,
-        "total_y_pos_amount": 197885,
-        "total_z_pos_amount": 209823,
-        "total_f_pos_amount": 245990,
-        "overal_open_interest_pos": -11938,
-        "overal_volume_pos": 443875
-    },
-    {
-        "total_x_pos_amount": 255813,
-        "total_y_pos_amount": 232737,
-        "total_z_pos_amount": 227074,
-        "total_f_pos_amount": 250150,
-        "overal_open_interest_pos": 5663,
-        "overal_volume_pos": 482887
-    },
-    {
-        "total_x_pos_amount": 124917,
-        "total_y_pos_amount": 108884,
-        "total_z_pos_amount": 130782,
-        "total_f_pos_amount": 146815,
-        "overal_open_interest_pos": -21898,
-        "overal_volume_pos": 255699
-    },
-    {
-        "total_x_pos_amount": 98485,
-        "total_y_pos_amount": 98899,
-        "total_z_pos_amount": 93943,
-        "total_f_pos_amount": 93529,
-        "overal_open_interest_pos": 4956,
-        "overal_volume_pos": 192428
-    },
-    {
-        "total_x_pos_amount": 149850,
-        "total_y_pos_amount": 152960,
-        "total_z_pos_amount": 155095,
-        "total_f_pos_amount": 151985,
-        "overal_open_interest_pos": -2135,
-        "overal_volume_pos": 304945
-    },
-    {
-        "total_x_pos_amount": 260464,
-        "total_y_pos_amount": 246881,
-        "total_z_pos_amount": 229018,
-        "total_f_pos_amount": 242601,
-        "overal_open_interest_pos": 17863,
-        "overal_volume_pos": 489482
-    },
-    {
-        "total_x_pos_amount": 303272,
-        "total_y_pos_amount": 283431,
-        "total_z_pos_amount": 272600,
-        "total_f_pos_amount": 292441,
-        "overal_open_interest_pos": 10831,
-        "overal_volume_pos": 575872
-    },
-    {
-        "total_x_pos_amount": 112735,
-        "total_y_pos_amount": 135587,
-        "total_z_pos_amount": 165882,
-        "total_f_pos_amount": 143030,
-        "overal_open_interest_pos": -30295,
-        "overal_volume_pos": 278617
-    },
-    {
-        "total_x_pos_amount": 111664,
-        "total_y_pos_amount": 104958,
-        "total_z_pos_amount": 109713,
-        "total_f_pos_amount": 116419,
-        "overal_open_interest_pos": -4755,
-        "overal_volume_pos": 221377
-    },
-    {
-        "total_x_pos_amount": 96133,
-        "total_y_pos_amount": 99783,
-        "total_z_pos_amount": 89469,
-        "total_f_pos_amount": 85819,
-        "overal_open_interest_pos": 10314,
-        "overal_volume_pos": 185602
-    },
-    {
-        "total_x_pos_amount": 113463,
-        "total_y_pos_amount": 102302,
-        "total_z_pos_amount": 108015,
-        "total_f_pos_amount": 119176,
-        "overal_open_interest_pos": -5713,
-        "overal_volume_pos": 221478
-    },
-    {
-        "total_x_pos_amount": 162337,
-        "total_y_pos_amount": 167088,
-        "total_z_pos_amount": 128507,
-        "total_f_pos_amount": 123756,
-        "overal_open_interest_pos": 38581,
-        "overal_volume_pos": 290844
-    },
-    {
-        "total_x_pos_amount": 146753,
-        "total_y_pos_amount": 127515,
-        "total_z_pos_amount": 166642,
-        "total_f_pos_amount": 185880,
-        "overal_open_interest_pos": -39127,
-        "overal_volume_pos": 313395
-    },
-    {
-        "total_x_pos_amount": 110403,
-        "total_y_pos_amount": 128618,
-        "total_z_pos_amount": 138110,
-        "total_f_pos_amount": 119895,
-        "overal_open_interest_pos": -9492,
-        "overal_volume_pos": 248513
-    },
-    {
-        "total_x_pos_amount": 98745,
-        "total_y_pos_amount": 110942,
-        "total_z_pos_amount": 103069,
-        "total_f_pos_amount": 90872,
-        "overal_open_interest_pos": 7873,
-        "overal_volume_pos": 201814
-    },
-    {
-        "total_x_pos_amount": 210124,
-        "total_y_pos_amount": 227031,
-        "total_z_pos_amount": 215494,
-        "total_f_pos_amount": 198587,
-        "overal_open_interest_pos": 11537,
-        "overal_volume_pos": 425618
-    },
-    {
-        "total_x_pos_amount": 92027,
-        "total_y_pos_amount": 78486,
-        "total_z_pos_amount": 57693,
-        "total_f_pos_amount": 71234,
-        "overal_open_interest_pos": 20793,
-        "overal_volume_pos": 149720
-    },
-    {
-        "total_x_pos_amount": 280580,
-        "total_y_pos_amount": 284763,
-        "total_z_pos_amount": 288469,
-        "total_f_pos_amount": 284286,
-        "overal_open_interest_pos": -3706,
-        "overal_volume_pos": 569049
-    },
-    {
-        "total_x_pos_amount": 99181,
-        "total_y_pos_amount": 116625,
-        "total_z_pos_amount": 136267,
-        "total_f_pos_amount": 118823,
-        "overal_open_interest_pos": -19642,
-        "overal_volume_pos": 235448
-    },
-    {
-        "total_x_pos_amount": 57621,
-        "total_y_pos_amount": 69005,
-        "total_z_pos_amount": 85476,
-        "total_f_pos_amount": 74092,
-        "overal_open_interest_pos": -16471,
-        "overal_volume_pos": 143097
-    },
-    {
-        "total_x_pos_amount": 102872,
-        "total_y_pos_amount": 99335,
-        "total_z_pos_amount": 95695,
-        "total_f_pos_amount": 99232,
-        "overal_open_interest_pos": 3640,
-        "overal_volume_pos": 198567
-    },
-    {
-        "total_x_pos_amount": 76628,
-        "total_y_pos_amount": 68265,
-        "total_z_pos_amount": 67618,
-        "total_f_pos_amount": 75981,
-        "overal_open_interest_pos": 647,
-        "overal_volume_pos": 144246
-    },
-    {
-        "total_x_pos_amount": 139140,
-        "total_y_pos_amount": 117021,
-        "total_z_pos_amount": 106798,
-        "total_f_pos_amount": 128917,
-        "overal_open_interest_pos": 10223,
-        "overal_volume_pos": 245938
-    },
-    {
-        "total_x_pos_amount": 151293,
-        "total_y_pos_amount": 126473,
-        "total_z_pos_amount": 134656,
-        "total_f_pos_amount": 159476,
-        "overal_open_interest_pos": -8183,
-        "overal_volume_pos": 285949
-    },
-    {
-        "total_x_pos_amount": 106062,
-        "total_y_pos_amount": 100979,
-        "total_z_pos_amount": 92299,
-        "total_f_pos_amount": 97382,
-        "overal_open_interest_pos": 8680,
-        "overal_volume_pos": 198361
-    },
-    {
-        "total_x_pos_amount": 131623,
-        "total_y_pos_amount": 134015,
-        "total_z_pos_amount": 150102,
-        "total_f_pos_amount": 147710,
-        "overal_open_interest_pos": -16087,
-        "overal_volume_pos": 281725
-    },
-    {
-        "total_x_pos_amount": 36269,
-        "total_y_pos_amount": 39388,
-        "total_z_pos_amount": 39905,
-        "total_f_pos_amount": 36786,
-        "overal_open_interest_pos": -517,
-        "overal_volume_pos": 76174
-    },
-    {
-        "total_x_pos_amount": 48080,
-        "total_y_pos_amount": 44077,
-        "total_z_pos_amount": 38580,
-        "total_f_pos_amount": 42583,
-        "overal_open_interest_pos": 5497,
-        "overal_volume_pos": 86660
-    },
-    {
-        "total_x_pos_amount": 125867,
-        "total_y_pos_amount": 146641,
-        "total_z_pos_amount": 147576,
-        "total_f_pos_amount": 126802,
-        "overal_open_interest_pos": -935,
-        "overal_volume_pos": 273443
-    },
-    {
-        "total_x_pos_amount": 141352,
-        "total_y_pos_amount": 147534,
-        "total_z_pos_amount": 132169,
-        "total_f_pos_amount": 125987,
-        "overal_open_interest_pos": 15365,
-        "overal_volume_pos": 273521
-    },
-    {
-        "total_x_pos_amount": 163461,
-        "total_y_pos_amount": 178544,
-        "total_z_pos_amount": 176556,
-        "total_f_pos_amount": 161473,
-        "overal_open_interest_pos": 1988,
-        "overal_volume_pos": 340017
-    },
-    {
-        "total_x_pos_amount": 114585,
-        "total_y_pos_amount": 125155,
-        "total_z_pos_amount": 139028,
-        "total_f_pos_amount": 128458,
-        "overal_open_interest_pos": -13873,
-        "overal_volume_pos": 253613
-    },
-    {
-        "total_x_pos_amount": 123309,
-        "total_y_pos_amount": 131699,
-        "total_z_pos_amount": 137720,
-        "total_f_pos_amount": 129330,
-        "overal_open_interest_pos": -6021,
-        "overal_volume_pos": 261029
-    },
-    {
-        "total_x_pos_amount": 112098,
-        "total_y_pos_amount": 108196,
-        "total_z_pos_amount": 99353,
-        "total_f_pos_amount": 103255,
-        "overal_open_interest_pos": 8843,
-        "overal_volume_pos": 211451
-    },
-    {
-        "total_x_pos_amount": 36904,
-        "total_y_pos_amount": 26138,
-        "total_z_pos_amount": 39871,
-        "total_f_pos_amount": 50637,
-        "overal_open_interest_pos": -13733,
-        "overal_volume_pos": 76775
-    },
-    {
-        "total_x_pos_amount": 39003,
-        "total_y_pos_amount": 39978,
-        "total_z_pos_amount": 38129,
-        "total_f_pos_amount": 37154,
-        "overal_open_interest_pos": 1849,
-        "overal_volume_pos": 77132
-    },
-    {
-        "total_x_pos_amount": 207067,
-        "total_y_pos_amount": 237029,
-        "total_z_pos_amount": 200045,
-        "total_f_pos_amount": 170083,
-        "overal_open_interest_pos": 36984,
-        "overal_volume_pos": 407112
-    },
-    {
-        "total_x_pos_amount": 115497,
-        "total_y_pos_amount": 112519,
-        "total_z_pos_amount": 114040,
-        "total_f_pos_amount": 117018,
-        "overal_open_interest_pos": -1521,
-        "overal_volume_pos": 229537
-    },
-    {
-        "total_x_pos_amount": 89951,
-        "total_y_pos_amount": 83827,
-        "total_z_pos_amount": 97501,
-        "total_f_pos_amount": 103625,
-        "overal_open_interest_pos": -13674,
-        "overal_volume_pos": 187452
-    },
-    {
-        "total_x_pos_amount": 135362,
-        "total_y_pos_amount": 131223,
-        "total_z_pos_amount": 145550,
-        "total_f_pos_amount": 149689,
-        "overal_open_interest_pos": -14327,
-        "overal_volume_pos": 280912
-    },
-    {
-        "total_x_pos_amount": 163752,
-        "total_y_pos_amount": 172438,
-        "total_z_pos_amount": 131076,
-        "total_f_pos_amount": 122390,
-        "overal_open_interest_pos": 41362,
-        "overal_volume_pos": 294828
-    },
-    {
-        "total_x_pos_amount": 34670,
-        "total_y_pos_amount": 37320,
-        "total_z_pos_amount": 82716,
-        "total_f_pos_amount": 80066,
-        "overal_open_interest_pos": -45396,
-        "overal_volume_pos": 117386
-    },
-    {
-        "total_x_pos_amount": 77653,
-        "total_y_pos_amount": 89083,
-        "total_z_pos_amount": 71189,
-        "total_f_pos_amount": 59759,
-        "overal_open_interest_pos": 17894,
-        "overal_volume_pos": 148842
-    },
-    {
-        "total_x_pos_amount": 171748,
-        "total_y_pos_amount": 174913,
-        "total_z_pos_amount": 165479,
-        "total_f_pos_amount": 162314,
-        "overal_open_interest_pos": 9434,
-        "overal_volume_pos": 337227
-    },
-    {
-        "total_x_pos_amount": 23689,
-        "total_y_pos_amount": 24104,
-        "total_z_pos_amount": 51646,
-        "total_f_pos_amount": 51231,
-        "overal_open_interest_pos": -27542,
-        "overal_volume_pos": 75335
-    },
-    {
-        "total_x_pos_amount": 92922,
-        "total_y_pos_amount": 84892,
-        "total_z_pos_amount": 74027,
-        "total_f_pos_amount": 82057,
-        "overal_open_interest_pos": 10865,
-        "overal_volume_pos": 166949
-    },
-    {
-        "total_x_pos_amount": 89552,
-        "total_y_pos_amount": 100988,
-        "total_z_pos_amount": 96337,
-        "total_f_pos_amount": 84901,
-        "overal_open_interest_pos": 4651,
-        "overal_volume_pos": 185889
-    },
-    {
-        "total_x_pos_amount": 101762,
-        "total_y_pos_amount": 99420,
-        "total_z_pos_amount": 118762,
-        "total_f_pos_amount": 121104,
-        "overal_open_interest_pos": -19342,
-        "overal_volume_pos": 220524
-    },
-    {
-        "total_x_pos_amount": 267946,
-        "total_y_pos_amount": 261637,
-        "total_z_pos_amount": 235893,
-        "total_f_pos_amount": 242202,
-        "overal_open_interest_pos": 25744,
-        "overal_volume_pos": 503839
-    },
-    {
-        "total_x_pos_amount": 189677,
-        "total_y_pos_amount": 203097,
-        "total_z_pos_amount": 193887,
-        "total_f_pos_amount": 180467,
-        "overal_open_interest_pos": 9210,
-        "overal_volume_pos": 383564
-    },
-    {
-        "total_x_pos_amount": 26907,
-        "total_y_pos_amount": 24691,
-        "total_z_pos_amount": 55017,
-        "total_f_pos_amount": 57233,
-        "overal_open_interest_pos": -30326,
-        "overal_volume_pos": 81924
-    },
-    {
-        "total_x_pos_amount": 43658,
-        "total_y_pos_amount": 39409,
-        "total_z_pos_amount": 41819,
-        "total_f_pos_amount": 46068,
-        "overal_open_interest_pos": -2410,
-        "overal_volume_pos": 85477
-    },
-    {
-        "total_x_pos_amount": 253814,
-        "total_y_pos_amount": 272022,
-        "total_z_pos_amount": 250410,
-        "total_f_pos_amount": 232202,
-        "overal_open_interest_pos": 21612,
-        "overal_volume_pos": 504224
-    },
-    {
-        "total_x_pos_amount": 138784,
-        "total_y_pos_amount": 124393,
-        "total_z_pos_amount": 144397,
-        "total_f_pos_amount": 158788,
-        "overal_open_interest_pos": -20004,
-        "overal_volume_pos": 283181
-    },
-    {
-        "total_x_pos_amount": 91967,
-        "total_y_pos_amount": 90247,
-        "total_z_pos_amount": 65582,
-        "total_f_pos_amount": 67302,
-        "overal_open_interest_pos": 24665,
-        "overal_volume_pos": 157549
-    },
-    {
-        "total_x_pos_amount": 191945,
-        "total_y_pos_amount": 190132,
-        "total_z_pos_amount": 185699,
-        "total_f_pos_amount": 187512,
-        "overal_open_interest_pos": 4433,
-        "overal_volume_pos": 377644
-    },
-    {
-        "total_x_pos_amount": 61595,
-        "total_y_pos_amount": 53390,
-        "total_z_pos_amount": 79581,
-        "total_f_pos_amount": 87786,
-        "overal_open_interest_pos": -26191,
-        "overal_volume_pos": 141176
-    },
-    {
-        "total_x_pos_amount": 71661,
-        "total_y_pos_amount": 84013,
-        "total_z_pos_amount": 61070,
-        "total_f_pos_amount": 48718,
-        "overal_open_interest_pos": 22943,
-        "overal_volume_pos": 132731
-    },
-    {
-        "total_x_pos_amount": 237802,
-        "total_y_pos_amount": 230792,
-        "total_z_pos_amount": 239767,
-        "total_f_pos_amount": 246777,
-        "overal_open_interest_pos": -8975,
-        "overal_volume_pos": 477569
-    },
-    {
-        "total_x_pos_amount": 63682,
-        "total_y_pos_amount": 70596,
-        "total_z_pos_amount": 85237,
-        "total_f_pos_amount": 78323,
-        "overal_open_interest_pos": -14641,
-        "overal_volume_pos": 148919
-    },
-    {
-        "total_x_pos_amount": 33458,
-        "total_y_pos_amount": 34618,
-        "total_z_pos_amount": 38561,
-        "total_f_pos_amount": 37401,
-        "overal_open_interest_pos": -3943,
-        "overal_volume_pos": 72019
-    },
-    {
-        "total_x_pos_amount": 36310,
-        "total_y_pos_amount": 33546,
-        "total_z_pos_amount": 36489,
-        "total_f_pos_amount": 39253,
-        "overal_open_interest_pos": -2943,
-        "overal_volume_pos": 72799
-    },
-    {
-        "total_x_pos_amount": 130976,
-        "total_y_pos_amount": 111513,
-        "total_z_pos_amount": 94273,
-        "total_f_pos_amount": 113736,
-        "overal_open_interest_pos": 17240,
-        "overal_volume_pos": 225249
-    },
-    {
-        "total_x_pos_amount": 141662,
-        "total_y_pos_amount": 122014,
-        "total_z_pos_amount": 132801,
-        "total_f_pos_amount": 152449,
-        "overal_open_interest_pos": -10787,
-        "overal_volume_pos": 274463
-    },
-    {
-        "total_x_pos_amount": 69789,
-        "total_y_pos_amount": 72333,
-        "total_z_pos_amount": 70853,
-        "total_f_pos_amount": 68309,
-        "overal_open_interest_pos": 1480,
-        "overal_volume_pos": 140642
-    },
-    {
-        "total_x_pos_amount": 35467,
-        "total_y_pos_amount": 35498,
-        "total_z_pos_amount": 41911,
-        "total_f_pos_amount": 41880,
-        "overal_open_interest_pos": -6413,
-        "overal_volume_pos": 77378
-    },
-    {
-        "total_x_pos_amount": 158074,
-        "total_y_pos_amount": 156599,
-        "total_z_pos_amount": 135971,
-        "total_f_pos_amount": 137446,
-        "overal_open_interest_pos": 20628,
-        "overal_volume_pos": 294045
-    },
-    {
-        "total_x_pos_amount": 175779,
-        "total_y_pos_amount": 183101,
-        "total_z_pos_amount": 177610,
-        "total_f_pos_amount": 170288,
-        "overal_open_interest_pos": 5491,
-        "overal_volume_pos": 353389
-    },
-    {
-        "total_x_pos_amount": 169918,
-        "total_y_pos_amount": 172980,
-        "total_z_pos_amount": 180086,
-        "total_f_pos_amount": 177024,
-        "overal_open_interest_pos": -7106,
-        "overal_volume_pos": 350004
-    },
-    {
-        "total_x_pos_amount": 207296,
-        "total_y_pos_amount": 205493,
-        "total_z_pos_amount": 177867,
-        "total_f_pos_amount": 179670,
-        "overal_open_interest_pos": 27626,
-        "overal_volume_pos": 385163
-    },
-    {
-        "total_x_pos_amount": 103978,
-        "total_y_pos_amount": 134960,
-        "total_z_pos_amount": 180927,
-        "total_f_pos_amount": 149945,
-        "overal_open_interest_pos": -45967,
-        "overal_volume_pos": 284905
-    },
-    {
-        "total_x_pos_amount": 68622,
-        "total_y_pos_amount": 71120,
-        "total_z_pos_amount": 50631,
-        "total_f_pos_amount": 48133,
-        "overal_open_interest_pos": 20489,
-        "overal_volume_pos": 119253
-    },
-    {
-        "total_x_pos_amount": 26018,
-        "total_y_pos_amount": 29360,
-        "total_z_pos_amount": 49938,
-        "total_f_pos_amount": 46596,
-        "overal_open_interest_pos": -20578,
-        "overal_volume_pos": 75956
-    },
-    {
-        "total_x_pos_amount": 65145,
-        "total_y_pos_amount": 61933,
-        "total_z_pos_amount": 42112,
-        "total_f_pos_amount": 45324,
-        "overal_open_interest_pos": 19821,
-        "overal_volume_pos": 107257
-    },
-    {
-        "total_x_pos_amount": 120159,
-        "total_y_pos_amount": 142987,
-        "total_z_pos_amount": 148607,
-        "total_f_pos_amount": 125779,
-        "overal_open_interest_pos": -5620,
-        "overal_volume_pos": 268766
-    },
-    {
-        "total_x_pos_amount": 134063,
-        "total_y_pos_amount": 132920,
-        "total_z_pos_amount": 131705,
-        "total_f_pos_amount": 132848,
-        "overal_open_interest_pos": 1215,
-        "overal_volume_pos": 265768
-    },
-    {
-        "total_x_pos_amount": 178066,
-        "total_y_pos_amount": 166130,
-        "total_z_pos_amount": 173405,
-        "total_f_pos_amount": 185341,
-        "overal_open_interest_pos": -7275,
-        "overal_volume_pos": 351471
-    },
-    {
-        "total_x_pos_amount": 167477,
-        "total_y_pos_amount": 188552,
-        "total_z_pos_amount": 164954,
-        "total_f_pos_amount": 143879,
-        "overal_open_interest_pos": 23598,
-        "overal_volume_pos": 332431
-    },
-    {
-        "total_x_pos_amount": 111932,
-        "total_y_pos_amount": 114217,
-        "total_z_pos_amount": 104529,
-        "total_f_pos_amount": 102244,
-        "overal_open_interest_pos": 9688,
-        "overal_volume_pos": 216461
-    },
-    {
-        "total_x_pos_amount": 217319,
-        "total_y_pos_amount": 204188,
-        "total_z_pos_amount": 234639,
-        "total_f_pos_amount": 247770,
-        "overal_open_interest_pos": -30451,
-        "overal_volume_pos": 451958
-    },
-    {
-        "total_x_pos_amount": 112485,
-        "total_y_pos_amount": 99603,
-        "total_z_pos_amount": 102402,
-        "total_f_pos_amount": 115284,
-        "overal_open_interest_pos": -2799,
-        "overal_volume_pos": 214887
-    },
-    {
-        "total_x_pos_amount": 219610,
-        "total_y_pos_amount": 202144,
-        "total_z_pos_amount": 193849,
-        "total_f_pos_amount": 211315,
-        "overal_open_interest_pos": 8295,
-        "overal_volume_pos": 413459
-    },
-    {
-        "total_x_pos_amount": 294709,
-        "total_y_pos_amount": 284498,
-        "total_z_pos_amount": 263418,
-        "total_f_pos_amount": 273629,
-        "overal_open_interest_pos": 21080,
-        "overal_volume_pos": 558127
-    },
-    {
-        "total_x_pos_amount": 109236,
-        "total_y_pos_amount": 89903,
-        "total_z_pos_amount": 116400,
-        "total_f_pos_amount": 135733,
-        "overal_open_interest_pos": -26497,
-        "overal_volume_pos": 225636
-    },
-    {
-        "total_x_pos_amount": 50030,
-        "total_y_pos_amount": 56735,
-        "total_z_pos_amount": 67216,
-        "total_f_pos_amount": 60511,
-        "overal_open_interest_pos": -10481,
-        "overal_volume_pos": 117246
-    },
-    {
-        "total_x_pos_amount": 47420,
-        "total_y_pos_amount": 47473,
-        "total_z_pos_amount": 37707,
-        "total_f_pos_amount": 37654,
-        "overal_open_interest_pos": 9766,
-        "overal_volume_pos": 85127
-    },
-    {
-        "total_x_pos_amount": 147646,
-        "total_y_pos_amount": 154570,
-        "total_z_pos_amount": 151193,
-        "total_f_pos_amount": 144269,
-        "overal_open_interest_pos": 3377,
-        "overal_volume_pos": 298839
-    },
-    {
-        "total_x_pos_amount": 191773,
-        "total_y_pos_amount": 173843,
-        "total_z_pos_amount": 154120,
-        "total_f_pos_amount": 172050,
-        "overal_open_interest_pos": 19723,
-        "overal_volume_pos": 345893
-    },
-    {
-        "total_x_pos_amount": 148827,
-        "total_y_pos_amount": 150695,
-        "total_z_pos_amount": 166979,
-        "total_f_pos_amount": 165111,
-        "overal_open_interest_pos": -16284,
-        "overal_volume_pos": 315806
-    },
-    {
-        "total_x_pos_amount": 194239,
-        "total_y_pos_amount": 178086,
-        "total_z_pos_amount": 157332,
-        "total_f_pos_amount": 173485,
-        "overal_open_interest_pos": 20754,
-        "overal_volume_pos": 351571
-    },
-    {
-        "total_x_pos_amount": 22050,
-        "total_y_pos_amount": 22798,
-        "total_z_pos_amount": 51071,
-        "total_f_pos_amount": 50323,
-        "overal_open_interest_pos": -28273,
-        "overal_volume_pos": 73121
-    },
-    {
-        "total_x_pos_amount": 30045,
-        "total_y_pos_amount": 32558,
-        "total_z_pos_amount": 42728,
-        "total_f_pos_amount": 40215,
-        "overal_open_interest_pos": -10170,
-        "overal_volume_pos": 72773
-    },
-    {
-        "total_x_pos_amount": 41903,
-        "total_y_pos_amount": 36819,
-        "total_z_pos_amount": 36709,
-        "total_f_pos_amount": 41793,
-        "overal_open_interest_pos": 110,
-        "overal_volume_pos": 78612
-    },
-    {
-        "total_x_pos_amount": 150778,
-        "total_y_pos_amount": 148332,
-        "total_z_pos_amount": 142996,
-        "total_f_pos_amount": 145442,
-        "overal_open_interest_pos": 5336,
-        "overal_volume_pos": 293774
-    },
-    {
-        "total_x_pos_amount": 135022,
-        "total_y_pos_amount": 145344,
-        "total_z_pos_amount": 133117,
-        "total_f_pos_amount": 122795,
-        "overal_open_interest_pos": 12227,
-        "overal_volume_pos": 268139
-    },
-    {
-        "total_x_pos_amount": 210895,
-        "total_y_pos_amount": 212118,
-        "total_z_pos_amount": 213480,
-        "total_f_pos_amount": 212257,
-        "overal_open_interest_pos": -1362,
-        "overal_volume_pos": 424375
-    },
-    {
-        "total_x_pos_amount": 251914,
-        "total_y_pos_amount": 258348,
-        "total_z_pos_amount": 265336,
-        "total_f_pos_amount": 258902,
-        "overal_open_interest_pos": -6988,
-        "overal_volume_pos": 517250
-    },
-    {
-        "total_x_pos_amount": 160629,
-        "total_y_pos_amount": 134721,
-        "total_z_pos_amount": 124325,
-        "total_f_pos_amount": 150233,
-        "overal_open_interest_pos": 10396,
-        "overal_volume_pos": 284954
-    },
-    {
-        "total_x_pos_amount": 135008,
-        "total_y_pos_amount": 121597,
-        "total_z_pos_amount": 128473,
-        "total_f_pos_amount": 141884,
-        "overal_open_interest_pos": -6876,
-        "overal_volume_pos": 263481
-    },
-    {
-        "total_x_pos_amount": 123889,
-        "total_y_pos_amount": 126941,
-        "total_z_pos_amount": 121727,
-        "total_f_pos_amount": 118675,
-        "overal_open_interest_pos": 5214,
-        "overal_volume_pos": 245616
-    },
-    {
-        "total_x_pos_amount": 114744,
-        "total_y_pos_amount": 98769,
-        "total_z_pos_amount": 111739,
-        "total_f_pos_amount": 127714,
-        "overal_open_interest_pos": -12970,
-        "overal_volume_pos": 226483
-    },
-    {
-        "total_x_pos_amount": 35420,
-        "total_y_pos_amount": 35595,
-        "total_z_pos_amount": 37777,
-        "total_f_pos_amount": 37602,
-        "overal_open_interest_pos": -2182,
-        "overal_volume_pos": 73197
-    },
-    {
-        "total_x_pos_amount": 153678,
-        "total_y_pos_amount": 163282,
-        "total_z_pos_amount": 152030,
-        "total_f_pos_amount": 142426,
-        "overal_open_interest_pos": 11252,
-        "overal_volume_pos": 305708
-    },
-    {
-        "total_x_pos_amount": 32789,
-        "total_y_pos_amount": 30899,
-        "total_z_pos_amount": 42788,
-        "total_f_pos_amount": 44678,
-        "overal_open_interest_pos": -11889,
-        "overal_volume_pos": 75577
-    },
-    {
-        "total_x_pos_amount": 89404,
-        "total_y_pos_amount": 87138,
-        "total_z_pos_amount": 58212,
-        "total_f_pos_amount": 60478,
-        "overal_open_interest_pos": 28926,
-        "overal_volume_pos": 147616
-    },
-    {
-        "total_x_pos_amount": 159990,
-        "total_y_pos_amount": 175533,
-        "total_z_pos_amount": 173275,
-        "total_f_pos_amount": 157732,
-        "overal_open_interest_pos": 2258,
-        "overal_volume_pos": 333265
-    },
-    {
-        "total_x_pos_amount": 21065,
-        "total_y_pos_amount": 24139,
-        "total_z_pos_amount": 53352,
-        "total_f_pos_amount": 50278,
-        "overal_open_interest_pos": -29213,
-        "overal_volume_pos": 74417
-    },
-    {
-        "total_x_pos_amount": 36771,
-        "total_y_pos_amount": 35672,
-        "total_z_pos_amount": 38101,
-        "total_f_pos_amount": 39200,
-        "overal_open_interest_pos": -2429,
-        "overal_volume_pos": 74872
-    },
-    {
-        "total_x_pos_amount": 35012,
-        "total_y_pos_amount": 34438,
-        "total_z_pos_amount": 35303,
-        "total_f_pos_amount": 35877,
-        "overal_open_interest_pos": -865,
-        "overal_volume_pos": 70315
-    },
-    {
-        "total_x_pos_amount": 102540,
-        "total_y_pos_amount": 123317,
-        "total_z_pos_amount": 110487,
-        "total_f_pos_amount": 89710,
-        "overal_open_interest_pos": 12830,
-        "overal_volume_pos": 213027
-    },
-    {
-        "total_x_pos_amount": 41053,
-        "total_y_pos_amount": 41201,
-        "total_z_pos_amount": 54663,
-        "total_f_pos_amount": 54515,
-        "overal_open_interest_pos": -13462,
-        "overal_volume_pos": 95716
-    },
-    {
-        "total_x_pos_amount": 203324,
-        "total_y_pos_amount": 218716,
-        "total_z_pos_amount": 186407,
-        "total_f_pos_amount": 171015,
-        "overal_open_interest_pos": 32309,
-        "overal_volume_pos": 389731
-    },
-    {
-        "total_x_pos_amount": 151743,
-        "total_y_pos_amount": 171562,
-        "total_z_pos_amount": 195501,
-        "total_f_pos_amount": 175682,
-        "overal_open_interest_pos": -23939,
-        "overal_volume_pos": 347244
-    },
-    {
-        "total_x_pos_amount": 86307,
-        "total_y_pos_amount": 97308,
-        "total_z_pos_amount": 78230,
-        "total_f_pos_amount": 67229,
-        "overal_open_interest_pos": 19078,
-        "overal_volume_pos": 164537
-    },
-    {
-        "total_x_pos_amount": 84943,
-        "total_y_pos_amount": 94780,
-        "total_z_pos_amount": 103727,
-        "total_f_pos_amount": 93890,
-        "overal_open_interest_pos": -8947,
-        "overal_volume_pos": 188670
-    },
-    {
-        "total_x_pos_amount": 231789,
-        "total_y_pos_amount": 192321,
-        "total_z_pos_amount": 182710,
-        "total_f_pos_amount": 222178,
-        "overal_open_interest_pos": 9611,
-        "overal_volume_pos": 414499
-    },
-    {
-        "total_x_pos_amount": 201304,
-        "total_y_pos_amount": 216071,
-        "total_z_pos_amount": 220475,
-        "total_f_pos_amount": 205708,
-        "overal_open_interest_pos": -4404,
-        "overal_volume_pos": 421779
-    },
-    {
-        "total_x_pos_amount": 237647,
-        "total_y_pos_amount": 224750,
-        "total_z_pos_amount": 201446,
-        "total_f_pos_amount": 214343,
-        "overal_open_interest_pos": 23304,
-        "overal_volume_pos": 439093
-    },
-    {
-        "total_x_pos_amount": 231721,
-        "total_y_pos_amount": 258120,
-        "total_z_pos_amount": 274493,
-        "total_f_pos_amount": 248094,
-        "overal_open_interest_pos": -16373,
-        "overal_volume_pos": 506214
-    },
-    {
-        "total_x_pos_amount": 286365,
-        "total_y_pos_amount": 256435,
-        "total_z_pos_amount": 270852,
-        "total_f_pos_amount": 300782,
-        "overal_open_interest_pos": -14417,
-        "overal_volume_pos": 557217
-    },
-    {
-        "total_x_pos_amount": 241920,
-        "total_y_pos_amount": 236915,
-        "total_z_pos_amount": 209049,
-        "total_f_pos_amount": 214054,
-        "overal_open_interest_pos": 27866,
-        "overal_volume_pos": 450969
-    },
-    {
-        "total_x_pos_amount": 201812,
-        "total_y_pos_amount": 219724,
-        "total_z_pos_amount": 232800,
-        "total_f_pos_amount": 214888,
-        "overal_open_interest_pos": -13076,
-        "overal_volume_pos": 434612
-    },
-    {
-        "total_x_pos_amount": 104896,
-        "total_y_pos_amount": 119462,
-        "total_z_pos_amount": 147448,
-        "total_f_pos_amount": 132882,
-        "overal_open_interest_pos": -27986,
-        "overal_volume_pos": 252344
-    },
-    {
-        "total_x_pos_amount": 35930,
-        "total_y_pos_amount": 38621,
-        "total_z_pos_amount": 41628,
-        "total_f_pos_amount": 38937,
-        "overal_open_interest_pos": -3007,
-        "overal_volume_pos": 77558
-    },
-    {
-        "total_x_pos_amount": 209677,
-        "total_y_pos_amount": 205839,
-        "total_z_pos_amount": 188146,
-        "total_f_pos_amount": 191984,
-        "overal_open_interest_pos": 17693,
-        "overal_volume_pos": 397823
-    },
-    {
-        "total_x_pos_amount": 155851,
-        "total_y_pos_amount": 182301,
-        "total_z_pos_amount": 159316,
-        "total_f_pos_amount": 132866,
-        "overal_open_interest_pos": 22985,
-        "overal_volume_pos": 315167
-    },
-    {
-        "total_x_pos_amount": 182628,
-        "total_y_pos_amount": 201794,
-        "total_z_pos_amount": 218816,
-        "total_f_pos_amount": 199650,
-        "overal_open_interest_pos": -17022,
-        "overal_volume_pos": 401444
-    },
-    {
-        "total_x_pos_amount": 156810,
-        "total_y_pos_amount": 171902,
-        "total_z_pos_amount": 189749,
-        "total_f_pos_amount": 174657,
-        "overal_open_interest_pos": -17847,
-        "overal_volume_pos": 346559
-    },
-    {
-        "total_x_pos_amount": 155008,
-        "total_y_pos_amount": 132334,
-        "total_z_pos_amount": 133163,
-        "total_f_pos_amount": 155837,
-        "overal_open_interest_pos": -829,
-        "overal_volume_pos": 288171
-    },
-    {
-        "total_x_pos_amount": 51473,
-        "total_y_pos_amount": 49380,
-        "total_z_pos_amount": 45727,
-        "total_f_pos_amount": 47820,
-        "overal_open_interest_pos": 3653,
-        "overal_volume_pos": 97200
-    },
-    {
-        "total_x_pos_amount": 262808,
-        "total_y_pos_amount": 230288,
-        "total_z_pos_amount": 203456,
-        "total_f_pos_amount": 235976,
-        "overal_open_interest_pos": 26832,
-        "overal_volume_pos": 466264
-    },
-    {
-        "total_x_pos_amount": 27778,
-        "total_y_pos_amount": 24847,
-        "total_z_pos_amount": 48746,
-        "total_f_pos_amount": 51677,
-        "overal_open_interest_pos": -23899,
-        "overal_volume_pos": 76524
-    },
-    {
-        "total_x_pos_amount": 182995,
-        "total_y_pos_amount": 193287,
-        "total_z_pos_amount": 181804,
-        "total_f_pos_amount": 171512,
-        "overal_open_interest_pos": 11483,
-        "overal_volume_pos": 364799
-    },
-    {
-        "total_x_pos_amount": 195268,
-        "total_y_pos_amount": 195904,
-        "total_z_pos_amount": 183876,
-        "total_f_pos_amount": 183240,
-        "overal_open_interest_pos": 12028,
-        "overal_volume_pos": 379144
-    },
-    {
-        "total_x_pos_amount": 265187,
-        "total_y_pos_amount": 240130,
-        "total_z_pos_amount": 246280,
-        "total_f_pos_amount": 271337,
-        "overal_open_interest_pos": -6150,
-        "overal_volume_pos": 511467
-    },
-    {
-        "total_x_pos_amount": 232892,
-        "total_y_pos_amount": 206442,
-        "total_z_pos_amount": 189924,
-        "total_f_pos_amount": 216374,
-        "overal_open_interest_pos": 16518,
-        "overal_volume_pos": 422816
-    },
-    {
-        "total_x_pos_amount": 89491,
-        "total_y_pos_amount": 109453,
-        "total_z_pos_amount": 139932,
-        "total_f_pos_amount": 119970,
-        "overal_open_interest_pos": -30479,
-        "overal_volume_pos": 229423
-    },
-    {
-        "total_x_pos_amount": 199514,
-        "total_y_pos_amount": 193186,
-        "total_z_pos_amount": 190298,
-        "total_f_pos_amount": 196626,
-        "overal_open_interest_pos": 2888,
-        "overal_volume_pos": 389812
-    },
-    {
-        "total_x_pos_amount": 201716,
-        "total_y_pos_amount": 207249,
-        "total_z_pos_amount": 212113,
-        "total_f_pos_amount": 206580,
-        "overal_open_interest_pos": -4864,
-        "overal_volume_pos": 413829
-    },
-    {
-        "total_x_pos_amount": 69154,
-        "total_y_pos_amount": 76279,
-        "total_z_pos_amount": 89294,
-        "total_f_pos_amount": 82169,
-        "overal_open_interest_pos": -13015,
-        "overal_volume_pos": 158448
-    },
-    {
-        "total_x_pos_amount": 94139,
-        "total_y_pos_amount": 90663,
-        "total_z_pos_amount": 86736,
-        "total_f_pos_amount": 90212,
-        "overal_open_interest_pos": 3927,
-        "overal_volume_pos": 180875
-    },
-    {
-        "total_x_pos_amount": 111573,
-        "total_y_pos_amount": 130236,
-        "total_z_pos_amount": 125509,
-        "total_f_pos_amount": 106846,
-        "overal_open_interest_pos": 4727,
-        "overal_volume_pos": 237082
-    },
-    {
-        "total_x_pos_amount": 32003,
-        "total_y_pos_amount": 33671,
-        "total_z_pos_amount": 41212,
-        "total_f_pos_amount": 39544,
-        "overal_open_interest_pos": -7541,
-        "overal_volume_pos": 73215
-    },
-    {
-        "total_x_pos_amount": 190091,
-        "total_y_pos_amount": 202667,
-        "total_z_pos_amount": 170566,
-        "total_f_pos_amount": 157990,
-        "overal_open_interest_pos": 32101,
-        "overal_volume_pos": 360657
-    },
-    {
-        "total_x_pos_amount": 193551,
-        "total_y_pos_amount": 144036,
-        "total_z_pos_amount": 166467,
-        "total_f_pos_amount": 215982,
-        "overal_open_interest_pos": -22431,
-        "overal_volume_pos": 360018
-    },
-    {
-        "total_x_pos_amount": 87716,
-        "total_y_pos_amount": 88541,
-        "total_z_pos_amount": 84605,
-        "total_f_pos_amount": 83780,
-        "overal_open_interest_pos": 3936,
-        "overal_volume_pos": 172321
-    },
-    {
-        "total_x_pos_amount": 80653,
-        "total_y_pos_amount": 85321,
-        "total_z_pos_amount": 77988,
-        "total_f_pos_amount": 73320,
-        "overal_open_interest_pos": 7333,
-        "overal_volume_pos": 158641
-    },
-    {
-        "total_x_pos_amount": 66767,
-        "total_y_pos_amount": 60133,
-        "total_z_pos_amount": 76815,
-        "total_f_pos_amount": 83449,
-        "overal_open_interest_pos": -16682,
-        "overal_volume_pos": 143582
-    },
-    {
-        "total_x_pos_amount": 142890,
-        "total_y_pos_amount": 177246,
-        "total_z_pos_amount": 174479,
-        "total_f_pos_amount": 140123,
-        "overal_open_interest_pos": 2767,
-        "overal_volume_pos": 317369
-    },
-    {
-        "total_x_pos_amount": 132802,
-        "total_y_pos_amount": 133000,
-        "total_z_pos_amount": 122132,
-        "total_f_pos_amount": 121934,
-        "overal_open_interest_pos": 10868,
-        "overal_volume_pos": 254934
-    },
-    {
-        "total_x_pos_amount": 79962,
-        "total_y_pos_amount": 74092,
-        "total_z_pos_amount": 75180,
-        "total_f_pos_amount": 81050,
-        "overal_open_interest_pos": -1088,
-        "overal_volume_pos": 155142
-    },
-    {
-        "total_x_pos_amount": 84727,
-        "total_y_pos_amount": 86429,
-        "total_z_pos_amount": 60838,
-        "total_f_pos_amount": 59136,
-        "overal_open_interest_pos": 25591,
-        "overal_volume_pos": 145565
-    },
-    {
-        "total_x_pos_amount": 146143,
-        "total_y_pos_amount": 124255,
-        "total_z_pos_amount": 148669,
-        "total_f_pos_amount": 170557,
-        "overal_open_interest_pos": -24414,
-        "overal_volume_pos": 294812
-    },
-    {
-        "total_x_pos_amount": 131331,
-        "total_y_pos_amount": 122931,
-        "total_z_pos_amount": 124089,
-        "total_f_pos_amount": 132489,
-        "overal_open_interest_pos": -1158,
-        "overal_volume_pos": 255420
-    },
-    {
-        "total_x_pos_amount": 47639,
-        "total_y_pos_amount": 51047,
-        "total_z_pos_amount": 69142,
-        "total_f_pos_amount": 65734,
-        "overal_open_interest_pos": -18095,
-        "overal_volume_pos": 116781
-    },
-    {
-        "total_x_pos_amount": 48015,
-        "total_y_pos_amount": 43544,
-        "total_z_pos_amount": 39431,
-        "total_f_pos_amount": 43902,
-        "overal_open_interest_pos": 4113,
-        "overal_volume_pos": 87446
-    },
-    {
-        "total_x_pos_amount": 298996,
-        "total_y_pos_amount": 253016,
-        "total_z_pos_amount": 215304,
-        "total_f_pos_amount": 261284,
-        "overal_open_interest_pos": 37712,
-        "overal_volume_pos": 514300
-    },
-    {
-        "total_x_pos_amount": 254073,
-        "total_y_pos_amount": 237828,
-        "total_z_pos_amount": 249503,
-        "total_f_pos_amount": 265748,
-        "overal_open_interest_pos": -11675,
-        "overal_volume_pos": 503576
-    },
-    {
-        "total_x_pos_amount": 147078,
-        "total_y_pos_amount": 158016,
-        "total_z_pos_amount": 170865,
-        "total_f_pos_amount": 159927,
-        "overal_open_interest_pos": -12849,
-        "overal_volume_pos": 317943
-    },
-    {
-        "total_x_pos_amount": 108337,
-        "total_y_pos_amount": 109266,
-        "total_z_pos_amount": 109266,
-        "total_f_pos_amount": 108337,
+        "total_x_pos_amount": 3441508,
+        "total_y_pos_amount": 1670759,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 1770749,
+        "overal_open_interest_pos": 1670759,
+        "overal_volume_pos": 3441508
+    },
+    {
+        "total_x_pos_amount": 3124906,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 3124906,
         "overal_open_interest_pos": 0,
-        "overal_volume_pos": 217603
+        "overal_volume_pos": 3124906
     },
     {
-        "total_x_pos_amount": 121166,
-        "total_y_pos_amount": 130540,
-        "total_z_pos_amount": 135256,
-        "total_f_pos_amount": 125882,
-        "overal_open_interest_pos": -4716,
-        "overal_volume_pos": 256422
+        "total_x_pos_amount": 4515409,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 4515409,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 4515409
     },
     {
-        "total_x_pos_amount": 106397,
-        "total_y_pos_amount": 117504,
-        "total_z_pos_amount": 107986,
-        "total_f_pos_amount": 96879,
-        "overal_open_interest_pos": 9518,
-        "overal_volume_pos": 214383
+        "total_x_pos_amount": 13897828,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 13897828,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 13897828
     },
     {
-        "total_x_pos_amount": 51531,
-        "total_y_pos_amount": 54708,
-        "total_z_pos_amount": 51591,
-        "total_f_pos_amount": 48414,
-        "overal_open_interest_pos": 3117,
-        "overal_volume_pos": 103122
+        "total_x_pos_amount": 5452492,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 5452492,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 5452492
     },
     {
-        "total_x_pos_amount": 221726,
-        "total_y_pos_amount": 187682,
-        "total_z_pos_amount": 172446,
-        "total_f_pos_amount": 206490,
-        "overal_open_interest_pos": 15236,
-        "overal_volume_pos": 394172
+        "total_x_pos_amount": 8756218,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 8756218,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 8756218
     },
     {
-        "total_x_pos_amount": 24849,
-        "total_y_pos_amount": 22520,
-        "total_z_pos_amount": 62232,
-        "total_f_pos_amount": 64561,
-        "overal_open_interest_pos": -39712,
-        "overal_volume_pos": 87081
+        "total_x_pos_amount": 4318860,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 4318860,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 4318860
     },
     {
-        "total_x_pos_amount": 133601,
-        "total_y_pos_amount": 136789,
-        "total_z_pos_amount": 129906,
-        "total_f_pos_amount": 126718,
-        "overal_open_interest_pos": 6883,
-        "overal_volume_pos": 263507
+        "total_x_pos_amount": 3812029,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 3812029,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 3812029
     },
     {
-        "total_x_pos_amount": 155163,
-        "total_y_pos_amount": 152083,
-        "total_z_pos_amount": 142376,
-        "total_f_pos_amount": 145456,
-        "overal_open_interest_pos": 9707,
-        "overal_volume_pos": 297539
+        "total_x_pos_amount": 5782042,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 5782042,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 5782042
     },
     {
-        "total_x_pos_amount": 193967,
-        "total_y_pos_amount": 199295,
-        "total_z_pos_amount": 189882,
-        "total_f_pos_amount": 184554,
-        "overal_open_interest_pos": 9413,
-        "overal_volume_pos": 383849
+        "total_x_pos_amount": 12910319,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 12910319,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 12910319
     },
     {
-        "total_x_pos_amount": 226040,
-        "total_y_pos_amount": 217431,
-        "total_z_pos_amount": 218206,
-        "total_f_pos_amount": 226815,
-        "overal_open_interest_pos": -775,
-        "overal_volume_pos": 444246
+        "total_x_pos_amount": 15029643,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 15029643,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 15029643
     },
     {
-        "total_x_pos_amount": 182345,
-        "total_y_pos_amount": 193509,
-        "total_z_pos_amount": 194550,
-        "total_f_pos_amount": 183386,
-        "overal_open_interest_pos": -1041,
-        "overal_volume_pos": 376895
+        "total_x_pos_amount": 14325249,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 14325249,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 14325249
     },
     {
-        "total_x_pos_amount": 24152,
-        "total_y_pos_amount": 26586,
-        "total_z_pos_amount": 52187,
-        "total_f_pos_amount": 49753,
-        "overal_open_interest_pos": -25601,
-        "overal_volume_pos": 76339
+        "total_x_pos_amount": 12289491,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 12289491,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 12289491
     },
     {
-        "total_x_pos_amount": 217303,
-        "total_y_pos_amount": 211308,
-        "total_z_pos_amount": 179712,
-        "total_f_pos_amount": 185707,
-        "overal_open_interest_pos": 31596,
-        "overal_volume_pos": 397015
+        "total_x_pos_amount": 1390858,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 1390858,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 1390858
     },
     {
-        "total_x_pos_amount": 172322,
-        "total_y_pos_amount": 153512,
-        "total_z_pos_amount": 176840,
-        "total_f_pos_amount": 195650,
-        "overal_open_interest_pos": -23328,
-        "overal_volume_pos": 349162
-    },
-    {
-        "total_x_pos_amount": 124836,
-        "total_y_pos_amount": 150508,
-        "total_z_pos_amount": 139651,
-        "total_f_pos_amount": 113979,
-        "overal_open_interest_pos": 10857,
-        "overal_volume_pos": 264487
-    },
-    {
-        "total_x_pos_amount": 206296,
-        "total_y_pos_amount": 206893,
-        "total_z_pos_amount": 196000,
-        "total_f_pos_amount": 195403,
-        "overal_open_interest_pos": 10893,
-        "overal_volume_pos": 402296
-    },
-    {
-        "total_x_pos_amount": 293018,
-        "total_y_pos_amount": 287733,
-        "total_z_pos_amount": 285203,
-        "total_f_pos_amount": 290488,
-        "overal_open_interest_pos": 2530,
-        "overal_volume_pos": 578221
-    },
-    {
-        "total_x_pos_amount": 172806,
-        "total_y_pos_amount": 167884,
-        "total_z_pos_amount": 188003,
-        "total_f_pos_amount": 192925,
-        "overal_open_interest_pos": -20119,
-        "overal_volume_pos": 360809
-    },
-    {
-        "total_x_pos_amount": 99408,
-        "total_y_pos_amount": 112779,
-        "total_z_pos_amount": 116922,
-        "total_f_pos_amount": 103551,
-        "overal_open_interest_pos": -4143,
-        "overal_volume_pos": 216330
-    },
-    {
-        "total_x_pos_amount": 33068,
-        "total_y_pos_amount": 34724,
-        "total_z_pos_amount": 42885,
-        "total_f_pos_amount": 41229,
-        "overal_open_interest_pos": -8161,
-        "overal_volume_pos": 75953
-    },
-    {
-        "total_x_pos_amount": 36858,
-        "total_y_pos_amount": 37316,
-        "total_z_pos_amount": 36939,
-        "total_f_pos_amount": 36481,
-        "overal_open_interest_pos": 377,
-        "overal_volume_pos": 73797
-    },
-    {
-        "total_x_pos_amount": 102985,
-        "total_y_pos_amount": 119022,
-        "total_z_pos_amount": 106892,
-        "total_f_pos_amount": 90855,
-        "overal_open_interest_pos": 12130,
-        "overal_volume_pos": 209877
-    },
-    {
-        "total_x_pos_amount": 150401,
-        "total_y_pos_amount": 185541,
-        "total_z_pos_amount": 184551,
-        "total_f_pos_amount": 149411,
-        "overal_open_interest_pos": 990,
-        "overal_volume_pos": 334952
-    },
-    {
-        "total_x_pos_amount": 65547,
-        "total_y_pos_amount": 62959,
-        "total_z_pos_amount": 62371,
-        "total_f_pos_amount": 64959,
-        "overal_open_interest_pos": 588,
-        "overal_volume_pos": 127918
-    },
-    {
-        "total_x_pos_amount": 185069,
-        "total_y_pos_amount": 169043,
-        "total_z_pos_amount": 156325,
-        "total_f_pos_amount": 172351,
-        "overal_open_interest_pos": 12718,
-        "overal_volume_pos": 341394
-    },
-    {
-        "total_x_pos_amount": 164767,
-        "total_y_pos_amount": 166465,
-        "total_z_pos_amount": 176826,
-        "total_f_pos_amount": 175128,
-        "overal_open_interest_pos": -10361,
-        "overal_volume_pos": 341593
-    },
-    {
-        "total_x_pos_amount": 162903,
-        "total_y_pos_amount": 128856,
-        "total_z_pos_amount": 134897,
-        "total_f_pos_amount": 168944,
-        "overal_open_interest_pos": -6041,
-        "overal_volume_pos": 297800
-    },
-    {
-        "total_x_pos_amount": 121434,
-        "total_y_pos_amount": 126461,
-        "total_z_pos_amount": 127173,
-        "total_f_pos_amount": 122146,
-        "overal_open_interest_pos": -712,
-        "overal_volume_pos": 248607
-    },
-    {
-        "total_x_pos_amount": 71450,
-        "total_y_pos_amount": 76590,
-        "total_z_pos_amount": 86607,
-        "total_f_pos_amount": 81467,
-        "overal_open_interest_pos": -10017,
-        "overal_volume_pos": 158057
-    },
-    {
-        "total_x_pos_amount": 36335,
-        "total_y_pos_amount": 35875,
-        "total_z_pos_amount": 36569,
-        "total_f_pos_amount": 37029,
-        "overal_open_interest_pos": -694,
-        "overal_volume_pos": 72904
-    },
-    {
-        "total_x_pos_amount": 273375,
-        "total_y_pos_amount": 256694,
-        "total_z_pos_amount": 214622,
-        "total_f_pos_amount": 231303,
-        "overal_open_interest_pos": 42072,
-        "overal_volume_pos": 487997
-    },
-    {
-        "total_x_pos_amount": 196040,
-        "total_y_pos_amount": 200860,
-        "total_z_pos_amount": 214893,
-        "total_f_pos_amount": 210073,
-        "overal_open_interest_pos": -14033,
-        "overal_volume_pos": 410933
-    },
-    {
-        "total_x_pos_amount": 247005,
-        "total_y_pos_amount": 257444,
-        "total_z_pos_amount": 258968,
-        "total_f_pos_amount": 248529,
-        "overal_open_interest_pos": -1524,
-        "overal_volume_pos": 505973
-    },
-    {
-        "total_x_pos_amount": 184401,
-        "total_y_pos_amount": 178756,
-        "total_z_pos_amount": 180715,
-        "total_f_pos_amount": 186360,
-        "overal_open_interest_pos": -1959,
-        "overal_volume_pos": 365116
-    },
-    {
-        "total_x_pos_amount": 67927,
-        "total_y_pos_amount": 69258,
-        "total_z_pos_amount": 82662,
-        "total_f_pos_amount": 81331,
-        "overal_open_interest_pos": -13404,
-        "overal_volume_pos": 150589
-    },
-    {
-        "total_x_pos_amount": 96857,
-        "total_y_pos_amount": 106829,
-        "total_z_pos_amount": 91572,
-        "total_f_pos_amount": 81600,
-        "overal_open_interest_pos": 15257,
-        "overal_volume_pos": 188429
-    },
-    {
-        "total_x_pos_amount": 223800,
-        "total_y_pos_amount": 231586,
-        "total_z_pos_amount": 227642,
-        "total_f_pos_amount": 219856,
-        "overal_open_interest_pos": 3944,
-        "overal_volume_pos": 451442
-    },
-    {
-        "total_x_pos_amount": 141559,
-        "total_y_pos_amount": 137844,
-        "total_z_pos_amount": 153584,
-        "total_f_pos_amount": 157299,
-        "overal_open_interest_pos": -15740,
-        "overal_volume_pos": 295143
-    },
-    {
-        "total_x_pos_amount": 242948,
-        "total_y_pos_amount": 189476,
-        "total_z_pos_amount": 191383,
-        "total_f_pos_amount": 244855,
-        "overal_open_interest_pos": -1907,
-        "overal_volume_pos": 434331
-    },
-    {
-        "total_x_pos_amount": 46749,
-        "total_y_pos_amount": 45878,
-        "total_z_pos_amount": 55837,
-        "total_f_pos_amount": 56708,
-        "overal_open_interest_pos": -9959,
-        "overal_volume_pos": 102586
-    },
-    {
-        "total_x_pos_amount": 161295,
-        "total_y_pos_amount": 167748,
-        "total_z_pos_amount": 143843,
-        "total_f_pos_amount": 137390,
-        "overal_open_interest_pos": 23905,
-        "overal_volume_pos": 305138
-    },
-    {
-        "total_x_pos_amount": 184057,
-        "total_y_pos_amount": 180685,
-        "total_z_pos_amount": 181495,
-        "total_f_pos_amount": 184867,
-        "overal_open_interest_pos": -810,
-        "overal_volume_pos": 365552
-    },
-    {
-        "total_x_pos_amount": 54866,
-        "total_y_pos_amount": 50413,
-        "total_z_pos_amount": 74230,
-        "total_f_pos_amount": 78683,
-        "overal_open_interest_pos": -23817,
-        "overal_volume_pos": 129096
-    },
-    {
-        "total_x_pos_amount": 59825,
-        "total_y_pos_amount": 60828,
-        "total_z_pos_amount": 48688,
-        "total_f_pos_amount": 47685,
-        "overal_open_interest_pos": 12140,
-        "overal_volume_pos": 108513
-    },
-    {
-        "total_x_pos_amount": 155763,
-        "total_y_pos_amount": 151223,
-        "total_z_pos_amount": 146337,
-        "total_f_pos_amount": 150877,
-        "overal_open_interest_pos": 4886,
-        "overal_volume_pos": 302100
-    },
-    {
-        "total_x_pos_amount": 155592,
-        "total_y_pos_amount": 167498,
-        "total_z_pos_amount": 170460,
-        "total_f_pos_amount": 158554,
-        "overal_open_interest_pos": -2962,
-        "overal_volume_pos": 326052
-    },
-    {
-        "total_x_pos_amount": 191119,
-        "total_y_pos_amount": 178289,
-        "total_z_pos_amount": 146592,
-        "total_f_pos_amount": 159422,
-        "overal_open_interest_pos": 31697,
-        "overal_volume_pos": 337711
-    },
-    {
-        "total_x_pos_amount": 253128,
-        "total_y_pos_amount": 235443,
-        "total_z_pos_amount": 251123,
-        "total_f_pos_amount": 268808,
-        "overal_open_interest_pos": -15680,
-        "overal_volume_pos": 504251
-    },
-    {
-        "total_x_pos_amount": 59918,
-        "total_y_pos_amount": 62256,
-        "total_z_pos_amount": 78989,
-        "total_f_pos_amount": 76651,
-        "overal_open_interest_pos": -16733,
-        "overal_volume_pos": 138907
-    },
-    {
-        "total_x_pos_amount": 37138,
-        "total_y_pos_amount": 38324,
-        "total_z_pos_amount": 51748,
-        "total_f_pos_amount": 50562,
-        "overal_open_interest_pos": -13424,
-        "overal_volume_pos": 88886
-    },
-    {
-        "total_x_pos_amount": 136790,
-        "total_y_pos_amount": 107338,
-        "total_z_pos_amount": 97539,
-        "total_f_pos_amount": 126991,
-        "overal_open_interest_pos": 9799,
-        "overal_volume_pos": 234329
-    },
-    {
-        "total_x_pos_amount": 129231,
-        "total_y_pos_amount": 121889,
-        "total_z_pos_amount": 121680,
-        "total_f_pos_amount": 129022,
-        "overal_open_interest_pos": 209,
-        "overal_volume_pos": 250911
-    },
-    {
-        "total_x_pos_amount": 92812,
-        "total_y_pos_amount": 100652,
-        "total_z_pos_amount": 109017,
-        "total_f_pos_amount": 101177,
-        "overal_open_interest_pos": -8365,
-        "overal_volume_pos": 201829
-    },
-    {
-        "total_x_pos_amount": 36634,
-        "total_y_pos_amount": 37972,
-        "total_z_pos_amount": 39266,
-        "total_f_pos_amount": 37928,
-        "overal_open_interest_pos": -1294,
-        "overal_volume_pos": 75900
-    },
-    {
-        "total_x_pos_amount": 136219,
-        "total_y_pos_amount": 132992,
-        "total_z_pos_amount": 121060,
-        "total_f_pos_amount": 124287,
-        "overal_open_interest_pos": 11932,
-        "overal_volume_pos": 257279
-    },
-    {
-        "total_x_pos_amount": 114925,
-        "total_y_pos_amount": 110951,
-        "total_z_pos_amount": 107029,
-        "total_f_pos_amount": 111003,
-        "overal_open_interest_pos": 3922,
-        "overal_volume_pos": 221954
-    },
-    {
-        "total_x_pos_amount": 75062,
-        "total_y_pos_amount": 89182,
-        "total_z_pos_amount": 106120,
-        "total_f_pos_amount": 92000,
-        "overal_open_interest_pos": -16938,
-        "overal_volume_pos": 181182
-    },
-    {
-        "total_x_pos_amount": 138730,
-        "total_y_pos_amount": 141790,
-        "total_z_pos_amount": 120916,
-        "total_f_pos_amount": 117856,
-        "overal_open_interest_pos": 20874,
-        "overal_volume_pos": 259646
-    },
-    {
-        "total_x_pos_amount": 44468,
-        "total_y_pos_amount": 48592,
-        "total_z_pos_amount": 66243,
-        "total_f_pos_amount": 62119,
-        "overal_open_interest_pos": -17651,
-        "overal_volume_pos": 110711
-    },
-    {
-        "total_x_pos_amount": 154073,
-        "total_y_pos_amount": 158057,
-        "total_z_pos_amount": 126709,
-        "total_f_pos_amount": 122725,
-        "overal_open_interest_pos": 31348,
-        "overal_volume_pos": 280782
-    },
-    {
-        "total_x_pos_amount": 19498,
-        "total_y_pos_amount": 20638,
-        "total_z_pos_amount": 54801,
-        "total_f_pos_amount": 53661,
-        "overal_open_interest_pos": -34163,
-        "overal_volume_pos": 74299
-    },
-    {
-        "total_x_pos_amount": 171827,
-        "total_y_pos_amount": 179039,
-        "total_z_pos_amount": 148284,
-        "total_f_pos_amount": 141072,
-        "overal_open_interest_pos": 30755,
-        "overal_volume_pos": 320111
-    },
-    {
-        "total_x_pos_amount": 236344,
-        "total_y_pos_amount": 184771,
-        "total_z_pos_amount": 202006,
-        "total_f_pos_amount": 253579,
-        "overal_open_interest_pos": -17235,
-        "overal_volume_pos": 438350
-    },
-    {
-        "total_x_pos_amount": 30717,
-        "total_y_pos_amount": 31049,
-        "total_z_pos_amount": 43526,
-        "total_f_pos_amount": 43194,
-        "overal_open_interest_pos": -12477,
-        "overal_volume_pos": 74243
-    },
-    {
-        "total_x_pos_amount": 39091,
-        "total_y_pos_amount": 37455,
-        "total_z_pos_amount": 38438,
-        "total_f_pos_amount": 40074,
-        "overal_open_interest_pos": -983,
-        "overal_volume_pos": 77529
-    },
-    {
-        "total_x_pos_amount": 121467,
-        "total_y_pos_amount": 133852,
-        "total_z_pos_amount": 111811,
-        "total_f_pos_amount": 99426,
-        "overal_open_interest_pos": 22041,
-        "overal_volume_pos": 233278
-    },
-    {
-        "total_x_pos_amount": 129220,
-        "total_y_pos_amount": 127683,
-        "total_z_pos_amount": 132823,
-        "total_f_pos_amount": 134360,
-        "overal_open_interest_pos": -5140,
-        "overal_volume_pos": 262043
-    },
-    {
-        "total_x_pos_amount": 131882,
-        "total_y_pos_amount": 132537,
-        "total_z_pos_amount": 143705,
-        "total_f_pos_amount": 143050,
-        "overal_open_interest_pos": -11168,
-        "overal_volume_pos": 275587
-    },
-    {
-        "total_x_pos_amount": 166218,
-        "total_y_pos_amount": 159270,
-        "total_z_pos_amount": 138221,
-        "total_f_pos_amount": 145169,
-        "overal_open_interest_pos": 21049,
-        "overal_volume_pos": 304439
-    },
-    {
-        "total_x_pos_amount": 277865,
-        "total_y_pos_amount": 307535,
-        "total_z_pos_amount": 314024,
-        "total_f_pos_amount": 284354,
-        "overal_open_interest_pos": -6489,
-        "overal_volume_pos": 591889
-    },
-    {
-        "total_x_pos_amount": 233339,
-        "total_y_pos_amount": 217473,
-        "total_z_pos_amount": 226420,
-        "total_f_pos_amount": 242286,
-        "overal_open_interest_pos": -8947,
-        "overal_volume_pos": 459759
-    },
-    {
-        "total_x_pos_amount": 89874,
-        "total_y_pos_amount": 88607,
-        "total_z_pos_amount": 97926,
-        "total_f_pos_amount": 99193,
-        "overal_open_interest_pos": -9319,
-        "overal_volume_pos": 187800
-    },
-    {
-        "total_x_pos_amount": 75456,
-        "total_y_pos_amount": 66264,
-        "total_z_pos_amount": 56665,
-        "total_f_pos_amount": 65857,
-        "overal_open_interest_pos": 9599,
-        "overal_volume_pos": 132121
-    },
-    {
-        "total_x_pos_amount": 97943,
-        "total_y_pos_amount": 96582,
-        "total_z_pos_amount": 101063,
-        "total_f_pos_amount": 102424,
-        "overal_open_interest_pos": -4481,
-        "overal_volume_pos": 199006
-    },
-    {
-        "total_x_pos_amount": 32258,
-        "total_y_pos_amount": 33313,
-        "total_z_pos_amount": 39948,
-        "total_f_pos_amount": 38893,
-        "overal_open_interest_pos": -6635,
-        "overal_volume_pos": 72206
-    },
-    {
-        "total_x_pos_amount": 34549,
-        "total_y_pos_amount": 38744,
-        "total_z_pos_amount": 40524,
-        "total_f_pos_amount": 36329,
-        "overal_open_interest_pos": -1780,
-        "overal_volume_pos": 75073
-    },
-    {
-        "total_x_pos_amount": 122194,
-        "total_y_pos_amount": 127141,
-        "total_z_pos_amount": 104925,
-        "total_f_pos_amount": 99978,
-        "overal_open_interest_pos": 22216,
-        "overal_volume_pos": 227119
-    },
-    {
-        "total_x_pos_amount": 60345,
-        "total_y_pos_amount": 65931,
-        "total_z_pos_amount": 85222,
-        "total_f_pos_amount": 79636,
-        "overal_open_interest_pos": -19291,
-        "overal_volume_pos": 145567
-    },
-    {
-        "total_x_pos_amount": 95860,
-        "total_y_pos_amount": 93069,
-        "total_z_pos_amount": 76786,
-        "total_f_pos_amount": 79577,
-        "overal_open_interest_pos": 16283,
-        "overal_volume_pos": 172646
-    },
-    {
-        "total_x_pos_amount": 86496,
-        "total_y_pos_amount": 85581,
-        "total_z_pos_amount": 83989,
-        "total_f_pos_amount": 84904,
-        "overal_open_interest_pos": 1592,
-        "overal_volume_pos": 170485
-    },
-    {
-        "total_x_pos_amount": 222240,
-        "total_y_pos_amount": 232661,
-        "total_z_pos_amount": 240035,
-        "total_f_pos_amount": 229614,
-        "overal_open_interest_pos": -7374,
-        "overal_volume_pos": 462275
-    },
-    {
-        "total_x_pos_amount": 234284,
-        "total_y_pos_amount": 207946,
-        "total_z_pos_amount": 196023,
-        "total_f_pos_amount": 222361,
-        "overal_open_interest_pos": 11923,
-        "overal_volume_pos": 430307
-    },
-    {
-        "total_x_pos_amount": 238439,
-        "total_y_pos_amount": 263537,
-        "total_z_pos_amount": 256341,
-        "total_f_pos_amount": 231243,
-        "overal_open_interest_pos": 7196,
-        "overal_volume_pos": 494780
-    },
-    {
-        "total_x_pos_amount": 25125,
-        "total_y_pos_amount": 28020,
-        "total_z_pos_amount": 50806,
-        "total_f_pos_amount": 47911,
-        "overal_open_interest_pos": -22786,
-        "overal_volume_pos": 75931
-    },
-    {
-        "total_x_pos_amount": 82584,
-        "total_y_pos_amount": 93559,
-        "total_z_pos_amount": 98381,
-        "total_f_pos_amount": 87406,
-        "overal_open_interest_pos": -4822,
-        "overal_volume_pos": 180965
-    },
-    {
-        "total_x_pos_amount": 119727,
-        "total_y_pos_amount": 126604,
-        "total_z_pos_amount": 81256,
-        "total_f_pos_amount": 74379,
-        "overal_open_interest_pos": 45348,
-        "overal_volume_pos": 200983
-    },
-    {
-        "total_x_pos_amount": 157119,
-        "total_y_pos_amount": 147970,
-        "total_z_pos_amount": 180576,
-        "total_f_pos_amount": 189725,
-        "overal_open_interest_pos": -32606,
-        "overal_volume_pos": 337695
-    },
-    {
-        "total_x_pos_amount": 213131,
-        "total_y_pos_amount": 233114,
-        "total_z_pos_amount": 212004,
-        "total_f_pos_amount": 192021,
-        "overal_open_interest_pos": 21110,
-        "overal_volume_pos": 425135
-    },
-    {
-        "total_x_pos_amount": 229395,
-        "total_y_pos_amount": 226783,
-        "total_z_pos_amount": 224446,
-        "total_f_pos_amount": 227058,
-        "overal_open_interest_pos": 2337,
-        "overal_volume_pos": 453841
-    },
-    {
-        "total_x_pos_amount": 82984,
-        "total_y_pos_amount": 79640,
-        "total_z_pos_amount": 102187,
-        "total_f_pos_amount": 105531,
-        "overal_open_interest_pos": -22547,
-        "overal_volume_pos": 185171
-    },
-    {
-        "total_x_pos_amount": 58014,
-        "total_y_pos_amount": 55962,
-        "total_z_pos_amount": 65559,
-        "total_f_pos_amount": 67611,
-        "overal_open_interest_pos": -9597,
-        "overal_volume_pos": 123573
-    },
-    {
-        "total_x_pos_amount": 239745,
-        "total_y_pos_amount": 242448,
-        "total_z_pos_amount": 225379,
-        "total_f_pos_amount": 222676,
-        "overal_open_interest_pos": 17069,
-        "overal_volume_pos": 465124
-    },
-    {
-        "total_x_pos_amount": 130950,
-        "total_y_pos_amount": 160086,
-        "total_z_pos_amount": 180325,
-        "total_f_pos_amount": 151189,
-        "overal_open_interest_pos": -20239,
-        "overal_volume_pos": 311275
-    },
-    {
-        "total_x_pos_amount": 70405,
-        "total_y_pos_amount": 74396,
-        "total_z_pos_amount": 60506,
-        "total_f_pos_amount": 56515,
-        "overal_open_interest_pos": 13890,
-        "overal_volume_pos": 130911
-    },
-    {
-        "total_x_pos_amount": 203395,
-        "total_y_pos_amount": 193438,
-        "total_z_pos_amount": 196329,
-        "total_f_pos_amount": 206286,
-        "overal_open_interest_pos": -2891,
-        "overal_volume_pos": 399724
-    },
-    {
-        "total_x_pos_amount": 235027,
-        "total_y_pos_amount": 241189,
-        "total_z_pos_amount": 239722,
-        "total_f_pos_amount": 233560,
-        "overal_open_interest_pos": 1467,
-        "overal_volume_pos": 474749
-    },
-    {
-        "total_x_pos_amount": 127920,
-        "total_y_pos_amount": 166579,
-        "total_z_pos_amount": 160766,
-        "total_f_pos_amount": 122107,
-        "overal_open_interest_pos": 5813,
-        "overal_volume_pos": 288686
-    },
-    {
-        "total_x_pos_amount": 143937,
-        "total_y_pos_amount": 126448,
-        "total_z_pos_amount": 135182,
-        "total_f_pos_amount": 152671,
-        "overal_open_interest_pos": -8734,
-        "overal_volume_pos": 279119
-    },
-    {
-        "total_x_pos_amount": 223005,
-        "total_y_pos_amount": 237112,
-        "total_z_pos_amount": 230138,
-        "total_f_pos_amount": 216031,
-        "overal_open_interest_pos": 6974,
-        "overal_volume_pos": 453143
-    },
-    {
-        "total_x_pos_amount": 80237,
-        "total_y_pos_amount": 72470,
-        "total_z_pos_amount": 91864,
-        "total_f_pos_amount": 99631,
-        "overal_open_interest_pos": -19394,
-        "overal_volume_pos": 172101
-    },
-    {
-        "total_x_pos_amount": 172806,
-        "total_y_pos_amount": 155736,
-        "total_z_pos_amount": 124980,
-        "total_f_pos_amount": 142050,
-        "overal_open_interest_pos": 30756,
-        "overal_volume_pos": 297786
-    },
-    {
-        "total_x_pos_amount": 65392,
-        "total_y_pos_amount": 63656,
-        "total_z_pos_amount": 83477,
-        "total_f_pos_amount": 85213,
-        "overal_open_interest_pos": -19821,
-        "overal_volume_pos": 148869
-    },
-    {
-        "total_x_pos_amount": 34214,
-        "total_y_pos_amount": 28873,
-        "total_z_pos_amount": 39720,
-        "total_f_pos_amount": 45061,
-        "overal_open_interest_pos": -10847,
-        "overal_volume_pos": 73934
-    },
-    {
-        "total_x_pos_amount": 174246,
-        "total_y_pos_amount": 169711,
-        "total_z_pos_amount": 158225,
-        "total_f_pos_amount": 162760,
-        "overal_open_interest_pos": 11486,
-        "overal_volume_pos": 332471
-    },
-    {
-        "total_x_pos_amount": 272164,
-        "total_y_pos_amount": 273184,
-        "total_z_pos_amount": 259119,
-        "total_f_pos_amount": 258099,
-        "overal_open_interest_pos": 14065,
-        "overal_volume_pos": 531283
-    },
-    {
-        "total_x_pos_amount": 269003,
-        "total_y_pos_amount": 247743,
-        "total_z_pos_amount": 240848,
-        "total_f_pos_amount": 262108,
-        "overal_open_interest_pos": 6895,
-        "overal_volume_pos": 509851
-    },
-    {
-        "total_x_pos_amount": 225887,
-        "total_y_pos_amount": 221186,
-        "total_z_pos_amount": 250555,
-        "total_f_pos_amount": 255256,
-        "overal_open_interest_pos": -29369,
-        "overal_volume_pos": 476442
-    },
-    {
-        "total_x_pos_amount": 272241,
-        "total_y_pos_amount": 265117,
-        "total_z_pos_amount": 240097,
-        "total_f_pos_amount": 247221,
-        "overal_open_interest_pos": 25020,
-        "overal_volume_pos": 512338
-    },
-    {
-        "total_x_pos_amount": 284893,
-        "total_y_pos_amount": 252270,
-        "total_z_pos_amount": 250025,
-        "total_f_pos_amount": 282648,
-        "overal_open_interest_pos": 2245,
-        "overal_volume_pos": 534918
-    },
-    {
-        "total_x_pos_amount": 256304,
-        "total_y_pos_amount": 253045,
-        "total_z_pos_amount": 249021,
-        "total_f_pos_amount": 252280,
-        "overal_open_interest_pos": 4024,
-        "overal_volume_pos": 505325
-    },
-    {
-        "total_x_pos_amount": 261556,
-        "total_y_pos_amount": 213204,
-        "total_z_pos_amount": 227240,
-        "total_f_pos_amount": 275592,
-        "overal_open_interest_pos": -14036,
-        "overal_volume_pos": 488796
-    },
-    {
-        "total_x_pos_amount": 115895,
-        "total_y_pos_amount": 127857,
-        "total_z_pos_amount": 136413,
-        "total_f_pos_amount": 124451,
-        "overal_open_interest_pos": -8556,
-        "overal_volume_pos": 252308
-    },
-    {
-        "total_x_pos_amount": 80942,
-        "total_y_pos_amount": 91110,
-        "total_z_pos_amount": 85273,
-        "total_f_pos_amount": 75105,
-        "overal_open_interest_pos": 5837,
-        "overal_volume_pos": 166215
-    },
-    {
-        "total_x_pos_amount": 93316,
-        "total_y_pos_amount": 96531,
-        "total_z_pos_amount": 103541,
-        "total_f_pos_amount": 100326,
-        "overal_open_interest_pos": -7010,
-        "overal_volume_pos": 196857
-    },
-    {
-        "total_x_pos_amount": 106566,
-        "total_y_pos_amount": 113158,
-        "total_z_pos_amount": 104387,
-        "total_f_pos_amount": 97795,
-        "overal_open_interest_pos": 8771,
-        "overal_volume_pos": 210953
-    },
-    {
-        "total_x_pos_amount": 30397,
-        "total_y_pos_amount": 31327,
-        "total_z_pos_amount": 52252,
-        "total_f_pos_amount": 51322,
-        "overal_open_interest_pos": -20925,
-        "overal_volume_pos": 82649
-    },
-    {
-        "total_x_pos_amount": 100552,
-        "total_y_pos_amount": 107061,
-        "total_z_pos_amount": 96288,
-        "total_f_pos_amount": 89779,
-        "overal_open_interest_pos": 10773,
-        "overal_volume_pos": 196840
-    },
-    {
-        "total_x_pos_amount": 201836,
-        "total_y_pos_amount": 224075,
-        "total_z_pos_amount": 212774,
-        "total_f_pos_amount": 190535,
-        "overal_open_interest_pos": 11301,
-        "overal_volume_pos": 414610
-    },
-    {
-        "total_x_pos_amount": 317086,
-        "total_y_pos_amount": 253467,
-        "total_z_pos_amount": 234524,
-        "total_f_pos_amount": 298143,
-        "overal_open_interest_pos": 18943,
-        "overal_volume_pos": 551610
-    },
-    {
-        "total_x_pos_amount": 278925,
-        "total_y_pos_amount": 266186,
-        "total_z_pos_amount": 274066,
-        "total_f_pos_amount": 286805,
-        "overal_open_interest_pos": -7880,
-        "overal_volume_pos": 552991
-    },
-    {
-        "total_x_pos_amount": 172237,
-        "total_y_pos_amount": 146349,
-        "total_z_pos_amount": 165335,
-        "total_f_pos_amount": 191223,
-        "overal_open_interest_pos": -18986,
-        "overal_volume_pos": 337572
-    },
-    {
-        "total_x_pos_amount": 139309,
-        "total_y_pos_amount": 144446,
-        "total_z_pos_amount": 139505,
-        "total_f_pos_amount": 134368,
-        "overal_open_interest_pos": 4941,
-        "overal_volume_pos": 278814
-    },
-    {
-        "total_x_pos_amount": 27659,
-        "total_y_pos_amount": 27205,
-        "total_z_pos_amount": 46104,
-        "total_f_pos_amount": 46558,
-        "overal_open_interest_pos": -18899,
-        "overal_volume_pos": 73763
-    },
-    {
-        "total_x_pos_amount": 95927,
-        "total_y_pos_amount": 102979,
-        "total_z_pos_amount": 93272,
-        "total_f_pos_amount": 86220,
-        "overal_open_interest_pos": 9707,
-        "overal_volume_pos": 189199
-    },
-    {
-        "total_x_pos_amount": 138155,
-        "total_y_pos_amount": 153929,
-        "total_z_pos_amount": 155580,
-        "total_f_pos_amount": 139806,
-        "overal_open_interest_pos": -1651,
-        "overal_volume_pos": 293735
-    },
-    {
-        "total_x_pos_amount": 166932,
-        "total_y_pos_amount": 144527,
-        "total_z_pos_amount": 133611,
-        "total_f_pos_amount": 156016,
-        "overal_open_interest_pos": 10916,
-        "overal_volume_pos": 300543
-    },
-    {
-        "total_x_pos_amount": 125585,
-        "total_y_pos_amount": 125262,
-        "total_z_pos_amount": 140950,
-        "total_f_pos_amount": 141273,
-        "overal_open_interest_pos": -15688,
-        "overal_volume_pos": 266535
-    },
-    {
-        "total_x_pos_amount": 144611,
-        "total_y_pos_amount": 128749,
-        "total_z_pos_amount": 122160,
-        "total_f_pos_amount": 138022,
-        "overal_open_interest_pos": 6589,
-        "overal_volume_pos": 266771
-    },
-    {
-        "total_x_pos_amount": 191906,
-        "total_y_pos_amount": 193734,
-        "total_z_pos_amount": 185589,
-        "total_f_pos_amount": 183761,
-        "overal_open_interest_pos": 8145,
-        "overal_volume_pos": 377495
-    },
-    {
-        "total_x_pos_amount": 181333,
-        "total_y_pos_amount": 154949,
-        "total_z_pos_amount": 147146,
-        "total_f_pos_amount": 173530,
-        "overal_open_interest_pos": 7803,
-        "overal_volume_pos": 328479
-    },
-    {
-        "total_x_pos_amount": 206658,
-        "total_y_pos_amount": 181249,
-        "total_z_pos_amount": 195531,
-        "total_f_pos_amount": 220940,
-        "overal_open_interest_pos": -14282,
-        "overal_volume_pos": 402189
-    },
-    {
-        "total_x_pos_amount": 117241,
-        "total_y_pos_amount": 109187,
-        "total_z_pos_amount": 110814,
-        "total_f_pos_amount": 118868,
-        "overal_open_interest_pos": -1627,
-        "overal_volume_pos": 228055
-    },
-    {
-        "total_x_pos_amount": 169403,
-        "total_y_pos_amount": 169970,
-        "total_z_pos_amount": 153700,
-        "total_f_pos_amount": 153133,
-        "overal_open_interest_pos": 16270,
-        "overal_volume_pos": 323103
-    },
-    {
-        "total_x_pos_amount": 163634,
-        "total_y_pos_amount": 157430,
-        "total_z_pos_amount": 146851,
-        "total_f_pos_amount": 153055,
-        "overal_open_interest_pos": 10579,
-        "overal_volume_pos": 310485
-    },
-    {
-        "total_x_pos_amount": 199180,
-        "total_y_pos_amount": 266420,
-        "total_z_pos_amount": 289488,
-        "total_f_pos_amount": 222248,
-        "overal_open_interest_pos": -23068,
-        "overal_volume_pos": 488668
-    },
-    {
-        "total_x_pos_amount": 201861,
-        "total_y_pos_amount": 212161,
-        "total_z_pos_amount": 194817,
-        "total_f_pos_amount": 184517,
-        "overal_open_interest_pos": 17344,
-        "overal_volume_pos": 396678
-    },
-    {
-        "total_x_pos_amount": 38619,
-        "total_y_pos_amount": 49085,
-        "total_z_pos_amount": 66682,
-        "total_f_pos_amount": 56216,
-        "overal_open_interest_pos": -17597,
-        "overal_volume_pos": 105301
-    },
-    {
-        "total_x_pos_amount": 34035,
-        "total_y_pos_amount": 27220,
-        "total_z_pos_amount": 40826,
-        "total_f_pos_amount": 47641,
-        "overal_open_interest_pos": -13606,
-        "overal_volume_pos": 74861
-    },
-    {
-        "total_x_pos_amount": 63757,
-        "total_y_pos_amount": 68768,
-        "total_z_pos_amount": 60029,
-        "total_f_pos_amount": 55018,
-        "overal_open_interest_pos": 8739,
-        "overal_volume_pos": 123786
-    },
-    {
-        "total_x_pos_amount": 158343,
-        "total_y_pos_amount": 133451,
-        "total_z_pos_amount": 131010,
-        "total_f_pos_amount": 155902,
-        "overal_open_interest_pos": 2441,
-        "overal_volume_pos": 289353
-    },
-    {
-        "total_x_pos_amount": 286472,
-        "total_y_pos_amount": 281973,
-        "total_z_pos_amount": 248398,
-        "total_f_pos_amount": 252897,
-        "overal_open_interest_pos": 33575,
-        "overal_volume_pos": 534870
-    },
-    {
-        "total_x_pos_amount": 146159,
-        "total_y_pos_amount": 167687,
-        "total_z_pos_amount": 198380,
-        "total_f_pos_amount": 176852,
-        "overal_open_interest_pos": -30693,
-        "overal_volume_pos": 344539
-    },
-    {
-        "total_x_pos_amount": 231563,
-        "total_y_pos_amount": 214282,
-        "total_z_pos_amount": 189059,
-        "total_f_pos_amount": 206340,
-        "overal_open_interest_pos": 25223,
-        "overal_volume_pos": 420622
-    },
-    {
-        "total_x_pos_amount": 124804,
-        "total_y_pos_amount": 107555,
-        "total_z_pos_amount": 132706,
-        "total_f_pos_amount": 149955,
-        "overal_open_interest_pos": -25151,
-        "overal_volume_pos": 257510
-    },
-    {
-        "total_x_pos_amount": 203425,
-        "total_y_pos_amount": 200670,
-        "total_z_pos_amount": 191316,
-        "total_f_pos_amount": 194071,
-        "overal_open_interest_pos": 9354,
-        "overal_volume_pos": 394741
-    },
-    {
-        "total_x_pos_amount": 219136,
-        "total_y_pos_amount": 205794,
-        "total_z_pos_amount": 200101,
-        "total_f_pos_amount": 213443,
-        "overal_open_interest_pos": 5693,
-        "overal_volume_pos": 419237
-    },
-    {
-        "total_x_pos_amount": 154270,
-        "total_y_pos_amount": 124636,
-        "total_z_pos_amount": 147585,
-        "total_f_pos_amount": 177219,
-        "overal_open_interest_pos": -22949,
-        "overal_volume_pos": 301855
-    },
-    {
-        "total_x_pos_amount": 159741,
-        "total_y_pos_amount": 131767,
-        "total_z_pos_amount": 119109,
-        "total_f_pos_amount": 147083,
-        "overal_open_interest_pos": 12658,
-        "overal_volume_pos": 278850
-    },
-    {
-        "total_x_pos_amount": 123838,
-        "total_y_pos_amount": 122788,
-        "total_z_pos_amount": 123112,
-        "total_f_pos_amount": 124162,
-        "overal_open_interest_pos": -324,
-        "overal_volume_pos": 246950
-    },
-    {
-        "total_x_pos_amount": 173354,
-        "total_y_pos_amount": 164693,
-        "total_z_pos_amount": 147309,
-        "total_f_pos_amount": 155970,
-        "overal_open_interest_pos": 17384,
-        "overal_volume_pos": 320663
-    },
-    {
-        "total_x_pos_amount": 155744,
-        "total_y_pos_amount": 170843,
-        "total_z_pos_amount": 165050,
-        "total_f_pos_amount": 149951,
-        "overal_open_interest_pos": 5793,
-        "overal_volume_pos": 320794
-    },
-    {
-        "total_x_pos_amount": 133431,
-        "total_y_pos_amount": 130578,
-        "total_z_pos_amount": 140975,
-        "total_f_pos_amount": 143828,
-        "overal_open_interest_pos": -10397,
-        "overal_volume_pos": 274406
-    },
-    {
-        "total_x_pos_amount": 209410,
-        "total_y_pos_amount": 222894,
-        "total_z_pos_amount": 217099,
-        "total_f_pos_amount": 203615,
-        "overal_open_interest_pos": 5795,
-        "overal_volume_pos": 426509
-    },
-    {
-        "total_x_pos_amount": 22366,
-        "total_y_pos_amount": 18186,
-        "total_z_pos_amount": 52531,
-        "total_f_pos_amount": 56711,
-        "overal_open_interest_pos": -34345,
-        "overal_volume_pos": 74897
-    },
-    {
-        "total_x_pos_amount": 128067,
-        "total_y_pos_amount": 121075,
-        "total_z_pos_amount": 112431,
-        "total_f_pos_amount": 119423,
-        "overal_open_interest_pos": 8644,
-        "overal_volume_pos": 240498
-    },
-    {
-        "total_x_pos_amount": 107577,
-        "total_y_pos_amount": 106719,
-        "total_z_pos_amount": 103763,
-        "total_f_pos_amount": 104621,
-        "overal_open_interest_pos": 2956,
-        "overal_volume_pos": 211340
-    },
-    {
-        "total_x_pos_amount": 175316,
-        "total_y_pos_amount": 164504,
-        "total_z_pos_amount": 154316,
-        "total_f_pos_amount": 165128,
-        "overal_open_interest_pos": 10188,
-        "overal_volume_pos": 329632
-    },
-    {
-        "total_x_pos_amount": 27129,
-        "total_y_pos_amount": 25774,
-        "total_z_pos_amount": 49505,
-        "total_f_pos_amount": 50860,
-        "overal_open_interest_pos": -23731,
-        "overal_volume_pos": 76634
-    },
-    {
-        "total_x_pos_amount": 217232,
-        "total_y_pos_amount": 232143,
-        "total_z_pos_amount": 191305,
-        "total_f_pos_amount": 176394,
-        "overal_open_interest_pos": 40838,
-        "overal_volume_pos": 408537
-    },
-    {
-        "total_x_pos_amount": 56296,
-        "total_y_pos_amount": 58609,
-        "total_z_pos_amount": 100960,
-        "total_f_pos_amount": 98647,
-        "overal_open_interest_pos": -42351,
-        "overal_volume_pos": 157256
-    },
-    {
-        "total_x_pos_amount": 293225,
-        "total_y_pos_amount": 286780,
-        "total_z_pos_amount": 249981,
-        "total_f_pos_amount": 256426,
-        "overal_open_interest_pos": 36799,
-        "overal_volume_pos": 543206
-    },
-    {
-        "total_x_pos_amount": 208712,
-        "total_y_pos_amount": 205632,
-        "total_z_pos_amount": 199175,
-        "total_f_pos_amount": 202255,
-        "overal_open_interest_pos": 6457,
-        "overal_volume_pos": 407887
-    },
-    {
-        "total_x_pos_amount": 191572,
-        "total_y_pos_amount": 187802,
-        "total_z_pos_amount": 193961,
-        "total_f_pos_amount": 197731,
-        "overal_open_interest_pos": -6159,
-        "overal_volume_pos": 385533
-    },
-    {
-        "total_x_pos_amount": 138692,
-        "total_y_pos_amount": 130363,
-        "total_z_pos_amount": 155579,
-        "total_f_pos_amount": 163908,
-        "overal_open_interest_pos": -25216,
-        "overal_volume_pos": 294271
-    },
-    {
-        "total_x_pos_amount": 160476,
-        "total_y_pos_amount": 172556,
-        "total_z_pos_amount": 161030,
-        "total_f_pos_amount": 148950,
-        "overal_open_interest_pos": 11526,
-        "overal_volume_pos": 321506
-    },
-    {
-        "total_x_pos_amount": 246785,
-        "total_y_pos_amount": 223477,
-        "total_z_pos_amount": 235814,
-        "total_f_pos_amount": 259122,
-        "overal_open_interest_pos": -12337,
-        "overal_volume_pos": 482599
-    },
-    {
-        "total_x_pos_amount": 32304,
-        "total_y_pos_amount": 29244,
-        "total_z_pos_amount": 39575,
-        "total_f_pos_amount": 42635,
-        "overal_open_interest_pos": -10331,
-        "overal_volume_pos": 71879
-    },
-    {
-        "total_x_pos_amount": 38849,
-        "total_y_pos_amount": 38125,
-        "total_z_pos_amount": 37918,
-        "total_f_pos_amount": 38642,
-        "overal_open_interest_pos": 207,
-        "overal_volume_pos": 76767
-    },
-    {
-        "total_x_pos_amount": 151441,
-        "total_y_pos_amount": 136436,
-        "total_z_pos_amount": 126927,
-        "total_f_pos_amount": 141932,
-        "overal_open_interest_pos": 9509,
-        "overal_volume_pos": 278368
-    },
-    {
-        "total_x_pos_amount": 32305,
-        "total_y_pos_amount": 31310,
-        "total_z_pos_amount": 42446,
-        "total_f_pos_amount": 43441,
-        "overal_open_interest_pos": -11136,
-        "overal_volume_pos": 74751
-    },
-    {
-        "total_x_pos_amount": 37210,
-        "total_y_pos_amount": 37340,
-        "total_z_pos_amount": 35808,
-        "total_f_pos_amount": 35678,
-        "overal_open_interest_pos": 1532,
-        "overal_volume_pos": 73018
-    },
-    {
-        "total_x_pos_amount": 136751,
-        "total_y_pos_amount": 132686,
-        "total_z_pos_amount": 122607,
-        "total_f_pos_amount": 126672,
-        "overal_open_interest_pos": 10079,
-        "overal_volume_pos": 259358
-    },
-    {
-        "total_x_pos_amount": 149057,
-        "total_y_pos_amount": 149344,
-        "total_z_pos_amount": 138253,
-        "total_f_pos_amount": 137966,
-        "overal_open_interest_pos": 11091,
-        "overal_volume_pos": 287310
-    },
-    {
-        "total_x_pos_amount": 176910,
-        "total_y_pos_amount": 158731,
-        "total_z_pos_amount": 149373,
-        "total_f_pos_amount": 167552,
-        "overal_open_interest_pos": 9358,
-        "overal_volume_pos": 326283
-    },
-    {
-        "total_x_pos_amount": 92226,
-        "total_y_pos_amount": 86408,
-        "total_z_pos_amount": 115694,
-        "total_f_pos_amount": 121512,
-        "overal_open_interest_pos": -29286,
-        "overal_volume_pos": 207920
-    },
-    {
-        "total_x_pos_amount": 81565,
-        "total_y_pos_amount": 96043,
-        "total_z_pos_amount": 90979,
-        "total_f_pos_amount": 76501,
-        "overal_open_interest_pos": 5064,
-        "overal_volume_pos": 172544
-    },
-    {
-        "total_x_pos_amount": 71272,
-        "total_y_pos_amount": 86404,
-        "total_z_pos_amount": 92629,
-        "total_f_pos_amount": 77497,
-        "overal_open_interest_pos": -6225,
-        "overal_volume_pos": 163901
-    },
-    {
-        "total_x_pos_amount": 132689,
-        "total_y_pos_amount": 108761,
-        "total_z_pos_amount": 79358,
-        "total_f_pos_amount": 103286,
-        "overal_open_interest_pos": 29403,
-        "overal_volume_pos": 212047
-    },
-    {
-        "total_x_pos_amount": 155840,
-        "total_y_pos_amount": 143050,
-        "total_z_pos_amount": 132974,
-        "total_f_pos_amount": 145764,
-        "overal_open_interest_pos": 10076,
-        "overal_volume_pos": 288814
-    },
-    {
-        "total_x_pos_amount": 51892,
-        "total_y_pos_amount": 42165,
-        "total_z_pos_amount": 57191,
-        "total_f_pos_amount": 66918,
-        "overal_open_interest_pos": -15026,
-        "overal_volume_pos": 109083
-    },
-    {
-        "total_x_pos_amount": 245132,
-        "total_y_pos_amount": 227335,
-        "total_z_pos_amount": 217013,
-        "total_f_pos_amount": 234810,
-        "overal_open_interest_pos": 10322,
-        "overal_volume_pos": 462145
-    },
-    {
-        "total_x_pos_amount": 127848,
-        "total_y_pos_amount": 125768,
-        "total_z_pos_amount": 141475,
-        "total_f_pos_amount": 143555,
-        "overal_open_interest_pos": -15707,
-        "overal_volume_pos": 269323
-    },
-    {
-        "total_x_pos_amount": 142423,
-        "total_y_pos_amount": 142211,
-        "total_z_pos_amount": 151107,
-        "total_f_pos_amount": 151319,
-        "overal_open_interest_pos": -8896,
-        "overal_volume_pos": 293530
-    },
-    {
-        "total_x_pos_amount": 140187,
-        "total_y_pos_amount": 142479,
-        "total_z_pos_amount": 136258,
-        "total_f_pos_amount": 133966,
-        "overal_open_interest_pos": 6221,
-        "overal_volume_pos": 276445
-    },
-    {
-        "total_x_pos_amount": 201955,
-        "total_y_pos_amount": 200367,
-        "total_z_pos_amount": 208566,
-        "total_f_pos_amount": 210154,
-        "overal_open_interest_pos": -8199,
-        "overal_volume_pos": 410521
-    },
-    {
-        "total_x_pos_amount": 210930,
-        "total_y_pos_amount": 202127,
-        "total_z_pos_amount": 180995,
-        "total_f_pos_amount": 189798,
-        "overal_open_interest_pos": 21132,
-        "overal_volume_pos": 391925
-    },
-    {
-        "total_x_pos_amount": 241697,
-        "total_y_pos_amount": 231824,
-        "total_z_pos_amount": 237756,
-        "total_f_pos_amount": 247629,
-        "overal_open_interest_pos": -5932,
-        "overal_volume_pos": 479453
-    },
-    {
-        "total_x_pos_amount": 218339,
-        "total_y_pos_amount": 193184,
-        "total_z_pos_amount": 197270,
-        "total_f_pos_amount": 222425,
-        "overal_open_interest_pos": -4086,
-        "overal_volume_pos": 415609
-    },
-    {
-        "total_x_pos_amount": 25618,
-        "total_y_pos_amount": 27994,
-        "total_z_pos_amount": 48697,
-        "total_f_pos_amount": 46321,
-        "overal_open_interest_pos": -20703,
-        "overal_volume_pos": 74315
-    },
-    {
-        "total_x_pos_amount": 162592,
-        "total_y_pos_amount": 166218,
-        "total_z_pos_amount": 136689,
-        "total_f_pos_amount": 133063,
-        "overal_open_interest_pos": 29529,
-        "overal_volume_pos": 299281
-    },
-    {
-        "total_x_pos_amount": 20019,
-        "total_y_pos_amount": 23670,
-        "total_z_pos_amount": 53634,
-        "total_f_pos_amount": 49983,
-        "overal_open_interest_pos": -29964,
-        "overal_volume_pos": 73653
-    },
-    {
-        "total_x_pos_amount": 85081,
-        "total_y_pos_amount": 74745,
-        "total_z_pos_amount": 72267,
-        "total_f_pos_amount": 82603,
-        "overal_open_interest_pos": 2478,
-        "overal_volume_pos": 157348
-    },
-    {
-        "total_x_pos_amount": 160778,
-        "total_y_pos_amount": 175515,
-        "total_z_pos_amount": 147885,
-        "total_f_pos_amount": 133148,
-        "overal_open_interest_pos": 27630,
-        "overal_volume_pos": 308663
-    },
-    {
-        "total_x_pos_amount": 73860,
-        "total_y_pos_amount": 63198,
-        "total_z_pos_amount": 80802,
-        "total_f_pos_amount": 91464,
-        "overal_open_interest_pos": -17604,
-        "overal_volume_pos": 154662
-    },
-    {
-        "total_x_pos_amount": 110723,
-        "total_y_pos_amount": 121390,
-        "total_z_pos_amount": 112624,
-        "total_f_pos_amount": 101957,
-        "overal_open_interest_pos": 8766,
-        "overal_volume_pos": 223347
-    },
-    {
-        "total_x_pos_amount": 49409,
-        "total_y_pos_amount": 50457,
-        "total_z_pos_amount": 70770,
-        "total_f_pos_amount": 69722,
-        "overal_open_interest_pos": -20313,
-        "overal_volume_pos": 120179
-    },
-    {
-        "total_x_pos_amount": 186113,
-        "total_y_pos_amount": 185136,
-        "total_z_pos_amount": 144969,
-        "total_f_pos_amount": 145946,
-        "overal_open_interest_pos": 40167,
-        "overal_volume_pos": 331082
-    },
-    {
-        "total_x_pos_amount": 199507,
-        "total_y_pos_amount": 251113,
-        "total_z_pos_amount": 274950,
-        "total_f_pos_amount": 223344,
-        "overal_open_interest_pos": -23837,
-        "overal_volume_pos": 474457
-    },
-    {
-        "total_x_pos_amount": 84241,
-        "total_y_pos_amount": 104076,
-        "total_z_pos_amount": 117364,
-        "total_f_pos_amount": 97529,
-        "overal_open_interest_pos": -13288,
-        "overal_volume_pos": 201605
-    },
-    {
-        "total_x_pos_amount": 36011,
-        "total_y_pos_amount": 39240,
-        "total_z_pos_amount": 41903,
-        "total_f_pos_amount": 38674,
-        "overal_open_interest_pos": -2663,
-        "overal_volume_pos": 77914
-    },
-    {
-        "total_x_pos_amount": 105243,
-        "total_y_pos_amount": 87867,
-        "total_z_pos_amount": 51253,
-        "total_f_pos_amount": 68629,
-        "overal_open_interest_pos": 36614,
-        "overal_volume_pos": 156496
-    },
-    {
-        "total_x_pos_amount": 104280,
-        "total_y_pos_amount": 119607,
-        "total_z_pos_amount": 143738,
-        "total_f_pos_amount": 128411,
-        "overal_open_interest_pos": -24131,
-        "overal_volume_pos": 248018
-    },
-    {
-        "total_x_pos_amount": 121538,
-        "total_y_pos_amount": 139282,
-        "total_z_pos_amount": 133212,
-        "total_f_pos_amount": 115468,
-        "overal_open_interest_pos": 6070,
-        "overal_volume_pos": 254750
-    },
-    {
-        "total_x_pos_amount": 207815,
-        "total_y_pos_amount": 209823,
-        "total_z_pos_amount": 222010,
-        "total_f_pos_amount": 220002,
-        "overal_open_interest_pos": -12187,
-        "overal_volume_pos": 429825
-    },
-    {
-        "total_x_pos_amount": 150230,
-        "total_y_pos_amount": 137995,
-        "total_z_pos_amount": 129488,
-        "total_f_pos_amount": 141723,
-        "overal_open_interest_pos": 8507,
-        "overal_volume_pos": 279718
-    },
-    {
-        "total_x_pos_amount": 151957,
-        "total_y_pos_amount": 153500,
-        "total_z_pos_amount": 154373,
-        "total_f_pos_amount": 152830,
-        "overal_open_interest_pos": -873,
-        "overal_volume_pos": 306330
-    },
-    {
-        "total_x_pos_amount": 71925,
-        "total_y_pos_amount": 74222,
-        "total_z_pos_amount": 84232,
-        "total_f_pos_amount": 81935,
-        "overal_open_interest_pos": -10010,
-        "overal_volume_pos": 156157
-    },
-    {
-        "total_x_pos_amount": 185617,
-        "total_y_pos_amount": 159736,
-        "total_z_pos_amount": 133028,
-        "total_f_pos_amount": 158909,
-        "overal_open_interest_pos": 26708,
-        "overal_volume_pos": 318645
-    },
-    {
-        "total_x_pos_amount": 166774,
-        "total_y_pos_amount": 165621,
-        "total_z_pos_amount": 159731,
-        "total_f_pos_amount": 160884,
-        "overal_open_interest_pos": 5890,
-        "overal_volume_pos": 326505
-    },
-    {
-        "total_x_pos_amount": 242734,
-        "total_y_pos_amount": 233771,
-        "total_z_pos_amount": 229424,
-        "total_f_pos_amount": 238387,
-        "overal_open_interest_pos": 4347,
-        "overal_volume_pos": 472158
-    },
-    {
-        "total_x_pos_amount": 248483,
-        "total_y_pos_amount": 264221,
-        "total_z_pos_amount": 280546,
-        "total_f_pos_amount": 264808,
-        "overal_open_interest_pos": -16325,
-        "overal_volume_pos": 529029
-    },
-    {
-        "total_x_pos_amount": 206954,
-        "total_y_pos_amount": 227339,
-        "total_z_pos_amount": 233971,
-        "total_f_pos_amount": 213586,
-        "overal_open_interest_pos": -6632,
-        "overal_volume_pos": 440925
-    },
-    {
-        "total_x_pos_amount": 110300,
-        "total_y_pos_amount": 119144,
-        "total_z_pos_amount": 136074,
-        "total_f_pos_amount": 127230,
-        "overal_open_interest_pos": -16930,
-        "overal_volume_pos": 246374
-    },
-    {
-        "total_x_pos_amount": 39767,
-        "total_y_pos_amount": 35579,
-        "total_z_pos_amount": 35992,
-        "total_f_pos_amount": 40180,
-        "overal_open_interest_pos": -413,
-        "overal_volume_pos": 75759
-    },
-    {
-        "total_x_pos_amount": 169532,
-        "total_y_pos_amount": 176474,
-        "total_z_pos_amount": 160188,
-        "total_f_pos_amount": 153246,
-        "overal_open_interest_pos": 16286,
-        "overal_volume_pos": 329720
-    },
-    {
-        "total_x_pos_amount": 106559,
-        "total_y_pos_amount": 122157,
-        "total_z_pos_amount": 115316,
-        "total_f_pos_amount": 99718,
-        "overal_open_interest_pos": 6841,
-        "overal_volume_pos": 221875
-    },
-    {
-        "total_x_pos_amount": 227581,
-        "total_y_pos_amount": 223229,
-        "total_z_pos_amount": 219919,
-        "total_f_pos_amount": 224271,
-        "overal_open_interest_pos": 3310,
-        "overal_volume_pos": 447500
-    },
-    {
-        "total_x_pos_amount": 264316,
-        "total_y_pos_amount": 257088,
-        "total_z_pos_amount": 254429,
-        "total_f_pos_amount": 261657,
-        "overal_open_interest_pos": 2659,
-        "overal_volume_pos": 518745
-    },
-    {
-        "total_x_pos_amount": 123007,
-        "total_y_pos_amount": 122480,
-        "total_z_pos_amount": 143570,
-        "total_f_pos_amount": 144097,
-        "overal_open_interest_pos": -21090,
-        "overal_volume_pos": 266577
-    },
-    {
-        "total_x_pos_amount": 69440,
-        "total_y_pos_amount": 80765,
-        "total_z_pos_amount": 86874,
-        "total_f_pos_amount": 75549,
-        "overal_open_interest_pos": -6109,
-        "overal_volume_pos": 156314
-    },
-    {
-        "total_x_pos_amount": 226555,
-        "total_y_pos_amount": 262052,
-        "total_z_pos_amount": 218614,
-        "total_f_pos_amount": 183117,
-        "overal_open_interest_pos": 43438,
-        "overal_volume_pos": 445169
-    },
-    {
-        "total_x_pos_amount": 149163,
-        "total_y_pos_amount": 153396,
-        "total_z_pos_amount": 186781,
-        "total_f_pos_amount": 182548,
-        "overal_open_interest_pos": -33385,
-        "overal_volume_pos": 335944
-    },
-    {
-        "total_x_pos_amount": 269741,
-        "total_y_pos_amount": 236464,
-        "total_z_pos_amount": 225606,
-        "total_f_pos_amount": 258883,
-        "overal_open_interest_pos": 10858,
-        "overal_volume_pos": 495347
-    },
-    {
-        "total_x_pos_amount": 266759,
-        "total_y_pos_amount": 254003,
-        "total_z_pos_amount": 259245,
-        "total_f_pos_amount": 272001,
-        "overal_open_interest_pos": -5242,
-        "overal_volume_pos": 526004
-    },
-    {
-        "total_x_pos_amount": 205243,
-        "total_y_pos_amount": 160355,
-        "total_z_pos_amount": 161372,
-        "total_f_pos_amount": 206260,
-        "overal_open_interest_pos": -1017,
-        "overal_volume_pos": 366615
-    },
-    {
-        "total_x_pos_amount": 28438,
-        "total_y_pos_amount": 32295,
-        "total_z_pos_amount": 47659,
-        "total_f_pos_amount": 43802,
-        "overal_open_interest_pos": -15364,
-        "overal_volume_pos": 76097
-    },
-    {
-        "total_x_pos_amount": 153730,
-        "total_y_pos_amount": 157419,
-        "total_z_pos_amount": 124876,
-        "total_f_pos_amount": 121187,
-        "overal_open_interest_pos": 32543,
-        "overal_volume_pos": 278606
-    },
-    {
-        "total_x_pos_amount": 264364,
-        "total_y_pos_amount": 318040,
-        "total_z_pos_amount": 328181,
-        "total_f_pos_amount": 274505,
-        "overal_open_interest_pos": -10141,
-        "overal_volume_pos": 592545
-    },
-    {
-        "total_x_pos_amount": 273374,
-        "total_y_pos_amount": 241199,
-        "total_z_pos_amount": 248336,
-        "total_f_pos_amount": 280511,
-        "overal_open_interest_pos": -7137,
-        "overal_volume_pos": 521710
-    },
-    {
-        "total_x_pos_amount": 175201,
-        "total_y_pos_amount": 152047,
-        "total_z_pos_amount": 155499,
-        "total_f_pos_amount": 178653,
-        "overal_open_interest_pos": -3452,
-        "overal_volume_pos": 330700
-    },
-    {
-        "total_x_pos_amount": 138747,
-        "total_y_pos_amount": 132375,
-        "total_z_pos_amount": 128795,
-        "total_f_pos_amount": 135167,
-        "overal_open_interest_pos": 3580,
-        "overal_volume_pos": 267542
-    },
-    {
-        "total_x_pos_amount": 126810,
-        "total_y_pos_amount": 107101,
-        "total_z_pos_amount": 115799,
-        "total_f_pos_amount": 135508,
-        "overal_open_interest_pos": -8698,
-        "overal_volume_pos": 242609
-    },
-    {
-        "total_x_pos_amount": 93727,
-        "total_y_pos_amount": 90592,
-        "total_z_pos_amount": 84072,
-        "total_f_pos_amount": 87207,
-        "overal_open_interest_pos": 6520,
-        "overal_volume_pos": 177799
-    },
-    {
-        "total_x_pos_amount": 143583,
-        "total_y_pos_amount": 139183,
-        "total_z_pos_amount": 149287,
-        "total_f_pos_amount": 153687,
-        "overal_open_interest_pos": -10104,
-        "overal_volume_pos": 292870
-    },
-    {
-        "total_x_pos_amount": 200191,
-        "total_y_pos_amount": 205598,
-        "total_z_pos_amount": 154843,
-        "total_f_pos_amount": 149436,
-        "overal_open_interest_pos": 50755,
-        "overal_volume_pos": 355034
-    },
-    {
-        "total_x_pos_amount": 200647,
-        "total_y_pos_amount": 218350,
-        "total_z_pos_amount": 256356,
-        "total_f_pos_amount": 238653,
-        "overal_open_interest_pos": -38006,
-        "overal_volume_pos": 457003
-    },
-    {
-        "total_x_pos_amount": 158598,
-        "total_y_pos_amount": 163326,
-        "total_z_pos_amount": 161837,
-        "total_f_pos_amount": 157109,
-        "overal_open_interest_pos": 1489,
-        "overal_volume_pos": 320435
-    },
-    {
-        "total_x_pos_amount": 155423,
-        "total_y_pos_amount": 141695,
-        "total_z_pos_amount": 138837,
-        "total_f_pos_amount": 152565,
-        "overal_open_interest_pos": 2858,
-        "overal_volume_pos": 294260
-    },
-    {
-        "total_x_pos_amount": 162268,
-        "total_y_pos_amount": 168199,
-        "total_z_pos_amount": 149368,
-        "total_f_pos_amount": 143437,
-        "overal_open_interest_pos": 18831,
-        "overal_volume_pos": 311636
-    },
-    {
-        "total_x_pos_amount": 210106,
-        "total_y_pos_amount": 220991,
-        "total_z_pos_amount": 230264,
-        "total_f_pos_amount": 219379,
-        "overal_open_interest_pos": -9273,
-        "overal_volume_pos": 440370
-    },
-    {
-        "total_x_pos_amount": 147329,
-        "total_y_pos_amount": 150252,
-        "total_z_pos_amount": 156873,
-        "total_f_pos_amount": 153950,
-        "overal_open_interest_pos": -6621,
-        "overal_volume_pos": 304202
-    },
-    {
-        "total_x_pos_amount": 252266,
-        "total_y_pos_amount": 260995,
-        "total_z_pos_amount": 263694,
-        "total_f_pos_amount": 254965,
-        "overal_open_interest_pos": -2699,
-        "overal_volume_pos": 515960
-    },
-    {
-        "total_x_pos_amount": 266164,
-        "total_y_pos_amount": 288290,
-        "total_z_pos_amount": 260602,
-        "total_f_pos_amount": 238476,
-        "overal_open_interest_pos": 27688,
-        "overal_volume_pos": 526766
-    },
-    {
-        "total_x_pos_amount": 152902,
-        "total_y_pos_amount": 192533,
-        "total_z_pos_amount": 208368,
-        "total_f_pos_amount": 168737,
-        "overal_open_interest_pos": -15835,
-        "overal_volume_pos": 361270
-    },
-    {
-        "total_x_pos_amount": 134777,
-        "total_y_pos_amount": 166530,
-        "total_z_pos_amount": 154252,
-        "total_f_pos_amount": 122499,
-        "overal_open_interest_pos": 12278,
-        "overal_volume_pos": 289029
-    },
-    {
-        "total_x_pos_amount": 148717,
-        "total_y_pos_amount": 142752,
-        "total_z_pos_amount": 158062,
-        "total_f_pos_amount": 164027,
-        "overal_open_interest_pos": -15310,
-        "overal_volume_pos": 306779
-    },
-    {
-        "total_x_pos_amount": 256371,
-        "total_y_pos_amount": 280138,
-        "total_z_pos_amount": 260706,
-        "total_f_pos_amount": 236939,
-        "overal_open_interest_pos": 19432,
-        "overal_volume_pos": 517077
-    },
-    {
-        "total_x_pos_amount": 142451,
-        "total_y_pos_amount": 165179,
-        "total_z_pos_amount": 199653,
-        "total_f_pos_amount": 176925,
-        "overal_open_interest_pos": -34474,
-        "overal_volume_pos": 342104
-    },
-    {
-        "total_x_pos_amount": 92142,
-        "total_y_pos_amount": 95849,
-        "total_z_pos_amount": 94295,
-        "total_f_pos_amount": 90588,
-        "overal_open_interest_pos": 1554,
-        "overal_volume_pos": 186437
-    },
-    {
-        "total_x_pos_amount": 82814,
-        "total_y_pos_amount": 81717,
-        "total_z_pos_amount": 98268,
-        "total_f_pos_amount": 99365,
-        "overal_open_interest_pos": -16551,
-        "overal_volume_pos": 181082
-    },
-    {
-        "total_x_pos_amount": 36816,
-        "total_y_pos_amount": 34661,
-        "total_z_pos_amount": 35947,
-        "total_f_pos_amount": 38102,
-        "overal_open_interest_pos": -1286,
-        "overal_volume_pos": 72763
+        "total_x_pos_amount": 1178886,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 1178886,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 1178886
+    },
+    {
+        "total_x_pos_amount": 2008887,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 2008887,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 2008887
+    },
+    {
+        "total_x_pos_amount": 1079329,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 1079329,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 1079329
+    },
+    {
+        "total_x_pos_amount": 9647134,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 9647134,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 9647134
+    },
+    {
+        "total_x_pos_amount": 4474927,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 4474927,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 4474927
+    },
+    {
+        "total_x_pos_amount": 6660404,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 6660404,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 6660404
+    },
+    {
+        "total_x_pos_amount": 14494185,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 14494185,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 14494185
+    },
+    {
+        "total_x_pos_amount": 15702386,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 15702386,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 15702386
+    },
+    {
+        "total_x_pos_amount": 14434669,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 14434669,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 14434669
+    },
+    {
+        "total_x_pos_amount": 15893983,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 15893983,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 15893983
+    },
+    {
+        "total_x_pos_amount": 4789257,
+        "total_y_pos_amount": 1395767,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 3393490,
+        "overal_open_interest_pos": 1395767,
+        "overal_volume_pos": 4789257
+    },
+    {
+        "total_x_pos_amount": 14595991,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 14595991,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 14595991
+    },
+    {
+        "total_x_pos_amount": 12184163,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 12184163,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 12184163
+    },
+    {
+        "total_x_pos_amount": 5387655,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 5387655,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 5387655
+    },
+    {
+        "total_x_pos_amount": 5677106,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 5677106,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 5677106
+    },
+    {
+        "total_x_pos_amount": 2043308,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 2043308,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 2043308
+    },
+    {
+        "total_x_pos_amount": 4662252,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 4662252,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 4662252
+    },
+    {
+        "total_x_pos_amount": 2030357,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 2030357,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 2030357
+    },
+    {
+        "total_x_pos_amount": 887436,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 887436,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 887436
+    },
+    {
+        "total_x_pos_amount": 975961,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 975961,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 975961
+    },
+    {
+        "total_x_pos_amount": 4869213,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 4869213,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 4869213
+    },
+    {
+        "total_x_pos_amount": 4016562,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 4016562,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 4016562
+    },
+    {
+        "total_x_pos_amount": 2007208,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 2007208,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 2007208
+    },
+    {
+        "total_x_pos_amount": 12388178,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 12388178,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 12388178
+    },
+    {
+        "total_x_pos_amount": 13029986,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 13029986,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 13029986
+    },
+    {
+        "total_x_pos_amount": 2874226,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 2874226,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 2874226
+    },
+    {
+        "total_x_pos_amount": 2473711,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 2473711,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 2473711
+    },
+    {
+        "total_x_pos_amount": 2049047,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 2049047,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 2049047
+    },
+    {
+        "total_x_pos_amount": 3320816,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 3320816,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 3320816
+    },
+    {
+        "total_x_pos_amount": 5763153,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 5763153,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 5763153
+    },
+    {
+        "total_x_pos_amount": 4421009,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 4421009,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 4421009
+    },
+    {
+        "total_x_pos_amount": 4541412,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 4541412,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 4541412
+    },
+    {
+        "total_x_pos_amount": 2427488,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 2427488,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 2427488
+    },
+    {
+        "total_x_pos_amount": 2658933,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 2658933,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 2658933
+    },
+    {
+        "total_x_pos_amount": 2435847,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 2435847,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 2435847
+    },
+    {
+        "total_x_pos_amount": 2769129,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 2769129,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 2769129
+    },
+    {
+        "total_x_pos_amount": 1945357,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 1945357,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 1945357
+    },
+    {
+        "total_x_pos_amount": 1165311,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 1165311,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 1165311
+    },
+    {
+        "total_x_pos_amount": 3721505,
+        "total_y_pos_amount": 1912723,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 1808782,
+        "overal_open_interest_pos": 1912723,
+        "overal_volume_pos": 3721505
+    },
+    {
+        "total_x_pos_amount": 7346343,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 7346343,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 7346343
+    },
+    {
+        "total_x_pos_amount": 3584938,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 3584938,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 3584938
+    },
+    {
+        "total_x_pos_amount": 2423501,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 2423501,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 2423501
+    },
+    {
+        "total_x_pos_amount": 1699825,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 1699825,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 1699825
+    },
+    {
+        "total_x_pos_amount": 3377809,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 3377809,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 3377809
+    },
+    {
+        "total_x_pos_amount": 4127258,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 4127258,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 4127258
+    },
+    {
+        "total_x_pos_amount": 6314511,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 6314511,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 6314511
+    },
+    {
+        "total_x_pos_amount": 3095320,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 3095320,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 3095320
+    },
+    {
+        "total_x_pos_amount": 3227882,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 3227882,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 3227882
+    },
+    {
+        "total_x_pos_amount": 2297451,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 2297451,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 2297451
+    },
+    {
+        "total_x_pos_amount": 1125320,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 1125320,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 1125320
+    },
+    {
+        "total_x_pos_amount": 1245603,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 1245603,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 1245603
+    },
+    {
+        "total_x_pos_amount": 1388748,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 1388748,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 1388748
+    },
+    {
+        "total_x_pos_amount": 4742607,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 4742607,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 4742607
+    },
+    {
+        "total_x_pos_amount": 5488770,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 5488770,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 5488770
+    },
+    {
+        "total_x_pos_amount": 14321890,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 14321890,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 14321890
+    },
+    {
+        "total_x_pos_amount": 12826700,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 12826700,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 12826700
+    },
+    {
+        "total_x_pos_amount": 3444907,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 3444907,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 3444907
+    },
+    {
+        "total_x_pos_amount": 1873374,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 1873374,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 1873374
+    },
+    {
+        "total_x_pos_amount": 6187811,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 6187811,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 6187811
+    },
+    {
+        "total_x_pos_amount": 1509757,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 1509757,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 1509757
+    },
+    {
+        "total_x_pos_amount": 3232296,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 3232296,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 3232296
+    },
+    {
+        "total_x_pos_amount": 4909468,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 4909468,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 4909468
+    },
+    {
+        "total_x_pos_amount": 5361232,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 5361232,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 5361232
+    },
+    {
+        "total_x_pos_amount": 8067431,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 8067431,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 8067431
+    },
+    {
+        "total_x_pos_amount": 7821896,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 7821896,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 7821896
+    },
+    {
+        "total_x_pos_amount": 4213997,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 4213997,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 4213997
+    },
+    {
+        "total_x_pos_amount": 7868698,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 7868698,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 7868698
+    },
+    {
+        "total_x_pos_amount": 1207186,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 1207186,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 1207186
+    },
+    {
+        "total_x_pos_amount": 9086937,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 9086937,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 9086937
+    },
+    {
+        "total_x_pos_amount": 3766445,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 3766445,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 3766445
+    },
+    {
+        "total_x_pos_amount": 3193130,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 3193130,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 3193130
+    },
+    {
+        "total_x_pos_amount": 3919060,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 3919060,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 3919060
+    },
+    {
+        "total_x_pos_amount": 4754224,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 4754224,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 4754224
+    },
+    {
+        "total_x_pos_amount": 4707070,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 4707070,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 4707070
+    },
+    {
+        "total_x_pos_amount": 5097842,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 5097842,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 5097842
+    },
+    {
+        "total_x_pos_amount": 1345247,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 1345247,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 1345247
+    },
+    {
+        "total_x_pos_amount": 1124742,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 1124742,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 1124742
+    },
+    {
+        "total_x_pos_amount": 1146075,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 1146075,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 1146075
+    },
+    {
+        "total_x_pos_amount": 2169786,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 2169786,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 2169786
+    },
+    {
+        "total_x_pos_amount": 6596382,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 6596382,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 6596382
+    },
+    {
+        "total_x_pos_amount": 15045276,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 15045276,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 15045276
+    },
+    {
+        "total_x_pos_amount": 10631010,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 10631010,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 10631010
+    },
+    {
+        "total_x_pos_amount": 15338983,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 15338983,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 15338983
+    },
+    {
+        "total_x_pos_amount": 12393082,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 12393082,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 12393082
+    },
+    {
+        "total_x_pos_amount": 4065182,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 4065182,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 4065182
+    },
+    {
+        "total_x_pos_amount": 4564509,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 4564509,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 4564509
+    },
+    {
+        "total_x_pos_amount": 11391906,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 11391906,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 11391906
+    },
+    {
+        "total_x_pos_amount": 6828893,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 6828893,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 6828893
+    },
+    {
+        "total_x_pos_amount": 2005155,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 2005155,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 2005155
+    },
+    {
+        "total_x_pos_amount": 7506698,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 7506698,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 7506698
+    },
+    {
+        "total_x_pos_amount": 2755473,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 2755473,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 2755473
+    },
+    {
+        "total_x_pos_amount": 3394287,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 3394287,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 3394287
+    },
+    {
+        "total_x_pos_amount": 5504883,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 5504883,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 5504883
+    },
+    {
+        "total_x_pos_amount": 14848594,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 14848594,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 14848594
+    },
+    {
+        "total_x_pos_amount": 5511009,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 5511009,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 5511009
+    },
+    {
+        "total_x_pos_amount": 4623153,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 4623153,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 4623153
+    },
+    {
+        "total_x_pos_amount": 2750619,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 2750619,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 2750619
+    },
+    {
+        "total_x_pos_amount": 2984819,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 2984819,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 2984819
+    },
+    {
+        "total_x_pos_amount": 12342164,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 12342164,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 12342164
+    },
+    {
+        "total_x_pos_amount": 16153643,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 16153643,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 16153643
+    },
+    {
+        "total_x_pos_amount": 7747657,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 7747657,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 7747657
+    },
+    {
+        "total_x_pos_amount": 9345629,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 9345629,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 9345629
+    },
+    {
+        "total_x_pos_amount": 2160974,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 2160974,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 2160974
+    },
+    {
+        "total_x_pos_amount": 2981175,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 2981175,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 2981175
+    },
+    {
+        "total_x_pos_amount": 813142,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 813142,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 813142
+    },
+    {
+        "total_x_pos_amount": 1174107,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 1174107,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 1174107
+    },
+    {
+        "total_x_pos_amount": 3523899,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 3523899,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 3523899
+    },
+    {
+        "total_x_pos_amount": 4786561,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 4786561,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 4786561
+    },
+    {
+        "total_x_pos_amount": 5532710,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 5532710,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 5532710
+    },
+    {
+        "total_x_pos_amount": 5852053,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 5852053,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 5852053
+    },
+    {
+        "total_x_pos_amount": 4483547,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 4483547,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 4483547
+    },
+    {
+        "total_x_pos_amount": 6049189,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 6049189,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 6049189
+    },
+    {
+        "total_x_pos_amount": 5394556,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 5394556,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 5394556
+    },
+    {
+        "total_x_pos_amount": 7223126,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 7223126,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 7223126
+    },
+    {
+        "total_x_pos_amount": 16404963,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 16404963,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 16404963
+    },
+    {
+        "total_x_pos_amount": 8397726,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 8397726,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 8397726
+    },
+    {
+        "total_x_pos_amount": 10297414,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 10297414,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 10297414
+    },
+    {
+        "total_x_pos_amount": 14351338,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 14351338,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 14351338
+    },
+    {
+        "total_x_pos_amount": 6077300,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 6077300,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 6077300
+    },
+    {
+        "total_x_pos_amount": 5341630,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 5341630,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 5341630
+    },
+    {
+        "total_x_pos_amount": 2653692,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 2653692,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 2653692
+    },
+    {
+        "total_x_pos_amount": 1084266,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 1084266,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 1084266
+    },
+    {
+        "total_x_pos_amount": 1055439,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 1055439,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 1055439
+    },
+    {
+        "total_x_pos_amount": 14942338,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 14942338,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 14942338
+    },
+    {
+        "total_x_pos_amount": 13449137,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 13449137,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 13449137
+    },
+    {
+        "total_x_pos_amount": 10978732,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 10978732,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 10978732
+    },
+    {
+        "total_x_pos_amount": 14584274,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 14584274,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 14584274
+    },
+    {
+        "total_x_pos_amount": 15376839,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 15376839,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 15376839
+    },
+    {
+        "total_x_pos_amount": 9507550,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 9507550,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 9507550
+    },
+    {
+        "total_x_pos_amount": 1095229,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 1095229,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 1095229
+    },
+    {
+        "total_x_pos_amount": 3119947,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 3119947,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 3119947
+    },
+    {
+        "total_x_pos_amount": 2021426,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 2021426,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 2021426
+    },
+    {
+        "total_x_pos_amount": 2466458,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 2466458,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 2466458
+    },
+    {
+        "total_x_pos_amount": 1634220,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 1634220,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 1634220
+    },
+    {
+        "total_x_pos_amount": 6582124,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 6582124,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 6582124
+    },
+    {
+        "total_x_pos_amount": 14914406,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 14914406,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 14914406
+    },
+    {
+        "total_x_pos_amount": 15918704,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 15918704,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 15918704
+    },
+    {
+        "total_x_pos_amount": 15498394,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 15498394,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 15498394
+    },
+    {
+        "total_x_pos_amount": 5921984,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 5921984,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 5921984
+    },
+    {
+        "total_x_pos_amount": 7239041,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 7239041,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 7239041
+    },
+    {
+        "total_x_pos_amount": 1181270,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 1181270,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 1181270
+    },
+    {
+        "total_x_pos_amount": 1711450,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 1711450,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 1711450
+    },
+    {
+        "total_x_pos_amount": 4582942,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 4582942,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 4582942
+    },
+    {
+        "total_x_pos_amount": 2261121,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 2261121,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 2261121
+    },
+    {
+        "total_x_pos_amount": 3359836,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 3359836,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 3359836
+    },
+    {
+        "total_x_pos_amount": 5523590,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 5523590,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 5523590
+    },
+    {
+        "total_x_pos_amount": 5355586,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 5355586,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 5355586
+    },
+    {
+        "total_x_pos_amount": 2843243,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 2843243,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 2843243
+    },
+    {
+        "total_x_pos_amount": 6823334,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 6823334,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 6823334
+    },
+    {
+        "total_x_pos_amount": 2574893,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 2574893,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 2574893
+    },
+    {
+        "total_x_pos_amount": 3204373,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 3204373,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 3204373
+    },
+    {
+        "total_x_pos_amount": 3277300,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 3277300,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 3277300
+    },
+    {
+        "total_x_pos_amount": 1977636,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 1977636,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 1977636
+    },
+    {
+        "total_x_pos_amount": 1135013,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 1135013,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 1135013
+    },
+    {
+        "total_x_pos_amount": 1498483,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 1498483,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 1498483
+    },
+    {
+        "total_x_pos_amount": 10825532,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 10825532,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 10825532
+    },
+    {
+        "total_x_pos_amount": 14352558,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 14352558,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 14352558
+    },
+    {
+        "total_x_pos_amount": 13510529,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 13510529,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 13510529
+    },
+    {
+        "total_x_pos_amount": 3236500,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 3236500,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 3236500
+    },
+    {
+        "total_x_pos_amount": 4662536,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 4662536,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 4662536
+    },
+    {
+        "total_x_pos_amount": 2366184,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 2366184,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 2366184
+    },
+    {
+        "total_x_pos_amount": 1854319,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 1854319,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 1854319
+    },
+    {
+        "total_x_pos_amount": 4360945,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 4360945,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 4360945
+    },
+    {
+        "total_x_pos_amount": 3871712,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 3871712,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 3871712
+    },
+    {
+        "total_x_pos_amount": 4554678,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 4554678,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 4554678
+    },
+    {
+        "total_x_pos_amount": 4768365,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 4768365,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 4768365
+    },
+    {
+        "total_x_pos_amount": 3466641,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 3466641,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 3466641
+    },
+    {
+        "total_x_pos_amount": 1718057,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 1718057,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 1718057
+    },
+    {
+        "total_x_pos_amount": 1764931,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 1764931,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 1764931
+    },
+    {
+        "total_x_pos_amount": 3846338,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 3846338,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 3846338
+    },
+    {
+        "total_x_pos_amount": 1055679,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 1055679,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 1055679
+    },
+    {
+        "total_x_pos_amount": 1323508,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 1323508,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 1323508
+    },
+    {
+        "total_x_pos_amount": 4209579,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 4209579,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 4209579
+    },
+    {
+        "total_x_pos_amount": 4895018,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 4895018,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 4895018
+    },
+    {
+        "total_x_pos_amount": 4410436,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 4410436,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 4410436
+    },
+    {
+        "total_x_pos_amount": 13337826,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 13337826,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 13337826
+    },
+    {
+        "total_x_pos_amount": 15416757,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 15416757,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 15416757
+    },
+    {
+        "total_x_pos_amount": 8962378,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 8962378,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 8962378
+    },
+    {
+        "total_x_pos_amount": 11011760,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 11011760,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 11011760
+    },
+    {
+        "total_x_pos_amount": 14513949,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 14513949,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 14513949
+    },
+    {
+        "total_x_pos_amount": 10986051,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 10986051,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 10986051
+    },
+    {
+        "total_x_pos_amount": 2997936,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 2997936,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 2997936
+    },
+    {
+        "total_x_pos_amount": 984735,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 984735,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 984735
+    },
+    {
+        "total_x_pos_amount": 1234381,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 1234381,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 1234381
+    },
+    {
+        "total_x_pos_amount": 2192779,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 2192779,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 2192779
+    },
+    {
+        "total_x_pos_amount": 1872611,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 1872611,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 1872611
+    },
+    {
+        "total_x_pos_amount": 3464049,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 3464049,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 3464049
+    },
+    {
+        "total_x_pos_amount": 5656868,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 5656868,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 5656868
+    },
+    {
+        "total_x_pos_amount": 12250398,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 12250398,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 12250398
+    },
+    {
+        "total_x_pos_amount": 10754309,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 10754309,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 10754309
+    },
+    {
+        "total_x_pos_amount": 12098509,
+        "total_y_pos_amount": 0,
+        "total_z_pos_amount": 0,
+        "total_f_pos_amount": 12098509,
+        "overal_open_interest_pos": 0,
+        "overal_volume_pos": 12098509
     }
 ]

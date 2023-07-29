@@ -215,16 +215,15 @@ type SeqClosePositionData = (Seq (Double, Int, String, Double, Double, Bool), Se
 normalGenerator ::
      VolumeSide -> [Int] -> [Int] -> SeqClosePositionData -> String -> IO (TakerPositions, MakerPositions)
 normalGenerator tVolumeSide takerLst makerLst (toTakeFromLong, toTakeFromShort) liqSide = do
-  let closingProb = if tVolumeSide == Buy then closingProbLong else closingProbShort
-  unless (closingProb >= 1 && closingProb <= 10) $
-    error "closingProb must be between 1 and 10"
+  -- let closingProb = if tVolumeSide == Buy then closingProbLong else closingProbShort
+  
   let genType =
         if sum takerLst + sum makerLst >=
            getSum (foldMap (\(_, n, _, _, _, _) -> Sum n) toTakeFromLong) &&
            sum takerLst + sum makerLst >=
            getSum (foldMap (\(_, n, _, _, _ , _) -> Sum n) toTakeFromShort)
           then openingGen tVolumeSide liqSide takerLst makerLst 
-          else normalGen tVolumeSide liqSide takerLst makerLst closingProb
+          else normalGen tVolumeSide liqSide takerLst makerLst closingProbLong closingProbShort
   genType
   
 -- involves only opening transactions  
@@ -240,8 +239,8 @@ openingGen tVolumeSide liqSide takerLst makerLst  = do
   return (takerT, makerT)
    
 -- mixing opening transactions with closing ones   
-normalGen :: VolumeSide -> String -> [Int] -> [Int] -> Int -> IO (TakerPositions, MakerPositions)
-normalGen tVolumeSide liqSide takerLst makerLst closingProb  = do
+normalGen :: VolumeSide -> String -> [Int] -> [Int] -> Int -> Int -> IO (TakerPositions, MakerPositions)
+normalGen tVolumeSide liqSide takerLst makerLst closingProbL closingProbS  = do
   let toTakerSide = if tVolumeSide == Buy then "x" else "y"
   let takerSide' = toTakerSide
   let finalTakerSide = if liqSide /= "" then liqSide else takerSide'
@@ -252,12 +251,22 @@ normalGen tVolumeSide liqSide takerLst makerLst closingProb  = do
         | finalTakerSide == "y" && liqSide == "" = "f"
         | otherwise                              = finalTakerSide
   let closingSideM = if makerside == "x"  then "z" else "f"
+  
+  let closingProbTaker = if finalTakerSide == "x" then closingProbL else closingProbS
+  let closingProbMaker = if closingProbTaker == closingProbL then closingProbS else closingProbL
+-- taker and maker side probability should be adjsued to positioning 
+ -- putStrLn $ "closingProb: " ++ show closingProb
+ -- putstrLn $ "finalTakerSide: " ++ show finalTakerSide
+
+  unless (closingProbTaker >= 0 && closingProbTaker <= 11 && closingProbMaker >= 0 && closingProbMaker <= 11) $
+    error "closingProb must be between 0 and 11"
   takerT <-
     mapM
       (\val -> do
           -- > RANDOMNESS <
           randVal <- randomRIO (1, 10) :: IO Int
-          let sideT = if randVal < closingProb then closingSideT else finalTakerSide
+          let 
+          let sideT = if randVal > closingProbTaker then closingSideT else finalTakerSide
           return (val, sideT))
       editedTakerLst
   makerT <-
@@ -265,7 +274,7 @@ normalGen tVolumeSide liqSide takerLst makerLst closingProb  = do
       (\val -> do
           -- > RANDOMNESS <
           randVal <- randomRIO (1, 10) :: IO Int
-          let sideM = if randVal < closingProb   then closingSideM else makerside
+          let sideM = if randVal > closingProbMaker   then closingSideM else makerside
           return (val, sideM))
       makerLst
   return (takerT, makerT)
@@ -546,3 +555,5 @@ normalrunProgram volSide (volumeSplitT, volumeSplitM) (oldLongFuture, oldShortFu
     ( updatedFutureAcc -- # already concat to new accumulator
     , unorderedPosNew -- # returning in a raw form to positionCycle
     , (isLeverageZeroTaker , isLeverageZeroMaker)) -- # returning the leverage to positionCycle 
+
+

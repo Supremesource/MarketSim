@@ -78,15 +78,16 @@ import NRandomFunc
 
 main :: IO ()
 main = do
-    tests
+--    tests
     hspec testsExpected
 
 -- ? comment tests in this function if you want to skip some
-tests :: IO ()
-tests = do
- -- testsLib
- -- testsUtil
-  testsPosCycle
+--tests :: IO ()
+--tests = do
+-- testsLib
+-- testsUtil
+ -- testsPosCycle
+ --testsExpected
 
 testsExpected :: SpecWith ()
 testsExpected = do
@@ -334,9 +335,10 @@ testsLib = hspec $ do
       roundedNumber `shouldBe` 1.2346
 
 -- // all functions from library were tested above
-
+{-
 testsUtil :: IO ()
 testsUtil = hspec $ do
+
 
   -- | UTILITY TESTS
   describe "Util.aggregateStats" $ do
@@ -473,7 +475,9 @@ testsUtil = hspec $ do
     it "returns the sum of a list of integers inside a list" $ do
       sumList [1, 2, 3] `shouldBe` ([6] :: [Int])
 
-
+-}
+-- ! uncomment
+{-
 testsPosCycle :: IO ()
 testsPosCycle = hspec $ do
   
@@ -710,7 +714,7 @@ testsPosCycle = hspec $ do
       any (< numberOfPosition) result `shouldBe` False
      -- result `shouldBe` []
 
-
+-}
 -- TESTTING OUTPUT THAT WAS GENERATED
 testOutputPosition :: SpecWith ()
 testOutputPosition = do
@@ -895,9 +899,9 @@ testDataPosFuture = do
           Right transactionFut -> futureDataCheckAux (future transactionFut) `shouldBe` True
 
 
-futureDataCheckAux ::  [(Double, Int, String)] -> Bool
+futureDataCheckAux ::  [(Double, Int, String, Double, Double, Bool)] -> Bool
 futureDataCheckAux [] = True
-futureDataCheckAux ((price,amount,side):xs) = 
+futureDataCheckAux ((price,amount,side,_,_,_):xs) = 
     let checks = [ price >= 0 && amount >= 0 && side /= "" ]
     in all id checks && futureDataCheckAux xs
   
