@@ -135,7 +135,6 @@ closingConversion (takers, makers)
     hasBothXY xs = "x" `elem` map snd xs && "y" `elem` map snd xs
 
 
-
 {-
 -- TODO better leverage statistics
 positionFuture :: Int -> Double -> (TakerPositions, MakerPositions) -> IO ClosePositionData
@@ -154,7 +153,6 @@ positionFuture leverage price' (taker, maker) = do
             | leverage == 1 && side == "z" = 2 * price'
             | otherwise                    = 0
       return (liquidationPrice, amt, side)
-
 -}
 
 

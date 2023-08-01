@@ -32,7 +32,7 @@ dependencies:
 - haskell-dap
 - random-shuffle
 - hspec-expectations
-
+- split
 
 ghc-options:
 - -Wall
@@ -99,6 +99,7 @@ executables:
     - haskell-dap
     - random-shuffle
     - hspec-expectations
+    - split
   
  
    

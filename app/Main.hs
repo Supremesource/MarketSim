@@ -41,22 +41,22 @@ where
     -- | make frontend more efficient the way the python script is called now is just terrible+
     -- | better UI with timeframes
     -- | better orderbook market making logic
-    
+
     -- // Todo add leverage info   
     -- add liquidation price into posInfo 
     -- TODO represent sides by data types
     -- TODO add much better leverage info
-    -- todo readjust leverage at the end by looking at current margin and initial leverage with initial margin
-    -- todo add stop calculation 
+    -- // todo readjust leverage at the end by looking at current margin and initial leverage with initial margin
+    --  // todo add stop calculation 
     -- TODO add slippage
     -- // todo add leverage info into pos future
     -- TODO delete Max makers to 1
-   
+
     -- todo add restrictive settings for everything
     -- todo when closing take only some part of the position
     -- optimize code, there is too much exponetial time complexity
     -- make general bug check of output
-    
+
     -- // fix negative orderbook levels on bids by stopping ask generation at that point as well, (probable stop ask gen at that point)
     -- //  | make reusable output 
 
@@ -90,11 +90,20 @@ import           RunSettings
 import           Statistics
 import           System.Random.Stateful      (StdGen)
 import           Util
+import           EndMetrics
 import System.CPUTime
 import Text.Printf
 
+
 main :: IO ()
 main = do
+  let shouldPrintMain  = when runMain mainAux
+  let shouldPrintBonus = when printFinalMetrics printMetrics
+  shouldPrintMain
+  shouldPrintBonus
+
+mainAux :: IO ()
+mainAux = do
   writeFile logP ""
   runProgram
 

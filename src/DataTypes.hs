@@ -113,7 +113,7 @@ data FileWriteBook = FileWriteBook
   , volumeAmountBook  :: Int
   -- fotmate with printf
   , spreadBook        :: String 
-  } deriving Generic
+  } deriving (Generic, Show)
   deriving (FromJSON, ToJSON)
   via JSONConfig FileWriteBook
 
@@ -143,7 +143,7 @@ data FileWritePosition    = FileWritePosition
   ,isVolForcedPos         :: (Bool,String)
   ,leverageAmtTPos         :: Int
   ,leverageAmtMPos         :: Int
-  } deriving Generic
+  } deriving (Show, Generic)
   deriving (FromJSON, ToJSON)
   via JSONConfig FileWritePosition
 

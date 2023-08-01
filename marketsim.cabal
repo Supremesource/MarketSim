@@ -65,6 +65,7 @@ library
     , random
     , random-shuffle
     , scotty
+    , split
     , text
     , time
   default-language: Haskell2010
@@ -95,6 +96,7 @@ executable marketsim-exe
     , random
     , random-shuffle
     , scotty
+    , split
     , text
     , time
   default-language: Haskell2010
@@ -124,6 +126,7 @@ executable marketsim-server-exe
     , random
     , random-shuffle
     , scotty
+    , split
     , text
     , time
   default-language: Haskell2010
@@ -155,6 +158,7 @@ test-suite marketsim-test
     , random
     , random-shuffle
     , scotty
+    , split
     , text
     , time
   default-language: Haskell2010

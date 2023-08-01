@@ -97,10 +97,10 @@ generaterunProgram genPass = do
 --       putStrLn $ purple "Debug.bang it is happening liquidation is the last element"
 --       processTransaction adjustedGenPass
   else processTransaction genPass
-
 -}
-  -- TODO
-   -- ! turn back on
+
+-- TODO
+-- ! turn back on
 
 generaterunProgram ::
      GenerationPass
@@ -372,8 +372,6 @@ volumeProcessing listPass@ListPass{}  = do
           takeWallInpt        listPass,
           liquidationTagInpt  listPass )
 
-
-
   let (volumeAmt,volumeSide) = vol
 
   let adjListPass  = listPass { volLstInpt = (volumeAmt,volumeSide) }
@@ -627,14 +625,14 @@ positionCycle positionCyclePass@PositionCyclePass{} = do
       -- | check if the future file is empty
   -- ! get rid of !
   -- > RANDOMNESS <
---  numTakers <- randomRIO (1, maxTakers) :: IO Int   -- select how many takers
---  numMakers <- randomRIO (1, maxMakers) :: IO Int   -- select how many makers
+  numTakers <- randomRIO (1, maxTakers) :: IO Int   -- select how many takers
+  numMakers <- randomRIO (1, maxMakers) :: IO Int   -- select how many makers
 
 
-  --volumeSplitT <- generateVolumes numTakers vAmount -- split the volume
-  --volumeSplitM <- generateVolumes numMakers vAmount -- split the volume
-  let volumeSplitT = [vAmount]
-  let volumeSplitM = [vAmount]
+  volumeSplitT <- generateVolumes numTakers vAmount -- split the volume
+  volumeSplitM <- generateVolumes numMakers vAmount -- split the volume
+  --let volumeSplitT = [vAmount]
+  --let volumeSplitM = [vAmount]
 
   liquidated   <- liquidationDuty longinfo shortinfo sPricegen
 
@@ -667,10 +665,21 @@ positionCycle positionCyclePass@PositionCyclePass{} = do
     , newPositions      = newPositionsGen
     , newPosFutureLong  = newPosFutureLongGen
     , newPosFutureShort = newPosFutureShortGen
-    , newPoslevgT        = leverageT
-    , newPoslevgM        = leverageM
+    , newPoslevgT       = leverageT
+    , newPoslevgM       = leverageM
     }
 
+-- adjusts leverage of positions (at the end of the cycle) to the current price
+baseLeverageAdjustementAux :: Double -> (Double, Int, String, Double, Double, Bool) -> (Double, Int, String, Double, Double, Bool)
+baseLeverageAdjustementAux currentP (liquidationP,a,sid,c,_,e) = case sid of _ 
+                                                                                | sid == "f" && liquidationP == 0 -> (liquidationP,a,sid,c,1,e)
+                                                                                | sid == "z" && liquidationP == (2 * currentP) -> (liquidationP,a,sid,c,1,e)
+                                                                                | sid == "z"  -> (liquidationP,a,sid,c,currentP / (liquidationP - currentP),e) 
+                                                                                | otherwise   -> (liquidationP,a,sid,c,currentP / (currentP - liquidationP),e)
+
+baseLeverageAdjustement :: Double -> TransactionFut -> TransactionFut
+baseLeverageAdjustement _ (TransactionFut []) = TransactionFut []
+baseLeverageAdjustement currentP transcF = TransactionFut $ fmap (baseLeverageAdjustementAux currentP) (future transcF)
 
 -- FUNCTION IS NOT USING UPDATED VOLUME ACCUMULATOR
 -- base case do block
@@ -682,18 +691,23 @@ processTransactionBase genPass = do
   let shortinfo    = initAccShortCloseInput genPass
   let bidBook      = bidBookInput genPass
   let askBook      = askBookInput genPass
-  let bookDetails  = tail $ reverse $  initialBookDetailsListInput genPass
+  let currentPrice = startingprice (head (initialBookDetailsListInput genPass))
+  let bookDetails  = tail $ reverse $ initialBookDetailsListInput genPass
   let posStats     = tail $ reverse $ initStatsInput genPass
+--  putStrLn "the current Price is : \n"
+--  print currentPrice
+
   --let leverageAmt  = tail $ levgInput genPass
   -- / ACTION
   -- ? DATA
-  let posFuture =  TransactionFut $ toList $ longinfo >< shortinfo
-  BL.writeFile posCloseDatP $ encodePretty posFuture
+  let posFuture =  TransactionFut $ toList $ longinfo >< shortinfo  
+  let posFutureWithLeverageAdj = if adjustLeverage then baseLeverageAdjustement currentPrice posFuture else posFuture
+  BL.writeFile posCloseDatP $ encodePretty posFutureWithLeverageAdj
   -- ? OUTPUT
   ids <- idList $ length posStats
 
-  writeLog  bookDetails ids
-  writeBook bookDetails ids
+  writeLog  bookDetails  ids
+  writeBook bookDetails  ids
   writePosition posStats ids
   -- ? DATA DO NOT TOUCH
   -- | / rewriting orderbooks

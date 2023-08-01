@@ -544,7 +544,7 @@ generateVolumes :: Int -> Int -> IO [Int]
 generateVolumes npos ttlVol
       | npos < 1      = error "Number of transactions cannot be less than 1"
       | ttlVol < 1    = error "Total volume cannot be less than 1"
- --     | ttlVol < npos = error "Total volume cannot be less than number of transactions"
+      --     | ttlVol < npos = error "Total volume cannot be less than number of transactions"
       | otherwise     = do
           let adjustedNpos = positionAdjustementAux npos ttlVol
           if adjustedNpos == 1 then return [ttlVol]
@@ -560,6 +560,9 @@ generateVolumes npos ttlVol
             -- final
             let c = zipWith (+) a b'
             return c
+
+
+
 {-
 -- splits volume into smaller lists
 generateVolumes :: Int -> Int -> IO [Int]
