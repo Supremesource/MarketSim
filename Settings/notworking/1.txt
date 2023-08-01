@@ -45,6 +45,7 @@ import           DataTypes (Options (..))
 -- | !POSITIONING SETTINGS / runProgram cycle
 -- | !ORDERBOOK SETTINGS / liquidity  / order walls / orderbook structure
 -- FILL IN THE SETTINGS BELOW !     :
+
 adjustLeverage :: Bool
 adjustLeverage = False
 
@@ -54,6 +55,7 @@ printFinalMetrics = True
 
 runMain :: Bool
 runMain = True
+
 
 -- ! Just keep on True otherwise it will get fucked, i will remove it later
 -- every run new == True
@@ -66,21 +68,16 @@ autoRestore = True
 plotCharts :: Bool
 plotCharts = False
 
-maxMakers :: Int
-maxMakers = 10
-
-maxTakers :: Int
-maxTakers = maxMakers
 
 -- must be between 1 and 500
 -- note that 305 is the base leverage pareto distribution starts at
 -- hence if you want highly dynamic leverage, set it to (250 - 305)
   -- 430 will make leverage > 10 all of the times
 baseLeverageLong :: Int
-baseLeverageLong = 200
+baseLeverageLong = 1
 
 baseLeverageShort :: Int
-baseLeverageShort = 200
+baseLeverageShort = 1
 
 --〇 ID = STRVAL
 -- | starting value
@@ -92,7 +89,7 @@ wipingStartingValue = 100
 -- | number of positions you want to take place in the simulation runProgram
 -- | number of positions
 numPositions :: Int
-numPositions = 10
+numPositions = 5000
 
 --〇 ID = NUMrunProgram
 -- | number of runPrograms, this is a loop how many times will the simulation repeat itself (random generators are updating each time though)
@@ -161,12 +158,12 @@ runProgramlist = [RANDOM]
 minBuyVol :: Int
 minBuyVol = 100
 maxBuyVol :: Int
-maxBuyVol = 1000000
+maxBuyVol = 400000
 -- | SELL VOLUME
 minSellVol :: Int
 minSellVol = 100
 maxSellVol :: Int
-maxSellVol = 1000000
+maxSellVol = 400000
 
 
 -- previous stat amount now it's probability 
@@ -193,11 +190,11 @@ stopProbShort  = 20
 --takerxProb = 5
 -- closing probab ranges from 0 to 11 where 11 is certain closing and zero is never close
 closingProbLong :: Int
-closingProbLong = 9
+closingProbLong = 2
 
 -- TODO add this as well
 closingProbShort :: Int
-closingProbShort = 9
+closingProbShort = 3
 
 -- TODO add closing probability x
 -- ! ORDERBOOK SETINGS

@@ -1,216 +1,310 @@
-[
-    {
-        "buy_volume_pos": 130348698,
-        "identifier_position": "&dZo4&KHCs",
-        "liquidation_info_pos": [
-            0,
-            "",
-            ""
-        ],
-        "maker_f_pos": 0,
-        "maker_x_pos": 0,
-        "maker_y_pos": 130348698,
-        "maker_z_pos": 0,
-        "overal_open_interest_pos": 130348698,
-        "overal_volume_pos": 130348698,
-        "sell_volume_pos": 0,
-        "taker_f_pos": 0,
-        "taker_x_pos": 130348698,
-        "taker_y_pos": 0,
-        "taker_z_pos": 0,
-        "total_f_pos_amount": 0,
-        "total_f_pos_count": 0,
-        "total_x_pos_amount": 130348698,
-        "total_x_pos_count": 3,
-        "total_y_pos_amount": 130348698,
-        "total_y_pos_count": 1,
-        "total_z_pos_amount": 0,
-        "total_z_pos_count": 0
-    },
-   
-   
-   
-   
-    {
-        "buy_volume_pos": 0,
-        "identifier_position": "p1gF@gOhHx",
-        "liquidation_info_pos": [
-            0,
-            "",
-            ""
-        ],
-        "maker_f_pos": 0,
-        "maker_x_pos": 359590319,
-        "maker_y_pos": 0,
-        "maker_z_pos": 0,
-        "overal_open_interest_pos": 359590319,
-        "overal_volume_pos": 359590319,
-        "sell_volume_pos": 359590319,
-        "taker_f_pos": 0,
-        "taker_x_pos": 0,
-        "taker_y_pos": 359590319,
-        "taker_z_pos": 0,
-        "total_f_pos_amount": 0,
-        "total_f_pos_count": 0,
-        "total_x_pos_amount": 359590319,
-        "total_x_pos_count": 3,
-        "total_y_pos_amount": 359590319,
-        "total_y_pos_count": 2,
-        "total_z_pos_amount": 0,
-        "total_z_pos_count": 0
-    },
-   
-   
-    {
-        "buy_volume_pos": 0,
-        "identifier_position": "IJ7t5$wsRj",
-        "liquidation_info_pos": [
-            0,
-            "",
-            ""
-        ],
-        "maker_f_pos": 0,
-        "maker_x_pos": 168862818,
-        "maker_y_pos": 0,
-        "maker_z_pos": 0,
-        "overal_open_interest_pos": 112924946,
-        "overal_volume_pos": 168862818,
-        "sell_volume_pos": 168 862 818,
-        "taker_f_pos": 55937872,
-        "taker_x_pos": 0,
-        "taker_y_pos": 112924946,
-        "taker_z_pos": 0,
-        "total_f_pos_amount": 55937872,
-        "total_f_pos_count": 2,
-        "total_x_pos_amount": 168862818,
-        "total_x_pos_count": 3,
-        "total_y_pos_amount": 112924946,
-        "total_y_pos_count": 2,
-        "total_z_pos_amount": 0,
-        "total_z_pos_count": 0
-    },
-    
-    
-    {
-        "buy_volume_pos": 351 005 731,
-        "identifier_position": "9ARuxxMKNo",
-        "liquidation_info_pos": [
-            67539234,
-            "z",
-            "stp"
-        ],
-        "maker_f_pos": 0,
-        "maker_x_pos": 0,
-        "maker_y_pos": 351005731,
-        "maker_z_pos": 0,
-        "overal_open_interest_pos": 351005731,
-        "overal_volume_pos": 351005731,
-        "sell_volume_pos": 0,
-        "taker_f_pos": 0,
-        "taker_x_pos": 351005731,
-        "taker_y_pos": 0,
-        "taker_z_pos": 0,
-        "total_f_pos_amount": 0,
-        "total_f_pos_count": 0,
-        "total_x_pos_amount": 351005731,
-        "total_x_pos_count": 4,
-        "total_y_pos_amount": 351005731,
-        "total_y_pos_count": 4,
-        "total_z_pos_amount": 0,
-        "total_z_pos_count": 0
-    },
-   
-   
-    {            
-        "buy_volume_pos": 180 464 180,
-        "identifier_position": "X89jQyueN!",
-        "liquidation_info_pos": [
-            32937602, -- sum of liq above its liq liq below
-            "z",
-            "liq"
-        ],
-        "maker_f_pos": 180464180,
-        "maker_x_pos": 0,
-        "maker_y_pos": 0,
-        "maker_z_pos": 0,
-        "overal_open_interest_pos": -180464180,
-        "overal_volume_pos": 180 464 180,
-        "sell_volume_pos": 0,
-        "taker_f_pos": 0,
-        "taker_x_pos": 0,
-        "taker_y_pos": 0,
-        "taker_z_pos": 180464180,
-        "total_f_pos_amount": 180464180,
-        "total_f_pos_count": 1,
-        "total_x_pos_amount": 0,
-        "total_x_pos_count": 0,
-        "total_y_pos_amount": 0,
-        "total_y_pos_count": 0,
-        "total_z_pos_amount": 180464180,
-        "total_z_pos_count": 1
-    },
-   
-   
-    {
-        "buy_volume_pos": 90 611 754, -- liq after
-      
-        "identifier_position": "BrdkSceEYz",
-        "liquidation_info_pos": [
-            79987344,
-            "z",
-            "stp"
-        ],
-        "maker_f_pos": 84913458,
-        "maker_x_pos": 0,
-        "maker_y_pos": 5698296,
-        "maker_z_pos": 0,
-        "overal_open_interest_pos": -84913458,
-        "overal_volume_pos": 90611754,
-        "sell_volume_pos": 0,
-        "taker_f_pos": 0,
-        "taker_x_pos": 0,
-        "taker_y_pos": 0,
-        "taker_z_pos": 90611754,
-        "total_f_pos_amount": 84913458,
-        "total_f_pos_count": 2,
-        "total_x_pos_amount": 0,
-        "total_x_pos_count": 0,
-        "total_y_pos_amount": 5698296,
-        "total_y_pos_count": 1,
-        "total_z_pos_amount": 90611754,
-        "total_z_pos_count": 1
-    },
-   
- 
-    
+❯ stack run
+Generating dataset ...
+^[[A
+^[[A
+^[[A
+^[[A
+^[[A
+^[[A
+Dataset generated in 20.821960 seconds
+Plotting is turned off.
+Final X: 744767535, Final Y: 760307110, Final Z: 585653656, Final F: 570114081
+check: False
+Total books: 891
+Up movement: 115.18740%, Down movement: 106.86560%
+Down movement closement: 558053040
+Up movement closement: 597714697
+
+check False
+Closement to move
+: (6.705917469778107e7,7.182516967482926e7)
+
+check2 False
+❯ stack run
+Generating dataset ...
+Dataset generated in 21.927538 seconds
+Plotting is turned off.
+Final X: 806224587, Final Y: 815920679, Final Z: 620967316, Final F: 611271224
+
+check: False
+Total books: 891
+Up movement: 119.86340%, Down movement: 114.52680%
+Down movement closement: 626847543
+Up movement closement: 605390997
+
+check True
+Closement to move
+: (1.1746196885657056e8,1.1344132912340729e8)
+
+check2 True
+❯ stack run
+Generating dataset ...
+Dataset generated in 22.333330 seconds
+Plotting is turned off.
+Final X: 842055954, Final Y: 795548513, Final Z: 636957601, Final F: 683465042
 
 
-    {
-        "buy_volume_pos": 177 334 546,
-        "identifier_position": "VM0Dhk8DL9",
-        "liquidation_info_pos": [
-            90611754,
-            "z",
-            "stp"
-        ],
-        "maker_f_pos": 112659670,
-        "maker_x_pos": 0,
-        "maker_y_pos": 64674876,
-        "maker_z_pos": 0,
-        "overal_open_interest_pos": -112659670,
-        "overal_volume_pos": 177334546,
-        "sell_volume_pos": 0,
-        "taker_f_pos": 0,
-        "taker_x_pos": 0,
-        "taker_y_pos": 0,
-        "taker_z_pos": 177334546,
-        "total_f_pos_amount": 112659670,
-        "total_f_pos_count": 2,
-        "total_x_pos_amount": 0,
-        "total_x_pos_count": 0,
-        "total_y_pos_amount": 64674876,
-        "total_y_pos_count": 1,
-        "total_z_pos_amount": 177334546,
-        "total_z_pos_count": 1
-    }
-]
+check: True
+Total books: 873
+Up movement: 115.62870%, Down movement: 124.03260%
+Down movement closement: 710157961
+Up movement closement: 610264682
+
+check True
+Closement to move
+: (8.450338069230269e7,7.261684241840534e7)
+
+check2 True
+❯ stack run
+Generating dataset ...
+^[[A
+^[[A
+^[[A
+^[[A
+^[[A
+^[[A
+^[[A
+^[[A
+^[[A
+^[[A
+^[[A
+^[[A^[[A
+Dataset generated in 22.761982 seconds
+Plotting is turned off.
+Final X: 829976807, Final Y: 823956305, Final Z: 645541370, Final F: 651561872
+
+
+check: True
+Total books: 921
+Up movement: 120.73370%, Down movement: 123.79720%
+Down movement closement: 652726740
+Up movement closement: 644376502
+
+check True
+Closement to move
+: (2.1306568957076097e8,2.1033997127469426e8)
+
+check2 True
+❯ stack run
+Generating dataset ...
+Dataset generated in 19.415036 seconds
+Plotting is turned off.
+Final X: 584237979, Final Y: 561462638, Final Z: 434083367, Final F: 456858708
+
+
+
+
+check: True
+Total books: 865
+Up movement: 81.49710%, Down movement: 90.12850%
+Down movement closement: 496436264
+Up movement closement: 394505811
+
+check True
+Closement to move
+: (5.7515149801883966e7,4.5705889079406016e7)
+
+check2 True
+❯ stack run
+Generating dataset ...
+Dataset generated in 20.083840 seconds
+Plotting is turned off.
+Final X: 628472539, Final Y: 622822594, Final Z: 467553240, Final F: 473203185
+
+
+
+check: True
+Total books: 858
+Up movement: 86.66350%, Down movement: 95.85190%
+Down movement closement: 501085803
+Up movement closement: 439670622
+
+check True
+Closement to move
+: (5.453460918114666e7,4.785061838840735e7)
+
+check2 True
+
+❯ stack run
+Generating dataset ...
+Dataset generated in 22.151598 seconds
+Plotting is turned off.
+Final X: 845901062, Final Y: 864140207, Final Z: 662947691, Final F: 644708546
+
+
+
+
+check: False
+Total books: 894
+Up movement: 118.97600%, Down movement: 126.54510%
+Down movement closement: 729005862
+Up movement closement: 578650375
+
+check True
+Closement to move
+: (9.631341401222537e7,7.644903291011462e7)
+
+check2 True
+
+❯ stack run
+Generating dataset ...
+Dataset generated in 24.462805 seconds
+Plotting is turned off.
+Final X: 1077004187, Final Y: 1053269078, Final Z: 815986011, Final F: 839721120
+
+
+check: True
+Total books: 925
+Up movement: 151.38530%, Down movement: 150.25190%
+Down movement closement: 768589450
+Up movement closement: 887117681
+
+check False
+Closement to move
+: (6.781272719254222e8,7.827048535383056e8)
+
+check2 False
+❯ stack run
+Generating dataset ...
+Dataset generated in 21.083160 seconds
+Plotting is turned off.
+Final X: 681760169, Final Y: 679015899, Final Z: 532497007, Final F: 535241277
+
+
+
+check: True
+Total books: 875
+Up movement: 96.87680%, Down movement: 103.71890%
+Down movement closement: 561276291
+Up movement closement: 506461993
+
+check True
+Closement to move
+: (8.203275178673093e7,7.402142514724901e7)
+
+check2 True
+❯ stack run
+Generating dataset ...
+Dataset generated in 21.022807 seconds
+Plotting is turned off.
+Final X: 707923593, Final Y: 695684313, Final Z: 507623561, Final F: 519862841
+
+
+
+check: True
+Total books: 887
+Up movement: 93.87180%, Down movement: 105.49140%
+Down movement closement: 596463072
+Up movement closement: 431023330
+
+check True
+Closement to move
+: (5.133249612723383e7,3.7094506695583716e7)
+
+check2 True
+❯ stack run
+Generating dataset ...
+^[[A
+^[[A
+^[[A
+^[[A
+^[[A^[[A
+^[[ADataset generated in 21.570055 seconds
+Plotting is turned off.
+Final X: 826369225, Final Y: 781224506, Final Z: 566751489, Final F: 611896208
+
+
+
+check: True
+Total books: 902
+Up movement: 105.57860%, Down movement: 122.66120%
+Down movement closement: 657830737
+Up movement closement: 520816960
+
+check True
+Closement to move
+: (3.850881815414509e7,3.0488155198857266e7)
+
+check2 True
+❯ stack run
+Generating dataset ...
+Dataset generated in 20.985224 seconds
+Plotting is turned off.
+Final X: 567106952, Final Y: 504154362, Final Z: 349363588, Final F: 412316178
+
+
+
+check: True
+Total books: 864
+Up movement: 68.89940%, Down movement: 86.70080%
+Down movement closement: 454157347
+Up movement closement: 307522419
+
+check True
+Closement to move
+: (2.551245109935245e7,1.7275181671105e7)
+
+check2 True
+❯ stack run
+Generating dataset ...
+Dataset generated in 22.374353 seconds
+Plotting is turned off.
+Final X: 814133256, Final Y: 749040066, Final Z: 552294195, Final F: 617387385
+
+
+
+check: True
+Total books: 896
+Up movement: 105.36210%, Down movement: 117.05530%
+Down movement closement: 624612975
+Up movement closement: 545068605
+
+check True
+Closement to move
+: (5.341677000307687e7,4.661415224232727e7)
+
+check2 True
+❯ stack run
+Generating dataset ...
+^[[A
+^[[A^[[A
+^[[A^[[ADataset generated in 22.378430 seconds
+Plotting is turned off.
+Final X: 876485221, Final Y: 865860673, Final Z: 669667783, Final F: 680292331
+
+
+
+check: True
+Total books: 890
+Up movement: 124.96070%, Down movement: 124.85700%
+Down movement closement: 669509876
+Up movement closement: 680450238
+
+check False
+Closement to move
+: (6.456218669197273e9,6.561718784915024e9)
+
+check2 False
+❯ stack run
+Generating dataset ...
+Dataset generated in 19.628405 seconds
+Plotting is turned off.
+Final X: 703009488, Final Y: 751750355, Final Z: 564403826, Final F: 515662959
+
+
+
+
+
+check: False
+Total books: 885
+Up movement: 107.34280%, Down movement: 99.99100%
+Down movement closement: 514898468
+Up movement closement: 565168317
+
+check False
+Closement to move
+: (7.003706139993092e7,7.687482208438931e7)
+
+check2 False
+❯ cd marketsim
+cd: no such file or directory: marketsim
