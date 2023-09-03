@@ -41,6 +41,11 @@ where
     -- | make frontend more efficient the way the python script is called now is just terrible+
     -- | better UI with timeframes
     -- | better orderbook market making logic
+--TODO
+-- add working Max takers/makers
+-- solve exponetional time complexity
+    -- TODO list all of the positions in the json 
+
 
     -- // Todo add leverage info   
     -- add liquidation price into posInfo 

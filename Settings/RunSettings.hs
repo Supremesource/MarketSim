@@ -50,7 +50,7 @@ adjustLeverage = False
 
 -- Set only on true when you genearated output
 printFinalMetrics :: Bool
-printFinalMetrics = True
+printFinalMetrics = False
 
 runMain :: Bool
 runMain = True

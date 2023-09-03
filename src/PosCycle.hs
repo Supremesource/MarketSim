@@ -110,6 +110,7 @@ import           Util
 import           Statistics
 import System.CPUTime
 import Text.Printf
+import Data.Maybe
 
 
 -- ? funcitons for the position future
@@ -151,42 +152,49 @@ positionFuture leverage price' (taker, maker) = do
             | leverage /= 1 && side == "f" =
               price' - (price' / fromIntegral leverage)
             | leverage == 1 && side == "z" = 2 * price'
-            | otherwise                    = 0
+            | otherwise                    = 0<
       return (liquidationPrice, amt, side)
 -}
 
 
-positionFuture :: (Int,Int) -> Double -> (TakerPositions, MakerPositions) -> IO ClosePositionData
+positionFuture :: ([Int],[Int]) -> Double -> (TakerPositions, MakerPositions) -> IO ClosePositionData
 positionFuture (leverageTaker, leverageMaker) price' (taker, maker) = do
-  let (takerConver, makerConvert) = closingConversion (taker, maker)
-  takerCalculation <- mapM (calcPosition leverageTaker) takerConver
-  makerCalculation <- mapM (calcPosition leverageMaker) makerConvert
+  let (takerConvert, makerConvert) = closingConversion (taker, maker)
+  putStrLn "\nthe leverage Takr is : "
+  print leverageTaker
+  putStrLn "\nthe leverage Maker is : "
+  print leverageMaker
+  takerCalculation <- zipWithM (calcPosition price' )leverageTaker takerConvert 
+  makerCalculation <- zipWithM (calcPosition price') leverageMaker makerConvert
+
   return $ takerCalculation ++ makerCalculation
-  where
-    calcPosition leverage (amt, side) = do
-      shouldAddStopLong  <- randomRIO (stopProbLong , 50) :: IO Int
-      shouldAddStopShort <- randomRIO (stopProbShort, 50) :: IO Int
-      let shouldAddStop = if side == "f" then shouldAddStopLong else shouldAddStopShort
-      let liquidationPrice
-            | leverage /= 1 && side == "z" = (price' / fromIntegral leverage) + price'
-            | leverage /= 1 && side == "f" = price' - (price' / fromIntegral leverage)
-            | leverage == 1 && side == "z" = 2 * price'
-            | otherwise                    = 0
+  
 
-      stopAdd  <- stopCalculation price' liquidationPrice
-      let stopCheckPrice = when (stopAdd < price' ) $ error "stop is to big"
-      let stopCheckLiqPriceLng = when (stopAdd < liquidationPrice && side == "f") $ error "stop is too small"
-      let stopCheckLiqPriceShrt = when (stopAdd > liquidationPrice && side == "z") $ error "stop is too small"
+calcPosition :: Double -> Int -> (Int, String) -> IO (Double, Int, String, Double, Double, Bool)
+calcPosition price' leverage (amt, side)  = do
+  shouldAddStopLong  <- randomRIO (stopProbLong , 50) :: IO Int
+  shouldAddStopShort <- randomRIO (stopProbShort, 50) :: IO Int
+  let shouldAddStop = if side == "f" then shouldAddStopLong else shouldAddStopShort
+  let liquidationPrice
+        | leverage /= 1 && side == "z" = (price' / fromIntegral leverage) + price'
+        | leverage /= 1 && side == "f" = price' - (price' / fromIntegral leverage)
+        | leverage == 1 && side == "z" = 2 * price'
+        | otherwise                    = 0
 
-      when (shouldAddStop == 50) $ do
-            stopCheckPrice
-            stopCheckLiqPriceLng
-            stopCheckLiqPriceShrt
-      let forcePrice = if shouldAddStop == 50 then   stopAdd
-                                              else   liquidationPrice
-      let isForceStop = shouldAddStop == 50
+  stopAdd  <- stopCalculation price' liquidationPrice
+  let stopCheckPrice = when (stopAdd < price' ) $ error "stop is to big"
+  let stopCheckLiqPriceLng = when (stopAdd < liquidationPrice && side == "f") $ error "stop is too small"
+  let stopCheckLiqPriceShrt = when (stopAdd > liquidationPrice && side == "z") $ error "stop is too small"
 
-      return (forcePrice, amt, side, price', fromIntegral leverage, isForceStop) -- add is Stop -> True / False
+  when (shouldAddStop == 50) $ do
+        stopCheckPrice
+        stopCheckLiqPriceLng
+        stopCheckLiqPriceShrt
+  let forcePrice = if shouldAddStop == 50 then   stopAdd
+                                          else   liquidationPrice
+  let isForceStop = shouldAddStop   == 50
+
+  return (forcePrice, amt, side, price', fromIntegral leverage, isForceStop) -- add is Stop -> True / False
 
 
 oppositeSide :: String -> String
@@ -214,16 +222,16 @@ normalGenerator ::
      VolumeSide -> [Int] -> [Int] -> SeqClosePositionData -> String -> IO (TakerPositions, MakerPositions)
 normalGenerator tVolumeSide takerLst makerLst (toTakeFromLong, toTakeFromShort) liqSide = do
   -- let closingProb = if tVolumeSide == Buy then closingProbLong else closingProbShort
-  
+
   let genType =
         if sum takerLst + sum makerLst >=
            getSum (foldMap (\(_, n, _, _, _, _) -> Sum n) toTakeFromLong) &&
            sum takerLst + sum makerLst >=
            getSum (foldMap (\(_, n, _, _, _ , _) -> Sum n) toTakeFromShort)
-          then openingGen tVolumeSide liqSide takerLst makerLst 
+          then openingGen tVolumeSide liqSide takerLst makerLst
           else normalGen tVolumeSide liqSide takerLst makerLst closingProbLong closingProbShort
   genType
-  
+
 -- involves only opening transactions  
 openingGen :: VolumeSide -> String -> [Int] -> [Int]  -> IO (TakerPositions, MakerPositions)
 openingGen tVolumeSide liqSide takerLst makerLst  = do
@@ -235,7 +243,7 @@ openingGen tVolumeSide liqSide takerLst makerLst  = do
   let takerT = zip editedTakerLst $ replicate (length takerLst) finalTakerSide
   let makerT = zip makerLst $ replicate (length makerLst) makerside
   return (takerT, makerT)
-   
+
 -- mixing opening transactions with closing ones   
 normalGen :: VolumeSide -> String -> [Int] -> [Int] -> Int -> Int -> IO (TakerPositions, MakerPositions)
 normalGen tVolumeSide liqSide takerLst makerLst closingProbL closingProbS  = do
@@ -249,7 +257,7 @@ normalGen tVolumeSide liqSide takerLst makerLst closingProbL closingProbS  = do
         | finalTakerSide == "y" && liqSide == "" = "f"
         | otherwise                              = finalTakerSide
   let closingSideM = if makerside == "x"  then "z" else "f"
-  
+
   let closingProbTaker = if finalTakerSide == "x" then closingProbL else closingProbS
   let closingProbMaker = if closingProbTaker == closingProbL then closingProbS else closingProbL
 -- taker and maker side probability should be adjsued to positioning 
@@ -263,7 +271,7 @@ normalGen tVolumeSide liqSide takerLst makerLst closingProbL closingProbS  = do
       (\val -> do
           -- > RANDOMNESS <
           randVal <- randomRIO (1, 10) :: IO Int
-          let 
+          let
           let sideT = if randVal > closingProbTaker then closingSideT else finalTakerSide
           return (val, sideT))
       editedTakerLst
@@ -487,6 +495,20 @@ where: `split of volume for taker and maker -> old future (acc) -> old Positions
 output: ` updated accumulators for FUTURE
        -> New position accumulators      `
 -}
+leverageAccumulator :: [a]
+leverageAccumulator = []
+
+leverageList :: [(Int, String)] -> [Int] -> IO [Int]
+leverageList [] accL = return accL
+leverageList ((_,side):xs) accL = do
+  leverageLong  <- takenLeverage baseLeverageLong
+  leverageShort <- takenLeverage baseLeverageShort
+  let takeLeverage  
+                  | side == "x" = leverageLong
+                  | side == "y" = leverageShort
+                  | otherwise = 0
+  if takeLeverage /= 0 then leverageList xs  $ takeLeverage : accL else leverageList xs accL
+
 -- ? PUTTING ALL FUNCTIONS ABOVE TOGETHER
 normalrunProgram ::
         VolumeSide
@@ -496,7 +518,7 @@ normalrunProgram ::
   -> String
   -> IO ( SeqClosePositionData     -- # updated accumulator short # updated accumulator long
         , NewPositioning           -- # updated accumulator positions
-        , (Int,Int) )              -- # taken leverage
+        , ([Int],[Int]) )              -- # taken leverage
 normalrunProgram volSide (volumeSplitT, volumeSplitM) (oldLongFuture, oldShortFuture) -- TODO TAKE OUT oldPositions
                                                sPrice liqSide = do
   newPositioning <-
@@ -507,19 +529,22 @@ normalrunProgram volSide (volumeSplitT, volumeSplitM) (oldLongFuture, oldShortFu
       (oldLongFuture, oldShortFuture)
       liqSide
 
-  --let leverageLong  = 1  --   
-  leverageLong <- takenLeverage baseLeverageLong
-  --let leverageShort = 10 --  
-  leverageShort <- takenLeverage baseLeverageShort
-
   let (takerPositioning,makerPositioning) = newPositioning
-  let leverageTaker = if "x" `elem` (snd <$> takerPositioning) then leverageLong else leverageShort
-  let leverageMaker = if leverageTaker == leverageLong then leverageShort else leverageLong
-  let isLeverageZeroTaker = if any (\x -> x == "z" || x == "f") (snd <$> takerPositioning) then 0 else leverageTaker
-  let isLeverageZeroMaker = if any (\x -> x == "z" || x == "f") (snd <$> makerPositioning) then 0 else leverageMaker
+
+  putStrLn  "\nthe taker Positioning is:"
+  print takerPositioning
+  putStrLn "\nthe maker Positioning is : "
+  print makerPositioning
+  
+  leverageTaker <- leverageList takerPositioning leverageAccumulator
+  leverageMaker <- leverageList makerPositioning leverageAccumulator
+  
+  -- let isLeverageZeroTaker = if any (\x -> x == "z" || x == "f") (snd <$> takerPositioning) then 0 else leverageTaker
+  -- let isLeverageZeroMaker = if any (\x -> x == "z" || x == "f") (snd <$> makerPositioning) then 0 else leverageMaker
 
   posFut <- positionFuture (leverageTaker,leverageMaker) sPrice newPositioning
-
+  putStrLn "\nthe position future is : "
+  print posFut
 
  -- let adjustedLiquidation = if liqSide == "" then "no" else "yes"
 
@@ -552,6 +577,6 @@ normalrunProgram volSide (volumeSplitT, volumeSplitM) (oldLongFuture, oldShortFu
   return
     ( updatedFutureAcc -- # already concat to new accumulator
     , unorderedPosNew -- # returning in a raw form to positionCycle
-    , (isLeverageZeroTaker , isLeverageZeroMaker)) -- # returning the leverage to positionCycle 
+    , (leverageTaker , leverageMaker)) -- # returning the leverage to positionCycle 
 
 

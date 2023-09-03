@@ -135,6 +135,7 @@ test-suite marketsim-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
+      GeneralPos
       NRandomFunc
       Paths_marketsim
   hs-source-dirs:

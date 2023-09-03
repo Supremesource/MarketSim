@@ -41,7 +41,7 @@ adjustData chunkSize' positionsData bookDetails =
 
   where
     combinePositionChunks :: [FileWritePosition] -> FileWritePosition
-    combinePositionChunks xs = foldl1 combinePositions xs
+    combinePositionChunks = foldl1 combinePositions 
 
     combinePositions :: FileWritePosition -> FileWritePosition -> FileWritePosition
     combinePositions p1 p2 = FileWritePosition
@@ -68,12 +68,12 @@ adjustData chunkSize' positionsData bookDetails =
       , overalOpenInterestPos = overalOpenInterestPos p1 + overalOpenInterestPos p2
       , activatedExitPos = activatedExitPos p2
       , isVolForcedPos = isVolForcedPos p2
-      , leverageAmtTPos = leverageAmtTPos p1 + leverageAmtTPos p2
-      , leverageAmtMPos = leverageAmtMPos p1 + leverageAmtMPos p2
+ --     , leverageAmtTPos = leverageAmtTPos p1 + leverageAmtTPos p2
+ --     , leverageAmtMPos = leverageAmtMPos p1 + leverageAmtMPos p2
       }
 
     combineBookChunks :: [FileWriteBook] -> FileWriteBook
-    combineBookChunks xs = foldl1 combineBooks xs
+    combineBookChunks  = foldl1 combineBooks 
 
     combineBooks :: FileWriteBook -> FileWriteBook -> FileWriteBook
     combineBooks b1 b2 = FileWriteBook
