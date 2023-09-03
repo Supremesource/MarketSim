@@ -160,10 +160,10 @@ positionFuture leverage price' (taker, maker) = do
 positionFuture :: ([Int],[Int]) -> Double -> (TakerPositions, MakerPositions) -> IO ClosePositionData
 positionFuture (leverageTaker, leverageMaker) price' (taker, maker) = do
   let (takerConvert, makerConvert) = closingConversion (taker, maker)
-  putStrLn "\nthe leverage Takr is : "
-  print leverageTaker
-  putStrLn "\nthe leverage Maker is : "
-  print leverageMaker
+  -- putStrLn "\nthe leverage Takr is : "
+  -- print leverageTaker
+  -- putStrLn "\nthe leverage Maker is : "
+  -- print leverageMaker
   takerCalculation <- zipWithM (calcPosition price' )leverageTaker takerConvert 
   makerCalculation <- zipWithM (calcPosition price') leverageMaker makerConvert
 
@@ -500,7 +500,7 @@ leverageAccumulator = []
 
 leverageList :: [(Int, String)] -> [Int] -> IO [Int]
 leverageList [] accL = return accL
-leverageList ((am,side):xs) accL = do
+leverageList ((_,side):xs) accL = do
   
   leverageLong  <- takenLeverage baseLeverageLong
   leverageShort <- takenLeverage baseLeverageShort
@@ -509,8 +509,8 @@ leverageList ((am,side):xs) accL = do
                   | side == "y" = leverageShort
                   | otherwise = 0
 
-  putStrLn $ "amount = " ++ show am
-  putStrLn $ "leverage is = " ++ show takeLeverage
+  --putStrLn $ "amount = " ++ show am
+  --putStrLn $ "leverage is = " ++ show takeLeverage
   if takeLeverage /= 0 then leverageList xs  $ takeLeverage : accL else leverageList xs accL
 
 -- ? PUTTING ALL FUNCTIONS ABOVE TOGETHER
@@ -535,10 +535,10 @@ normalrunProgram volSide (volumeSplitT, volumeSplitM) (oldLongFuture, oldShortFu
 
   let (takerPositioning,makerPositioning) = newPositioning
 
-  putStrLn  "\nthe taker Positioning is:"
-  print takerPositioning
-  putStrLn "\nthe maker Positioning is : "
-  print makerPositioning
+  --putStrLn  "\nthe taker Positioning is:"
+  --print takerPositioning
+  --putStrLn "\nthe maker Positioning is : "
+  --print makerPositioning
   
 
   leverageTaker <- leverageList takerPositioning leverageAccumulator
@@ -550,8 +550,8 @@ normalrunProgram volSide (volumeSplitT, volumeSplitM) (oldLongFuture, oldShortFu
   -- let isLeverageZeroMaker = if any (\x -> x == "z" || x == "f") (snd <$> makerPositioning) then 0 else leverageMaker
 
   posFut <- positionFuture (leverageTaker,leverageMaker) sPrice newPositioning
-  putStrLn "\nthe position future is : "
-  print posFut
+  --putStrLn "\nthe position future is : "
+  --print posFut
 
  -- let adjustedLiquidation = if liqSide == "" then "no" else "yes"
 

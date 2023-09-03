@@ -114,7 +114,7 @@ setupBookDetails (startingP', maxMinL', asksTot', bidsTot', takewall', lengchngB
 -- | aggregating stats together
 aggregateStats :: (TakerPositions, MakerPositions) -> Seq (Int,String,String) -> (Bool,String) -> ([Int],[Int]) -> Stats -> Stats
 aggregateStats (taker, maker) liquidation isforced (lvgT,lvgM) stats  =
-  trace  ("taker: " ++ show taker ++ "maker: " ++ show maker )
+  -- trace  ("taker: " ++ show taker ++ "maker: " ++ show maker )
   Stats
     { overallOI =
         overallOI stats + interestorPlus taker maker -
