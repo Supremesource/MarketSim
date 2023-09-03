@@ -45,21 +45,51 @@ where
 -- add working Max takers/makers
 -- solve exponetional time complexity
     -- TODO list all of the positions in the json 
-
+    -- TODO add exact statistics for max makers max takers ditribution
 
     -- // Todo add leverage info   
     -- add liquidation price into posInfo 
-    -- TODO represent sides by data types
-    -- TODO add much better leverage info
+    -- TODO represent sides with data types
+    -- // TODO add much better leverage info
     -- // todo readjust leverage at the end by looking at current margin and initial leverage with initial margin
     --  // todo add stop calculation 
     -- TODO add slippage
     -- // todo add leverage info into pos future
-    -- TODO delete Max makers to 1
+    -- // TODO delete Max makers to 1
 
     -- todo add restrictive settings for everything
     -- todo when closing take only some part of the position
     -- optimize code, there is too much exponetial time complexity
+
+
+    ---- ~ --------------
+    --- ~  TO OPTIMIZE --
+    ----- ~ -------------
+  -- | current time complexity
+  -- O(x^3)
+  -- FIT = 3.21e-8 * x**3 - 1.5e4 * x**2 + 2.26e-1 * x + 8.53e1
+  -- we should reduce to linear time complexity, or  O(x log x)
+  -- worse O(x^2)
+
+    -- liquidation duty
+      -- liquidation function
+      -- iquidationDuty.newFutureInfoL
+      
+    -- additional book info
+    -- orderbook process
+  -- calculate setup inserts
+-------------
+
+--number pos	set. Insert	calc Total	liq duty	OB process	process t.	OB	total	maxMakers	actual s	ALLOC ->		set. Insert	calc Total	liq duty	OB process	process t.	OB	total
+--500									5									
+--1000									7									
+--1500									10									
+--2000	12	20	15	5	x	x	52	10	50									
+--3000	18	21	31	18	12	5	105	10	127									
+--3500	17	18	39	21	10	3	108	10	208		3500	23	27	37	23	9	0.5	119
+--4000	10	16	47	15			88	10	490			15	26	47	15			
+
+----------------
     -- make general bug check of output
 
     -- // fix negative orderbook levels on bids by stopping ask generation at that point as well, (probable stop ask gen at that point)

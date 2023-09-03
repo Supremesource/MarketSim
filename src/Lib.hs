@@ -173,7 +173,7 @@ infiniteListDownConstant start gen moves =
 zipToTuples :: [Double] -> [Int] -> SeqOrderBook
 zipToTuples xs ys = fromList $ zip xs ys
 
-
+-- ! optimization warning
 -- sums the order wall into the normal orderbook
 sumAt :: Int -> Int -> [Int] -> [Int]
 sumAt idx val lst =
@@ -560,7 +560,7 @@ generateVolumes npos ttlVol
             let b' = lastChunk2 : b
             -- final
             let c = zipWith (+) a b'
-            putStrLn $ "c: " ++ show c
+            -- putStrLn $ "c: " ++ show c
             return c
 
 

@@ -271,8 +271,8 @@ processTransaction genPass@GenerationPass{} = do
   let posinfo   = initPositioningAccInput genPass
   let longinfo  = initAccLongCloseInput genPass
   let shortinfo = initAccShortCloseInput genPass
-  putStrLn $ "\nlong info : " ++ show longinfo
-  putStrLn $ "\nshort info : " ++ show shortinfo
+  -- putStrLn $ "\nlong info : " ++ show longinfo
+  -- putStrLn $ "\nshort info : " ++ show shortinfo
   
   let listOfVolumes = listofvolumesInput genPass
 --  let (x, _) = case listOfVolumes of
@@ -352,10 +352,12 @@ processTransaction genPass@GenerationPass{} = do
       
       }
 
+
+-- ! optimization warning
 insertAt :: Int -> [a] -> [a] -> [a]
 insertAt i xs ys = let (before, after) = splitAt i ys in before ++ xs ++ after
 
-
+-- # biggest computational bottleneck from the whole program
 volumeProcessing :: ListPass  -> IO ReturnVolumeProcess
 volumeProcessing listPass@ListPass{}  = do
   let (liqinfo,posinfo,longinfo,shortinfo,vol:restOfVol,sPoint,takeWall,liqT:liqTRest) =
@@ -426,6 +428,7 @@ volumeProcessing listPass@ListPass{}  = do
   let liquidationString = if null newLiqInfoGenerated then [""] else (toList . fmap (\(_, _, s) -> s)) newLiqInfoGenerated
   let liquidationTag    = if null newLiqInfoGenerated then  [(False,"")] else map (True, ) liquidationString
   let maybeLiqConcat    = if null newLiqInfoGenerated then [] else map (True, ) liquidationString
+  -- ! optimization warning
   let liquidationTagOut = if null liqTRest then liquidationTag else  liqTRest  ++ maybeLiqConcat
 
 
@@ -449,6 +452,7 @@ volumeProcessing listPass@ListPass{}  = do
                                   else (amt, Sell) ) newLiqInfoGenerated
 
   let concatVolProcess = if null liqTRest
+      -- ! optimization warning
       then toList liquidationTOvol ++ restOfVol
       else insertAt (length liqTRest) (toList liquidationTOvol) restOfVol
 
@@ -593,6 +597,7 @@ additionalBookInfo additionalBook@AdditionData{} = do
   return newbookDetails
 
 
+-- second biggest bottle neck
 -- TODO convert into records
 -- | position cycle 
 -- ! does not need to recive liquidation info

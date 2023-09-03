@@ -66,10 +66,10 @@ normalrunProgramNonRPG volSide (volumeSplitT, volumeSplitM) (oldLongFuture, oldS
 
   let (takerPositioning,makerPositioning) = newPositioning
 
-  putStrLn  "\nthe taker Positioning is:"
-  print takerPositioning
-  putStrLn "\nthe maker Positioning is : "
-  print makerPositioning
+  --putStrLn  "\nthe taker Positioning is:"
+  --print takerPositioning
+  --putStrLn "\nthe maker Positioning is : "
+  --print makerPositioning
   
   leverageTaker <- leverageListNonRPG takerPositioning leverageAccumulator
   leverageMaker <- leverageListNonRPG makerPositioning leverageAccumulator
@@ -78,8 +78,8 @@ normalrunProgramNonRPG volSide (volumeSplitT, volumeSplitM) (oldLongFuture, oldS
   -- let isLeverageZeroMaker = if any (\x -> x == "z" || x == "f") (snd <$> makerPositioning) then 0 else leverageMaker
 
   posFut <- positionFuture (leverageTaker,leverageMaker) sPrice newPositioning
-  putStrLn "\nthe position future is : "
-  print posFut
+  --putStrLn "\nthe position future is : "
+  --print posFut
 
  -- let adjustedLiquidation = if liqSide == "" then "no" else "yes"
 

@@ -70,17 +70,17 @@ maxMakers :: Int
 maxMakers = 10
 
 maxTakers :: Int
-maxTakers = maxMakers
+maxTakers = round $ fromIntegral maxMakers / (1.1 :: Double) :: Int
 
 -- must be between 1 and 500
 -- note that 305 is the base leverage pareto distribution starts at
 -- hence if you want highly dynamic leverage, set it to (250 - 305)
   -- 430 will make leverage > 10 all of the times
 baseLeverageLong :: Int
-baseLeverageLong = 200
+baseLeverageLong = 1
 
 baseLeverageShort :: Int
-baseLeverageShort = 200
+baseLeverageShort = 1
 
 --〇 ID = STRVAL
 -- | starting value
@@ -92,7 +92,7 @@ wipingStartingValue = 100
 -- | number of positions you want to take place in the simulation runProgram
 -- | number of positions
 numPositions :: Int
-numPositions = 10
+numPositions = 1500
 
 --〇 ID = NUMrunProgram
 -- | number of runPrograms, this is a loop how many times will the simulation repeat itself (random generators are updating each time though)
@@ -161,12 +161,12 @@ runProgramlist = [RANDOM]
 minBuyVol :: Int
 minBuyVol = 100
 maxBuyVol :: Int
-maxBuyVol = 1000000
+maxBuyVol = 500000
 -- | SELL VOLUME
 minSellVol :: Int
 minSellVol = 100
 maxSellVol :: Int
-maxSellVol = 1000000
+maxSellVol = 500000
 
 
 -- previous stat amount now it's probability 
@@ -193,7 +193,7 @@ stopProbShort  = 20
 --takerxProb = 5
 -- closing probab ranges from 0 to 11 where 11 is certain closing and zero is never close
 closingProbLong :: Int
-closingProbLong = 9
+closingProbLong = 10
 
 -- TODO add this as well
 closingProbShort :: Int
@@ -232,10 +232,10 @@ maxDownMove = 0.01
 --〇 ID = TakeBidAsk
 -- | Size of bid orderbook
 takeamountBID :: Int
-takeamountBID = 20000
+takeamountBID = 15000
 -- | Size of ask orderbook
 takeamountASK :: Int
-takeamountASK = 20000
+takeamountASK = 15000
 
 --  'WALL' SETTINGS:
 --〇 ID = wallLikeHood
