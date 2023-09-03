@@ -74,16 +74,18 @@ import Statistics
 import Generator
 import Filepaths
 import NRandomFunc
-
+import GeneralPos
 
 main :: IO ()
 main = do
---    tests
     hspec testsExpected
+    tests
 
+    
 -- ? comment tests in this function if you want to skip some
---tests :: IO ()
---tests = do
+tests :: IO ()
+tests = do
+  testsGeneralPos
 -- testsLib
 -- testsUtil
  -- testsPosCycle
@@ -715,6 +717,10 @@ testsPosCycle = hspec $ do
      -- result `shouldBe` []
 
 -}
+
+
+
+
 -- TESTTING OUTPUT THAT WAS GENERATED
 testOutputPosition :: SpecWith ()
 testOutputPosition = do
@@ -904,4 +910,22 @@ futureDataCheckAux [] = True
 futureDataCheckAux ((price,amount,side,_,_,_):xs) = 
     let checks = [ price >= 0 && amount >= 0 && side /= "" ]
     in all id checks && futureDataCheckAux xs
-  
+
+
+-- type SeqClosePositionData = (Seq (Double, Int, String, Double, Double, Bool), Seq (Double, Int, String, Double, Double, Bool))
+                            -- liqPrice, amount, side, entryPrice, leverage, isForceStop
+
+testsGeneralPos :: IO ()
+testsGeneralPos = hspec $ do
+
+  describe "PosCycle.normalrunProgram" $ do  
+    it "returns realistic positioning management" $ do
+          let sideOFvolume = Buy
+          let splitVolumeForTaker = [100,1,1200,800]
+          let splitVolumeForMaker = [50]
+          let (oldLongFuture', oldShortFuture') = (fromList [], fromList [])
+          let strtPrice = 0.1
+          let liqside = ""
+          result <- normalrunProgramNonRPG sideOFvolume (splitVolumeForTaker,splitVolumeForMaker) (oldLongFuture', oldShortFuture') strtPrice liqside 
+          result `shouldBe` ((fromList [], fromList []), ( [], []), ([100,100,100,100], [1]) )
+

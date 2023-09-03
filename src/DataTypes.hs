@@ -50,7 +50,7 @@ import Data.Sequence (Seq)
 type JSONConfig a = 
  CustomJSON '[OmitNothingFields, FieldLabelModifier 
  '[StripPrefix "DATA", CamelToSnake]] a
-
++
 data TransactionFut = TransactionFut {
     future :: ClosePositionData
   } deriving (Show, Eq, Generic)
@@ -141,8 +141,8 @@ data FileWritePosition    = FileWritePosition
   ,overalOpenInterestPos  :: Int
   ,activatedExitPos       :: Seq (Int,String,String)
   ,isVolForcedPos         :: (Bool,String)
-  ,leverageAmtTPos         :: Int
-  ,leverageAmtMPos         :: Int
+  ,leverageAmtTPos         :: [Int]
+  ,leverageAmtMPos         :: [Int]
   } deriving (Show, Generic)
   deriving (FromJSON, ToJSON)
   via JSONConfig FileWritePosition
@@ -189,9 +189,8 @@ data Stats = Stats
   , makerF      :: Int
   , forceCall   :: Seq (Int,String,String)
   , isVolForced :: (Bool,String)
-  , leverageAmtT :: Int
-  , leverageAmtM :: Int
-
+  , leverageAmtT :: [Int]
+  , leverageAmtM :: [Int]
   } deriving (Show,Eq)
 
 data Options =

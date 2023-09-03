@@ -253,8 +253,8 @@ data PositionCycleOutput = PositionCycleOutput
   , newPositions      :: NewPositioning
   , newPosFutureLong  :: Seq (Double, Int, String, Double, Double, Bool)
   , newPosFutureShort :: Seq (Double, Int, String, Double, Double, Bool)
-  , newPoslevgT              :: Int
-  , newPoslevgM              :: Int
+  , newPoslevgT              :: [Int]
+  , newPoslevgM              :: [Int]
   } deriving (Eq)
 
 
@@ -271,9 +271,10 @@ processTransaction genPass@GenerationPass{} = do
   let posinfo   = initPositioningAccInput genPass
   let longinfo  = initAccLongCloseInput genPass
   let shortinfo = initAccShortCloseInput genPass
-
+  putStrLn $ "\nlong info : " ++ show longinfo
+  putStrLn $ "\nshort info : " ++ show shortinfo
+  
   let listOfVolumes = listofvolumesInput genPass
-
 --  let (x, _) = case listOfVolumes of
 --        [] -> error "list of volumes empty"
 --        (y:ys) -> (y, ys)
@@ -324,13 +325,8 @@ processTransaction genPass@GenerationPass{} = do
       , newPosStatsOutpt     = newPosStats
       , liquidationTagOutpt  = newLiquidationTag 
       } -> do
-
-
-    -- / 
-
+  
     let (newGen1, newGen2)   = (fst (split gen1), fst (split gen2))
-
-
     -- trace (orange "writeLiqInfoOLD: " ++ show writeLiqInfo ++ "\n\n") $ return ()
     -- trace (orange "writeLiqInfoNEW: " ++ show newWriteLiqInfo ++ "\n\n") $ return ()          
     generaterunProgram
@@ -434,7 +430,7 @@ volumeProcessing listPass@ListPass{}  = do
 
 
  -- ++ liquidation information 
-  let newStats       = aggregateStats localPositions newLiqInfoGenerated liqT (newPosLevgT,newPosLevgM) initStats
+  let newStats  = aggregateStats localPositions newLiqInfoGenerated liqT (newPosLevgT,newPosLevgM) initStats
 
 -- in case of liquidation it will add the volume to the accumulator
   --let isVolAtOneElement = vAmount == [a]
@@ -627,7 +623,6 @@ positionCycle positionCyclePass@PositionCyclePass{} = do
   -- > RANDOMNESS <
   numTakers <- randomRIO (1, maxTakers) :: IO Int   -- select how many takers
   numMakers <- randomRIO (1, maxMakers) :: IO Int   -- select how many makers
-
 
   volumeSplitT <- generateVolumes numTakers vAmount -- split the volume
   volumeSplitM <- generateVolumes numMakers vAmount -- split the volume
