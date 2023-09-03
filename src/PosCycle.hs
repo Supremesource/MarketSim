@@ -500,13 +500,17 @@ leverageAccumulator = []
 
 leverageList :: [(Int, String)] -> [Int] -> IO [Int]
 leverageList [] accL = return accL
-leverageList ((_,side):xs) accL = do
+leverageList ((am,side):xs) accL = do
+  
   leverageLong  <- takenLeverage baseLeverageLong
   leverageShort <- takenLeverage baseLeverageShort
   let takeLeverage  
                   | side == "x" = leverageLong
                   | side == "y" = leverageShort
                   | otherwise = 0
+
+  putStrLn $ "amount = " ++ show am
+  putStrLn $ "leverage is = " ++ show takeLeverage
   if takeLeverage /= 0 then leverageList xs  $ takeLeverage : accL else leverageList xs accL
 
 -- ? PUTTING ALL FUNCTIONS ABOVE TOGETHER
@@ -536,9 +540,12 @@ normalrunProgram volSide (volumeSplitT, volumeSplitM) (oldLongFuture, oldShortFu
   putStrLn "\nthe maker Positioning is : "
   print makerPositioning
   
+
   leverageTaker <- leverageList takerPositioning leverageAccumulator
   leverageMaker <- leverageList makerPositioning leverageAccumulator
   
+
+
   -- let isLeverageZeroTaker = if any (\x -> x == "z" || x == "f") (snd <$> takerPositioning) then 0 else leverageTaker
   -- let isLeverageZeroMaker = if any (\x -> x == "z" || x == "f") (snd <$> makerPositioning) then 0 else leverageMaker
 

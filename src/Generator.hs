@@ -425,7 +425,7 @@ volumeProcessing listPass@ListPass{}  = do
 
   let liquidationString = if null newLiqInfoGenerated then [""] else (toList . fmap (\(_, _, s) -> s)) newLiqInfoGenerated
   let liquidationTag    = if null newLiqInfoGenerated then  [(False,"")] else map (True, ) liquidationString
-  let maybeLiqConcat = if null newLiqInfoGenerated then [] else map (True, ) liquidationString
+  let maybeLiqConcat    = if null newLiqInfoGenerated then [] else map (True, ) liquidationString
   let liquidationTagOut = if null liqTRest then liquidationTag else  liqTRest  ++ maybeLiqConcat
 
 

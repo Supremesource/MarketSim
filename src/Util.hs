@@ -36,6 +36,7 @@ idefining the majority of task specific functions / accumulators (similart to li
 -}
  where
 
+import Debug.Trace (trace)
 -- | importing external libraries
 import           Data.Foldable (toList)
 import           Data.Sequence (Seq, empty, fromList, singleton, (><), ViewL (EmptyL, (:<)), viewl,index)
@@ -87,7 +88,7 @@ initLiquidationAcc = empty
 
 -- | helper funciton for the funciton below (where everything is starting at)
 initStats :: Stats
-initStats = Stats 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+initStats = Stats 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 [0] [0] [0] [0] [0] [0] [0] [0] 
             (fromList [(0,"","")]) (False,"") [] []
 
 setupBookDetails :: InitBookStats -> BookStats
@@ -113,14 +114,15 @@ setupBookDetails (startingP', maxMinL', asksTot', bidsTot', takewall', lengchngB
 -- | aggregating stats together
 aggregateStats :: (TakerPositions, MakerPositions) -> Seq (Int,String,String) -> (Bool,String) -> ([Int],[Int]) -> Stats -> Stats
 aggregateStats (taker, maker) liquidation isforced (lvgT,lvgM) stats  =
+  trace  ("taker: " ++ show taker ++ "maker: " ++ show maker )
   Stats
     { overallOI =
         overallOI stats + interestorPlus taker maker -
         interestorMinus taker maker
-    , totalVolume = totalVolume stats + elementSize "x" taker + 
-          elementSize "y" taker + elementSize "z" taker + elementSize "f" taker
-    , buyVolume  =  buyVolume stats + elementSize "x" taker + elementSize "z" taker
-    , sellVolume = sellVolume stats + elementSize "y" taker + elementSize "f" taker      
+    , totalVolume = totalVolume stats + sum (elementSize "x" taker )+ 
+          sum (elementSize "y" taker )+ sum (elementSize "z" taker) + sum (elementSize "f" taker)
+    , buyVolume  =  buyVolume stats + sum (elementSize "x" taker) + sum (elementSize "z" taker)
+    , sellVolume = sellVolume stats + sum (elementSize "y" taker) + sum (elementSize "f" taker )     
     , takerXc = takerXc stats + countElements "x" taker
     , takerYc = takerYc stats + countElements "y" taker
     , takerZc = takerZc stats + countElements "z" taker
@@ -129,18 +131,18 @@ aggregateStats (taker, maker) liquidation isforced (lvgT,lvgM) stats  =
     , makerYc = makerYc stats + countElements "y" maker
     , makerZc = makerZc stats + countElements "z" maker
     , makerFc = makerFc stats + countElements "f" maker
-    , offX = offX stats + elementSize         "x" taker + elementSize "x" maker
-    , offY = offY stats + elementSize         "y" taker + elementSize "y" maker
-    , offZ = offZ stats + elementSize         "z" taker + elementSize "z" maker
-    , offF = offF stats + elementSize         "f" taker + elementSize "f" maker
-    , takerX = takerX stats + elementSize     "x" taker
-    , takerY = takerY stats + elementSize     "y" taker
-    , takerZ = takerZ stats + elementSize     "z" taker
-    , takerF = takerF stats + elementSize     "f" taker
-    , makerX = makerX stats + elementSize     "x" maker
-    , makerY = makerY stats + elementSize     "y" maker
-    , makerZ = makerZ stats + elementSize     "z" maker
-    , makerF = makerF stats + elementSize     "f" maker
+    , offX = offX stats + sum (elementSize "x" taker) + sum (elementSize "x" maker)
+    , offY = offY stats + sum (elementSize "y" taker) + sum (elementSize "y" maker)
+    , offZ = offZ stats + sum (elementSize "z" taker) + sum (elementSize "z" maker)
+    , offF = offF stats + sum (elementSize "f" taker) + sum (elementSize "f" maker)
+    , takerX = takerX stats ++ elementSize     "x" taker
+    , takerY = takerY stats ++ elementSize     "y" taker
+    , takerZ = takerZ stats ++ elementSize     "z" taker
+    , takerF = takerF stats ++ elementSize     "f" taker
+    , makerX = makerX stats ++ elementSize     "x" maker
+    , makerY = makerY stats ++ elementSize     "y" maker
+    , makerZ = makerZ stats ++ elementSize     "z" maker
+    , makerF = makerF stats ++ elementSize     "f" maker
     , forceCall   = liquidation  
     , isVolForced = isforced
     , leverageAmtT = lvgT

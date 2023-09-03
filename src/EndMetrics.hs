@@ -17,8 +17,10 @@ import qualified Data.ByteString.Lazy as BSL
 import Data.Aeson.Encode.Pretty
 import Data.List.Split (chunksOf)
 
+printMetrics :: IO ()
+printMetrics = undefined
 
-
+{-
 -- Module for testing your thesis
 printMetrics :: IO ()
 printMetrics = do
@@ -180,3 +182,5 @@ finalPositioning xs =
                     ", Final Z: " ++ show finalZ ++
                     ", Final F: " ++ show finalF ++
                     "\ncheck: " ++ show (finalF > finalZ)
+
+                    -}
