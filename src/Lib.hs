@@ -68,6 +68,7 @@ import           RunSettings
 import           Statistics
 import System.Process
 import Data.Sequence (Seq(..))
+--import Data.ByteString.Char8 (putStrLn)
 
 
 -- ? WALLS
@@ -270,8 +271,8 @@ countElements :: String -> [(Int,String)] -> Int
 countElements x = length . filter ((== x) . snd)
 
 
-elementSize :: String -> [(Int,String)] -> Int
-elementSize x = sum . map fst . filter ((== x) . snd)
+elementSize :: String -> [(Int,String)] -> [Int]
+elementSize x = map fst . filter ((== x) . snd)
 
 
 -- | putting voume side and amount into a tuple
@@ -559,6 +560,7 @@ generateVolumes npos ttlVol
             let b' = lastChunk2 : b
             -- final
             let c = zipWith (+) a b'
+            putStrLn $ "c: " ++ show c
             return c
 
 

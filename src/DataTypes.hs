@@ -50,7 +50,7 @@ import Data.Sequence (Seq)
 type JSONConfig a = 
  CustomJSON '[OmitNothingFields, FieldLabelModifier 
  '[StripPrefix "DATA", CamelToSnake]] a
-+
+
 data TransactionFut = TransactionFut {
     future :: ClosePositionData
   } deriving (Show, Eq, Generic)
@@ -127,14 +127,14 @@ data FileWritePosition    = FileWritePosition
   ,totalYPosCount         :: Int
   ,totalZPosCount         :: Int
   ,totalFPosCount         :: Int
-  ,takerXPos              :: Int
-  ,takerYPos              :: Int
-  ,takerZPos              :: Int  
-  ,takerFPos              :: Int
-  ,makerXPos              :: Int
-  ,makerYPos              :: Int
-  ,makerZPos              :: Int
-  ,makerFPos              :: Int
+  ,takerXPos              :: [Int]
+  ,takerYPos              :: [Int]
+  ,takerZPos              :: [Int]  
+  ,takerFPos              :: [Int]
+  ,makerXPos              :: [Int]
+  ,makerYPos              :: [Int]
+  ,makerZPos              :: [Int]
+  ,makerFPos              :: [Int]
   ,buyVolumePos           :: Int
   ,sellVolumePos          :: Int
   ,overalVolumePos        :: Int
@@ -179,14 +179,14 @@ data Stats = Stats
   , offY        :: Int
   , offF        :: Int
   , offZ        :: Int
-  , takerX      :: Int
-  , takerY      :: Int
-  , takerZ      :: Int
-  , takerF      :: Int
-  , makerX      :: Int
-  , makerY      :: Int
-  , makerZ      :: Int
-  , makerF      :: Int
+  , takerX      :: [Int]
+  , takerY      :: [Int]
+  , takerZ      :: [Int]
+  , takerF      :: [Int]
+  , makerX      :: [Int]
+  , makerY      :: [Int]
+  , makerZ      :: [Int]
+  , makerF      :: [Int]
   , forceCall   :: Seq (Int,String,String)
   , isVolForced :: (Bool,String)
   , leverageAmtT :: [Int]
@@ -259,6 +259,14 @@ type VolumeList         = [(Int, VolumeSide)]
 type Volume             = (Int, VolumeSide)
 -- | additional
 type Generator          = StdGen
+
+-- | data types for the positioning
+data Positioning = Positioning {
+  openLong :: String,
+  openShort :: String,
+  closeLong :: String,
+  closeShort :: String
+} deriving (Show, Eq, Generic, FromJSON, ToJSON)
 
 
 

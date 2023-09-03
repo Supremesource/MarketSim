@@ -114,22 +114,22 @@ writePosition statList idList02 = do
       , totalYPosCount         = takerYc     stats + makerYc stats
       , totalZPosCount         = takerZc     stats + makerZc stats
       , totalFPosCount         = takerFc     stats + makerFc stats
-      , takerXPos              = takerX      stats
-      , takerYPos              = takerY      stats
-      , takerZPos              = takerZ      stats
-      , takerFPos              = takerF      stats
-      , makerXPos              = makerX      stats
-      , makerYPos              = makerY      stats
-      , makerZPos              = makerZ      stats
-      , makerFPos              = makerF      stats
+      , takerXPos              = tail $ takerX      stats
+      , takerYPos              = tail $ takerY      stats
+      , takerZPos              = tail $ takerZ      stats
+      , takerFPos              = tail $ takerF      stats
+      , makerXPos              = tail $ makerX      stats
+      , makerYPos              = tail $ makerY      stats
+      , makerZPos              = tail $ makerZ      stats
+      , makerFPos              = tail $ makerF      stats
       , buyVolumePos           = buyVolume   stats
       , sellVolumePos          = sellVolume  stats
       , overalVolumePos        = totalVolume stats
       , overalOpenInterestPos  = overallOI   stats
       , activatedExitPos       = forceCall stats
       , isVolForcedPos         = isVolForced stats
-      , leverageAmtTPos         = leverageAmtT stats
-      , leverageAmtMPos         = leverageAmtM stats
+      , leverageAmtTPos        = reverse $ leverageAmtT stats
+      , leverageAmtMPos        = reverse $ leverageAmtM stats
       }
 
 
@@ -178,7 +178,7 @@ writeLog statsList idList02 = do
         return fileWritesLog
 
 
-
+{-
 -- | rewriting bid/ask RATIO
 -- | rewriting bid TO ask RATIO
 -- | printing stats associated with positioning
@@ -211,7 +211,7 @@ printPositionStats  (taker, makers)  = do
 --    let jsonData = encodePretty positionDataList
 --    BL.writeFile newLongsPath' jsonData
 
-
+-}
 
 
 -- | final overview
@@ -228,6 +228,7 @@ printPositionStats  (taker, makers)  = do
 -- | to stop unwanted misinformation
 checkers :: Stats -> [(String, String)]
 checkers stats =
+  
   [ ( "Checker 1"
     , if (offX stats + offZ stats) - (offY stats + offF stats) /= 0
         then error $ red "fail 1"
@@ -238,34 +239,34 @@ checkers stats =
         then error $ red "fail 2"
         else "check 2 pass")
   , ( "Checker 3"
-    , if ((takerX stats + takerZ stats) - (makerY stats + makerF stats)) /= 0
+    , if ((sum (takerX stats )+ sum (takerZ stats)) - (sum (makerY stats )+ sum (makerF stats))) /= 0
         then error $ red "fail 3"
         else "check 3 pass")
   , ( "Checker 4"
-    , if ((takerY stats + takerF stats) - (makerX stats + makerZ stats)) /= 0
+    , if ((sum (takerY stats) + sum (takerF stats)) - (sum (makerX stats) + sum (makerZ stats))) /= 0
         then error $ red "fail 4"
         else "check 4 pass")
   , ( "Checker 5"
-    , if (takerX stats + takerZ stats) /= buyVolume stats
+    , if (sum (takerX stats) + sum (takerZ stats)) /= buyVolume stats
         then error $ red "5 fail"
         else "check 5 pass")
   , ( "Checker 6"
-    , if (takerY stats + takerF stats) /= sellVolume stats
+    , if (sum (takerY stats )+ sum (takerF stats)) /= sellVolume stats
         then error $ red "6 fail"
         else "check 6 pass")
   , ( "Checker 7"
-    , if ((takerX stats + takerY stats + makerX stats + makerY stats) -
-          (takerZ stats + takerF stats + makerZ stats + makerF stats)) `div`
+    , if ((sum (takerX stats) + sum (takerY stats )+ sum (makerX stats) + sum (makerY stats)) -
+          (sum (takerZ stats )+ sum (takerF stats) + sum (makerZ stats )+ sum (makerF stats))) `div`
          2 /=
          overallOI stats
         then error $ red "7 fail"
         else "check 7 pass")
   , ( "Checker 8"
-    , if (takerX stats + takerZ stats) - (makerY stats + makerF stats) /= 0
+    , if (sum (takerX stats )+ sum (takerZ stats)) - (sum (makerY stats )+ sum (makerF stats)) /= 0
         then error $ red "check 8 fail"
         else "check 8 pass")
   , ( "Checker 9"
-    , if (takerY stats + takerF stats) - (makerX stats + makerZ stats) /= 0
+    , if (sum (takerY stats) + sum (takerF stats)) - (sum (makerX stats) + sum (makerZ stats)) /= 0
         then error $ red "check 9 fail"
         else "check 9 pass")
 
