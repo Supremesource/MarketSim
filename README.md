@@ -1,29 +1,6 @@
 # Markert simulation software
 
-prototype of a market simulation with transparent data
+Ever wondered if those crypto twitter infulencers know whate they are talking about ? Well, test it for yourself.
+Accurate simulation of market conditions, from leverage, positioning, to funding rate.
 
-
-    Note : 
-    - X = NEW LONG
-    - Y = NEW SHORT
-    - F = CLOSING LONG
-    - Z = CLOSING SHORT
-
-
-
-# User manual
-Do not forget to specify runProgramSettings in /Settings 
-
-
-# References
-
-- [POSSIBLE SETTINGS](/doc/SETTING.MD)
-
-- [VOLUME PROOF](/doc/setThoryproof.pdf)
-
-- [TODO](doc/TODO.md)
-
-
-## Directory look
-
-![Haskell Project Structure](https://showme.redstarplugin.com/d/ATnXrU1O)
+WIP
